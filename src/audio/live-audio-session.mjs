@@ -1,4 +1,10 @@
+import { createHash } from "node:crypto";
+
 import { AdaptiveEnergyVad } from "./adaptive-energy-vad.mjs";
+import {
+  normalizePrefinalPolicy,
+  PREFINAL_POLICY_ACOUSTIC_FIXED_BOUNDARY
+} from "./prefinal-policy.mjs";
 import {
   assessTranscriptPlausibility
 } from "../asr/transcript-plausibility.mjs";
@@ -50,6 +56,7 @@ export class LiveAudioSession {
   #mergeWindowMs;
   #nextTurnId = 0;
   #pendingFinals = new Set();
+  #prefinalPolicy;
   #preRoll = [];
   #preRollFrames;
   #recentFinal = null;
@@ -80,6 +87,9 @@ export class LiveAudioSession {
       this.#finalCommitGraceMs;
     this.#criticalFinalCommitGraceMs =
       options.criticalFinalCommitGraceMs ?? 1_100;
+    this.#prefinalPolicy = normalizePrefinalPolicy(
+      options.prefinalPolicy
+    );
     this.#vad = options.vad ?? new AdaptiveEnergyVad({
       minimumOnThreshold: 0.025,
       minimumOffThreshold: 0.012,
@@ -209,12 +219,17 @@ export class LiveAudioSession {
     if (started) {
       this.#startTurn(started);
     } else if (this.#turn) {
-      this.#turn.asr.pushPcm(frame.pcm, { capturedAtMs: atMs });
+      this.#turn.asr.pushPcm(frame.pcm, {
+        capturedAtMs: atMs,
+        sampleStart: frame.sampleStart
+      });
     }
 
     for (const event of vadEvents) {
       if (event.type === "user.speech.paused" && this.#turn) {
         this.#turn.pauseAtMs = event.atMs;
+        this.#turn.pauseSampleStart =
+          event.payload?.pauseSampleStart ?? null;
         this.#turn.asr.suspendPartials?.();
         this.#tryPrepareFinal(
           this.#turn,
@@ -222,12 +237,16 @@ export class LiveAudioSession {
           "speech-paused"
         );
       } else if (event.type === "user.speech.resumed" && this.#turn) {
+        const invalidatedBoundary = this.#turn.pauseSampleStart;
         this.#turn.pauseAtMs = null;
+        this.#turn.pauseSampleStart = null;
         if (this.#turn.asr.invalidatePreparedFinal?.()) {
           this.#turn.prefinalStarted = false;
           this.#emit("endpoint.prefinal.cancelled", event.atMs, {
             turnId: this.#turn.id,
-            reason: "speech-resumed"
+            reason: "speech-resumed",
+            acousticBoundarySample: invalidatedBoundary,
+            prefinalPolicy: this.#prefinalPolicy
           });
         }
         this.#turn.asr.resumePartials?.();
@@ -307,6 +326,7 @@ export class LiveAudioSession {
       cancelled: false,
       latestTranscript: "",
       pauseAtMs: null,
+      pauseSampleStart: null,
       prefinalStarted: false,
       previousTurn,
       startedAtMs: vadEvent.atMs
@@ -343,7 +363,10 @@ export class LiveAudioSession {
     });
     this.#turn = turn;
     for (const buffered of this.#preRoll) {
-      turn.asr.pushPcm(buffered.pcm, { capturedAtMs: buffered.atMs });
+      turn.asr.pushPcm(buffered.pcm, {
+        capturedAtMs: buffered.atMs,
+        sampleStart: buffered.sampleStart
+      });
     }
     this.#preRoll = [];
   }
@@ -353,14 +376,36 @@ export class LiveAudioSession {
       this.#turn !== turn ||
       turn.pauseAtMs === null ||
       turn.prefinalStarted ||
-      turn.pauseAtMs - turn.startedAtMs < 420 ||
-      !turn.latestTranscript ||
-      looksIncompletePtBr(turn.latestTranscript)
+      turn.pauseAtMs - turn.startedAtMs < 420
     ) {
       return false;
     }
 
-    const preparation = turn.asr.prepareFinal?.();
+    const acousticFixed =
+      this.#prefinalPolicy ===
+      PREFINAL_POLICY_ACOUSTIC_FIXED_BOUNDARY;
+    if (
+      acousticFixed &&
+      !Number.isSafeInteger(turn.pauseSampleStart)
+    ) {
+      return false;
+    }
+    if (
+      !acousticFixed &&
+      (
+        !turn.latestTranscript ||
+        looksIncompletePtBr(turn.latestTranscript)
+      )
+    ) {
+      return false;
+    }
+    const preparationOptions = {
+      trigger,
+      ...(acousticFixed
+        ? { sampleEnd: turn.pauseSampleStart }
+        : {})
+    };
+    const preparation = turn.asr.prepareFinal?.(preparationOptions);
     if (!preparation) {
       return false;
     }
@@ -368,7 +413,11 @@ export class LiveAudioSession {
     this.#emit("endpoint.prefinal.started", atMs, {
       turnId: turn.id,
       provisionalText: turn.latestTranscript,
-      trigger
+      trigger,
+      prefinalPolicy: this.#prefinalPolicy,
+      acousticBoundarySample:
+        acousticFixed ? turn.pauseSampleStart : null,
+      audioSnapshot: turn.asr.preparedFinalSnapshot ?? null
     });
     return true;
   }
@@ -419,7 +468,9 @@ export class LiveAudioSession {
       reason: decision.reason,
       silenceMs: decision.observedSilenceMs,
       requiredSilenceMs: decision.requiredSilenceMs,
-      provisionalText: turn.latestTranscript
+      provisionalText: turn.latestTranscript,
+      acousticBoundarySample: turn.pauseSampleStart,
+      prefinalPolicy: this.#prefinalPolicy
     });
 
     const rawFinal = turn.asr.finish();
@@ -438,6 +489,7 @@ export class LiveAudioSession {
         criticalConflict: reconciliation.criticalConflict ?? null,
         criticalInstability: reconciliation.criticalInstability ?? null
       };
+      turn.finalPcm = turn.asr.finalPcmSnapshot ?? null;
       const previous = turn.previousTurn;
       if (!previous?.finalPromise) {
         turn.resolvedFinal = final;
@@ -478,8 +530,32 @@ export class LiveAudioSession {
         mergedTurnIds: [
           ...(previousFinal.mergedTurnIds ?? [previous.id]),
           turn.id
+        ],
+        preMergeAudioSnapshots: [
+          ...(previousFinal.preMergeAudioSnapshots ??
+            (previousFinal.audioSnapshot
+              ? [previousFinal.audioSnapshot]
+              : [])),
+          ...(final.preMergeAudioSnapshots ??
+            (final.audioSnapshot ? [final.audioSnapshot] : []))
         ]
       };
+      if (previous.finalPcm && turn.finalPcm) {
+        const mergedPcm = Buffer.concat([
+          previous.finalPcm,
+          turn.finalPcm
+        ]);
+        merged.postMergeAudioSnapshot = {
+          kind: "merged-turns",
+          sha256: createHash("sha256")
+            .update(mergedPcm)
+            .digest("hex"),
+          sampleCount: mergedPcm.length / 2,
+          segmentCount: merged.preMergeAudioSnapshots.length
+        };
+        merged.audioSnapshot = merged.postMergeAudioSnapshot;
+        turn.finalPcm = mergedPcm;
+      }
       turn.resolvedFinal = merged;
       return merged;
     })();
@@ -540,7 +616,28 @@ export class LiveAudioSession {
           criticalConflict: final.criticalConflict ?? null,
           criticalInstability: final.criticalInstability ?? null,
           mergedTurnIds: final.mergedTurnIds ?? null,
-          endpointAtMs: atMs
+          endpointAtMs: atMs,
+          finalSource: final.finalSource ?? "fresh",
+          audioSnapshot: final.audioSnapshot ?? null,
+          preMergeAudioSnapshots:
+            final.preMergeAudioSnapshots ?? null,
+          postMergeAudioSnapshot:
+            final.postMergeAudioSnapshot ?? null,
+          rawFinalReadyAtMs: final.rawFinalReadyAtMs ?? null,
+          finishRequestedAtMs: final.finishRequestedAtMs ?? null,
+          preparedStartedAtMs: final.preparedStartedAtMs ?? null,
+          preparedReadyBeforeFinish:
+            final.preparedReadyBeforeFinish ?? false,
+          commitGraceMs,
+          commitGraceWaitMs: waitAfterFinalMs,
+          rawFinalToPublishMs:
+            Number.isFinite(final.rawFinalReadyAtMs)
+              ? Math.max(
+                  0,
+                  performance.now() - final.rawFinalReadyAtMs
+                )
+              : null,
+          prefinalPolicy: this.#prefinalPolicy
         });
         turn.emitted = true;
         this.#recentFinal = turn;

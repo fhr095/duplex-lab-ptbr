@@ -202,6 +202,12 @@ test("controle Silero produz início, pausa e retomada sem evento shadow", async
       (event) => event.payload.detector === "silero-vad-v6.2"
     )
   );
+  assert.equal(
+    events.find(
+      (event) => event.type === "user.speech.paused"
+    ).payload.pauseSampleStart,
+    1_024
+  );
   assert.equal(controller.state, "speaking");
 });
 

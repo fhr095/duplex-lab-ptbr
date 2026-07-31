@@ -84,6 +84,7 @@ class ControlledPrefinalRuntime {
       invalidations: 0,
       maximumActivePreparations: 0,
       options,
+      preparationOptions: [],
       preparations: 0,
       partialResumes: 0,
       partialSuspensions: 0
@@ -101,7 +102,8 @@ class ControlledPrefinalRuntime {
           audioEndMs: 800
         });
       },
-      prepareFinal() {
+      prepareFinal(preparationOptions = {}) {
+        state.preparationOptions.push(preparationOptions);
         state.preparations += 1;
         state.activePreparations += 1;
         state.maximumActivePreparations = Math.max(
@@ -109,6 +111,13 @@ class ControlledPrefinalRuntime {
           state.activePreparations
         );
         return new Promise(() => {});
+      },
+      get preparedFinalSnapshot() {
+        const latest = state.preparationOptions.at(-1) ?? {};
+        return {
+          requestedSampleEnd: latest.sampleEnd ?? null,
+          trigger: latest.trigger ?? null
+        };
       },
       suspendPartials() {
         state.partialSuspensions += 1;
@@ -571,6 +580,42 @@ test("parcial completa tardia usa a janela de pausa para antecipar a final", () 
     events[prefinalIndex].trigger,
     "partial-after-pause"
   );
+  live.close();
+});
+
+test("challenger acústico inicia na pausa sem depender de parcial", () => {
+  const runtime = new ControlledPrefinalRuntime();
+  const events = [];
+  const live = new LiveAudioSession({
+    asrRuntime: runtime,
+    prefinalPolicy: "acoustic-eager-fixed-boundary",
+    onEvent: (event) => events.push(event)
+  });
+
+  pushSeries(live, [
+    ...Array(30).fill(0.04),
+    ...Array(10).fill(0.002)
+  ]);
+
+  const state = runtime.sessions[0];
+  assert.equal(state.preparations, 1);
+  assert.deepEqual(state.preparationOptions, [{
+    sampleEnd: 9_600,
+    trigger: "speech-paused"
+  }]);
+  const prefinal = events.find(
+    (event) => event.type === "endpoint.prefinal.started"
+  );
+  assert.equal(prefinal.provisionalText, "");
+  assert.equal(
+    prefinal.prefinalPolicy,
+    "acoustic-eager-fixed-boundary"
+  );
+  assert.equal(prefinal.acousticBoundarySample, 9_600);
+  assert.deepEqual(prefinal.audioSnapshot, {
+    requestedSampleEnd: 9_600,
+    trigger: "speech-paused"
+  });
   live.close();
 });
 

@@ -21,6 +21,20 @@ const AUTOMATION_AUDIT_PRE_ROLL_FRAMES = 100;
 const AUTOMATION_AUDIT_POST_ROLL_FRAMES = 100;
 const AUDIO_RECONNECT_DELAYS_MS = Object.freeze([100, 250, 500]);
 const MAX_BROWSER_TELEMETRY_SAMPLES = 30_000;
+const AUTOMATION_AUDIO_EVIDENCE_EVENTS = new Set([
+  "audio.error",
+  "audio.frames.dropped",
+  "endpoint.committed",
+  "endpoint.prefinal.cancelled",
+  "endpoint.prefinal.started",
+  "transcript.error",
+  "transcript.final",
+  "transcript.partial",
+  "transcript.rejected",
+  "user.speech.paused",
+  "user.speech.resumed",
+  "user.speech.started"
+]);
 
 function createVadShadowTelemetry() {
   return {
@@ -110,6 +124,7 @@ const session = {
     clips: [],
     ring: []
   },
+  audioRuntimeEvidence: [],
   speechBuffer: "",
   tentativePauseCount: 0,
   taskDeliveryTimer: null,
@@ -1353,6 +1368,17 @@ function handleLocalAudioEvent(event) {
   if (!event || typeof event.type !== "string") {
     return;
   }
+  if (
+    automationEnabled &&
+    AUTOMATION_AUDIO_EVIDENCE_EVENTS.has(event.type)
+  ) {
+    session.audioRuntimeEvidence.push({
+      ...event,
+      observedAtMs: Math.round(performance.now() * 100) / 100
+    });
+    session.audioRuntimeEvidence =
+      session.audioRuntimeEvidence.slice(-1_000);
+  }
   if (event.type === "audio.flushed") {
     session.audioPipelineTelemetry =
       event.pipeline ?? session.audioPipelineTelemetry;
@@ -2152,7 +2178,9 @@ function automationSnapshot() {
       vadControl: {
         ...session.vadControl,
         telemetry: session.vadControlTelemetry
-      }
+      },
+      runtimeEvidence:
+        session.audioRuntimeEvidence.map((event) => ({ ...event }))
     },
     metrics: {
       responseStartMs: metricValue(elements.responseMetric),
@@ -2233,6 +2261,7 @@ function resetAutomation() {
     clips: [],
     ring: []
   };
+  session.audioRuntimeEvidence = [];
   session.tentativePauseCount = 0;
   session.userSpeaking = false;
   session.vadControl = { state: "unknown" };

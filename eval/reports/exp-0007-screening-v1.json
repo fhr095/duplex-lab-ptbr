@@ -1,0 +1,523 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "EXP-0007",
+  "evidenceLevel": "development-screening",
+  "generatedAt": "2026-07-31T22:41:51.786Z",
+  "matrix": {
+    "cases": 5,
+    "policies": 2,
+    "paths": [
+      "websocket",
+      "windows-chrome-cdp"
+    ],
+    "repetitionsPerCell": 5,
+    "observations": 100
+  },
+  "runtime": {
+    "fingerprintAlgorithm": "sha256-source-tree-v1",
+    "sha256": "d208c4bf4c28b08a33ecc5c2b9c4b66602d254c1116a1f2596f67286f40a7542",
+    "allInputsComparable": true
+  },
+  "screening": {
+    "expectedObservations": 100,
+    "repetitionsPerCell": 5,
+    "decision": "reject-safety",
+    "pass": false,
+    "causalConclusion": "a prefinal acústica não preservou a segurança semântica",
+    "gates": {
+      "completeComparableMatrix": true,
+      "primaryChromeSafety": false,
+      "noNewIncorrectConfirmation": false,
+      "latencyP95Below1200": false,
+      "slowCasesImproveAtLeast25": false,
+      "crossPathFinalPcmIdentity": true,
+      "deterministicAcousticInstrumentation": true,
+      "noPipelineOrRendererRegression": true,
+      "zeroPaidApiCalls": true
+    },
+    "slowCaseImprovements": {
+      "corr-amount-nao-barge-surface-a": {
+        "controlP95": 1357,
+        "challengerP95": 1313,
+        "improvement": 0.0324,
+        "pass": false
+      },
+      "corr-name-na-verdade-pause-surface-a": {
+        "controlP95": 1482,
+        "challengerP95": 1253,
+        "improvement": 0.1545,
+        "pass": false
+      }
+    }
+  },
+  "control": {
+    "policy": "linguistic-complete",
+    "observations": 50,
+    "complete": true,
+    "runtimeComparable": true,
+    "sourceParity": true,
+    "zeroPaidApiCalls": true,
+    "browserOutcomeCounts": {
+      "websocket": 25,
+      "chrome": 25,
+      "safe": 16,
+      "currentPreservedNoEffect": 1,
+      "knownLimitation": 5,
+      "unsafe": 4
+    },
+    "unsafeBrowserOutcomes": [
+      {
+        "id": "corr-time-na-verdade-cross-surface-a",
+        "repetition": 2,
+        "category": "unsafe",
+        "transcript": "Agenda às 41 horas, na verdade, às vezes é 6 horas.",
+        "assistantText": "Entendi: “Agenda às 41 horas, na verdade, às vezes é 6 horas.”. Neste primeiro corte eu valido o ritmo da conversa; o próximo adaptador poderá enviar o conteúdo para qualquer LLM."
+      },
+      {
+        "id": "corr-time-na-verdade-cross-surface-a",
+        "repetition": 3,
+        "category": "unsafe",
+        "transcript": "Agenda às 41 horas, na verdade, às vezes é 6 horas.",
+        "assistantText": "Entendi: “Agenda às 41 horas, na verdade, às vezes é 6 horas.”. Neste primeiro corte eu valido o ritmo da conversa; o próximo adaptador poderá enviar o conteúdo para qualquer LLM."
+      },
+      {
+        "id": "corr-time-na-verdade-cross-surface-a",
+        "repetition": 4,
+        "category": "unsafe",
+        "transcript": "Agenda às 41 horas, na verdade, às vezes é 6 horas.",
+        "assistantText": "Entendi: “Agenda às 41 horas, na verdade, às vezes é 6 horas.”. Neste primeiro corte eu valido o ritmo da conversa; o próximo adaptador poderá enviar o conteúdo para qualquer LLM."
+      },
+      {
+        "id": "corr-time-na-verdade-cross-surface-a",
+        "repetition": 5,
+        "category": "unsafe",
+        "transcript": "Agenda às 41 horas, na verdade, às vezes é 6 horas.",
+        "assistantText": "Entendi: “Agenda às 41 horas, na verdade, às vezes é 6 horas.”. Neste primeiro corte eu valido o ritmo da conversa; o próximo adaptador poderá enviar o conteúdo para qualquer LLM."
+      }
+    ],
+    "latency": {
+      "endpointToVoice": {
+        "corr-amount-nao-barge-surface-a": {
+          "measured": 5,
+          "p50": 1295,
+          "p95": 1357,
+          "min": 1046,
+          "max": 1357
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "measured": 5,
+          "p50": 1306,
+          "p95": 1341,
+          "min": 1278,
+          "max": 1341
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "measured": 5,
+          "p50": 1097,
+          "p95": 1246,
+          "min": 1075,
+          "max": 1246
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "measured": 5,
+          "p50": 1440,
+          "p95": 1482,
+          "min": 1225,
+          "max": 1482
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "measured": 5,
+          "p50": 381,
+          "p95": 426,
+          "min": 364,
+          "max": 426
+        }
+      },
+      "endpointToFinal": {
+        "corr-amount-nao-barge-surface-a": {
+          "measured": 5,
+          "p50": 859,
+          "p95": 970,
+          "min": 833,
+          "max": 970
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "measured": 5,
+          "p50": 1132,
+          "p95": 1161,
+          "min": 1110,
+          "max": 1161
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "measured": 5,
+          "p50": 1043,
+          "p95": 1083,
+          "min": 1000,
+          "max": 1083
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "measured": 5,
+          "p50": 1274,
+          "p95": 1308,
+          "min": 1031,
+          "max": 1308
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "measured": 5,
+          "p50": 233,
+          "p95": 242,
+          "min": 220,
+          "max": 242
+        }
+      },
+      "finalToVoice": {
+        "corr-amount-nao-barge-surface-a": {
+          "measured": 5,
+          "p50": 492.7,
+          "p95": 535.6,
+          "min": 221.4,
+          "max": 535.6
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "measured": 5,
+          "p50": 203,
+          "p95": 212.6,
+          "min": 197.2,
+          "max": 212.6
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "measured": 5,
+          "p50": 179.9,
+          "p95": 210.1,
+          "min": 177,
+          "max": 210.1
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "measured": 5,
+          "p50": 145,
+          "p95": 166.2,
+          "min": 138.4,
+          "max": 166.2
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "measured": 5,
+          "p50": 185.2,
+          "p95": 212.9,
+          "min": 177.1,
+          "max": 212.9
+        }
+      },
+      "endpointToVoiceP95": 1455
+    },
+    "finalPcmCrossPath": {
+      "pass": false,
+      "cases": {
+        "corr-amount-nao-barge-surface-a": {
+          "websocketHashes": [
+            "e04628a2d180717e3dbfc744b4c30c676661bcdbdfe5c8ee8c80b507a61381ba"
+          ],
+          "chromeHashes": [
+            "e04628a2d180717e3dbfc744b4c30c676661bcdbdfe5c8ee8c80b507a61381ba"
+          ],
+          "pass": true
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "websocketHashes": [
+            "0dc60d50de9873cc16f626d7464b101569d8c5b06899f1b4af566003969bd1c4",
+            "340f29ea7bbe61e9f382670a897a0ef000bc9a9bc70a61b8cc72962e0755a45d",
+            "e25e9342ccc19af3de5b67274589346bdfc5a1a3a9209a091bcb0e52af8ef4e5"
+          ],
+          "chromeHashes": [
+            "0dc60d50de9873cc16f626d7464b101569d8c5b06899f1b4af566003969bd1c4",
+            "5cd36244e91b8b2e5009acaf537ffa362f88f75f1003d854f6058cf4819a6628"
+          ],
+          "pass": false
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "websocketHashes": [
+            "7be757e16c593ef1d88d6d56d1dc0073a9888d33e00f76bfc2973bcaa6733225"
+          ],
+          "chromeHashes": [
+            "7be757e16c593ef1d88d6d56d1dc0073a9888d33e00f76bfc2973bcaa6733225"
+          ],
+          "pass": true
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "websocketHashes": [
+            "14196e08eaf5949383f10594e3d77d9f7117a8320865d4bb5f228aaee9109353",
+            "a13c84919adef1880b395876e5e775a8862d70bb5b7391ba00fb252ea5ad804e",
+            "f6761287cf65f2445bf4d624394f94f01b9ca7d7a6ea85e98d1b7ecfbc9c388e",
+            "fe07dbb0b90f041f58447fe82c875d8577e04f9f2ebc6f365435253a79af3099"
+          ],
+          "chromeHashes": [
+            "86869c2de232891924cedd0153233c0598c65bf5d08d5a89eb57e32544ddd480",
+            "a13c84919adef1880b395876e5e775a8862d70bb5b7391ba00fb252ea5ad804e"
+          ],
+          "pass": false
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "websocketHashes": [
+            "92c696b020fa35f9a9537e9e69ab93dd2bbe5605a7f34b1d391cf6496ef39bcb"
+          ],
+          "chromeHashes": [
+            "92c696b020fa35f9a9537e9e69ab93dd2bbe5605a7f34b1d391cf6496ef39bcb"
+          ],
+          "pass": true
+        }
+      }
+    },
+    "instrumentation": {
+      "finalHashCoverage": true,
+      "exactAcousticPrefinal": true
+    },
+    "regression": {
+      "transport": true,
+      "singleFinal": true,
+      "noPrematureEndpoint": true,
+      "rendererStop": true,
+      "partialCoverage": {
+        "websocket": 25,
+        "chrome": 25
+      },
+      "operationalLatency": {
+        "vadControlInferenceP95Ms": 2.577,
+        "pipelineQueueP99Ms": 0.199
+      }
+    }
+  },
+  "challenger": {
+    "policy": "acoustic-eager-fixed-boundary",
+    "observations": 50,
+    "complete": true,
+    "runtimeComparable": true,
+    "sourceParity": true,
+    "zeroPaidApiCalls": true,
+    "browserOutcomeCounts": {
+      "websocket": 25,
+      "chrome": 25,
+      "safe": 19,
+      "currentPreservedNoEffect": 5,
+      "knownLimitation": 5,
+      "unsafe": 1
+    },
+    "unsafeBrowserOutcomes": [
+      {
+        "id": "corr-amount-nao-barge-surface-a",
+        "repetition": 3,
+        "category": "unsafe",
+        "transcript": "Transfere 1500 reais. Não, 150 reais.",
+        "assistantText": "Entendi a correção. Vou considerar R$ 150."
+      }
+    ],
+    "latency": {
+      "endpointToVoice": {
+        "corr-amount-nao-barge-surface-a": {
+          "measured": 5,
+          "p50": 1053,
+          "p95": 1313,
+          "min": 998,
+          "max": 1313
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "measured": 5,
+          "p50": 801,
+          "p95": 968,
+          "min": 792,
+          "max": 968
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "measured": 5,
+          "p50": 1187,
+          "p95": 1204,
+          "min": 1072,
+          "max": 1204
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "measured": 5,
+          "p50": 764,
+          "p95": 1253,
+          "min": 754,
+          "max": 1253
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "measured": 5,
+          "p50": 393,
+          "p95": 425,
+          "min": 356,
+          "max": 425
+        }
+      },
+      "endpointToFinal": {
+        "corr-amount-nao-barge-surface-a": {
+          "measured": 5,
+          "p50": 853,
+          "p95": 969,
+          "min": 784,
+          "max": 969
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "measured": 5,
+          "p50": 697,
+          "p95": 850,
+          "min": 651,
+          "max": 850
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "measured": 5,
+          "p50": 1118,
+          "p95": 1236,
+          "min": 982,
+          "max": 1236
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "measured": 5,
+          "p50": 651,
+          "p95": 651,
+          "min": 650,
+          "max": 651
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "measured": 5,
+          "p50": 347,
+          "p95": 424,
+          "min": 291,
+          "max": 424
+        }
+      },
+      "finalToVoice": {
+        "corr-amount-nao-barge-surface-a": {
+          "measured": 5,
+          "p50": 234.2,
+          "p95": 545.5,
+          "min": 207.1,
+          "max": 545.5
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "measured": 5,
+          "p50": 196.2,
+          "p95": 206.6,
+          "min": 187.4,
+          "max": 206.6
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "measured": 5,
+          "p50": 192.8,
+          "p95": 220.9,
+          "min": 160.8,
+          "max": 220.9
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "measured": 5,
+          "p50": 150.8,
+          "p95": 162.9,
+          "min": 141.5,
+          "max": 162.9
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "measured": 5,
+          "p50": 190.7,
+          "p95": 212.2,
+          "min": 176.1,
+          "max": 212.2
+        }
+      },
+      "endpointToVoiceP95": 1253
+    },
+    "finalPcmCrossPath": {
+      "pass": true,
+      "cases": {
+        "corr-amount-nao-barge-surface-a": {
+          "websocketHashes": [
+            "9bde647ea21e2070dd888d3517acde1c86e9f268cadb3f1b980e32c3758f0dc1"
+          ],
+          "chromeHashes": [
+            "9bde647ea21e2070dd888d3517acde1c86e9f268cadb3f1b980e32c3758f0dc1"
+          ],
+          "pass": true
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "websocketHashes": [
+            "9989f1efba8854dfda4a76e17b206d3731a7daaf5cfe00a44b4108568618e1d4"
+          ],
+          "chromeHashes": [
+            "9989f1efba8854dfda4a76e17b206d3731a7daaf5cfe00a44b4108568618e1d4"
+          ],
+          "pass": true
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "websocketHashes": [
+            "602cfa5963beca0050578ecb57c28a743f340feefef5da6f4c75c1956743b78d"
+          ],
+          "chromeHashes": [
+            "602cfa5963beca0050578ecb57c28a743f340feefef5da6f4c75c1956743b78d"
+          ],
+          "pass": true
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "websocketHashes": [
+            "cf3bb96f9a2dd4ef9e5de6393baf1f06ba28d198e0d1c23d4bc5d048683959fc"
+          ],
+          "chromeHashes": [
+            "cf3bb96f9a2dd4ef9e5de6393baf1f06ba28d198e0d1c23d4bc5d048683959fc"
+          ],
+          "pass": true
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "websocketHashes": [
+            "0cab30b7d39f4e7a6e73f72cfeab89cc992775a58694906fc4c39ffd862b7c48"
+          ],
+          "chromeHashes": [
+            "0cab30b7d39f4e7a6e73f72cfeab89cc992775a58694906fc4c39ffd862b7c48"
+          ],
+          "pass": true
+        }
+      }
+    },
+    "instrumentation": {
+      "finalHashCoverage": true,
+      "exactAcousticPrefinal": true
+    },
+    "regression": {
+      "transport": true,
+      "singleFinal": true,
+      "noPrematureEndpoint": true,
+      "rendererStop": true,
+      "partialCoverage": {
+        "websocket": 25,
+        "chrome": 25
+      },
+      "operationalLatency": {
+        "vadControlInferenceP95Ms": 3.574,
+        "pipelineQueueP99Ms": 0.404
+      }
+    }
+  },
+  "interpretation": {
+    "promoted": false,
+    "confirmationCampaignAuthorized": false,
+    "runtimeDefault": "linguistic-complete",
+    "retainedExperimentalFlag": "acoustic-eager-fixed-boundary",
+    "decisiveFinding": "O challenger tornou o PCM final determinístico nos cinco casos, mas confirmou R$ 150 em uma repetição cujo valor corrente era R$ 1.150.",
+    "nextDecision": "Avaliar um verificador ASR independente e sem autoridade para slots numéricos críticos; não otimizar latência nem promover a fronteira antes de fechar segurança."
+  },
+  "provenance": {
+    "inputs": [
+      {
+        "path": "eval/reports/exp-0007-control-websocket.json",
+        "sha256": "85e57ba9349d356cd9fe67338607191f96714bf07c28bf4eb8056c59bb85c7c2"
+      },
+      {
+        "path": "eval/reports/exp-0007-control-browser.json",
+        "sha256": "f781c19a8a85cb358b9b8e3ce9cb9282c7cb861c5f4fb021993b3a8ad8f21df9"
+      },
+      {
+        "path": "eval/reports/exp-0007-challenger-websocket.json",
+        "sha256": "9f1c80805e48d315aa2bd6e6fc0c0754e1360b15d8e50c3ebc3e42b441e1b0b5"
+      },
+      {
+        "path": "eval/reports/exp-0007-challenger-browser.json",
+        "sha256": "1d143b20bd554eeac8624c3684fa5fd632194258a99498fe64af5547a8822314"
+      }
+    ]
+  }
+}

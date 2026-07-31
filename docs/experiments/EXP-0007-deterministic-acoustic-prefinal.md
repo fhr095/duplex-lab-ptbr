@@ -1,6 +1,6 @@
 # Experimento EXP-0007 — prefinal acústica determinística
 
-Status: **planejado, não executado**
+Status: **executado e rejeitado por segurança em 31/07/2026**
 
 ## Decisão que este experimento desbloqueia
 
@@ -123,6 +123,65 @@ confirmação de desenvolvimento; não autoriza alegação humana nem ampla.
 
 ## Resultado
 
-`NOT_RUN`
+`REJECT_SAFETY` — 5/9 gates aprovados.
 
-Este documento congela hipótese e gate antes da implementação.
+A matriz congelada foi executada integralmente: cinco casos, duas políticas,
+dois caminhos e cinco repetições por célula, totalizando **100 observações**.
+Os quatro relatórios brutos têm o mesmo fingerprint de runtime
+`d208c4bf4c28b08a33ecc5c2b9c4b66602d254c1116a1f2596f67286f40a7542`,
+sem chamadas pagas. A evidência compacta e seus hashes de proveniência estão em
+[`exp-0007-screening-v1.json`](../../eval/reports/exp-0007-screening-v1.json).
+
+| Gate congelado | Resultado |
+| --- | --- |
+| matriz completa e comparável | passou |
+| segurança dos casos Chrome primários | **falhou** |
+| nenhuma confirmação incorreta nova | **falhou** |
+| p95 endpoint→voz < 1.200 ms | **falhou**: 1.253 ms |
+| ganho ≥ 25% nos dois casos lentos | **falhou**: valor 3,24%; nome 15,45% |
+| PCM final idêntico entre WebSocket e Chrome | passou nos 5/5 casos |
+| fronteira acústica instrumentada exatamente | passou |
+| sem regressão de pipeline ou renderer | passou |
+| zero chamadas pagas | passou |
+
+### O que a hipótese explicou
+
+O controle produziu hashes finais variáveis para horário `14→16` e nome
+`Ana→Marina`. O challenger produziu um único hash por caso, igual entre as
+cinco repetições e entre WebSocket e Chrome. Portanto, congelar no limite
+acústico resolveu de fato a não determinação do PCM que motivou o experimento.
+
+Também houve melhora de latência perceptível em casos específicos: o p95
+endpoint→voz de `14→16` caiu de 1.341 para 968 ms e o de nome caiu de 1.482
+para 1.253 ms. O agregado caiu de 1.455 para 1.253 ms, ainda acima do gate.
+
+### Falha decisiva
+
+Na terceira repetição Chrome do valor `1.500→1.150`, o ASR final retornou
+`“Transfere 1500 reais. Não, 150 reais.”` e a parcial mais recente também
+convergiu para `150`. Sem divergência entre parcial e final, o reparo atual não
+teve um segundo sinal e o sistema respondeu
+`“Entendi a correção. Vou considerar R$ 150.”`.
+
+Nas outras quatro repetições do challenger, a parcial divergiu o suficiente
+para provocar esclarecimento seguro. No controle, isso ocorreu nas cinco. A
+segurança, portanto, estava apoiada em uma parcial volátil, não em evidência
+independente. Uma única confirmação crítica incorreta basta para rejeitar o
+challenger, independentemente de seus ganhos médios.
+
+### Decisão e aprendizado causal
+
+- `linguistic-complete` permanece como padrão;
+- `acoustic-eager-fixed-boundary` fica somente atrás de flag experimental;
+- não executar a campanha de confirmação, pois o screening falhou;
+- preservar hashes, limites de amostra e evidência do navegador: eles tornaram
+  a causa observável e serão reutilizados;
+- a primeira ramificação causal será um verificador ASR independente, em
+  shadow e sem autoridade, apenas para slots críticos;
+- otimização de commit grace, TTS ou concorrência do worker fica depois da
+  segurança numérica.
+
+O mecanismo provável — ainda hipótese — é que iniciar a final pesada em toda
+pausa acústica altere o escalonamento das parciais. Isso será distinguido de
+erro estável do decoder por intervenção controlada; não é tratado como causa
+provada por esta rodada.

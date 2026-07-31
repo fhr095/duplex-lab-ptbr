@@ -582,6 +582,7 @@ export class SileroVadController {
               silenceMs:
                 this.#offsetWindows *
                 WINDOW_SAMPLES / SAMPLE_RATE * 1_000,
+              pauseSampleStart,
               triggerSequence: frame.sequence,
               triggerSampleStart: sampleStart
             }

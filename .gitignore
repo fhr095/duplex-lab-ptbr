@@ -11,5 +11,6 @@ eval/generated/
 # O agregado canônico pequeno permanece versionado como evidência de referência.
 eval/reports/*
 !eval/reports/eval-factory-campaign-v0.2.json
+!eval/reports/exp-0007-screening-v1.json
 coverage/
 tmp/

@@ -109,8 +109,8 @@ instrumento, não como prova de prontidão do runtime.
 
 ## Fase 2.5 — validade experimental do runtime
 
-Status: **planejada; próximo fechamento estrutural depois do EXP-0007 e de sua
-ramificação causal limitada**.
+Status: **planejada; próximo fechamento estrutural depois da ramificação causal
+de segurança aberta pelo EXP-0007**.
 
 Objetivo: eliminar a diferença entre “política avaliada” e “política realmente
 executada”. Hoje a decisão está distribuída entre a política do evaluator, o
@@ -266,9 +266,9 @@ card de dados e splits por família, gerador e pessoa.
 
 | Ordem | Decisão/experimento | Saída necessária | Limite |
 | --- | --- | --- | --- |
-| 1 | EXP-0007: screening de prefinal acústica | causa classificada por caso e repetição | 5 casos × 2 políticas × 2 caminhos × 5 repetições; não é promoção |
-| 2 | Confirmação do vencedor | evidência suficiente para promover/rejeitar | ≥10 repetições por caso crítico; ampliar só se houver sinal |
-| 3 | Ramificação causal | corrigir apenas segurança, trace, confounder ou desbloqueio de treino | timebox pré-declarado; no máximo duas hipóteses comuns, exceção explícita para risco grave |
+| 1 | EXP-0007: screening de prefinal acústica — **concluído, `reject-safety`** | PCM determinístico, mas uma confirmação crítica incorreta | 100/100 observações; challenger não promovido |
+| 2 | Confirmação do vencedor — **não autorizada** | screening não produziu vencedor seguro | gate preservado; não gastar mais amostra na variante rejeitada |
+| 3 | EXP-0008: verificador independente de slot crítico — **próximo** | saber se um segundo ASR recupera `1.150` sem depender da parcial | shadow, sem autoridade, corpus crítico pequeno e custo pago zero |
 | 4 | Baseline experimental versionada | configuração, artefatos, métricas e nível de evidência congelados | não confundir confirmação de desenvolvimento com promoção ampla |
 | 5 | M2.5: kernel/runtime/reflex equivalentes | mesma semântica no evaluator, backend e navegador | migração incremental; STOP físico permanece local |
 | 6 | Trace treinável + efeitos + generalização | `training-trace-v1`, ledger e holdout novo | derivados acústicos fora do formato canônico |
@@ -276,7 +276,8 @@ card de dados e splits por família, gerador e pessoa.
 | 8 | Calibração humana pequena | corrigir timing/rótulos antes de M4b | não é alegação de preferência de produto |
 | 9 | M4b e próximo PDCA | ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
 
-Depois do item 6, um desafio nativo pode rodar em paralelo para validar
+Depois da baseline congelada e do item de trace/generalização, um desafio
+nativo pode rodar em paralelo para validar
 ontologia/adaptador, desde que exista pergunta decisória. Ele não bloqueia M4a
 ou calibração humana; GPU paga exige autorização.
 

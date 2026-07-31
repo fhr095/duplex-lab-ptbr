@@ -25,7 +25,9 @@ engenharia interna, não preferência humana ou generalização aprendida.
 
 ## Decisão
 
-Depois do EXP-0007 e de uma ramificação causal limitada:
+O EXP-0007 foi executado depois desta decisão: resolveu a divergência do PCM,
+mas foi rejeitado por uma confirmação numérica incorreta. Depois da ramificação
+causal limitada agora aberta:
 
 - congelar a cascata como baseline versionada;
 - extrair `InteractionKernel`, `InteractionRuntime` e
@@ -102,7 +104,7 @@ chamado isoladamente de latência voz-a-voz.
 
 ## Decisões deliberadamente abertas
 
-Não são bloqueadores do EXP-0007:
+Não são bloqueadores da ramificação causal nem do fechamento M2.5:
 
 - processo que hospedará a única instância autoritativa do kernel;
 - primeira família de modelo M4a — começar pela baseline treinável mais simples;

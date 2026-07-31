@@ -62,6 +62,29 @@ test("emite pausa e retomada sem encerrar o turno", () => {
   assert.equal(resumed.at(-1).type, "user.speech.resumed");
 });
 
+test("pausa informa a primeira amostra classificada como silêncio", () => {
+  const vad = new AdaptiveEnergyVad();
+  const values = [
+    ...Array(3).fill(0.04),
+    ...Array(10).fill(0.002)
+  ];
+  const events = values.flatMap((rms, index) =>
+    vad.push({
+      atMs: index * 20,
+      durationMs: 20,
+      rms,
+      sequence: index,
+      sampleStart: 5_000 + index * 320
+    })
+  );
+  const pause = events.find(
+    (event) => event.type === "user.speech.paused"
+  );
+
+  assert.equal(pause.atMs, 60);
+  assert.equal(pause.payload.pauseSampleStart, 5_960);
+});
+
 test("adapta o piso de ruído sem aprender a voz como ruído", () => {
   const vad = new AdaptiveEnergyVad({ noiseAlpha: 0.2 });
   pushFrames(vad, Array(20).fill(0.007));

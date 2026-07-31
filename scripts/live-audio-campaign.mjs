@@ -797,6 +797,7 @@ function parseArgs(args) {
     out: DEFAULT_REPORT,
     pack: DEFAULT_PACK,
     realtime: true,
+    repetitions: 1,
     tailSilenceMs: 1_800,
     url:
       process.env.DUPLEX_AUDIO_URL ??
@@ -815,14 +816,18 @@ function parseArgs(args) {
       options.caseIds.push(args[++index]);
     } else if (
       ["--cohort", "--frame-ms", "--out", "--pack",
-        "--tail-silence-ms", "--url"].includes(argument)
+        "--repetitions", "--tail-silence-ms", "--url"].includes(argument)
     ) {
       const field = argument.slice(2).replace(
         /-([a-z])/gu,
         (_, letter) => letter.toUpperCase()
       );
       const value = args[++index];
-      options[field] = ["frameMs", "tailSilenceMs"].includes(field)
+      options[field] = [
+        "frameMs",
+        "repetitions",
+        "tailSilenceMs"
+      ].includes(field)
         ? Number.parseInt(value, 10)
         : value;
     } else {
@@ -836,6 +841,8 @@ function parseArgs(args) {
   if (
     !Number.isInteger(options.frameMs) ||
     options.frameMs <= 0 ||
+    !Number.isInteger(options.repetitions) ||
+    options.repetitions <= 0 ||
     !Number.isInteger(options.tailSilenceMs) ||
     options.tailSilenceMs < 0
   ) {
@@ -1233,23 +1240,35 @@ export async function runCampaign(options) {
       currentRuntimeFingerprint.sha256;
   const cases = [];
   const startedAt = performance.now();
-  for (const definition of definitions) {
-    if (!options.json) {
-      process.stdout.write(
-        `Executando ${definition.id} (${definition.evidence})... `
-      );
-    }
-    const result = await runLiveCase(definition, options);
-    cases.push(result);
-    if (!options.json) {
-      const outcome = result.expectSpeech
-        ? (
-            result.eventCounts.finals === 0
-              ? `sem final (WER conservador=${result.transcript.wer})`
-              : `WER=${result.transcript.wer}`
-          )
-        : `ativações=${result.eventCounts.speechStarts}`;
-      console.log(outcome);
+  const repetitions = options.repetitions ?? 1;
+  for (let repetition = 1; repetition <= repetitions; repetition += 1) {
+    const offset = (repetition - 1) % definitions.length;
+    const ordered = [
+      ...definitions.slice(offset),
+      ...definitions.slice(0, offset)
+    ];
+    for (const definition of ordered) {
+      if (!options.json) {
+        process.stdout.write(
+          `Executando ${definition.id} ` +
+            `[r${repetition}/${repetitions}] ` +
+            `(${definition.evidence})... `
+        );
+      }
+      const result = await runLiveCase(definition, options);
+      result.repetition = repetition;
+      result.observationId = `${definition.id}#r${repetition}`;
+      cases.push(result);
+      if (!options.json) {
+        const outcome = result.expectSpeech
+          ? (
+              result.eventCounts.finals === 0
+                ? `sem final (WER conservador=${result.transcript.wer})`
+                : `WER=${result.transcript.wer}`
+            )
+          : `ativações=${result.eventCounts.speechStarts}`;
+        console.log(outcome);
+      }
     }
   }
   const gate = evaluateCampaign(pack, cases);
@@ -1304,6 +1323,7 @@ export async function runCampaign(options) {
       url: options.url,
       selectedCohort: options.cohort,
       selectedCaseIds: definitions.map((item) => item.id),
+      repetitions,
       ...usageDelta
     },
     evidence: {

@@ -10,6 +10,9 @@ import { createConfiguredBrain } from "../brain/provider.mjs";
 import { loadEnvFile } from "../config/load-env.mjs";
 import { attachAudioWebSocket } from "../audio/audio-websocket.mjs";
 import {
+  normalizePrefinalPolicy
+} from "../audio/prefinal-policy.mjs";
+import {
   createSileroVadShadowRuntime
 } from "../audio/silero-vad-shadow.mjs";
 import { createCpuStreamingAsr } from "../asr/index.mjs";
@@ -34,6 +37,9 @@ const configuredBrain = createConfiguredBrain({ planner: localBrain });
 const brain = configuredBrain.brain;
 const port = Number.parseInt(process.env.PORT ?? "4173", 10);
 const host = process.env.HOST ?? "0.0.0.0";
+const prefinalPolicy = normalizePrefinalPolicy(
+  process.env.PREFINAL_POLICY
+);
 const endpointConfig = {
   completeSilenceMs: Number.parseInt(
     process.env.ENDPOINT_COMPLETE_MS ?? "520",
@@ -470,6 +476,7 @@ const server = createServer(async (request, response) => {
           criticalFinalCommitGraceMs,
           finalCommitGraceMs,
           mergeWindowMs,
+          prefinalPolicy,
           vad: vadConfig
         },
         tts: ttsHealth
@@ -507,6 +514,7 @@ const audioWebSocket =
         criticalFinalCommitGraceMs,
         endpointConfig,
         finalCommitGraceMs,
+        prefinalPolicy,
         mergeWindowMs,
         maxPipelineFrames: audioPipelineMaxFrames,
         vadControlRuntime:

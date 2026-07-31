@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { setImmediate as waitImmediate } from "node:timers/promises";
 import test from "node:test";
 
@@ -191,6 +192,79 @@ test("final especulativa pronta reduz espera sem publicar antes do endpoint", as
   assert.equal(final.text, "pode seguir");
   assert.equal(finalWorker.calls.length, 1);
   assert.equal(finalWorker.calls[0].request.sessionId, "prepared:prepared-final");
+  assert.equal(final.finalSource, "prepared");
+  assert.equal(final.preparedReadyBeforeFinish, true);
+});
+
+test("prefinal acústica recorta PCM no limite exato e registra sua identidade", async () => {
+  const finalWorker = new FakeWorker(async () => ({
+    text: "limite acústico",
+    elapsedMs: 30,
+    language: "pt"
+  }));
+  const partialWorker = new FakeWorker(async () => ({
+    text: "parcial",
+    elapsedMs: 10,
+    language: "pt"
+  }));
+  let now = 100;
+  const session = new IncrementalAsrSession({
+    id: "fixed-boundary",
+    partialWorker,
+    finalWorker,
+    initialAudioMs: 10_000,
+    now: () => now++
+  });
+  const first = Buffer.alloc(640, 0x11);
+  const second = Buffer.alloc(640, 0x22);
+  const third = Buffer.alloc(640, 0x33);
+  session.pushPcm(first, { sampleStart: 1_000 });
+  session.pushPcm(second, { sampleStart: 1_320 });
+  session.pushPcm(third, { sampleStart: 1_640 });
+
+  await session.prepareFinal({
+    sampleEnd: 1_480,
+    trigger: "speech-paused"
+  });
+  const expectedPcm = Buffer.concat([
+    first,
+    second.subarray(0, 320)
+  ]);
+  assert.deepEqual(finalWorker.calls[0].request.pcm, expectedPcm);
+  assert.deepEqual(session.preparedFinalSnapshot, {
+    sha256: createHash("sha256").update(expectedPcm).digest("hex"),
+    sampleStart: 1_000,
+    sampleEnd: 1_480,
+    sampleCount: 480,
+    requestedSampleEnd: 1_480,
+    availableSampleStart: 1_000,
+    availableSampleEnd: 1_960,
+    availableSampleCount: 960,
+    tailExcludedSamples: 480,
+    gapSamples: 0,
+    contiguous: true,
+    boundaryMatched: true,
+    trigger: "speech-paused"
+  });
+
+  const final = await session.finish();
+  assert.equal(final.finalSource, "prepared");
+  assert.deepEqual(final.audioSnapshot, {
+    sha256: createHash("sha256").update(expectedPcm).digest("hex"),
+    sampleStart: 1_000,
+    sampleEnd: 1_480,
+    sampleCount: 480,
+    requestedSampleEnd: 1_480,
+    availableSampleStart: 1_000,
+    availableSampleEnd: 1_960,
+    availableSampleCount: 960,
+    tailExcludedSamples: 480,
+    gapSamples: 0,
+    contiguous: true,
+    boundaryMatched: true,
+    trigger: "speech-paused"
+  });
+  assert.deepEqual(session.finalPcmSnapshot, expectedPcm);
 });
 
 test("retomada invalida final especulativa e confirma o áudio completo", async () => {
@@ -220,6 +294,8 @@ test("retomada invalida final especulativa e confirma o áudio completo", async 
 
   assert.equal(final.text, "primeira parte e continuação");
   assert.equal(finalWorker.calls.length, 2);
+  assert.equal(final.finalSource, "fresh");
+  assert.equal(final.audioSnapshot.sampleCount, pcmFor(800).length / 2);
 });
 
 test("cancelamento invalida saída atrasada sem encerrar o worker", async () => {

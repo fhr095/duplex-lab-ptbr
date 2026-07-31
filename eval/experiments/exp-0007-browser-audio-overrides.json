@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "EXP-0007",
+  "overrides": {
+    "corr-amount-nao-barge-surface-a": "eval/generated/factory/audio/corr-amount-nao-barge-surface-a.wav",
+    "corr-time-na-verdade-cross-surface-a": "eval/generated/factory/acoustic/corr-time-na-verdade-cross-surface-a--noise-10db.wav",
+    "corr-weekday-quer-dizer-cross-surface-a": "eval/generated/factory/acoustic/corr-weekday-quer-dizer-cross-surface-a--noise-10db.wav",
+    "corr-name-na-verdade-pause-surface-a": "eval/generated/factory/acoustic/corr-name-na-verdade-pause-surface-a--noise-10db.wav",
+    "corr-time-quer-dizer-barge-surface-a": "eval/generated/factory/acoustic/corr-time-quer-dizer-barge-surface-a--noise-10db.wav"
+  }
+}

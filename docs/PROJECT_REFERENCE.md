@@ -232,8 +232,8 @@ navegador. O alvo é separar:
 Evaluator e experiência real devem usar o mesmo kernel. Um
 `training-trace-v1` separado registra contexto incremental, relógios,
 decisões propostas/aceitas/observadas e proveniência de rótulos.
-**Planejado; é o próximo fechamento estrutural depois do EXP-0007 e de sua
-ramificação causal limitada.**
+**Planejado; é o próximo fechamento estrutural depois da ramificação causal de
+segurança aberta pelo EXP-0007.**
 
 ### M3 — qualidade modular local
 
@@ -275,9 +275,10 @@ A ordem executável existe em um único lugar:
 [Roadmap — ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada).
 Esta referência preserva apenas a lógica macro:
 
-1. classificar a causa medida pelo EXP-0007 e confirmar qualquer vitória;
-2. permitir somente uma ramificação causal limitada que afete segurança,
-   fidelidade do trace ou validade da comparação;
+1. preservar o `reject-safety` do EXP-0007 e não promover sua fronteira
+   acústica, apesar do ganho de determinismo;
+2. testar em shadow se um verificador independente recupera slots críticos,
+   como primeira hipótese da ramificação causal limitada;
 3. congelar a cascata como baseline versionada;
 4. fechar M2.5 com kernel comum, trace treinável, ledger e holdout novo;
 5. provar M4a com uma capacidade estreita e sem autoridade;

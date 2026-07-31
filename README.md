@@ -217,11 +217,12 @@ capacidade implementada.
 ## Próximo fechamento
 
 A mecânica local e a fundação da fábrica estão fechadas o bastante para seguir
-sem usar pessoas como depuradores de problemas básicos. A ordem executável
-existe somente no
-[roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada):
-o próximo passo é o screening do EXP-0007; qualquer sinal vencedor precisa de
-confirmação antes da ramificação causal e do fechamento estrutural M2.5.
+sem usar pessoas como depuradores de problemas básicos. O EXP-0007 completou
+100 observações e rejeitou a prefinal acústica por uma confirmação numérica
+incorreta, embora tenha tornado o PCM determinístico. A ordem executável existe
+somente no [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada):
+o próximo passo é verificar slots críticos com um segundo ASR em shadow; depois,
+congelar a baseline e iniciar o fechamento estrutural M2.5.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

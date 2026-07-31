@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "id": "exp-0007-screening-ptbr-v1",
+  "locale": "pt-BR",
+  "description": "Cinco estímulos congelados para comparar prefinal linguística e acústica.",
+  "sources": {
+    "synthetic": "Artefatos determinísticos da fábrica f9be30987613d5f1."
+  },
+  "gate": {
+    "id": "exp-0007-driver-integrity",
+    "maxOnsetP95Ms": 250,
+    "maxFirstUsefulPartialP95Ms": 3000,
+    "maxEndpointP95Ms": 1500,
+    "maxFinalAfterEndpointP95Ms": 2500,
+    "maxSyntheticCorpusWer": 1,
+    "maxHumanCorpusWer": 1,
+    "maxPerCaseWer": 1,
+    "minCriticalPhraseRecall": 0,
+    "maxLostFrames": 0,
+    "maxBufferedAmountBytes": 16384,
+    "maxRejectedFrames": 0,
+    "maxProtocolErrors": 0,
+    "requireSilenceControl": false
+  },
+  "cases": [
+    {
+      "id": "corr-amount-nao-barge-surface-a",
+      "cohort": "synthetic",
+      "evidence": "windows-maria-local-clean",
+      "category": "correction-clean",
+      "audio": "eval/generated/factory/audio/corr-amount-nao-barge-surface-a.wav",
+      "expected": "Transfere R$ 1500... não, R$ 1150.",
+      "requiredPhrases": ["R$ 1500", "não", "R$ 1150"],
+      "metadata": {
+        "condition": "clean",
+        "slot": "amount",
+        "obsolete": "BRL 1500",
+        "current": "BRL 1150"
+      }
+    },
+    {
+      "id": "corr-time-na-verdade-cross-surface-a",
+      "cohort": "synthetic",
+      "evidence": "windows-maria-local-noise-10db",
+      "category": "correction-noise",
+      "audio": "eval/generated/factory/acoustic/corr-time-na-verdade-cross-surface-a--noise-10db.wav",
+      "expected": "Agenda às 14h... na verdade, às 16h.",
+      "requiredPhrases": ["14h", "na verdade", "16h"],
+      "metadata": {
+        "condition": "noise-10db",
+        "slot": "time",
+        "obsolete": "14:00",
+        "current": "16:00"
+      }
+    },
+    {
+      "id": "corr-weekday-quer-dizer-cross-surface-a",
+      "cohort": "synthetic",
+      "evidence": "windows-maria-local-noise-10db",
+      "category": "correction-noise",
+      "audio": "eval/generated/factory/acoustic/corr-weekday-quer-dizer-cross-surface-a--noise-10db.wav",
+      "expected": "A reserva fica para quinta... quer dizer, para domingo.",
+      "requiredPhrases": ["quinta", "quer dizer", "domingo"],
+      "metadata": {
+        "condition": "noise-10db",
+        "slot": "weekday",
+        "obsolete": "quinta",
+        "current": "domingo"
+      }
+    },
+    {
+      "id": "corr-name-na-verdade-pause-surface-a",
+      "cohort": "synthetic",
+      "evidence": "windows-maria-local-noise-10db",
+      "category": "correction-noise",
+      "audio": "eval/generated/factory/acoustic/corr-name-na-verdade-pause-surface-a--noise-10db.wav",
+      "expected": "Autoriza no nome de Ana... na verdade, no nome de Marina.",
+      "requiredPhrases": ["Ana", "na verdade", "Marina"],
+      "metadata": {
+        "condition": "noise-10db",
+        "slot": "name",
+        "obsolete": "Ana",
+        "current": "Marina"
+      }
+    },
+    {
+      "id": "corr-time-quer-dizer-barge-surface-a",
+      "cohort": "synthetic",
+      "evidence": "windows-maria-local-noise-10db",
+      "category": "correction-noise",
+      "audio": "eval/generated/factory/acoustic/corr-time-quer-dizer-barge-surface-a--noise-10db.wav",
+      "expected": "Eu pensei às 9h... quer dizer, às 11h.",
+      "requiredPhrases": ["9h", "quer dizer", "11h"],
+      "metadata": {
+        "condition": "noise-10db",
+        "slot": "time",
+        "obsolete": "09:00",
+        "current": "11:00"
+      }
+    }
+  ]
+}

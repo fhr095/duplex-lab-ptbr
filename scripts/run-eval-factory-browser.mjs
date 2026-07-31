@@ -33,22 +33,41 @@ const TIMEOUT_MS = 20_000;
 function parseArgs(args) {
   const options = {
     acousticCondition: null,
+    audioOverrides: null,
+    caseIds: [],
     cases: null,
+    failOnHold: true,
     input: "text",
     pack: DEFAULT_PACK,
-    out: null
+    out: null,
+    repetitions: 1
   };
   for (let index = 0; index < args.length; index += 1) {
     const argument = args[index];
-    if (
-      ["--acoustic-condition", "--cases", "--input", "--pack", "--out"]
+    if (argument === "--no-fail") {
+      options.failOnHold = false;
+    } else if (argument === "--case") {
+      options.caseIds.push(args[++index]);
+    } else if (
+      [
+        "--acoustic-condition",
+        "--audio-overrides",
+        "--cases",
+        "--input",
+        "--pack",
+        "--out",
+        "--repetitions"
+      ]
         .includes(argument)
     ) {
       const field = argument.slice(2).replace(
         /-([a-z])/gu,
         (_, letter) => letter.toUpperCase()
       );
-      options[field] = args[++index];
+      const value = args[++index];
+      options[field] = field === "repetitions"
+        ? Number.parseInt(value, 10)
+        : value;
     } else {
       throw new TypeError(`argumento desconhecido: ${argument}`);
     }
@@ -65,7 +84,78 @@ function parseArgs(args) {
   if (options.acousticCondition !== null && options.input !== "pcm") {
     throw new TypeError("--acoustic-condition exige --input pcm");
   }
+  if (options.audioOverrides !== null && options.input !== "pcm") {
+    throw new TypeError("--audio-overrides exige --input pcm");
+  }
+  if (
+    !Number.isSafeInteger(options.repetitions) ||
+    options.repetitions < 1
+  ) {
+    throw new TypeError("--repetitions precisa ser inteiro positivo");
+  }
   return options;
+}
+
+function evaluateRepeatedCampaignGates({
+  definitions,
+  diagnostics,
+  repetitions,
+  results
+}) {
+  const expectedObservations = definitions.length * repetitions;
+  const expectedCounts = new Map(
+    definitions.map((definition) => [
+      definition.id,
+      repetitions
+    ])
+  );
+  const actualCounts = new Map();
+  for (const result of results) {
+    actualCounts.set(
+      result.id,
+      (actualCounts.get(result.id) ?? 0) + 1
+    );
+  }
+  const complete =
+    results.length === expectedObservations &&
+    [...expectedCounts].every(
+      ([id, count]) => actualCounts.get(id) === count
+    );
+  const diagnosticsPass = [
+    diagnostics.consoleErrors,
+    diagnostics.runtimeErrors,
+    diagnostics.httpErrors
+  ].every((items) => Array.isArray(items) && items.length === 0);
+  const effects = results.map((item) =>
+    item.assessment?.checks?.find(
+      (check) => check.id === "no-obsolete-effect"
+    )
+  );
+  const effectsMeasured = effects.filter(
+    (check) => check && check.status !== "unmeasured"
+  ).length;
+  return {
+    complete,
+    diagnosticsPass,
+    semanticBehaviorPass:
+      complete &&
+      diagnosticsPass &&
+      results.every((item) => item.semanticPass === true && !item.error),
+    interactionBehaviorPass:
+      complete &&
+      diagnosticsPass &&
+      results.every((item) => item.behaviorPass === true && !item.error),
+    criticalSlotSafetyPass:
+      complete &&
+      diagnosticsPass &&
+      results.every((item) => item.safeOutcomePass === true && !item.error),
+    downstreamEffectsPass:
+      complete &&
+      effectsMeasured === expectedObservations &&
+      effects.every((check) => check?.status === "pass"),
+    effectsMeasured,
+    effectsRequired: expectedObservations
+  };
 }
 
 function sha256Bytes(value) {
@@ -191,8 +281,18 @@ async function connectChrome(cdpUrl) {
       });
     }
   });
+  socket.addEventListener("close", () => {
+    for (const operation of pending.values()) {
+      clearTimeout(operation.timer);
+      operation.reject(new Error("CDP desconectado da página"));
+    }
+    pending.clear();
+  });
 
   function send(method, params = {}, timeoutMs = 30_000) {
+    if (socket.readyState !== WebSocket.OPEN) {
+      return Promise.reject(new Error("CDP desconectado da página"));
+    }
     const id = ++nextId;
     return new Promise((resolvePromise, rejectPromise) => {
       const timer = setTimeout(() => {
@@ -207,13 +307,13 @@ async function connectChrome(cdpUrl) {
       socket.send(JSON.stringify({ id, method, params }));
     });
   }
-  async function evaluate(expression) {
+  async function evaluate(expression, timeoutMs = 30_000) {
     const result = await send("Runtime.evaluate", {
       expression,
       awaitPromise: true,
       returnByValue: true,
       userGesture: true
-    });
+    }, timeoutMs);
     if (result.exceptionDetails) {
       throw new Error(
         result.exceptionDetails.exception?.description ??
@@ -287,10 +387,14 @@ async function runCase(chrome, definition, sourceCase, options) {
   };
   let acousticInput = null;
   if (options.input === "pcm") {
-    const audioPath = options.acousticCondition
-      ? `eval/generated/factory/acoustic/${definition.id}--` +
-        `${options.acousticCondition}.wav`
-      : definition.audio;
+    const audioPath =
+      options.audioOverrideValues?.[definition.id] ??
+      (
+        options.acousticCondition
+          ? `eval/generated/factory/acoustic/${definition.id}--` +
+            `${options.acousticCondition}.wav`
+          : definition.audio
+      );
     const wave = await readFile(resolve(PROJECT_ROOT, audioPath));
     const decoded = decodeWaveToPcm16(wave, { targetSampleRate: 16_000 });
     acousticInput = {
@@ -486,6 +590,8 @@ async function runCase(chrome, definition, sourceCase, options) {
     transcript: snapshot.text.user,
     assistantText: snapshot.text.assistant,
     trace: snapshot.trace,
+    audioRuntimeEvidence:
+      snapshot.audio?.runtimeEvidence ?? [],
     browserErrors
   };
 }
@@ -508,8 +614,26 @@ async function main() {
         : "eval/reports/eval-factory-browser-latest.json"
     );
   const acousticBuildInput = options.acousticCondition
+    || options.audioOverrides
     ? await readJsonWithBytes("eval/reports/eval-factory-acoustic-latest.json")
     : null;
+  const audioOverridesInput = options.audioOverrides
+    ? await readJsonWithBytes(options.audioOverrides)
+    : null;
+  const audioOverrideValues =
+    audioOverridesInput?.value.overrides ??
+    audioOverridesInput?.value ??
+    null;
+  if (
+    audioOverrideValues !== null &&
+    (
+      typeof audioOverrideValues !== "object" ||
+      Array.isArray(audioOverrideValues)
+    )
+  ) {
+    throw new TypeError("--audio-overrides precisa apontar para um objeto");
+  }
+  options.audioOverrideValues = audioOverrideValues;
   const [browserInput, sourceInput, manifestInput, runtimeHealth] =
     await Promise.all([
       readJsonWithBytes(casesPath),
@@ -545,15 +669,57 @@ async function main() {
   const sourceById = new Map(
     sourcePack.cases.map((item) => [item.id, item])
   );
+  const definitions = browserPack.cases.filter(
+    (definition) =>
+      options.caseIds.length === 0 ||
+      options.caseIds.includes(definition.id)
+  );
+  const unknownCaseIds = options.caseIds.filter(
+    (id) => !browserPack.cases.some((definition) => definition.id === id)
+  );
+  if (unknownCaseIds.length > 0) {
+    throw new TypeError(
+      `casos de browser desconhecidos: ${unknownCaseIds.join(", ")}`
+    );
+  }
+  if (definitions.length === 0) {
+    throw new TypeError("nenhum caso de browser selecionado");
+  }
+  for (const [id, path] of Object.entries(audioOverrideValues ?? {})) {
+    if (
+      !browserPack.cases.some((definition) => definition.id === id) ||
+      typeof path !== "string" ||
+      !path
+    ) {
+      throw new TypeError(`override de áudio inválido: ${id}`);
+    }
+  }
   const cdpUrl = discoverCdpUrl();
-  const chrome = await connectChrome(cdpUrl);
+  let chrome = await connectChrome(cdpUrl);
+  const campaignDiagnostics = {
+    consoleErrors: [],
+    runtimeErrors: [],
+    httpErrors: []
+  };
+  const pageIds = new Set();
+  let cdpReconnectCount = 0;
+  const cdpRecoveryEvents = [];
   const results = [];
-  try {
+  const absorbDiagnostics = () => {
+    for (const field of Object.keys(campaignDiagnostics)) {
+      campaignDiagnostics[field].push(
+        ...chrome.diagnostics[field]
+      );
+      chrome.diagnostics[field].length = 0;
+    }
+  };
+  const prepareChrome = async () => {
     await Promise.all([
       chrome.send("Runtime.enable"),
       chrome.send("Page.enable"),
       chrome.send("Network.enable")
     ]);
+    pageIds.add(chrome.page.id);
     await chrome.send("Page.bringToFront");
     await chrome.send("Page.navigate", { url: TARGET_URL });
     await chrome.waitFor(() =>
@@ -564,52 +730,119 @@ async function main() {
     chrome.diagnostics.consoleErrors.length = 0;
     chrome.diagnostics.runtimeErrors.length = 0;
     chrome.diagnostics.httpErrors.length = 0;
+  };
+  const reconnectChrome = async (detail) => {
+    cdpRecoveryEvents.push(detail);
+    absorbDiagnostics();
+    chrome.socket.close();
+    chrome = await connectChrome(cdpUrl);
+    cdpReconnectCount += 1;
+    await prepareChrome();
+  };
+  try {
+    await prepareChrome();
 
-    for (const definition of browserPack.cases) {
-      process.stdout.write(`Chrome ${definition.id}... `);
-      let result;
-      try {
-        result = await runCase(
-          chrome,
-          definition,
-          sourceById.get(definition.id),
-          options
+    for (
+      let repetition = 1;
+      repetition <= options.repetitions;
+      repetition += 1
+    ) {
+      const offset = (repetition - 1) % definitions.length;
+      const ordered = [
+        ...definitions.slice(offset),
+        ...definitions.slice(0, offset)
+      ];
+      for (const definition of ordered) {
+        process.stdout.write(
+          `Chrome ${definition.id} ` +
+            `[r${repetition}/${options.repetitions}]... `
         );
-      } catch (error) {
-        result = {
-          id: definition.id,
-          timingPattern: definition.timingPattern,
-          effectRisk: definition.effectRisk,
-          behaviorPass: false,
-          error: { name: error.name, message: error.message },
-          trace: await chrome.evaluate(
-            "window.__duplexLab.snapshot().trace"
-          ).catch(() => [])
-        };
+        let result = null;
+        let cdpRetryCount = 0;
+        while (result === null) {
+          try {
+            result = await runCase(
+              chrome,
+              definition,
+              sourceById.get(definition.id),
+              options
+            );
+          } catch (error) {
+            const cdpLost =
+              /CDP (?:não respondeu|desconectado)/u.test(error.message);
+            if (cdpLost && cdpRetryCount < 1) {
+              cdpRetryCount += 1;
+              await reconnectChrome({
+                id: definition.id,
+                repetition,
+                recovered: true,
+                message: error.message
+              });
+              continue;
+            }
+            result = {
+              id: definition.id,
+              timingPattern: definition.timingPattern,
+              effectRisk: definition.effectRisk,
+              behaviorPass: false,
+              error: { name: error.name, message: error.message },
+              trace: cdpLost
+                ? []
+                : await chrome.evaluate(
+                    "window.__duplexLab.snapshot().trace",
+                    5_000
+                  ).catch(() => [])
+            };
+            if (cdpLost) {
+              await reconnectChrome({
+                id: definition.id,
+                repetition,
+                recovered: false,
+                message: error.message
+              });
+            }
+          }
+        }
+        result.repetition = repetition;
+        result.cdpRetryCount = cdpRetryCount;
+        result.observationId =
+          `${definition.id}#r${repetition}`;
+        results.push(result);
+        console.log(result.behaviorPass ? "PASS" : "HOLD");
       }
-      results.push(result);
-      console.log(result.behaviorPass ? "PASS" : "HOLD");
     }
   } finally {
+    absorbDiagnostics();
     chrome.socket.close();
   }
   const runtimeHealthAfter = await readRuntimeHealth();
   const usageDelta = measureUsageDelta(runtimeHealth, runtimeHealthAfter);
   const sameProcess =
     runtimeHealth.process?.runId === runtimeHealthAfter.process?.runId;
-  const campaignGates = evaluateBrowserCampaignGates({
-    expectedCaseIds: provenance.expectedCaseIds,
-    expectedCaseCount: provenance.expectedCaseCount,
-    results,
-    diagnostics: chrome.diagnostics
-  });
+  const customExecution =
+    options.caseIds.length > 0 ||
+    options.repetitions !== 1 ||
+    options.audioOverrides !== null;
+  const campaignGates = customExecution
+    ? evaluateRepeatedCampaignGates({
+        definitions,
+        diagnostics: campaignDiagnostics,
+        repetitions: options.repetitions,
+        results
+      })
+    : evaluateBrowserCampaignGates({
+        expectedCaseIds: provenance.expectedCaseIds,
+        expectedCaseCount: provenance.expectedCaseCount,
+        results,
+        diagnostics: campaignDiagnostics
+      });
   const comparable = runtimeComparable && sameProcess;
   const semanticPass =
     campaignGates.semanticBehaviorPass && comparable;
   const behaviorPass =
     campaignGates.interactionBehaviorPass && comparable;
   const temporalPatternsPass =
-    results.length === provenance.expectedCaseCount &&
+    results.length === definitions.length * options.repetitions &&
     results.every((item) => item.timingPatternExecuted === true);
   const interruptionResults = results.filter((item) =>
     ["barge-in", "cross-turn"].includes(item.timingPattern)
@@ -641,7 +874,10 @@ async function main() {
         ? "eval/reports/eval-factory-acoustic-latest.json"
         : null,
       acousticBuildReportFileSha256:
-        acousticBuildInput?.sha256 ?? null
+        acousticBuildInput?.sha256 ?? null,
+      audioOverridesPath: options.audioOverrides,
+      audioOverridesFileSha256:
+        audioOverridesInput?.sha256 ?? null
     },
     runtime: {
       health: runtimeHealth,
@@ -651,14 +887,18 @@ async function main() {
     },
     browser: {
       cdpUrl,
-      pageId: chrome.page.id,
+      pageIds: [...pageIds],
+      cdpReconnectCount,
+      cdpRecoveryEvents,
       targetUrl: TARGET_URL
     },
     execution: {
       ...usageDelta,
       input: options.input,
       acousticCondition: options.acousticCondition,
-      caseCount: results.length
+      caseCount: results.length,
+      repetitions: options.repetitions,
+      selectedCaseIds: definitions.map((item) => item.id)
     },
     gates: {
       browserSemanticCorrection: {
@@ -718,7 +958,7 @@ async function main() {
           "efeitos externos, repetição estatística e validade humana continuam não medidos"
       }
     },
-    diagnostics: chrome.diagnostics,
+    diagnostics: campaignDiagnostics,
     results
   };
   const output = resolve(PROJECT_ROOT, outPath);
@@ -729,7 +969,7 @@ async function main() {
       `efeitos: ${report.gates.downstreamEffects.decision}.`
   );
   console.log(`Relatório: ${outPath}`);
-  if (!behaviorPass) {
+  if (options.failOnHold && !behaviorPass) {
     process.exitCode = 1;
   }
 }

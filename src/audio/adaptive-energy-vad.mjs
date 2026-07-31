@@ -26,6 +26,7 @@ export class AdaptiveEnergyVad {
     this.possibleOnsetSequence = null;
     this.possibleOnsetSampleStart = null;
     this.possiblePauseAtMs = null;
+    this.possiblePauseSampleStart = null;
   }
 
   thresholds() {
@@ -96,6 +97,7 @@ export class AdaptiveEnergyVad {
     if (this.state === "speaking") {
       if (rms < thresholds.off) {
         this.possiblePauseAtMs ??= atMs;
+        this.possiblePauseSampleStart ??= frame.sampleStart ?? null;
         this.quietCount += 1;
         if (this.quietCount >= this.config.pauseFrames) {
           this.state = "paused";
@@ -104,7 +106,8 @@ export class AdaptiveEnergyVad {
             atMs: this.possiblePauseAtMs,
             payload: {
               detector: "adaptive-energy-vad",
-              silenceMs: this.quietCount * durationMs
+              silenceMs: this.quietCount * durationMs,
+              pauseSampleStart: this.possiblePauseSampleStart
             }
           });
           this.quietCount = 0;
@@ -112,6 +115,7 @@ export class AdaptiveEnergyVad {
       } else {
         this.quietCount = 0;
         this.possiblePauseAtMs = null;
+        this.possiblePauseSampleStart = null;
       }
       return events;
     }
@@ -122,6 +126,7 @@ export class AdaptiveEnergyVad {
         this.state = "speaking";
         this.resumeCount = 0;
         this.possiblePauseAtMs = null;
+        this.possiblePauseSampleStart = null;
         events.push({
           type: "user.speech.resumed",
           atMs: atMs - durationMs * (this.config.resumeFrames - 1),

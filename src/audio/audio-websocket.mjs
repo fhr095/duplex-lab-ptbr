@@ -83,6 +83,7 @@ export function attachAudioWebSocket(options) {
         options.criticalFinalCommitGraceMs,
       endpointConfig: options.endpointConfig,
       finalCommitGraceMs: options.finalCommitGraceMs,
+      prefinalPolicy: options.prefinalPolicy,
       vadConfig: options.vadConfig,
       vad: vadController,
       mergeWindowMs: options.mergeWindowMs,
@@ -196,6 +197,7 @@ export function attachAudioWebSocket(options) {
         engine: "adaptive-energy-vad"
       },
       audioPipeline: pipeline.snapshot(),
+      prefinalPolicy: options.prefinalPolicy,
       telemetryIntervalFrames
     });
 
