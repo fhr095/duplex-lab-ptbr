@@ -88,7 +88,8 @@ test("cérebro local confirma correção reversível e usa texto efetivo", () =>
 test("cérebro local pede repetição antes de afirmar transferência corrigida", () => {
   const brain = createLocalBrain();
   const plan = brain.planTurn(
-    "Transfere 1500 reais... não, 150 reais."
+    "Transfere 1500 reais... não, 150 reais.",
+    { eventId: "turn-1" }
   );
   assert.equal(plan.safety.confirmationRequired, true);
   assert.equal(
@@ -97,4 +98,28 @@ test("cérebro local pede repetição antes de afirmar transferência corrigida"
   );
   assert.match(plan.response, /qual é o valor final/iu);
   assert.doesNotMatch(plan.response, /\b150\b/u);
+  assert.equal(plan.interaction.state.semantic.committed, null);
+});
+
+test("cérebro local materializa confirmação já resolvida pelo kernel", () => {
+  const brain = createLocalBrain();
+  const pending = brain.planTurn(
+    "Transfere 1500 reais... não, 150 reais.",
+    { eventId: "turn-1" }
+  );
+  const confirmed = brain.planTurn(
+    "O valor final é 1150 reais.",
+    {
+      eventId: "turn-2",
+      interactionState: pending.interaction.state
+    }
+  );
+
+  assert.equal(confirmed.safety.providerBypass, true);
+  assert.equal(confirmed.safety.confirmationRequired, false);
+  assert.equal(
+    confirmed.interaction.state.semantic.committed.value,
+    "BRL 1150"
+  );
+  assert.match(confirmed.response, /1150/u);
 });

@@ -57,7 +57,7 @@ Gate provisório:
 - falso corte ≤ 5% no pack;
 - correção/delegação/cancelamento ≥ 95%.
 
-Evidência congelada atual:
+Evidência congelada da promoção M1:
 
 - 163/163 testes e 20/20 expectativas de política;
 - 10/10 execuções do Chrome, 27/27 gates em cada;
@@ -71,7 +71,9 @@ Evidência congelada atual:
 
 O comparador registra `engineering-promote`. Ainda faltam loopback acústico
 calibrado, diversidade humana e preferência cega; por isso a fase não recebe
-`done` de produto.
+`done` de produto. Essa campanha histórica não apaga instabilidade física nova:
+o EXP-0010 encontrou autoativação em 3/4 smokes longos na configuração atual e
+mantém o runtime global em `hold-acoustic-stability`.
 
 ## Fase 2 — fábrica autônoma de avaliações
 
@@ -109,8 +111,8 @@ instrumento, não como prova de prontidão do runtime.
 
 ## Fase 2.5 — validade experimental do runtime
 
-Status: **próximo fechamento estrutural; ramificação causal encerrada pelos
-EXP-0008/0009**.
+Status: **em andamento; primeira fatia stateful promovida pelo EXP-0010 e
+runtime global em `hold-acoustic-stability`**.
 
 Objetivo: eliminar a diferença entre “política avaliada” e “política realmente
 executada”. Hoje a decisão está distribuída entre a política do evaluator, o
@@ -118,13 +120,20 @@ controle acústico/temporal do backend e a orquestração do navegador.
 
 Entregas:
 
-1. `InteractionKernel` puro: estado + evento → próximo estado + intenções;
-2. `InteractionRuntime`: relógios, filas, lifecycle, autoridade e efeitos;
+1. `InteractionKernel` puro: estado + evento → próximo estado + intenções —
+   **implementado para correção e confirmação monetária; demais intenções
+   pendentes**;
+2. `InteractionRuntime`: relógios, filas, lifecycle, autoridade e efeitos —
+   **sessão autoritativa, LRU e retry idempotente implementados; clocks, filas,
+   lifecycle acústico e efeitos pendentes**;
 3. `LocalAudioReflex`: pausa/STOP imediato no navegador, conciliado depois
-   com o kernel;
+   com o kernel — **próximo experimento**;
 4. adaptadores para evaluator, backend e navegador sob a mesma semântica, com
-   uma única instância autoritativa por sessão real;
-5. teste de equivalência entre replay virtual e caminho real;
+   uma única instância autoritativa por sessão real — **backend e navegador
+   implementados na fatia crítica; evaluator e áudio pendentes**;
+5. teste de equivalência entre replay virtual e caminho real — **gate causal
+   de dois turnos implementado para a fatia crítica; equivalência ampla
+   pendente**;
 6. `training-trace-v1` com clocks, causalidade operacional, proveniência e
    proposta/aceite/efeito observado;
 7. ledger/test-double de efeitos e holdout ainda não observado.
@@ -133,6 +142,13 @@ Gate: o mesmo evento e estado produzem a mesma intenção nos três ambientes;
 uma sessão real nunca possui duas autoridades de política; qualquer diferença
 de efeito físico é atribuível e observável no runtime, não a uma política
 paralela.
+
+Evidência EXP-0010: 270/270 testes, 5/5 ciclos Chrome stateful, zero commit
+antes da confirmação, exatamente um rollback/commit para `BRL 1150` depois da
+repetição, p95 de 94,9/399,9 ms e zero chamada paga. A promoção vale somente
+para essa fatia. O smoke longo passou o eixo stateful em 4/4 campanhas, mas o
+eixo acústico em apenas 1/4; portanto o próximo comparador ataca vazamento da
+fala do assistente no VAD sem relaxar a parada real.
 
 ## Fase 3 — qualidade modular e local
 
@@ -271,11 +287,13 @@ card de dados e splits por família, gerador e pessoa.
 | 3 | EXP-0008: verificador independente — **`hold-latency`** | `small` recuperou `1.150`, mas nenhum candidato venceu semântica e 650 ms | 45/45 observações; nenhum modelo integrado |
 | 4 | EXP-0009: interlock monetário — **`promote-safety-guard`** | valor incerto vira pergunta neutra, sem estado, delegação ou LLM | proteção estreita; não alega recuperar o slot |
 | 5 | Baseline experimental versionada — **concluída, v0.3** | configuração, artefatos, métricas e nível de evidência congelados | comparador de desenvolvimento; prontidão humana permanece hold |
-| 6 | M2.5: kernel/runtime/reflex equivalentes — **próximo** | mesma semântica no evaluator, backend e navegador | migração incremental; STOP físico permanece local |
-| 7 | Trace treinável + efeitos + generalização | `training-trace-v1`, ledger e holdout novo | derivados acústicos fora do formato canônico |
-| 8 | M4a: shadow estreito | ciclo de aprendizado completo sem autoridade | uma capacidade e um candidato por vez |
-| 9 | Calibração humana pequena | corrigir timing/rótulos antes de M4b | não é alegação de preferência de produto |
-| 10 | M4b e próximo PDCA | ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
+| 6 | EXP-0010: kernel stateful crítico — **`promote-stateful-kernel-slice`** | confirmação em dois turnos, autoridade backend e projeção browser | 5/5 causal; não promove M2.5 inteiro |
+| 7 | `LocalAudioReflex` contra autoativação — **próximo** | reduzir pausas pelo próprio áudio sem piorar barge-in real | estado atual 1/4 no eixo acústico longo |
+| 8 | Completar M2.5: runtime/reflex/evaluator equivalentes | mesma semântica, lifecycle e clocks nos caminhos relevantes | migração incremental; STOP físico permanece local |
+| 9 | Trace treinável + efeitos + generalização | `training-trace-v1`, ledger e holdout novo | derivados acústicos fora do formato canônico |
+| 10 | M4a: shadow estreito | ciclo de aprendizado completo sem autoridade | uma capacidade e um candidato por vez |
+| 11 | Calibração humana pequena | corrigir timing/rótulos antes de M4b | não é alegação de preferência de produto |
+| 12 | M4b e próximo PDCA | ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
 
 Depois da baseline congelada e do item de trace/generalização, um desafio
 nativo pode rodar em paralelo para validar

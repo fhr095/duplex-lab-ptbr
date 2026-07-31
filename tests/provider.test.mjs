@@ -43,8 +43,10 @@ test("guardrail crítico não chama provider externo", async () => {
     turnPlan: {
       safety: {
         confirmationRequired: true,
+        providerBypass: true,
         prompt: "Qual é o valor final?"
-      }
+      },
+      response: "Qual é o valor final?"
     }
   })) {
     events.push(event);
@@ -52,6 +54,36 @@ test("guardrail crítico não chama provider externo", async () => {
   assert.equal(calls, 0);
   assert.equal(events[1].delta, "Qual é o valor final?");
   assert.equal(events.at(-1).model, "deterministic-safety-guard");
+});
+
+test("aceite da confirmação também não volta ao provider externo", async () => {
+  let calls = 0;
+  const guarded = createSafetyGuardedBrain({
+    interactionModel: "external",
+    taskModel: "external",
+    requestLimit: 10,
+    getUsage: () => ({ requests: calls }),
+    async *streamTurn() {
+      calls += 1;
+      yield { type: "delta", delta: "resposta externa" };
+    }
+  });
+  const events = [];
+  for await (const event of guarded.streamTurn({
+    turnPlan: {
+      safety: {
+        confirmationRequired: false,
+        providerBypass: true,
+        policy: "repeat-critical-value-before-commit"
+      },
+      response: "Entendido. Valor final confirmado: R$ 1150."
+    }
+  })) {
+    events.push(event);
+  }
+
+  assert.equal(calls, 0);
+  assert.match(events[1].delta, /1150/u);
 });
 
 test("provider local é o padrão mesmo quando existe chave", async () => {

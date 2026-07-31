@@ -35,7 +35,7 @@ npm run eval:auto
 10. relatório consolidado em `eval/reports/autonomous-latest.json`.
 
 Esse comando preserva a baseline ampla histórica. Ele ainda não orquestra a
-fábrica v0.2 nem os EXP-0007–0009; portanto, “rodar `eval:auto`” não equivale a
+fábrica v0.2 nem os EXP-0007–0010; portanto, “rodar `eval:auto`” não equivale a
 avançar automaticamente o roadmap atual.
 
 O runner abre uma porta livre, força `BRAIN_PROVIDER=local`, verifica no
@@ -71,10 +71,17 @@ amplos, multivoz, eco e agrupamento automático continuam pendentes.
 
 O próximo loop não é “ampliar tudo”. EXP-0007 classificou a fronteira acústica,
 EXP-0008 reteve o verificador forte por latência e EXP-0009 bloqueou a
-confirmação monetária insegura. A
-[ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada) agora
-fecha a baseline e inicia M2.5. O roadmap, e não este documento de método,
-define os fechamentos posteriores.
+confirmação monetária insegura. O EXP-0010 promoveu a primeira máquina de
+estados compartilhada: 270/270 testes e 5/5 ciclos causais no Chrome, sem commit
+prematuro e sem LLM pago. Durante quatro smokes completos, porém, a fatia
+stateful passou 4/4 e o eixo acústico longo apenas 1/4, por autoativação próxima
+ao limiar durante a fala do assistente.
+
+A [ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada)
+ataca agora `LocalAudioReflex`. Esse é o maior gargalo observado e pode ser
+comparado de forma isolada: reduzir pausas falsas sem piorar a latência de STOP
+para fala humana real. O roadmap, e não este documento de método, define os
+fechamentos posteriores.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O

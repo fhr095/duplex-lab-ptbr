@@ -21,6 +21,10 @@ A primeira vertical local já é funcional de ponta a ponta:
   local, sem LLM;
 - uma janela curta de commit absorve continuações e é maior antes de ações
   corrigíveis;
+- `InteractionKernel` v0.1 e um runtime stateful no backend mantêm uma única
+  autoridade por sessão para correções e confirmação monetária;
+- o navegador valida a transição versionada e apenas projeta intenções, sem
+  decidir rollback ou commit em paralelo;
 - cérebro local e adaptador OpenAI obedecem ao mesmo contrato cancelável;
 - TTS PT-BR aquecido do Windows entrega WAV ao player Web Audio;
 - fala do usuário mantém a captura contínua, mas cancela resposta, tarefa,
@@ -70,10 +74,24 @@ ainda parcialmente rotulada, diversidade acústica limitada a uma voz e ausênci
 de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
 
-Após a consolidação documental, a suíte corrente possui **224/224 testes**,
-incluindo a consistência de links, exemplos e fonte única do roadmap. Os
-223/223 acima pertencem à execução congelada da campanha v0.2 e não são
-reescritos retrospectivamente.
+Após o EXP-0010, a suíte corrente possui **270/270 testes**, incluindo a
+consistência documental, o kernel puro, isolamento/idempotência de sessões e a
+projeção browser. Os 223/223 acima pertencem à execução congelada da campanha
+v0.2 e não são reescritos retrospectivamente.
+
+## Primeira fatia do runtime comum
+
+O EXP-0010 fechou o ciclo crítico em dois turnos: diante de uma transferência
+corrigida, o sistema pergunta o valor sem ecoar a hipótese; somente uma nova
+fala com um único valor não negado registra o commit. No Chrome real foram
+**5/5 ciclos**, com p95 de 94,9 ms para iniciar a pergunta e 399,9 ms para
+aceitar a repetição, sempre sem API paga.
+
+Isso promove a fatia stateful, não o M2.5 inteiro. Em quatro smokes completos,
+a nova semântica passou 4/4, mas a sessão acústica longa passou apenas 1/4 sem
+um pico de autoativação causado pela própria fala do assistente. O runtime
+global permanece em `hold-acoustic-stability`; o próximo ataque é o
+`LocalAudioReflex`, preservando a interrupção rápida.
 
 ## Rodar
 
@@ -94,6 +112,10 @@ exista uma chave no `.env`. Depois, abra `http://localhost:4173` no
 Chrome/Chromium do Windows. O servidor escuta em `0.0.0.0` por padrão para
 atravessar WSL → Windows e também imprime o IP direto da distro. Use fones no
 primeiro teste para reduzir auto-interrupções.
+
+O mesmo comando reproduz o controle promovido da baseline v0.3: Silero VAD
+v6.2 com limiar `0.85 × 1`. Para comparar explicitamente o controle legado por
+energia, use `npm run start:energy-control`.
 
 O reconhecimento não usa Web Speech nem envia áudio a uma API. A fala é
 sintetizada pela voz PT-BR do Windows em WAV e reproduzida por um grafo Web
@@ -186,10 +208,10 @@ npm run eval:asr:compare
 fora dela e retornam assincronamente; eventos internos usam relógio comparável
 e efeitos externos só poderão promover quando houver ledger verificável.
 
-O fechamento M2.5 separará decisão pura (`InteractionKernel`), lifecycle e
-efeitos (`InteractionRuntime`) e o STOP físico imediato no navegador
-(`LocalAudioReflex`). Essa separação ainda não deve ser confundida com
-capacidade implementada.
+O fechamento M2.5 está em migração incremental. Correção e confirmação crítica
+já usam decisão pura (`InteractionKernel`) e autoridade stateful no backend;
+lifecycle acústico, evaluator comum, efeitos e o STOP físico imediato
+(`LocalAudioReflex`) ainda precisam entrar no mesmo contrato.
 
 ## Documentos de decisão
 
@@ -215,6 +237,7 @@ capacidade implementada.
 - [EXP-0007 — prefinal acústica determinística](docs/experiments/EXP-0007-deterministic-acoustic-prefinal.md)
 - [EXP-0008 — verificador ASR de slot crítico em shadow](docs/experiments/EXP-0008-critical-slot-shadow-asr.md)
 - [EXP-0009 — interlock de confirmação monetária](docs/experiments/EXP-0009-critical-amount-confirmation-interlock.md)
+- [EXP-0010 — primeira fatia stateful do InteractionKernel](docs/experiments/EXP-0010-stateful-interaction-kernel.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -225,7 +248,8 @@ prefinal acústica, o EXP-0008 encontrou um verificador semanticamente útil mas
 lento, e o EXP-0009 bloqueou a confirmação monetária insegura sem LLM. A ordem
 executável existe somente no
 [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada): a baseline
-v0.3 está congelada e o próximo fechamento é M2.5.
+v0.3 está congelada, a primeira fatia do M2.5 foi promovida e o próximo
+fechamento é o reflexo local contra autoativação acústica.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 
-import { analyzeCorrection } from "../interaction/correction-semantics.mjs";
 import {
-  planCriticalConfirmation
-} from "../interaction/critical-confirmation.mjs";
+  createInteractionState,
+  reduceInteraction
+} from "../interaction/interaction-kernel.mjs";
 
 function normalize(text) {
   return text.trim().replace(/\s+/gu, " ");
@@ -28,12 +28,12 @@ function spokenValue(value) {
 }
 
 function directAnswer(text, semantic, safety) {
-  if (/\b(oi|olá|bom dia|boa tarde|boa noite)\b/iu.test(text)) {
-    return "Oi! Estou te ouvindo. Pode falar naturalmente e me interromper quando quiser.";
+  if (safety?.providerBypass) {
+    return safety.prompt;
   }
 
-  if (safety?.confirmationRequired) {
-    return safety.prompt;
+  if (/\b(oi|olá|bom dia|boa tarde|boa noite)\b/iu.test(text)) {
+    return "Oi! Estou te ouvindo. Pode falar naturalmente e me interromper quando quiser.";
   }
 
   if (semantic?.correction) {
@@ -49,12 +49,33 @@ function directAnswer(text, semantic, safety) {
   return `Entendi: “${text}”. Neste primeiro corte eu valido o ritmo da conversa; o próximo adaptador poderá enviar o conteúdo para qualquer LLM.`;
 }
 
+function safetyFromInteraction(interaction) {
+  const authoritativeSpeech = interaction.intents.find(
+    (intent) => intent.type === "SPEAK" && intent.providerBypass === true
+  );
+  if (!authoritativeSpeech) {
+    return null;
+  }
+  return {
+    confirmationRequired: [
+      "critical-confirmation",
+      "critical-confirmation-retry"
+    ].includes(authoritativeSpeech.purpose),
+    providerBypass: true,
+    policy: authoritativeSpeech.policy,
+    prompt: authoritativeSpeech.content,
+    purpose: authoritativeSpeech.purpose,
+    confirmationId: authoritativeSpeech.confirmationId,
+    confirmation: interaction.analysis.confirmation
+  };
+}
+
 export function createLocalBrain(options = {}) {
   const idFactory = options.idFactory ?? randomUUID;
   const taskDelayMs = options.taskDelayMs ?? 2_200;
 
   return {
-    planTurn(rawText) {
+    planTurn(rawText, planOptions = {}) {
       const text = normalize(rawText ?? "");
       if (!text) {
         return {
@@ -63,15 +84,19 @@ export function createLocalBrain(options = {}) {
         };
       }
 
-      const correction = analyzeCorrection(text);
-      const effectiveText = correction.effectiveText;
-      const semantic = correction.isCorrection
-        ? { correction: correction.correction }
-        : { correction: null };
-      const safety = planCriticalConfirmation(
-        text,
-        semantic.correction
+      const interaction = planOptions.interaction ?? reduceInteraction(
+        planOptions.interactionState ?? createInteractionState(),
+        {
+          type: "USER_TURN_FINAL",
+          id: planOptions.eventId ?? idFactory(),
+          text
+        }
       );
+      const effectiveText = interaction.analysis.effectiveText;
+      const semantic = {
+        correction: interaction.analysis.correction
+      };
+      const safety = safetyFromInteraction(interaction);
 
       if (safety) {
         return {
@@ -79,6 +104,7 @@ export function createLocalBrain(options = {}) {
           effectiveText,
           semantic,
           safety,
+          interaction,
           response: directAnswer(effectiveText, semantic, safety)
         };
       }
@@ -88,6 +114,8 @@ export function createLocalBrain(options = {}) {
           mode: "delegate",
           effectiveText,
           semantic,
+          safety: null,
+          interaction,
           acknowledgment:
             "Entendi. Vou trabalhar nisso em paralelo. Se mudar de ideia, pode me interromper.",
           task: {
@@ -105,6 +133,8 @@ export function createLocalBrain(options = {}) {
         mode: "direct",
         effectiveText,
         semantic,
+        safety: null,
+        interaction,
         response: directAnswer(effectiveText, semantic, safety)
       };
     }

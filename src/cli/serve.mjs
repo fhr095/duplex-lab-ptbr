@@ -22,6 +22,12 @@ import {
   prewarmWindowsSpeech,
   synthesizeWindowsSpeech
 } from "../tts/windows-system-tts.mjs";
+import {
+  INTERACTION_KERNEL_VERSION
+} from "../interaction/interaction-kernel.mjs";
+import {
+  createTurnCoordinator
+} from "../interaction/turn-coordinator.mjs";
 
 await loadEnvFile();
 
@@ -33,6 +39,7 @@ const runtimeFingerprint = await createSourceFingerprint(PROJECT_ROOT, {
   roots: ["src", "web", "package.json", "package-lock.json", "requirements-asr.txt"]
 });
 const localBrain = createLocalBrain();
+const turnCoordinator = createTurnCoordinator({ planner: localBrain });
 const configuredBrain = createConfiguredBrain({ planner: localBrain });
 const brain = configuredBrain.brain;
 const port = Number.parseInt(process.env.PORT ?? "4173", 10);
@@ -269,6 +276,7 @@ const STATIC_ROUTES = new Map([
   ["/", "index.html"],
   ["/app.mjs", "app.mjs"],
   ["/critical-conflict.mjs", "critical-conflict.mjs"],
+  ["/interaction-browser-adapter.mjs", "interaction-browser-adapter.mjs"],
   ["/pcm-capture-worklet.js", "pcm-capture-worklet.js"],
   ["/pcm-capture.mjs", "pcm-capture.mjs"],
   ["/pcm-dsp.mjs", "pcm-dsp.mjs"],
@@ -332,12 +340,30 @@ function validateTurn(body) {
   if (body.text.length > 4_000) {
     throw new RangeError("O campo text excede 4.000 caracteres.");
   }
+  if (
+    typeof body.sessionId !== "string" ||
+    !body.sessionId.trim() ||
+    body.sessionId.length > 160
+  ) {
+    throw new TypeError("O campo sessionId é obrigatório.");
+  }
+  if (
+    typeof body.turnId !== "string" ||
+    !body.turnId.trim() ||
+    body.turnId.length > 160
+  ) {
+    throw new TypeError("O campo turnId é obrigatório.");
+  }
 }
 
 async function streamTurn(request, response, body) {
   validateTurn(body);
 
-  const plan = localBrain.planTurn(body.text);
+  const plan = turnCoordinator.planTurn({
+    sessionId: body.sessionId,
+    turnId: body.turnId,
+    text: body.text
+  });
   const mode = plan.mode;
   const controller = new AbortController();
   const abortUpstream = () => controller.abort();
@@ -361,6 +387,7 @@ async function streamTurn(request, response, body) {
     mode,
     semantic: plan.semantic ?? null,
     safety: plan.safety ?? null,
+    interaction: plan.interaction,
     acknowledgment: mode === "delegate" ? plan.acknowledgment : null,
     taskId: mode === "delegate" ? plan.task.id : null,
     query: mode === "delegate" ? plan.task.query : null
@@ -471,6 +498,9 @@ const server = createServer(async (request, response) => {
         vadControl: vadControlHealth,
         vadShadow: vadShadowHealth,
         interaction: {
+          authority: "backend-interaction-runtime",
+          kernelVersion: INTERACTION_KERNEL_VERSION,
+          activeKernelSessions: turnCoordinator.sessionCount,
           audioPipelineMaxFrames,
           endpoint: endpointConfig,
           effectfulFinalCommitGraceMs,
@@ -560,7 +590,7 @@ server.listen(port, host, () => {
   );
   console.log(
     vadControlMode === "silero"
-      ? `VAD de controle (candidato): Silero ` +
+      ? `VAD de controle: Silero ` +
         `${vadControlHealth.version} ` +
         `(p>=${vadControlHealth.threshold} × ` +
         `${vadControlHealth.onsetWindows})`

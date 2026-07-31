@@ -93,7 +93,7 @@ export function createSafetyGuardedBrain(upstream) {
 
     async *streamTurn(input) {
       const safety = input.turnPlan?.safety;
-      if (!safety?.confirmationRequired) {
+      if (!safety?.providerBypass) {
         yield* upstream.streamTurn(input);
         return;
       }
@@ -105,7 +105,10 @@ export function createSafetyGuardedBrain(upstream) {
         responseId: null,
         model: "deterministic-safety-guard"
       };
-      yield { type: "delta", delta: safety.prompt };
+      yield {
+        type: "delta",
+        delta: input.turnPlan?.response ?? safety.prompt
+      };
       yield {
         type: "done",
         responseId: null,

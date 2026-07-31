@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "EXP-0010",
+  "evidenceLevel": "stateful-browser-causal-slice",
+  "generatedAt": "2026-07-31T23:43:48.079Z",
+  "decision": "promote-stateful-kernel-slice",
+  "pass": true,
+  "scope": "critical-amount-confirmation-state-machine",
+  "globalRuntimeStatus": "hold-acoustic-stability",
+  "gates": {
+    "complete": true,
+    "deterministicReplayContract": true,
+    "singleAuthority": true,
+    "noPrematureSemanticCommit": true,
+    "singlePostConfirmationCommit": true,
+    "neutralPromptWithoutRecognizedValue": true,
+    "responseP95Below1200": true,
+    "sourceAndRuntimeComparable": true,
+    "localZeroPaidExecution": true,
+    "authorityAdvertisedByRuntime": true,
+    "nonAcousticBrowserRegression": true
+  },
+  "contextGates": {
+    "acousticLongSessionStable": false,
+    "fullSmokePass": false
+  },
+  "metrics": {
+    "observations": 5,
+    "passingObservations": 5,
+    "pendingResponseP95Ms": 94.9,
+    "acceptedResponseP95Ms": 399.9,
+    "browserHistory": {
+      "fullSmokeRuns": 4,
+      "fullSmokePasses": 1,
+      "statefulGatePasses": 4,
+      "acousticLongSessionPasses": 1
+    }
+  },
+  "observations": [
+    {
+      "repetition": 1,
+      "sessionId": "3a1222c7-ed13-4f95-9651-2734637c0240",
+      "pass": true,
+      "checks": {
+        "singleAuthority": true,
+        "orderedVersions": true,
+        "noPrematureSemanticCommit": true,
+        "singlePostConfirmationCommit": true,
+        "neutralPrompt": true,
+        "acceptedResponse": true,
+        "noRuntimeErrors": true
+      },
+      "pendingResponseMs": 72.9,
+      "acceptedResponseMs": 107,
+      "finalValue": "BRL 1150",
+      "pendingRollbackCount": 0,
+      "acceptedRollbackCount": 1
+    },
+    {
+      "repetition": 2,
+      "sessionId": "16cacc59-2993-4a63-a048-5d1429cc3cc3",
+      "pass": true,
+      "checks": {
+        "singleAuthority": true,
+        "orderedVersions": true,
+        "noPrematureSemanticCommit": true,
+        "singlePostConfirmationCommit": true,
+        "neutralPrompt": true,
+        "acceptedResponse": true,
+        "noRuntimeErrors": true
+      },
+      "pendingResponseMs": 67.7,
+      "acceptedResponseMs": 98.9,
+      "finalValue": "BRL 1150",
+      "pendingRollbackCount": 0,
+      "acceptedRollbackCount": 1
+    },
+    {
+      "repetition": 3,
+      "sessionId": "0dde2d03-fd00-43e9-9d3f-ce45c4248461",
+      "pass": true,
+      "checks": {
+        "singleAuthority": true,
+        "orderedVersions": true,
+        "noPrematureSemanticCommit": true,
+        "singlePostConfirmationCommit": true,
+        "neutralPrompt": true,
+        "acceptedResponse": true,
+        "noRuntimeErrors": true
+      },
+      "pendingResponseMs": 94.9,
+      "acceptedResponseMs": 94.7,
+      "finalValue": "BRL 1150",
+      "pendingRollbackCount": 0,
+      "acceptedRollbackCount": 1
+    },
+    {
+      "repetition": 4,
+      "sessionId": "f1281c94-055e-4e6d-b51d-efa8e2bffc4c",
+      "pass": true,
+      "checks": {
+        "singleAuthority": true,
+        "orderedVersions": true,
+        "noPrematureSemanticCommit": true,
+        "singlePostConfirmationCommit": true,
+        "neutralPrompt": true,
+        "acceptedResponse": true,
+        "noRuntimeErrors": true
+      },
+      "pendingResponseMs": 75.8,
+      "acceptedResponseMs": 399.9,
+      "finalValue": "BRL 1150",
+      "pendingRollbackCount": 0,
+      "acceptedRollbackCount": 1
+    },
+    {
+      "repetition": 5,
+      "sessionId": "17e4dd24-90ea-4db0-9272-1d67bb866047",
+      "pass": true,
+      "checks": {
+        "singleAuthority": true,
+        "orderedVersions": true,
+        "noPrematureSemanticCommit": true,
+        "singlePostConfirmationCommit": true,
+        "neutralPrompt": true,
+        "acceptedResponse": true,
+        "noRuntimeErrors": true
+      },
+      "pendingResponseMs": 92.8,
+      "acceptedResponseMs": 99.8,
+      "finalValue": "BRL 1150",
+      "pendingRollbackCount": 0,
+      "acceptedRollbackCount": 1
+    }
+  ],
+  "interpretation": {
+    "promoted": "Kernel stateful v0.1, autoridade única por sessão e projeção browser de intenções para o fluxo monetário crítico.",
+    "notPromoted": "M2.5 completo, efeitos externos reais, generalização semântica ou estabilidade acústica física de longo prazo.",
+    "acousticFinding": "1/4 smokes suplementares passaram o eixo acústico longo; o resultado não altera o gate causal do kernel."
+  },
+  "limitations": [
+    "A campanha usa texto injetado para isolar a máquina de estados; ASR acústico continua coberto separadamente.",
+    "O valor repetido é uma única realização conhecida e ainda não autoriza efeito financeiro externo.",
+    "A política abstém em negação, dúvida, alternativa ou ausência de um único valor, mas a cobertura linguística ainda é estreita.",
+    "Flutuações físicas de AEC/VAD permanecem um eixo independente e explicitamente reportado."
+  ],
+  "provenance": {
+    "primaryInput": {
+      "path": "eval/reports/exp-0010-browser-smoke-current.json",
+      "sha256": "f017000ffdff09864d3e1094934707641649daf4170081af9debe82d6f9c885c",
+      "runNonce": "exp-0010-current"
+    },
+    "supplementalInputs": [
+      {
+        "path": "eval/reports/exp-0010-browser-smoke.json",
+        "sha256": "72307b7d323d353c143577212a08efec3603b32a8bd03fc308258944144cfa28",
+        "runNonce": "exp-0010-m2-5",
+        "sourceFingerprint": "8fb3d4af94daec36924ddf82c5d2b0b3c7c1e872480e27e2dd20d41f5f69f89e"
+      },
+      {
+        "path": "eval/reports/exp-0010-browser-smoke-repeat-2.json",
+        "sha256": "3e91f074cd413798cf701fda3c1f353b5100cb9e654d234bac4d493eaf1503ae",
+        "runNonce": "exp-0010-m2-5-repeat-2",
+        "sourceFingerprint": "8fb3d4af94daec36924ddf82c5d2b0b3c7c1e872480e27e2dd20d41f5f69f89e"
+      },
+      {
+        "path": "eval/reports/exp-0010-browser-smoke-five.json",
+        "sha256": "54b99ecbff4a8509748287836d970c8b9e597df6511b17d3e1e1f63d74c23abb",
+        "runNonce": "exp-0010-m2-5-five",
+        "sourceFingerprint": "f3798c36f6802182484153a30a3cbf7f967dd366d4cd744b5f10dfa20807c912"
+      }
+    ],
+    "campaignFingerprint": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "dc621d96f86d544d487930569be0be1bc3e3cc92d1c8bf3cc65e4202ed1fa6e4",
+      "fileCount": 204,
+      "roots": [
+        "src",
+        "web",
+        "scripts",
+        "tests",
+        "eval/factory",
+        "eval/gates",
+        "eval/scenarios",
+        "package.json",
+        "package-lock.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "runtimeFingerprint": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "5bec7ccff2a80873dcfd938b1aecfc7ead000074ca577c64cef47b3eb2c59462",
+      "fileCount": 77,
+      "roots": [
+        "src",
+        "web",
+        "package.json",
+        "package-lock.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "runtimeRunId": "e9bf16f1-f971-4553-9656-19ccd88a7a73",
+    "runtimeProvider": "local",
+    "paidApiRequests": 0
+  }
+}

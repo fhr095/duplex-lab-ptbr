@@ -232,8 +232,16 @@ navegador. O alvo é separar:
 Evaluator e experiência real devem usar o mesmo kernel. Um
 `training-trace-v1` separado registra contexto incremental, relógios,
 decisões propostas/aceitas/observadas e proveniência de rótulos.
-**Próximo fechamento estrutural; a ramificação causal de segurança foi
-encerrada pelos EXP-0008/0009.**
+**Em andamento.** O EXP-0010 promoveu a primeira fatia: confirmação monetária
+stateful, runtime autoritativo no backend e navegador sem política semântica
+paralela. Em 5/5 ciclos de dois turnos houve zero commit prematuro e exatamente
+um commit após a repetição inequívoca, com p95 de 94,9 ms para a pergunta neutra
+e 399,9 ms para o aceite.
+
+Isso não fecha M2.5. Nos quatro smokes completos usados durante a implementação,
+a fatia stateful passou 4/4, mas apenas 1/4 sessões longas passou o eixo acústico
+sem autoativação pelo áudio do assistente. O status global permanece
+`hold-acoustic-stability`; `LocalAudioReflex` é o próximo fechamento medido.
 
 ### M3 — qualidade modular local
 
@@ -280,11 +288,14 @@ Esta referência preserva apenas a lógica macro:
 2. manter o interlock monetário EXP-0009 como guardrail, sem alegar que ele
    recupera o valor;
 3. usar a baseline v0.3 congelada como comparador de desenvolvimento;
-4. fechar M2.5 com kernel comum, trace treinável, ledger e holdout novo;
-5. provar M4a com uma capacidade estreita e sem autoridade;
-6. desafiar contrato/evaluator com referência nativa apenas quando houver uma
+4. preservar a fatia promovida do kernel e fechar primeiro o reflexo local
+   contra autoativação, sem piorar barge-in real;
+5. completar M2.5 com clocks/lifecycle comuns, trace treinável, ledger e
+   holdout novo;
+6. provar M4a com uma capacidade estreita e sem autoridade;
+7. desafiar contrato/evaluator com referência nativa apenas quando houver uma
    pergunta experimental concreta;
-7. calibrar rótulos com humanos antes de M4b e promover somente ganhos
+8. calibrar rótulos com humanos antes de M4b e promover somente ganhos
    percebidos sob os gates.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo

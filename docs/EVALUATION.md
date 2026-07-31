@@ -279,14 +279,18 @@ canônico é `eval/reports/eval-factory-campaign-v0.2.json`.
 | EXP-0007 | 100 observações; PCM final idêntico em 5/5 casos, mas uma confirmação de `R$ 150` | `reject-safety` |
 | EXP-0008 | 45 inferências; Whisper `small` recuperou `1.150` e controles, p95 3.100 ms | `hold-latency`; zero autoridade |
 | EXP-0009 | transcript errado injetado 5× no Chrome; 5/5 abstentions, p95 122 ms, estado nulo | `promote-safety-guard` |
+| EXP-0010 | 5/5 ciclos stateful no Chrome; p95 94,9/399,9 ms; zero commit antes da repetição e um depois | `promote-stateful-kernel-slice`; runtime global em `hold-acoustic-stability` |
 
 A configuração resultante está congelada em
 [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
 Ela é um comparador de desenvolvimento, não uma promoção de prontidão humana.
 
-A evidência acústica ainda usa uma única voz sintética e ruído branco. Não mede
-microfone real, AEC, eco de alto-falante, reverberação, double-talk, cauda física
-da sala ou preferência humana.
+A fábrica acústica ainda usa uma única voz sintética e ruído branco. O EXP-0010
+também exercitou microfone/AEC/VAD físicos em sessões longas suplementares: só
+1/4 passou sem pico Silero associado à fala do assistente. Esse eixo é separado
+do gate stateful com texto injetado e ainda não mede loopback calibrado, eco e
+reverberação controlados, double-talk sistemático, cauda física da sala ou
+preferência humana.
 
 O ciclo completo e seus limites estão em
 [AUTONOMOUS_LOOP.md](AUTONOMOUS_LOOP.md).

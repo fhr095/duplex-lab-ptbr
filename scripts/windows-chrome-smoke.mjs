@@ -38,6 +38,13 @@ const FALSE_ACTIVATION_PROBE_MS = Math.max(
 );
 const REQUIRE_VAD_SHADOW =
   process.env.REQUIRE_VAD_SHADOW === "1";
+const CRITICAL_CONFIRMATION_REPETITIONS = Math.max(
+  1,
+  Number.parseInt(
+    process.env.CRITICAL_CONFIRMATION_REPETITIONS ?? "1",
+    10
+  )
+);
 const REQUIRED_VAD_CONTROL =
   process.env.REQUIRE_VAD_CONTROL?.trim() || null;
 const REQUIRED_SILERO_THRESHOLD = Number.parseFloat(
@@ -320,6 +327,38 @@ async function waitFor(check, timeoutMs = 10_000) {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   throw new Error(`Condição não satisfeita em ${timeoutMs} ms.`);
+}
+
+function assessStatefulCriticalConfirmation({ pending, accepted }) {
+  const transitions = accepted.trace
+    .filter((event) => event.type === "interaction.transition")
+    .map((event) => JSON.parse(event.detail));
+  const rollbacks = accepted.trace.filter(
+    (event) => event.type === "state.rollback"
+  );
+  return (
+    pending.semantic.authority === "backend-interaction-runtime" &&
+    pending.semantic.kernelStateVersion === 1 &&
+    pending.semantic.state === null &&
+    pending.semantic.revisions.length === 0 &&
+    pending.semantic.pendingConfirmation?.policy ===
+      "repeat-critical-value-before-commit" &&
+    !/\d/u.test(pending.text.assistant) &&
+    accepted.semantic.authority === "backend-interaction-runtime" &&
+    accepted.semantic.kernelStateVersion === 2 &&
+    accepted.semantic.pendingConfirmation === null &&
+    accepted.semantic.state?.value === "BRL 1150" &&
+    accepted.semantic.revisions.length === 1 &&
+    accepted.semantic.revisions[0].current === "BRL 1150" &&
+    rollbacks.length === 1 &&
+    transitions.length === 2 &&
+    transitions.every(
+      (transition) =>
+        transition.authority === "backend-interaction-runtime" &&
+        transition.kernelVersion === "interaction-kernel-v0.1"
+    ) &&
+    /1150/u.test(accepted.text.assistant)
+  );
 }
 
 try {
@@ -702,6 +741,68 @@ try {
     15_000
   );
 
+  const criticalConfirmationRuns = [];
+  for (
+    let repetition = 1;
+    repetition <= CRITICAL_CONFIRMATION_REPETITIONS;
+    repetition += 1
+  ) {
+    await evaluate(`window.__duplexLab.reset()`);
+    await evaluate(
+      `window.__duplexLab.injectSpeech(
+        "Transfere 1500 reais, não, 150 reais."
+      )`
+    );
+    const pending = await waitFor(
+      () =>
+        evaluate(`(() => {
+          const snapshot = window.__duplexLab.snapshot();
+          return snapshot.semantic.pendingConfirmation &&
+            snapshot.trace.some(
+              (event) => event.type === "assistant.safety-confirmation"
+            ) &&
+            snapshot.trace.some(
+              (event) =>
+                event.type === "assistant.speech.finished" &&
+                event.detail === "direct"
+            ) &&
+            !snapshot.state.responseActive &&
+            !snapshot.state.assistantPreparing &&
+            !snapshot.state.assistantSpeaking
+            ? snapshot
+            : null;
+        })()`),
+      15_000
+    );
+    await evaluate(
+      `window.__duplexLab.injectSpeech(
+        "O valor final é 1150 reais."
+      )`
+    );
+    const accepted = await waitFor(
+      () =>
+        evaluate(`(() => {
+          const snapshot = window.__duplexLab.snapshot();
+          return snapshot.semantic.state?.value === "BRL 1150" &&
+            snapshot.semantic.pendingConfirmation === null &&
+            snapshot.trace.some(
+              (event) => event.type === "assistant.safety-confirmed"
+            ) &&
+            snapshot.trace.filter(
+              (event) =>
+                event.type === "assistant.speech.finished" &&
+                event.detail === "direct"
+            ).length >= 2 &&
+            !snapshot.state.responseActive &&
+            !snapshot.state.assistantPreparing &&
+            !snapshot.state.assistantSpeaking
+            ? snapshot
+            : null;
+        })()`),
+      15_000
+    );
+    criticalConfirmationRuns.push({ repetition, pending, accepted });
+  }
   await evaluate(`window.__duplexLab.reset()`);
   const preparingBargeInInitial = await evaluate(`(() => {
     window.__duplexLab.speak(
@@ -1488,6 +1589,12 @@ try {
     responseStarted:
       directTurn.metrics.responseStartMs !== null &&
       directTurn.metrics.responseStartMs <= RESPONSE_START_LIMIT_MS,
+    statefulCriticalConfirmation:
+      criticalConfirmationRuns.length ===
+        CRITICAL_CONFIRMATION_REPETITIONS &&
+      criticalConfirmationRuns.every(
+        assessStatefulCriticalConfirmation
+      ),
     stoppedOnBargeIn:
       bargeIn.metrics.stopCommandMs !== null &&
       bargeIn.metrics.stopCommandMs <= STOP_COMMAND_LIMIT_MS &&
@@ -1661,6 +1768,9 @@ try {
       microphoneCapture,
       microphoneCapture.transportRecovery?.after,
       directTurn,
+      ...criticalConfirmationRuns.flatMap(
+        (run) => [run.pending, run.accepted]
+      ),
       preparingBargeInInitial.before,
       preparingBargeInInitial.after,
       preparingBargeInHeld,
@@ -1726,6 +1836,10 @@ try {
         "ou medição do último sample físico"
     },
     directTurn,
+    criticalConfirmation: {
+      repetitions: CRITICAL_CONFIRMATION_REPETITIONS,
+      runs: criticalConfirmationRuns
+    },
     preparingBargeIn: {
       initial: preparingBargeInInitial,
       held: preparingBargeInHeld,

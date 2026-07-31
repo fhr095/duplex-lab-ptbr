@@ -8,6 +8,9 @@ import {
   createCriticalConflictClarification
 } from "/critical-conflict.mjs";
 import {
+  projectInteractionTransition
+} from "/interaction-browser-adapter.mjs";
+import {
   classifyPotentialBargeIn,
   isExplicitTaskCancellation
 } from "/turn-taking.mjs";
@@ -21,6 +24,21 @@ const AUTOMATION_AUDIT_PRE_ROLL_FRAMES = 100;
 const AUTOMATION_AUDIT_POST_ROLL_FRAMES = 100;
 const AUDIO_RECONNECT_DELAYS_MS = Object.freeze([100, 250, 500]);
 const MAX_BROWSER_TELEMETRY_SAMPLES = 30_000;
+let interactionSessionSequence = 0;
+
+function createInteractionSessionId() {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+  interactionSessionSequence += 1;
+  return [
+    "browser",
+    Date.now().toString(36),
+    interactionSessionSequence.toString(36),
+    Math.random().toString(36).slice(2)
+  ].join("-");
+}
+
 const AUTOMATION_AUDIO_EVIDENCE_EVENTS = new Set([
   "audio.error",
   "audio.frames.dropped",
@@ -115,6 +133,10 @@ const session = {
   responseAudioStarted: false,
   responseGeneration: 0,
   responseText: "",
+  interactionSessionId: createInteractionSessionId(),
+  interactionStateVersion: 0,
+  interactionTurnSequence: 0,
+  pendingConfirmation: null,
   semanticRevisions: [],
   semanticState: null,
   potentialBargeIn: null,
@@ -955,6 +977,7 @@ async function processTurn() {
   session.responseAudioStarted = false;
   session.responseText = "";
   session.speechBuffer = "";
+  const turnId = `turn-${++session.interactionTurnSequence}`;
   appendHistory("user", text);
   log("turn.committed", text);
   setStatus("pensando e ouvindo", "speaking");
@@ -965,7 +988,12 @@ async function processTurn() {
     const response = await fetch("/api/turn", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ text, history }),
+      body: JSON.stringify({
+        text,
+        history,
+        sessionId: session.interactionSessionId,
+        turnId
+      }),
       signal: controller.signal
     });
 
@@ -981,40 +1009,23 @@ async function processTurn() {
         context.mode =
           event.mode === "delegate" ? "delegate" : "direct";
         log("turn.routed", event.mode);
-        if (
-          event.semantic?.correction &&
-          event.safety?.confirmationRequired
-        ) {
-          log(
-            "state.pending-confirmation",
-            JSON.stringify({
-              ...event.safety,
-              proposedValue: event.semantic.correction.current,
-              revisionId: event.semantic.correction.id
-            })
-          );
-          log(
-            "assistant.safety-confirmation",
-            event.safety.policy ?? "critical-confirmation"
-          );
-        } else if (event.semantic?.correction) {
-          const correction = event.semantic.correction;
-          session.semanticState = {
-            slot: correction.slot,
-            value: correction.current,
-            revisionId: correction.id
-          };
-          session.semanticRevisions.push({ ...correction });
-          session.semanticRevisions = session.semanticRevisions.slice(-20);
-          log(
-            "state.rollback",
-            JSON.stringify({
-              previous: correction.obsolete,
-              current: correction.current,
-              revisionId: correction.id,
-              slot: correction.slot
-            })
-          );
+        const projection = projectInteractionTransition(event.interaction);
+        session.interactionStateVersion = projection.stateVersion;
+        session.semanticState = projection.semanticState;
+        session.semanticRevisions = projection.semanticRevisions;
+        session.pendingConfirmation = projection.pendingConfirmation;
+        log(
+          "interaction.transition",
+          JSON.stringify({
+            authority: projection.authority,
+            eventId: projection.eventId,
+            kernelVersion: projection.kernelVersion,
+            previousStateVersion: projection.previousStateVersion,
+            stateVersion: projection.stateVersion
+          })
+        );
+        for (const traceEvent of projection.traceEvents) {
+          log(traceEvent.type, traceEvent.detail);
         }
         if (context.mode === "delegate") {
           if (
@@ -2222,6 +2233,13 @@ function automationSnapshot() {
       user: elements.userText.textContent
     },
     semantic: {
+      authority: "backend-interaction-runtime",
+      sessionId: session.interactionSessionId,
+      kernelStateVersion: session.interactionStateVersion,
+      pendingConfirmation:
+        session.pendingConfirmation === null
+          ? null
+          : { ...session.pendingConfirmation },
       revisions: session.semanticRevisions.map((revision) => ({
         ...revision
       })),
@@ -2269,6 +2287,10 @@ function resetAutomation() {
   session.responseActive = false;
   session.responseAudioStarted = false;
   session.responseText = "";
+  session.interactionSessionId = createInteractionSessionId();
+  session.interactionStateVersion = 0;
+  session.interactionTurnSequence = 0;
+  session.pendingConfirmation = null;
   session.semanticRevisions = [];
   session.semanticState = null;
   session.speechBuffer = "";

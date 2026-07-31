@@ -36,10 +36,11 @@ O reflexo local pode pausar áudio diante de fala antes da classificação final
 O kernel decide depois se confirma a interrupção, retoma ou ignora ruído. Isso
 preserva latência física sem criar uma segunda política conversacional.
 
-Hoje essa separação ainda é uma arquitetura-alvo: a semântica está fragmentada
-entre a política do evaluator, o controlador acústico do backend e a
-orquestração do navegador. M2.5 migra esses caminhos incrementalmente para o
-mesmo kernel, sem reescrita big-bang.
+A separação está parcialmente materializada. Correção e confirmação monetária
+passam pelo `InteractionKernel` v0.1 e por uma autoridade stateful no backend;
+o navegador somente projeta a transição versionada. Política temporal do
+evaluator, controle acústico e `LocalAudioReflex` ainda migram
+incrementalmente, sem reescrita big-bang.
 
 ## Portas estáveis
 
@@ -89,6 +90,13 @@ antecipação permitida e precisa ser reconciliado no trace.
 O primeiro checkpoint não precisa emitir toda a ontologia. M4a começa com uma
 capacidade estreita e probabilidades; o runtime pode escolher
 `WAIT_FOR_EVIDENCE` por confiança, risco e deadline.
+
+Na fatia v0.1, `USER_TURN_FINAL` cobre somente correção semântica e confirmação
+monetária. O backend guarda versão, revisão e confirmação pendente por sessão;
+retries do mesmo `turnId` são idempotentes. O navegador recusa versão ou
+autoridade desconhecida e materializa `WAIT`, `SPEAK`, `ROLLBACK` e `CANCEL` no
+estado/trace. Isso é uma migração real, mas não autoriza chamar todo o runtime
+de unificado.
 
 ### Cérebro e ferramentas
 
@@ -203,8 +211,12 @@ Implementado:
   corrigíveis e 1.100 ms para slots críticos, antes de publicar texto ou
   disparar trabalho;
 - interlock determinístico para correção monetária em ação irreversível: pede
-  repetição do valor sem ecoar a hipótese, não atualiza estado e contorna tanto
-  provider local quanto externo;
+  repetição do valor sem ecoar a hipótese, mantém pendência no backend e só
+  atualiza estado após nova fala inequívoca; contorna tanto provider local
+  quanto externo;
+- `InteractionKernel` v0.1 puro, `InteractionRuntime` stateful com LRU/retry
+  idempotente, coordenador autoritativo no backend e adaptador de projeção no
+  navegador para a fatia de correções/confirmação;
 - identidade SHA-256 e ranges de amostras do PCM final/prefinal; a política
   acústica eager permanece disponível somente como flag experimental rejeitada;
 - TTS provisório do Windows entregue como WAV por worker aquecido;
@@ -231,8 +243,10 @@ Implementado:
 
 Ainda não implementado:
 
-- kernel comum realmente usado por evaluator, backend e navegador;
-- runtime/atuador local separados sob teste de equivalência;
+- kernel comum para política temporal, evaluator, backend e áudio — somente a
+  fatia semântica crítica está migrada;
+- `LocalAudioReflex` extraído e conciliado sob teste de equivalência;
+- clocks, filas, epochs, tarefas e efeitos sob o `InteractionRuntime` comum;
 - `training-trace-v1` materializado pelo caminho real;
 - ledger verificável de efeitos externos e holdout independente novo;
 - primeiro checkpoint em shadow mode;

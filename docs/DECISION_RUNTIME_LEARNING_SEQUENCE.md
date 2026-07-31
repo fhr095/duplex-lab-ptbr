@@ -1,6 +1,6 @@
 # Decisão — runtime comum e sequência até o primeiro peso
 
-Status: **aceita em 31/07/2026**
+Status: **aceita em 31/07/2026; execução incremental em andamento**
 
 ## Contexto
 
@@ -42,6 +42,26 @@ e o EXP-0009 promoveu abstention determinística para o risco monetário. Agora:
 
 A ordem executável e seus limites permanecem somente em
 [ROADMAP.md](ROADMAP.md#ordem-operacional-consolidada).
+
+## Atualização após o EXP-0010
+
+A primeira fatia da decisão foi executada sem antecipar o restante da
+arquitetura:
+
+- `InteractionKernel` v0.1 decide correção e confirmação monetária como reducer
+  puro;
+- `InteractionRuntime` no backend é a autoridade única por sessão, com LRU e
+  retry idempotente;
+- o navegador valida e projeta intenções, sem reconstruir a política semântica;
+- 5/5 ciclos Chrome preservaram estado nulo antes da confirmação e produziram
+  exatamente um rollback/commit depois da repetição inequívoca;
+- 270/270 testes e zero chamada paga sustentam
+  `promote-stateful-kernel-slice`.
+
+M2.5 continua aberto. Em quatro smokes completos, o gate stateful passou 4/4,
+mas o eixo acústico longo passou 1/4 devido a picos próximos ao limiar durante
+a fala do assistente. A próxima extração é `LocalAudioReflex`, comparada pela
+redução de pausas falsas e pela preservação do STOP real.
 
 ## Pontos incorporados
 
@@ -107,7 +127,8 @@ chamado isoladamente de latência voz-a-voz.
 
 Não são bloqueadores do fechamento M2.5:
 
-- processo que hospedará a única instância autoritativa do kernel;
+- eventual mudança da autoridade hoje hospedada no backend; qualquer mudança
+  precisa preservar uma única autoridade por sessão;
 - primeira família de modelo M4a — começar pela baseline treinável mais simples;
 - candidato nativo e provedor de GPU, somente após pergunta/orçamento;
 - tamanho e protocolo da calibração humana, definidos depois dos primeiros
