@@ -100,9 +100,16 @@ mudar a obrigação de fazer rollback quando a pessoa diz “não, sexta”.
 
 O pack `eval/factory/packs/corrections.pt-BR.v0.2.json` possui 24 casos em 12
 famílias. O build canônico `f9be3098` registra 85,7% de cobertura pairwise e
-detecta 288/288 mutações adversariais. Texto injetado no Chrome valida a espinha
-semântica; PCM valida o caminho VAD→ASR→semântica→brain→TTS. Um resultado verde
-no primeiro não substitui o segundo.
+rejeita 288/288 corrupções de observação — 12 operadores aplicados aos 24
+casos. Isso mede sensibilidade dos oráculos, não mutação do código de produção.
+Texto injetado no Chrome valida a espinha semântica; PCM valida o caminho
+VAD→ASR→semântica→brain→TTS. Um resultado verde no primeiro não substitui o
+segundo.
+
+O artefato canônico e seu CLI preservam o rótulo histórico “mutantes mortos”.
+Renomear o texto do builder altera corretamente seu fingerprint; a terminologia
+só mudará junto de um novo build/campanha, sem reescrever a evidência
+`f9be3098`.
 
 Estados de gate:
 
@@ -135,6 +142,7 @@ representativo.
 | --- | --- | --- | --- |
 | Latência de decisão | fim semântico do turno | `SPEAK` | isola a política |
 | Primeiro áudio | fim semântico do turno | primeiro sample audível | métrica de produto |
+| Playback após final injetada | fim sintético marcado pelo harness | `HTMLAudioElement.onplaying` | métrica operacional do Chrome; exclui microfone, VAD, ASR e cauda física |
 | Parada de decisão | onset de interrupção | `STOP` | isola a política |
 | Parada acústica | onset de interrupção | último sample audível do assistente | métrica de produto |
 | Corte indevido | pausa interna válida | início audível indevido | reportar taxa e duração |
@@ -214,6 +222,11 @@ Há placares deliberadamente separados:
 - **gate WebSocket:** VAD, endpoint, parciais, finais, merges, perda e backlog;
 - **gate do Chrome:** captura física longa, resposta, último quantum, falsa
   ativação, cancelamento e erros;
+- **gate de equivalência de política:** o mesmo estado/evento produz a mesma
+  intenção no evaluator, backend e navegador; efeitos físicos permanecem
+  observáveis no runtime;
+- **gate de shadow:** proposta do candidato nunca vira autoridade por acidente
+  e pode ser comparada/reproduzida sob o mesmo trace;
 - **gate humano:** naturalidade, conforto, confiança e preferência — ainda
   pendente.
 
@@ -228,7 +241,7 @@ guardrails de semântica, falsos cortes, naturalidade, custo e estabilidade.
 | Parakeet, 12 trechos CORAA | WER 38,03%; RTF p50 0,13 |
 | Whisper `base`, mesmos trechos | WER 52,82%; RTF p50 0,46 |
 | Chrome, campanha repetida | 10/10 execuções; 27/27 gates em cada |
-| Chrome físico, resposta simples | primeiro áudio p95 187 ms |
+| Chrome, final textual injetada | fim sintético→`HTMLAudioElement.onplaying` p95 187 ms; não inclui microfone/VAD/ASR nem cauda da sala |
 | Chrome, barge-in closed-loop | onset PCM→último quantum p95 83,21 ms |
 | Chrome, sessão longa | 600,082 s; 30.001 frames; zero falsa ativação, gap ou drop |
 | Pipeline ao vivo | 15/15 falas finalizadas; 4/4 controles silenciosos |
@@ -242,7 +255,7 @@ placar atual da fábrica.
 | Gate ou eixo | Resultado | Decisão |
 | --- | --- | --- |
 | Suíte determinística, verificação local separada | 223/223 testes | `promote`; não é input hasheado do agregado |
-| Fábrica | 24 casos; 288/288 mutantes; pairwise 85,7% | `promote` |
+| Fábrica | 24 casos; 12 operadores × 24 casos = 288/288 corrupções de observação rejeitadas pelos oráculos; pairwise 85,7% | `promote` |
 | Fixtures | 12 WAVs únicos; 12 cenas + controle; hashes íntegros | `promote` |
 | WebSocket limpo | 12/12 operáveis; WER 6,67%; recall crítico 97,22% | operabilidade `promote`; fidelidade `hold` |
 | WebSocket acústico | 12/12 operáveis; WER 7,14%; recall crítico 91,67% | operabilidade `promote`; fidelidade `hold` |

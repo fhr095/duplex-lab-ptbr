@@ -73,7 +73,9 @@ O provider permaneceu local e nenhum LLM externo participou das regressões.
 
 - 223/223 testes na verificação local separada; esse total não é um input
   hasheado do agregado;
-- 288/288 mutantes de oráculo detectados;
+- 288/288 corrupções de observação rejeitadas pelos oráculos — 12 operadores
+  aplicados aos 24 casos; isso mede sensibilidade dos oráculos, não mutação do
+  código de produção;
 - 85,7% de cobertura pairwise;
 - 12 WAVs únicos e 12 cenas acústicas sem clipping;
 - todas as provas de manifest, packs, áudio, execução, toolchain, evaluator,

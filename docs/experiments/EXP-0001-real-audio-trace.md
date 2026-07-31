@@ -1,6 +1,11 @@
 # EXP-0001 — primeiro trace com áudio real PT-BR
 
-Status: `PLANEJADO`
+Status: `SUPERADO SEM EXECUÇÃO DIRETA`
+
+O plano não foi executado com esta amostra exata. Seus objetivos foram
+absorvidos e superados pelas campanhas EXP-0002, EXP-0003 e EXP-0005. Este
+arquivo permanece como registro histórico da hipótese inicial, não como próximo
+experimento.
 
 ## Decisão
 

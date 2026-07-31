@@ -47,10 +47,13 @@ depois de instrumentação e micro-turnos.
 ### H1 — O primeiro peso proprietário deve aprender interação, não conhecimento
 
 Um modelo pequeno recebe transcrição incremental, pausas, energia, estado do
-player e tarefas; ele emite ações temporais. O LLM externo fornece conteúdo.
+player e tarefas; ele estima uma capacidade temporal estreita. O LLM externo
+fornece conteúdo. O runtime mantém abstention e guardrails; efeitos externos
+continuam determinísticos.
 
-**Teste:** substituir a política determinística por um checkpoint ajustado em
-traces PT-BR.
+**Teste:** primeiro provar o checkpoint em shadow; depois conceder autoridade
+limitada somente à capacidade que vencer a política determinística em holdout
+PT-BR.
 **Mata a hipótese:** sinais textuais/acústicos compactos não bastam para
 desambiguar hesitação, fala paralela e interrupção.
 
@@ -75,9 +78,11 @@ contrafactuais, vozes, timings e ambientes. Críticos independentes procuram
 lacunas; cada falha reproduzível vira regressão congelada. Essa base é iterativa,
 não uma entrega única cuja distribuição aceitamos passivamente.
 
-Pessoas reais entram como decisão principal quando o sistema já é funcional e
-as dúvidas restantes são naturalidade, conforto, sotaque, comportamento social
-ou acústica física. Assim, humanos calibram a validade externa e lapidam a
+Uma amostra humana pequena pode calibrar timing e rótulos sociais depois de a
+infraestrutura de shadow existir; ela não é uma avaliação de produto. Pessoas
+reais entram como decisão principal quando o sistema já é funcional e as
+dúvidas restantes são naturalidade, conforto, sotaque, comportamento social ou
+acústica física. Assim, humanos calibram a validade externa e lapidam a
 experiência, em vez de serem usados para depurar problemas fundamentais.
 
 ## Contrato de experiência
@@ -124,6 +129,7 @@ Antes de mobilizar uma avaliação humana como caminho crítico, o sistema deve:
   por IA;
 - preservar slots e efeitos críticos em correções e mudanças de intenção;
 - manter os budgets de interrupção e resposta sob concorrência local;
+- executar a mesma semântica de política no evaluator e na experiência real;
 - comparar TTS e modelos de interação no mesmo replay reproduzível;
 - demonstrar que novas gerações adversariais encontram sobretudo caudas, e não
   novas classes fundamentais de falha.

@@ -2,27 +2,44 @@
 
 ## Princípio central
 
-Existe um único relógio conversacional e vários fluxos concorrentes. Nenhum
-módulo ganha o direito de bloquear os demais.
+Existe uma única ordem lógica da conversa, vários fluxos concorrentes e vários
+domínios de relógio. Nenhum módulo ganha o direito de bloquear os demais, e
+dois `performance.now()` de processos diferentes nunca são tratados como o
+mesmo relógio sem uma transformação registrada.
 
 ```text
-microfone ──► AEC/NS/VAD ──► adaptador de entrada ──────────────┐
-                                                               │
-                                      relógio + estado          ▼
-                               ┌────────────────────────────────────┐
-                               │ MODELO/POLÍTICA DE INTERAÇÃO       │
-                               │ WAIT · BACKCHANNEL · SPEAK · STOP  │
-                               │ DELEGATE · CANCEL · ROLLBACK       │
-                               └──────────────┬─────────────────────┘
-                                              │
-                         ┌────────────────────┼───────────────────┐
-                         ▼                    ▼                   ▼
-                  brain adapter        task/tool bus       output scheduler
-                  (substituível)        (cancelável)        (TTS ou tokens)
-                         │                    │                   │
-                         └──── resultado ─────┘                   ▼
-                                                          áudio + telemetria
+microfone ─► AEC/NS/VAD ─► LocalAudioReflex ─────► player PAUSE/STOP
+                 │                 │
+                 └──── eventos normalizados ───────┐
+                                                    ▼
+                                     ┌─────────────────────────┐
+                                     │ InteractionRuntime      │
+                                     │ clocks · filas · epochs │
+                                     │ autoridade · efeitos    │
+                                     └──────┬─────────────┬────┘
+                                            │             │ estado + evento
+                                            │             ▼
+                                            │   ┌───────────────────────┐
+                                            │   │ InteractionKernel     │
+                                            │   │ → estado + intenções  │
+                                            │   └───────────┬───────────┘
+                                            │     intenções │
+                                            ◄───────────────┘
+                                            │
+                       ┌────────────────────┼─────────────────────┐
+                       ▼                    ▼                     ▼
+                brain adapter        task/tool bus        output scheduler
+                (substituível)        (cancelável)         (TTS ou tokens)
 ```
+
+O reflexo local pode pausar áudio diante de fala antes da classificação final.
+O kernel decide depois se confirma a interrupção, retoma ou ignora ruído. Isso
+preserva latência física sem criar uma segunda política conversacional.
+
+Hoje essa separação ainda é uma arquitetura-alvo: a semântica está fragmentada
+entre a política do evaluator, o controlador acústico do backend e a
+orquestração do navegador. M2.5 migra esses caminhos incrementalmente para o
+mesmo kernel, sem reescrita big-bang.
 
 ## Portas estáveis
 
@@ -40,7 +57,7 @@ O detector pode ser substituído sem alterar a política.
 
 ### Interação
 
-Consome o estado incremental e emite intenções:
+O contrato de longo prazo consome estado incremental e emite intenções:
 
 ```text
 WAIT
@@ -54,6 +71,24 @@ ROLLBACK(previous, current)
 
 A implementação atual é determinística. O primeiro checkpoint proprietário
 poderá aprender essa mesma interface.
+
+A separação obrigatória é:
+
+- `InteractionKernel`: reducer puro, sem DOM, WebSocket, `Audio`, clock de
+  parede ou chamada externa;
+- `InteractionRuntime`: normaliza eventos, mantém timers/epochs, aplica
+  autoridade, despacha efeitos e observa o que ocorreu;
+- `LocalAudioReflex`: interlock mínimo junto ao Web Audio para pausa/STOP
+  imediato; não confirma sozinho intenção, commit ou efeito externo.
+
+Cada sessão real possui **uma única instância autoritativa do kernel**.
+Evaluator e adaptadores reutilizam o mesmo código/contrato, mas navegador e
+backend não mantêm duas políticas concorrentes. O reflexo local é a única
+antecipação permitida e precisa ser reconciliado no trace.
+
+O primeiro checkpoint não precisa emitir toda a ontologia. M4a começa com uma
+capacidade estreita e probabilidades; o runtime pode escolher
+`WAIT_FOR_EVIDENCE` por confiança, risco e deadline.
 
 ### Cérebro e ferramentas
 
@@ -99,9 +134,17 @@ reportar o último sample audível para medir barge-in de verdade.
 
 ### Trace
 
-Todos os módulos escrevem no mesmo tempo monotônico. Os canais de microfone e
-assistente permanecem separados. Esse trace é o produto principal do
-laboratório: permite reproduzir, comparar e treinar.
+Há dois contratos deliberadamente separados:
+
+1. o [trace de avaliação v0](TRACE_CONTRACT.md), pequeno e relativo ao cenário,
+   usado para pontuar qualquer candidato;
+2. o [training-trace-v1](TRAINING_TRACE_V1.md), causal e mais rico, usado para
+   shadow, replay e aprendizado.
+
+Os canais de microfone e assistente permanecem separados. Eventos acústicos
+usam índice de amostra como referência primária dentro do stream. Navegador,
+servidor, player e evaluator preservam seus domínios monotônicos e registram
+pontos de mapeamento; tempo de parede serve apenas para correlacionar sessões.
 
 ## Duas implementações sob o mesmo contrato
 
@@ -156,8 +199,9 @@ Implementado:
 - especulação da final durante pausa, cancelada se a fala retomar;
 - reconciliação conservadora quando o Parakeet retorna vazio ou troca
   claramente de idioma;
-- graça de commit de 220 ms, elevada a 500 ms para ações potencialmente
-  corrigíveis, antes de publicar texto ou disparar trabalho;
+- graça de commit padrão de 220 ms, elevada a 650 ms para ações potencialmente
+  corrigíveis e 1.100 ms para slots críticos, antes de publicar texto ou
+  disparar trabalho;
 - TTS provisório do Windows entregue como WAV por worker aquecido;
 - player Web Audio instrumentado até o último quantum renderizado;
 - barge-in fechado PCM→WebSocket→VAD→STOP→renderer;
@@ -172,11 +216,19 @@ Implementado:
   resposta, barge-in, render, falsa ativação, reconexão forçada e cancelamento;
 - campanha WebSocket com silêncio, hesitação, correção, tarefa, números e
   amostras CORAA;
-- comparação de candidatos com gate conjunto de WER e tempo real.
+- comparação de candidatos com gate conjunto de WER e tempo real;
+- fábrica v0.2 de correções com 24 casos, superfícies geradas, oráculos
+  determinísticos, mutação adversarial, áudio/ambientes seeded, replay
+  WebSocket/Chrome e relatório agregado por hash.
 
 Ainda não implementado:
 
-- fábrica v0.2 de cenários, crítica, mutação e ambientalização por IA;
+- kernel comum realmente usado por evaluator, backend e navegador;
+- runtime/atuador local separados sob teste de equivalência;
+- `training-trace-v1` materializado pelo caminho real;
+- ledger verificável de efeitos externos e holdout independente novo;
+- primeiro checkpoint em shadow mode;
+- geração/crítica autônoma ampla e ambientalização multivoz da fábrica;
 - loopback físico separado para medir a cauda do alto-falante e da sala;
 - AEC controlado por hardware/ambiente além das constraints do navegador;
 - TTS aberto promovido por A/B humano;

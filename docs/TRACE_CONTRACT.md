@@ -5,6 +5,11 @@
 Permitir que qualquer candidato — política simulada, cascata modular, API
 proprietária ou modelo de pesos abertos — seja pontuado pelo mesmo evaluator.
 
+Este é um contrato de **avaliação**, não um dataset de treino. Ele permanece
+pequeno e relativo ao cenário. Contexto incremental, clocks entre processos,
+decisões em shadow, proveniência de rótulos e lifecycle de efeitos pertencem ao
+[contrato `training-trace-v1`](TRAINING_TRACE_V1.md).
+
 ## Bundle
 
 ```json
@@ -82,6 +87,9 @@ depois de:
 2. definição precisa do instante;
 3. teste de validação;
 4. migração ou congelamento do pack antigo.
+
+O trace treinável evolui separadamente e deve possuir uma projeção testada para
+este vocabulário; ele não amplia silenciosamente o formato v0.
 
 ## Avaliar
 

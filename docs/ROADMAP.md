@@ -1,5 +1,11 @@
 # Roadmap guiado por gates
 
+Este é o **único documento que define a ordem operacional**. As fases abaixo
+organizam capacidades e podem se sobrepor; a tabela
+[Ordem operacional consolidada](#ordem-operacional-consolidada) decide o que
+entra agora no caminho crítico. O racional e as alternativas estão registrados
+na [decisão de runtime e aprendizado](DECISION_RUNTIME_LEARNING_SEQUENCE.md).
+
 ## Fase 0 — laboratório de decisão
 
 Status: **implementado**.
@@ -55,7 +61,8 @@ Evidência congelada atual:
 
 - 163/163 testes e 20/20 expectativas de política;
 - 10/10 execuções do Chrome, 27/27 gates em cada;
-- primeiro áudio simples p95 187 ms;
+- final textual injetada→`HTMLAudioElement.onplaying` p95 187 ms; não inclui
+  microfone, VAD, ASR ou cauda física da sala;
 - parada PCM→renderer p95 83,21 ms;
 - retomada de backchannel p95 282,1 ms;
 - soak físico de 600,082 s, 30.001 frames e zero falso início, gap ou drop;
@@ -100,10 +107,42 @@ Evidência atual: toolchain `promote`; PCM limpo 5/6 semântico e 6/6 seguro;
 PCM com ruído 3/6 semântico e 5/6 seguro. A fábrica foi promovida como
 instrumento, não como prova de prontidão do runtime.
 
+## Fase 2.5 — validade experimental do runtime
+
+Status: **planejada; próximo fechamento estrutural depois do EXP-0007 e de sua
+ramificação causal limitada**.
+
+Objetivo: eliminar a diferença entre “política avaliada” e “política realmente
+executada”. Hoje a decisão está distribuída entre a política do evaluator, o
+controle acústico/temporal do backend e a orquestração do navegador.
+
+Entregas:
+
+1. `InteractionKernel` puro: estado + evento → próximo estado + intenções;
+2. `InteractionRuntime`: relógios, filas, lifecycle, autoridade e efeitos;
+3. `LocalAudioReflex`: pausa/STOP imediato no navegador, conciliado depois
+   com o kernel;
+4. adaptadores para evaluator, backend e navegador sob a mesma semântica, com
+   uma única instância autoritativa por sessão real;
+5. teste de equivalência entre replay virtual e caminho real;
+6. `training-trace-v1` com clocks, causalidade operacional, proveniência e
+   proposta/aceite/efeito observado;
+7. ledger/test-double de efeitos e holdout ainda não observado.
+
+Gate: o mesmo evento e estado produzem a mesma intenção nos três ambientes;
+uma sessão real nunca possui duas autoridades de política; qualquer diferença
+de efeito físico é atribuível e observável no runtime, não a uma política
+paralela.
+
 ## Fase 3 — qualidade modular e local
 
 Status: **iniciada**. Parser de correções, estado semântico e reparo de conflito
 numérico antes de commit já existem; o gate ponta a ponta ainda não promove.
+
+Até fechar a validade experimental do runtime, somente correções causais que
+afetem segurança, fidelidade do trace, comparação entre candidatos ou o
+primeiro treinamento entram no caminho crítico. Melhorias genéricas de WER,
+TTS, regex ou poucos milissegundos sem impacto percebido ficam no backlog.
 
 Atacar os maiores gargalos produzidos pela fábrica, preservando o caminho
 full-duplex já promovido:
@@ -122,10 +161,11 @@ modelo vence por reputação ou demonstração.
 Gate: ganho ponta a ponta em falhas medidas, dentro de budgets locais de
 latência, memória e CPU, sem regressão de interrupção ou efeitos.
 
-## Fase 4 — primeiro peso proprietário
+## Fase 4a — prova da infraestrutura de aprendizado
 
-Hipótese prioritária: ajustar um modelo pequeno de interação usando transcrição
-incremental e sinais acústicos compactos.
+Objetivo: provar o ciclo
+`dados → treino → checkpoint → inferência online → trace → replay` com um
+modelo pequeno, em shadow mode e sem autoridade.
 
 Entrada:
 
@@ -134,30 +174,52 @@ texto parcial + duração da pausa + sinais acústicos
 + usuário/assistente falando + tarefa ativa + estado corrigível
 ```
 
-Saída:
+Primeira saída:
 
 ```text
-WAIT | BACKCHANNEL | SPEAK | STOP | DELEGATE | CANCEL | ROLLBACK
+probabilidade de CONTINUE_LISTENING | TAKE_FLOOR
 ```
+
+O runtime pode escolher `WAIT_FOR_EVIDENCE` quando confiança, risco ou prazo
+não autorizam uma ação. Incerteza é inicialmente uma política de abstention,
+não uma classe de verdade obrigatória.
+
+Gate: checkpoint reproduzível, inferência online instrumentada e replay
+determinístico. Superajuste é aceitável neste marco; ganho de qualidade e
+generalização não são alegados.
+
+## Fase 4b — primeiro peso comportamental comparável
+
+Hipótese: sinais incrementais compactos bastam para vencer a política
+determinística em uma capacidade observada, sem reduzir os guardrails.
 
 Sequência:
 
-1. SFT nos traces sintéticos diversos e âncoras públicas disponíveis;
-2. preferência entre decisões melhores/piores geradas e auditadas;
-3. proteção semântica e de efeitos;
-4. shadow mode contra a política determinística;
-5. canário local sem autoridade externa;
-6. promoção por ganho no evaluator completo.
+1. famílias de treino/desenvolvimento separadas do holdout;
+2. rótulos com origem explícita: regra, blueprint, professor, humano ou
+   resultado observado;
+3. calibração humana pequena de timing e rótulos sociais;
+4. comparação shadow contra a política determinística;
+5. autoridade limitada apenas para a capacidade aprovada;
+6. proteção determinística de efeitos, commit, delegação e cancelamento;
+7. promoção por ganho no evaluator e no caminho real equivalentes.
 
 Gate: melhora significativa em ao menos um gargalo real sem regressão nos
-guardrails. Avaliação humana não é necessária para iniciar o shadow; será
-necessária antes de alegar superioridade perceptiva.
+guardrails e em casos não vistos. A primeira capacidade é estreita; a ontologia
+`WAIT/BACKCHANNEL/SPEAK/STOP/DELEGATE/CANCEL/ROLLBACK` continua sendo o
+contrato de longo prazo, não a saída obrigatória do primeiro checkpoint.
 
 ## Fase 5 — calibração humana
 
-Só vira caminho crítico quando a fábrica e a vertical local estiverem maduras.
-Conversas cegas de 5–10 minutos medem naturalidade, conforto, sotaque,
-previsibilidade, confiança, double-talk e cauda física da sala.
+Há duas atividades diferentes:
+
+1. **calibração pequena de dados/rótulos**, entre M4a e M4b, para pausas,
+   backchannels, interrupções e retomadas;
+2. **avaliação humana de produto**, que só vira caminho crítico quando a
+   fábrica e a vertical local estiverem maduras.
+
+Conversas cegas de produto de 5–10 minutos medem naturalidade, conforto,
+sotaque, previsibilidade, confiança, double-talk e cauda física da sala.
 
 O objetivo não é construir primeiro uma base humana perfeita. É medir a
 distância entre proxies e pessoas, escolher entre finalistas maduros e descobrir
@@ -168,8 +230,12 @@ nenhum turno da mesma pessoa contado como participante independente.
 
 ## Fase 6 — adaptação nativa de áudio
 
-Só começa se houver evidência de que a cascata atingiu um teto em prosódia,
-sobreposição ou timing.
+Um adaptador de referência pode desafiar o contrato logo após o
+`training-trace-v1`, desde que responda uma pergunta concreta e não bloqueie
+M4a. Execução paga em GPU exige orçamento explícito.
+
+Adaptação ou adoção só começa se houver evidência de que a cascata atingiu um
+teto em prosódia, sobreposição ou timing.
 
 Experimentos limitados:
 
@@ -196,19 +262,41 @@ Os dados crescem ao longo de todas as fases:
 Cada versão recebe hash, proveniência, licença/consentimento quando aplicável,
 card de dados e splits por família, gerador e pessoa.
 
-## Ordem dos próximos experimentos
+## Ordem operacional consolidada
 
-| Ordem | Experimento | Valor da informação | Limite |
+| Ordem | Decisão/experimento | Saída necessária | Limite |
 | --- | --- | --- | --- |
-| 1 | Prefinal acústica determinística no WebSocket e Chrome | separa framing/merge de nondeterminismo do ASR e ataca a cauda | 100 observações; gate congelado no EXP-0007 |
-| 2 | Verificador seletivo de slot crítico | testa segurança sem taxar todos os turnos | somente se a causa anterior justificar |
-| 3 | Temporalidade causal | transforma pausa, cross-turn e barge-in em estímulos reais | uma família por ciclo |
-| 4 | Ledger/test-double de efeitos | prova que intenção obsoleta nunca escapa | seis correções atuais |
-| 5 | Repetição + novo holdout | mede caudas e generalização sem otimizar o placar visto | ≥20 observações e pack congelado novo |
-| 6 | Diversidade acústica e TTS aberto | mede vozes, salas, cancelamento e custo no caminho completo | após fechar a vertical limpa |
-| 7 | Modelo em shadow + gate sem rede | testa peso proprietário e direção offline sem autoridade | um treino/candidato por vez |
-| 8 | Sweep nativo full-duplex | mede o teto contra a cascata já madura | ≤2 h GPU/candidato |
-| 9 | Loopback e A/B humano | calibra proxies e escolhe finalistas maduros | após gate de entrada |
+| 1 | EXP-0007: screening de prefinal acústica | causa classificada por caso e repetição | 5 casos × 2 políticas × 2 caminhos × 5 repetições; não é promoção |
+| 2 | Confirmação do vencedor | evidência suficiente para promover/rejeitar | ≥10 repetições por caso crítico; ampliar só se houver sinal |
+| 3 | Ramificação causal | corrigir apenas segurança, trace, confounder ou desbloqueio de treino | timebox pré-declarado; no máximo duas hipóteses comuns, exceção explícita para risco grave |
+| 4 | Baseline experimental versionada | configuração, artefatos, métricas e nível de evidência congelados | não confundir confirmação de desenvolvimento com promoção ampla |
+| 5 | M2.5: kernel/runtime/reflex equivalentes | mesma semântica no evaluator, backend e navegador | migração incremental; STOP físico permanece local |
+| 6 | Trace treinável + efeitos + generalização | `training-trace-v1`, ledger e holdout novo | derivados acústicos fora do formato canônico |
+| 7 | M4a: shadow estreito | ciclo de aprendizado completo sem autoridade | uma capacidade e um candidato por vez |
+| 8 | Calibração humana pequena | corrigir timing/rótulos antes de M4b | não é alegação de preferência de produto |
+| 9 | M4b e próximo PDCA | ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
+
+Depois do item 6, um desafio nativo pode rodar em paralelo para validar
+ontologia/adaptador, desde que exista pergunta decisória. Ele não bloqueia M4a
+ou calibração humana; GPU paga exige autorização.
+
+Depois de M4b, ASR, TTS, diversidade acústica, cérebro local, loopback ou
+backbone nativo entram pela maior falha percebida no relatório, não por ordem
+fixa.
+
+## Trilha paralela de governança
+
+Não bloqueia o EXP-0007 nem M2.5, mas deve fechar antes de aceitar contribuição
+ou alegar reprodução pública independente:
+
+- licença do código escolhida pelo proprietário e avisos/licenças de terceiros;
+- CI público para a suíte determinística;
+- lock transitivo de Python e revisões exatas dos modelos;
+- bundle de evidência compacto com manifest, checksums, comando e ambiente;
+- proteção da branch quando o fluxo por pull request começar.
+
+CI público melhora automação e verificabilidade; reprodução externa só existe
+quando um terceiro executa a campanha de forma independente.
 
 ## Regra de prioridade
 

@@ -68,9 +68,13 @@ Cinco casos:
 Matriz contrabalanceada: 5 casos × 2 políticas × 2 caminhos (WebSocket e
 Chrome) × 5 repetições = **100 observações**.
 
-## Gate antes de executar
+As 100 observações não são 100 conversas independentes: existem somente cinco
+conteúdos principais. A análise deve mostrar consistência por caso e por
+repetição, melhorias e regressões, além do agregado.
 
-Promover o challenger somente se:
+## Gate de screening congelado
+
+Levar o challenger à confirmação somente se:
 
 - valor limpo e horário ruidoso terminarem corretos ou em esclarecimento seguro
   em 100% das repetições Chrome;
@@ -91,10 +95,29 @@ segurança/latência. Nesse caso, a árvore seguinte é:
 - final pronta cedo e voz tardia: investigar commit grace;
 - final→voz acima de 250 ms: investigar TTS.
 
+## Confirmação e promoção
+
+As cinco repetições por célula são screening e não promovem o runtime.
+
+Se o challenger passar:
+
+1. repetir cada caso crítico com pelo menos 10 observações por célula para
+   confirmação de desenvolvimento;
+2. inspecionar distribuição e regressões por caso, não apenas p95 agregado;
+3. reexecutar os seis casos canônicos de correção limpa e ruidosa;
+4. exigir o gate autônomo de promoção definido em
+   [EVALUATION.md](../EVALUATION.md#estatística-de-promoção) antes de alegar
+   generalização acústica.
+
+Uma vitória pode congelar uma baseline experimental versionada após a
+confirmação de desenvolvimento; não autoriza alegação humana nem ampla.
+
 ## Orçamento máximo
 
 - engenharia e testes: 6–9 horas;
-- campanha: 30–45 minutos;
+- screening: 30–45 minutos;
+- confirmação: só existe se o screening passar e recebe orçamento próprio
+  antes da execução;
 - API paga, gravação humana e treinamento: zero;
 - parada: não ampliar modelo ou corpus antes de classificar a causa.
 

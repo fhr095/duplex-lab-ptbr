@@ -12,7 +12,7 @@ contrafactuais, sintetiza variações e propõe novos ataques. O laboratório n�
 aceita a primeira saída como dataset final; mede, encontra lacunas e orienta a
 próxima geração.
 
-## O comando único
+## O comando único da baseline ampla
 
 Depois da preparação inicial:
 
@@ -33,6 +33,10 @@ npm run eval:auto
 8. aplicação real no Chrome do Windows por 30 s;
 9. resposta falada, último quantum de barge-in e cancelamento delegado;
 10. relatório consolidado em `eval/reports/autonomous-latest.json`.
+
+Esse comando preserva a baseline ampla histórica. Ele ainda não orquestra a
+fábrica v0.2 nem o EXP-0007; portanto, “rodar `eval:auto`” não equivale a
+avançar automaticamente o roadmap atual.
 
 O runner abre uma porta livre, força `BRAIN_PROVIDER=local`, verifica no
 `/api/health` que o provider é local e encerra somente o processo que criou. A
@@ -58,23 +62,23 @@ arquivos do ZIP remoto por HTTP Range, preserva a licença e não redistribui o
 corpus. A seleção cobre hesitação, pausa preenchida, ruído, segunda voz,
 sotaques e subcorpora diferentes.
 
-## Próximo loop: fábrica v0.2
+## Estado da fábrica e próximo loop
 
-O ciclo autônomo será ampliado sem tornar uma API parte da regressão:
+A primeira vertical da fábrica v0.2 já foi implementada para correções: 24
+casos, superfícies geradas, oráculos determinísticos, mutações adversariais,
+áudio/ambientes seeded e replay WebSocket/Chrome. Geradores/críticos autônomos
+amplos, multivoz, eco e agrupamento automático continuam pendentes.
 
-1. uma ontologia escolhe os fenômenos e eixos ainda subcobertos;
-2. geradores produzem cenários, timelines e contrafactuais;
-3. críticos independentes rejeitam repetição, artificialidade e oráculos
-   frágeis;
-4. múltiplos TTSs e transformações produzem áudio reproduzível;
-5. o sistema executa os casos em lote e agrupa falhas por causa percebida;
-6. um adversário gera variações direcionadas aos clusters;
-7. casos úteis são congelados com seed, prompt, versão e hash;
-8. regressões seguintes reutilizam os artefatos sem chamada paga.
+O próximo loop não é “ampliar tudo”. Ele segue a
+[ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada):
+executa agora o screening EXP-0007 e só segue sua ramificação se houver sinal
+confirmado. O roadmap, e não este documento de método, define os fechamentos
+posteriores.
 
-Modelos fortes podem gerar ou auditar pequenas amostras difíceis; modelos
-locais/econômicos e transformações determinísticas fornecem volume. O mesmo
-modelo nunca é o único gerador e juiz.
+Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
+modelos locais/econômicos e transformações determinísticas fornecem volume. O
+mesmo modelo nunca é o único gerador e juiz, e nenhum gerador define seu próprio
+oráculo.
 
 ## Métricas e promoção
 
@@ -108,7 +112,7 @@ Na campanha encerrada em 31/07/2026, nesta CPU:
 | ASR sintético Parakeet | WER 4,40%, RTF p50 0,10 |
 | ASR humano Parakeet | WER 38,03%, RTF p50 0,13 |
 | Comparação com `base` | `promote`; WER 52,82% → 38,03% |
-| Chrome | 10/10 execuções, 27/27 gates; primeiro áudio p95 187 ms; PCM→último quantum p95 83,21 ms |
+| Chrome | 10/10 execuções, 27/27 gates; final textual injetada→`onplaying` p95 187 ms; PCM→último quantum p95 83,21 ms |
 | Sessão física | 600,082 s; 30.001 frames; zero falsa ativação, gap ou drop |
 | VAD | Silero v6.2 `0,85×1` promovido; energia teve 3 falsos inícios no baseline equivalente |
 | Custo de API | zero |
@@ -131,11 +135,19 @@ Cada iteração segue um contrato curto:
 6. guardar os casos em que o candidato piorou;
 7. transformar cada falha nova reproduzível em cenário de regressão.
 
+Depois do EXP-0007, uma correção na cascata só entra no caminho crítico se
+evitar risco, preservar a fidelidade do trace, remover um confounder de
+comparação ou desbloquear M4a. Cada ramificação declara timebox e regra de
+parada; duas hipóteses são o orçamento comum, com exceção explícita para falha
+grave.
+
 O maior gargalo automatizado conhecido é a correção: fim de fala até nova voz
-teve p95 de 1.746 ms, enquanto a resposta simples ficou em 187 ms. A fábrica
-deve primeiro ampliar essa família e testar se o padrão persiste. Confirmado o
-cluster, a hipótese é verificação seletiva, não uma segunda passagem
-indiscriminada:
+teve p95 de 1.746 ms, enquanto o harness textual simples marcou 187 ms de fim
+sintético até `onplaying`. Essas métricas têm caminhos diferentes e não são
+uma comparação de produto. O EXP-0007 primeiro classifica se framing/merge,
+nondeterminismo do decoder, commit grace ou TTS explica a cauda. Somente se o
+decoder for a causa, a hipótese seguinte é verificação seletiva, não uma segunda
+passagem indiscriminada:
 
 ```text
 tiny → parcial e sinal de intenção
@@ -143,8 +155,9 @@ Parakeet → final rápida
 verificador mais forte → apenas slot crítico, baixa confiança ou efeito
 ```
 
-TTS aberto, cérebro local e modelos de interação entram em torneios autônomos
-antes de levar finalistas para loopback acústico e A/B humano.
+TTS aberto, cérebro local e modelos nativos entram depois pelo maior gargalo
+medido. O primeiro modelo de interação entra antes como M4a estreito, em shadow
+e sem alegação de generalização.
 
 ## Onde humanos continuam indispensáveis
 
@@ -153,9 +166,10 @@ backchannels, percepção de eco ou vontade de continuar conversando. Também n�
 mede a cauda acústica que sai fisicamente pelo alto-falante.
 
 Portanto, gravações do dono do projeto não são necessárias nem são o próximo
-bloqueador. Pessoas entram como caminho crítico quando sessões e tarefas já
-forem robustas sob grande diversidade gerada, novas campanhas encontrarem
-principalmente caudas conhecidas e existirem finalistas maduros que só possam
-ser separados por percepção. Uma bateria humana então calibra sotaque,
-linguagem natural, TTS e eco; suas descobertas voltam à automação como novas
-famílias congeladas.
+bloqueador. Uma amostra humana pequena calibra timing e rótulos depois de M4a e
+antes de M4b; ela não promove qualidade de produto. Pessoas entram como caminho
+crítico para preferência quando sessões e tarefas já forem robustas sob grande
+diversidade, novas campanhas encontrarem principalmente caudas conhecidas e
+existirem finalistas maduros que só possam ser separados por percepção. Uma
+bateria humana então calibra sotaque, linguagem natural, TTS e eco; suas
+descobertas voltam à automação como novas famílias congeladas.

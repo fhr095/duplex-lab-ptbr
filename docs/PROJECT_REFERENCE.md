@@ -1,6 +1,7 @@
 # Referência macro do projeto
 
-Status: **referência canônica — 31/07/2026**
+Status: **referência canônica — consolidada em 31/07/2026 após auditoria
+independente e contranálise**
 
 ## Tese
 
@@ -85,7 +86,8 @@ histórica:
 
 - 163/163 testes e 20/20 expectativas de política;
 - 10/10 execuções no Chrome, com 27/27 gates em cada;
-- primeiro áudio simples p95 de 187 ms;
+- final textual injetada→`HTMLAudioElement.onplaying` p95 de 187 ms; exclui
+  microfone, VAD, ASR e cauda física da sala;
 - interrupção PCM até último quantum renderizado p95 de 83,21 ms;
 - retomada após backchannel p95 de 282,1 ms;
 - sessão física de 600,082 s e 30.001 frames, sem falso início, gap ou drop;
@@ -98,9 +100,10 @@ Isso prova a fundação full-duplex modular no escopo medido naquela campanha.
 ### A fundação M2 existe e encontrou o próximo gargalo
 
 A fábrica v0.2 executou uma vertical completa de autocorreções. O build canônico
-`f9be3098` contém 24 casos, matou 288/288 mutantes de oráculo e cobriu 85,7% dos
-pares de fatores. Os 12 WAVs e 12 cenas acústicas estão vinculados às execuções
-por hash; evaluator, runtime, artefatos e telemetria de custo passaram todas as
+`f9be3098` contém 24 casos, rejeitou 288/288 corrupções de observação pelos
+oráculos — 12 operadores aplicados aos 24 casos — e cobriu 85,7% dos pares de
+fatores. Os 12 WAVs e 12 cenas acústicas estão vinculados às execuções por
+hash; evaluator, runtime, artefatos e telemetria de custo passaram todas as
 provas de integridade.
 
 Resultados ponta a ponta:
@@ -199,9 +202,12 @@ uma invariável verificável.
 
 ## Escada de maturidade
 
-### M0 — contratos e relógio
+### M0 — contratos de avaliação e relógio virtual
 
-Filas, eventos, ações, cancelamento e métricas determinísticas. **Concluído.**
+Filas, eventos, ações, cancelamento e métricas determinísticas.
+**Concluído no evaluator.** A equivalência entre a política avaliada e a
+combinação realmente executada no navegador/backend pertence ao fechamento
+M2.5; não deve ser inferida apenas da promoção histórica de M0.
 
 ### M1 — vertical modular full-duplex
 
@@ -214,21 +220,49 @@ Fábrica por IA, centenas e depois milhares de variações, falhas agrupadas e
 reincorporadas como regressões. **Fundação implementada; primeira vertical
 executada; escala e promoção do runtime pendentes.**
 
+### M2.5 — validade experimental do runtime
+
+Unificar a semântica de decisão hoje distribuída entre evaluator, backend e
+navegador. O alvo é separar:
+
+- `InteractionKernel`: decisão pura e reproduzível;
+- `InteractionRuntime`: relógios, filas, lifecycle e efeitos;
+- `LocalAudioReflex`: pausa/STOP físico imediato próximo ao Web Audio.
+
+Evaluator e experiência real devem usar o mesmo kernel. Um
+`training-trace-v1` separado registra contexto incremental, relógios,
+decisões propostas/aceitas/observadas e proveniência de rótulos.
+**Planejado; é o próximo fechamento estrutural depois do EXP-0007 e de sua
+ramificação causal limitada.**
+
 ### M3 — qualidade modular local
 
 Melhorar correções, semântica, TTS aberto, sobreposição e execução offline sem
-regredir o full-duplex.
+regredir o full-duplex. É uma trilha contínua, não um bloco que precisa ser
+“concluído” antes de M4a: antes do runtime comum, só falhas causais que afetem
+segurança, trace, comparação ou aprendizado entram no caminho crítico.
 
-### M4 — primeiro peso proprietário de interação
+### M4a — prova da infraestrutura de aprendizado
 
-Treinar um modelo pequeno sobre os traces e ações atuais; rodar em shadow contra
-a política determinística; promover somente por ganho medido.
+Fechar `dados → treino → checkpoint → inferência online → trace → replay`
+com uma capacidade estreita em shadow mode. Pode usar poucos casos e até
+superajustar; não recebe autoridade nem sustenta alegação de generalização.
 
-### M5 — calibração humana
+### M4b — primeiro peso comportamental comparável
 
-Quando os erros estruturais estiverem raros, executar conversas cegas com
-pessoas reais para naturalidade, conforto, sotaque, confiança e cauda acústica.
-Falhas reais voltam para a fábrica como novas famílias de casos.
+Treinar uma capacidade estreita sobre famílias separadas, medir em holdout
+independente, calibrar rótulos sociais/temporais com uma amostra humana pequena
+e comparar contra a baseline determinística. Autoridade só entra para a
+capacidade que vencer seus gates; efeitos externos continuam protegidos por
+regras determinísticas.
+
+### M5 — calibração e avaliação humana
+
+Uma calibração pequena de timing e rótulos entra entre M4a e M4b para impedir
+que regras e dados sintéticos definam sozinhos o comportamento social desejado.
+Ela não é uma avaliação de produto. Quando os erros estruturais estiverem
+raros, conversas cegas maiores medem naturalidade, conforto, sotaque, confiança
+e cauda acústica. Falhas reais voltam para a fábrica como novas famílias.
 
 ### M6 — adaptação nativa de áudio, se necessária
 
@@ -237,23 +271,23 @@ sobreposição que não seja explicado por ASR, TTS, runtime ou dados.
 
 ## Próximos fechamentos por retorno/esforço
 
-1. **Prefinal acústica determinística:** comparar a política atual com snapshot
-   fixo na pausa, repetindo o mesmo PCM no WebSocket e Chrome; separar
-   framing/merge de nondeterminismo do decoder e atacar a cauda de latência.
-2. **Proteger slots de risco:** testar verificador ASR condicional somente se o
-   experimento anterior provar ganho, sem taxar todo turno nem afrouxar o
-   oráculo.
-3. **Temporalidade e efeitos reais:** encenar pausa/cross-turn causalmente e
-   adicionar ledger/test-double para provar que valores obsoletos não escapam.
-4. **Repetição e generalização:** obter amostra suficiente para caudas e criar
-   um novo holdout congelado que o ciclo ainda não viu.
-5. **Diversidade acústica e TTS local aberto:** só então ampliar vozes, salas,
-   eco e sobreposição e comparar candidatos por primeiro PCM, cancelamento,
-   CPU, memória e adequação conversacional.
-6. **Modelo de interação em shadow e modo sem rede:** aprender as ações atuais
-   sem autoridade e validar o caminho offline sob os mesmos gates.
-7. **Torneio nativo limitado:** medir referências full-duplex somente quando a
-   pergunta experimental estiver clara.
+A ordem executável existe em um único lugar:
+[Roadmap — ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada).
+Esta referência preserva apenas a lógica macro:
+
+1. classificar a causa medida pelo EXP-0007 e confirmar qualquer vitória;
+2. permitir somente uma ramificação causal limitada que afete segurança,
+   fidelidade do trace ou validade da comparação;
+3. congelar a cascata como baseline versionada;
+4. fechar M2.5 com kernel comum, trace treinável, ledger e holdout novo;
+5. provar M4a com uma capacidade estreita e sem autoridade;
+6. desafiar contrato/evaluator com referência nativa apenas quando houver uma
+   pergunta experimental concreta;
+7. calibrar rótulos com humanos antes de M4b e promover somente ganhos
+   percebidos sob os gates.
+
+Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo
+medido, não por uma fase presumida.
 
 ## Gate para envolver humanos como caminho crítico
 
@@ -290,6 +324,11 @@ Este documento é a referência macro canônica. Os demais detalham partes dela:
 - [Sistema de avaliação](EVALUATION.md): dados, métricas e gates;
 - [Ciclo autônomo](AUTONOMOUS_LOOP.md): execução dos PDCAs;
 - [Roadmap](ROADMAP.md): ordem de decisões;
+- [Decisão runtime/aprendizado](DECISION_RUNTIME_LEARNING_SEQUENCE.md):
+  racional consolidado e alternativas;
+- [Trace de treinamento](TRAINING_TRACE_V1.md): contrato causal para shadow e
+  aprendizado;
 - [Experimentos](experiments/): evidências e promoções;
-- [Pré-análise original](../../opiniao_chatgpt_sobre_conversacional.md): fonte
-  histórica da tese, não estado operacional do projeto.
+- pré-análise original `opiniao_chatgpt_sobre_conversacional.md`, mantida
+  fora do repositório: fonte histórica da tese, não estado operacional do
+  projeto.

@@ -1,8 +1,10 @@
 # Panorama de modelos abertos — 30/07/2026
 
-Status: **snapshot técnico de candidatos**. A ordem operacional vigente está na
-[referência macro](../PROJECT_REFERENCE.md); em 31/07/2026, a fábrica autônoma
-de avaliações passou à frente de coleta humana e de novos backbones.
+Status: **snapshot técnico de candidatos**. A lista preserva a evidência
+consultada naquela data; sua ordem de investimento foi superada pela
+[decisão consolidada](../DECISION_RUNTIME_LEARNING_SEQUENCE.md). O
+[roadmap](../ROADMAP.md#ordem-operacional-consolidada) é a única ordem
+executável.
 
 ## Conclusão executiva
 
@@ -72,6 +74,9 @@ As ideias da pré-análise são boas, mas alguns itens precisam de qualificaçã
   devem ser comparados diretamente fora do nosso harness.
 
 ## Decisão recomendada
+
+Esta subseção registra a recomendação em 30/07/2026 e não orienta a fila atual
+quando divergir do roadmap consolidado.
 
 ### Agora
 

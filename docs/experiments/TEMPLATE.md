@@ -14,6 +14,7 @@ Se mudarmos **X**, então **Y** melhora, porque **Z**.
 - pack e hash:
 - hardware:
 - runtime:
+- kernel/política:
 - região/rede:
 - seed:
 
@@ -25,6 +26,8 @@ Descreva o que muda e, explicitamente, o que permanece fixo.
 
 - nome:
 - definição temporal:
+- caminho incluído e excluído:
+- domínio de clock/amostras:
 - direção desejada:
 - tamanho mínimo de efeito:
 
@@ -40,6 +43,7 @@ Descreva o que muda e, explicitamente, o que permanece fixo.
 
 - cenários:
 - repetições:
+- unidades realmente independentes:
 - falantes:
 - condições acústicas:
 - critério de exclusão:
@@ -50,16 +54,26 @@ Descreva o que muda e, explicitamente, o que permanece fixo.
 - GPU:
 - dados:
 - data de parada:
+- hipóteses/ciclos máximos desta ramificação:
 
-## Gate antes de executar
+## Gate de screening antes de executar
 
-Continuar se:
+Qualificar para confirmação se:
 
 Abandonar se:
+
+## Confirmação e nível de evidência
+
+- amostra confirmatória:
+- gate de promoção aplicável:
+- escopo que poderá ser alegado:
+- novo holdout necessário:
 
 ## Resultado
 
 Preencher sem mudar a hipótese ou o gate retrospectivamente.
+Separar resultado por caso/repetição do agregado e registrar qualquer
+informação vista depois do congelamento.
 
 ## Artefatos
 
@@ -68,10 +82,14 @@ Preencher sem mudar a hipótese ou o gate retrospectivamente.
 - relatório:
 - áudio:
 - checkpoint:
+- proveniência de rótulos, quando aplicável:
 
 ## Decisão
 
-`PROMOVER | REPETIR | ABANDONAR | INCONCLUSIVO`
+```text
+QUALIFICAR_CONFIRMAÇÃO | CONGELAR_BASELINE_EXPERIMENTAL | PROMOVER
+REPETIR | ABANDONAR | INCONCLUSIVO
+```
 
 Justificativa:
 

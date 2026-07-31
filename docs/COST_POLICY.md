@@ -11,18 +11,23 @@ Uma IA externa pode participar da criação ou crítica de dados. Sua saída dev
 ser armazenada com proveniência e transformada em artefato reproduzível antes
 de entrar na regressão. O custo ocorre uma vez na geração, não em toda execução.
 
-## Quatro faixas
+## Cinco faixas
 
-| Faixa | Uso | Chamadas pagas | Gate |
+| Faixa | Uso | Custo externo | Gate |
 | --- | --- | ---: | --- |
 | Regressão | testes, cenários, UI e política temporal | 0 | todo commit |
-| Canário | autenticação, protocolo e latência de um provider | 1 | manual e explícito |
-| Benchmark | qualidade semântica em amostra congelada | pequena e limitada | só após gates locais |
-| Geração de dados | novas famílias e auditoria adversarial | limitada e cacheada | apenas quando amplia cobertura |
+| Canário | autenticação, protocolo e latência de um provider | 1 chamada | manual e explícito |
+| Benchmark semântico | qualidade em amostra congelada | pequeno e limitado | só após gates locais |
+| Geração de dados | novas famílias e auditoria adversarial | limitado e cacheado | apenas quando amplia cobertura |
+| Benchmark nativo | desafiar ontologia/evaluator em GPU externa | orçamento fechado | somente após trace v1, com pergunta decisória e autorização |
 
 `npm start`, `npm test`, `npm run eval` e o smoke normal usam o provider local.
 O canário exige `ALLOW_PAID_PROBE=1`. Um modelo Sol exige ainda uma segunda
 autorização e recebe um teto de cinco chamadas por processo.
+
+Preparar um adaptador nativo é trabalho local. Alugar GPU ou executar serviço
+pago nunca é inferido da existência de uma chave de LLM e precisa de orçamento
+e autorização próprios. O experimento não bloqueia M4a.
 
 ## Ordem dos candidatos
 

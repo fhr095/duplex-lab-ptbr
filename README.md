@@ -30,9 +30,11 @@ A primeira vertical local já é funcional de ponta a ponta:
 - o modo padrão faz zero chamadas pagas, mesmo com chave presente.
 
 Na campanha histórica que fechou a M1, o Chrome passou **27/27 gates em 10/10
-execuções**. O p95 foi 187 ms para começar uma resposta simples, 83,21 ms entre
-o início do PCM de interrupção e o último quantum renderizado, e 282,1 ms para
-retomar após um backchannel. Um soak físico de 600,082 s processou 30.001
+execuções**. Em uma entrada textual de automação, o p95 entre o fim sintético
+marcado pelo harness e `HTMLAudioElement.onplaying` foi 187 ms; essa métrica
+não inclui microfone, VAD, ASR nem a cauda física da sala. O p95 foi 83,21 ms
+entre o início do PCM de interrupção e o último quantum renderizado, e 282,1 ms
+para retomar após um backchannel. Um soak físico de 600,082 s processou 30.001
 frames, sem falsa ativação, gap, drop ou erro. Essa evidência continua válida no
 seu escopo; não é o placar da fábrica v0.2.
 
@@ -47,7 +49,8 @@ quando qualquer artefato ou runtime diverge.
 Na campanha canônica de 31/07/2026:
 
 - verificação local separada com **223/223 testes**; fábrica com 24 casos em 12
-  famílias e **288/288 mutantes de oráculo detectados**;
+  famílias e **288/288 corrupções de observação rejeitadas pelos oráculos**
+  (12 operadores aplicados aos 24 casos);
 - 85,7% de cobertura pairwise, 12 WAVs TTS únicos e 12 cenas acústicas;
 - operabilidade PCM→VAD→endpoint→ASR promovida em 12/12 casos limpos e 12/12
   com fala baixa/ruído;
@@ -66,6 +69,11 @@ críticos, segurança sob ruído, efeitos externos ainda sem ledger, temporalida
 ainda parcialmente rotulada, diversidade acústica limitada a uma voz e ausência
 de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
+
+Após a consolidação documental, a suíte corrente possui **224/224 testes**,
+incluindo a consistência de links, exemplos e fonte única do roadmap. Os
+223/223 acima pertencem à execução congelada da campanha v0.2 e não são
+reescritos retrospectivamente.
 
 ## Rodar
 
@@ -178,6 +186,11 @@ npm run eval:asr:compare
 fora dela e retornam assincronamente; eventos internos usam relógio comparável
 e efeitos externos só poderão promover quando houver ledger verificável.
 
+O fechamento M2.5 separará decisão pura (`InteractionKernel`), lifecycle e
+efeitos (`InteractionRuntime`) e o STOP físico imediato no navegador
+(`LocalAudioReflex`). Essa separação ainda não deve ser confundida com
+capacidade implementada.
+
 ## Documentos de decisão
 
 - [Referência macro canônica](docs/PROJECT_REFERENCE.md)
@@ -187,11 +200,13 @@ e efeitos externos só poderão promover quando houver ledger verificável.
 - [Política de custo e independência](docs/COST_POLICY.md)
 - [Ciclo autônomo de evolução](docs/AUTONOMOUS_LOOP.md)
 - [Contrato de traces](docs/TRACE_CONTRACT.md)
+- [Contrato de trace treinável](docs/TRAINING_TRACE_V1.md)
 - [Panorama de modelos em 30/07/2026](docs/research/MODEL_LANDSCAPE_2026-07-30.md)
 - [Roadmap por gates](docs/ROADMAP.md)
+- [Decisão consolidada de runtime e aprendizado](docs/DECISION_RUNTIME_LEARNING_SEQUENCE.md)
 - [Template de experimento](docs/experiments/TEMPLATE.md)
 - [EXP-0000 — baseline concluída](docs/experiments/EXP-0000-policy-baseline.md)
-- [EXP-0001 — próximo trace acústico](docs/experiments/EXP-0001-real-audio-trace.md)
+- [EXP-0001 — plano acústico inicial absorvido por campanhas posteriores](docs/experiments/EXP-0001-real-audio-trace.md)
 - [EXP-0002 — baseline autônoma concluída](docs/experiments/EXP-0002-autonomous-baseline.md)
 - [EXP-0003 — vertical PCM + Parakeet](docs/experiments/EXP-0003-parakeet-full-duplex-vertical.md)
 - [EXP-0004 — interrupção e tarefas](docs/experiments/EXP-0004-interruption-and-background-task.md)
@@ -201,18 +216,13 @@ e efeitos externos só poderão promover quando houver ledger verificável.
 
 ## Próximo fechamento
 
-A mecânica local e a fundação da fábrica estão fechadas o bastante para ampliar
-qualidade sem usar pessoas como depuradores de problemas básicos:
-
-1. executar o A/B de prefinal acústica determinística com o mesmo PCM no
-   WebSocket e no Chrome, antes de trocar modelo ou afrouxar oráculos;
-2. adicionar verificação ASR seletiva apenas se o experimento provar erro do
-   decoder em ações de risco;
-3. transformar pausa/cross-turn em estímulo causal e instrumentar um ledger de
-   efeitos para provar que valores obsoletos nunca escapam;
-4. repetir estatisticamente e congelar um novo holdout ainda não observado;
-5. ampliar vozes, salas e condições acústicas; envolver humanos quando os erros
-   restantes forem principalmente perceptivos, sociais ou físicos.
+A mecânica local e a fundação da fábrica estão fechadas o bastante para seguir
+sem usar pessoas como depuradores de problemas básicos. A ordem executável
+existe somente no
+[roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada):
+o próximo passo é o screening do EXP-0007; qualquer sinal vencedor precisa de
+confirmação antes da ramificação causal e do fechamento estrutural M2.5.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
-substituem a cascata quando vencerem estes mesmos gates em PT-BR.
+entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só
+substituem a cascata quando vencerem os mesmos gates em PT-BR.

@@ -73,7 +73,7 @@ Dez execuções completas no Chrome do Windows passaram todos os 27 gates:
 
 | Métrica | p50 | p95 |
 | --- | ---: | ---: |
-| Primeiro áudio de resposta simples | 123 ms | 187 ms |
+| Final textual injetada → `HTMLAudioElement.onplaying` | 123 ms | 187 ms |
 | Início de PCM de interrupção → último quantum renderizado | 74,75 ms | 83,21 ms |
 | Comando de parada | 7 ms | 18 ms |
 | Fim de backchannel → retomada | 272,6 ms | 282,1 ms |
@@ -83,6 +83,9 @@ Dez execuções completas no Chrome do Windows passaram todos os 27 gates:
 Cada repetição exigiu captura física, interrupção fechada, correção, delegação,
 cancelamento, ausência de auto-interrupção e recuperação após queda forçada do
 WebSocket.
+
+Os 187 ms são uma métrica operacional do harness textual; não incluem
+microfone, VAD, ASR nem cauda física da sala.
 
 ## PDCA 5 — soak final de 10 minutos
 
