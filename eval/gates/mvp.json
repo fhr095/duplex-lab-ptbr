@@ -1,0 +1,35 @@
+{
+  "id": "mvp-policy-gate-v0.1",
+  "requiredPassRate": 1,
+  "maxFailedExpectations": 0,
+  "metricLimits": {
+    "response_start_latency_ms": {
+      "stat": "p95",
+      "max": 350
+    },
+    "stop_decision_latency_ms": {
+      "stat": "p95",
+      "max": 150
+    },
+    "backchannel_latency_ms": {
+      "stat": "p95",
+      "max": 200
+    },
+    "delegation_latency_ms": {
+      "stat": "p95",
+      "max": 100
+    },
+    "task_cancel_latency_ms": {
+      "stat": "p95",
+      "max": 50
+    },
+    "rollback_latency_ms": {
+      "stat": "p95",
+      "max": 50
+    },
+    "task_result_reentry_latency_ms": {
+      "stat": "p95",
+      "max": 200
+    }
+  }
+}

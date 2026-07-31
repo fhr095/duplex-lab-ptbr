@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "id": "live-audio-websocket-ptbr-v1",
+  "locale": "pt-BR",
+  "description": "Campanha ponta a ponta no WebSocket PCM local. TTS sintético mede regressão controlada; CORAA mede fala humana sem ser misturado ao sintético.",
+  "sources": {
+    "synthetic": "Microsoft Maria Desktop via Windows System Speech",
+    "human": {
+      "name": "CORAA ASR v1.1",
+      "license": "CC BY-NC-ND 4.0",
+      "selection": "Subconjunto local do pack coraa-ptbr-test-12-v1"
+    }
+  },
+  "gate": {
+    "id": "live-audio-user-perception-gate-v1",
+    "maxOnsetP95Ms": 180,
+    "maxFirstUsefulPartialP95Ms": 2500,
+    "maxEndpointP95Ms": 1300,
+    "maxFinalAfterEndpointP95Ms": 2000,
+    "maxSyntheticCorpusWer": 0.25,
+    "maxHumanCorpusWer": 0.25,
+    "maxPerCaseWer": 0.5,
+    "minCriticalPhraseRecall": 1,
+    "maxLostFrames": 0,
+    "maxBufferedAmountBytes": 16384,
+    "maxRejectedFrames": 0,
+    "maxProtocolErrors": 0,
+    "requireSilenceControl": true
+  },
+  "cases": [
+    {
+      "id": "silencio-controle",
+      "cohort": "control",
+      "evidence": "synthetic-silence",
+      "category": "false-activation",
+      "generatedSilenceMs": 2200,
+      "expectSpeech": false
+    },
+    {
+      "id": "transiente-fisico-controle-1",
+      "cohort": "control",
+      "evidence": "chrome-physical-negative-parakeet-whisper-empty",
+      "category": "assistant-output-residual-or-noise",
+      "audio": "eval/reports/browser-10min-aec-all-recovery--audio-0.wav",
+      "expectSpeech": false
+    },
+    {
+      "id": "transiente-fisico-controle-2",
+      "cohort": "control",
+      "evidence": "chrome-physical-negative-parakeet-whisper-empty",
+      "category": "assistant-output-residual-or-noise",
+      "audio": "eval/reports/browser-10min-aec-all-recovery--audio-1.wav",
+      "expectSpeech": false
+    },
+    {
+      "id": "transiente-fisico-silero-controle",
+      "cohort": "control",
+      "evidence": "chrome-physical-negative-parakeet-whisper-empty",
+      "category": "short-low-energy-transient",
+      "audio": "eval/reports/browser-silero-control-probe--audio-0.wav",
+      "expectSpeech": false
+    },
+    {
+      "id": "saudacao-tts",
+      "cohort": "synthetic",
+      "evidence": "windows-tts",
+      "category": "greeting",
+      "audio": "eval/generated/asr/audio/saudacao--rate-1.wav",
+      "expected": "Oi, tudo bem?",
+      "requiredPhrases": ["oi", "tudo bem"]
+    },
+    {
+      "id": "hesitacao-tts",
+      "cohort": "synthetic",
+      "evidence": "windows-tts",
+      "category": "hesitation",
+      "audio": "eval/generated/asr/audio/hesitacao--rate-1.wav",
+      "expected": "Eu queria, ahn, mudar a data da reunião.",
+      "requiredPhrases": ["mudar a data", "reunião"]
+    },
+    {
+      "id": "correcao-tts",
+      "cohort": "synthetic",
+      "evidence": "windows-tts",
+      "category": "correction",
+      "audio": "eval/generated/asr/audio/correcao--rate-1.wav",
+      "expected": "Marque para sexta. Não, na verdade, para domingo.",
+      "requiredPhrases": ["sexta", "não", "domingo"]
+    },
+    {
+      "id": "delegacao-tts",
+      "cohort": "synthetic",
+      "evidence": "windows-tts",
+      "category": "delegation",
+      "audio": "eval/generated/asr/audio/delegacao--rate-1.wav",
+      "expected": "Pesquise e compare as três melhores opções para mim.",
+      "requiredPhrases": ["pesquise", "compare", "três"]
+    },
+    {
+      "id": "numeros-tts",
+      "cohort": "synthetic",
+      "evidence": "windows-tts",
+      "category": "semantic-detail",
+      "audio": "eval/generated/asr/audio/numeros--rate-1.wav",
+      "expected": "Mude a reunião do dia quinze para o dia vinte e três.",
+      "requiredPhrases": ["quinze", "vinte e três"]
+    },
+    {
+      "id": "nao-curto-baixo",
+      "cohort": "synthetic",
+      "evidence": "windows-tts-scaled",
+      "category": "short-soft-command",
+      "audio": "eval/generated/asr/audio/nao-curto--rate-1.wav",
+      "gain": 0.25,
+      "expected": "Não.",
+      "requiredPhrases": ["não"]
+    },
+    {
+      "id": "espera-curto-baixo",
+      "cohort": "synthetic",
+      "evidence": "windows-tts-scaled",
+      "category": "short-soft-command",
+      "audio": "eval/generated/asr/audio/espera-curto--rate-1.wav",
+      "gain": 0.25,
+      "expected": "Espera.",
+      "requiredPhrases": ["espera"]
+    },
+    {
+      "id": "muda-terca-baixo",
+      "cohort": "synthetic",
+      "evidence": "windows-tts-scaled",
+      "category": "short-soft-correction",
+      "audio": "eval/generated/asr/audio/muda-terca--rate-1.wav",
+      "gain": 0.25,
+      "expected": "Muda para terça.",
+      "requiredPhrases": ["muda", "terça"]
+    },
+    {
+      "id": "coraa-hesitacao",
+      "cohort": "human",
+      "evidence": "coraa-human-speech",
+      "category": "hesitation",
+      "audio": "eval/generated/coraa/audio/test--CORAL--15752_CO_bfammn12.wav",
+      "expected": "e é igual eu já te falei",
+      "metadata": {
+        "dataset": "C-ORAL-BRASIL I",
+        "accent": "Minas Gerais",
+        "speechStyle": "Spontaneous Speech"
+      }
+    },
+    {
+      "id": "coraa-ruido",
+      "cohort": "human",
+      "evidence": "coraa-human-speech",
+      "category": "noise",
+      "audio": "eval/generated/coraa/audio/test--sp--48796_sp_.wav",
+      "expected": "me vê dois pastel e um chopes",
+      "metadata": {
+        "dataset": "SP2010",
+        "accent": "São Paulo (cap.)",
+        "speechStyle": "Spontaneous Speech"
+      }
+    },
+    {
+      "id": "coraa-espontanea",
+      "cohort": "human",
+      "evidence": "coraa-human-speech",
+      "category": "spontaneous-clean",
+      "audio": "eval/generated/coraa/audio/test--Ted_part1--aETOz3IGfG0-0121.wav",
+      "expected": "de que de que a sociedade passasse a respeitar ele passasse a respeitar o jeito que",
+      "metadata": {
+        "dataset": "TEDx Talks",
+        "accent": "Misc.",
+        "speechStyle": "Prepared Speech"
+      }
+    }
+  ]
+}

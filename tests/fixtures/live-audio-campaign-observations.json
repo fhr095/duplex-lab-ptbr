@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "pack": {
+    "id": "live-audio-test-fixture",
+    "gate": {
+      "id": "live-audio-test-gate",
+      "maxOnsetP95Ms": 180,
+      "maxFirstUsefulPartialP95Ms": 2500,
+      "maxEndpointP95Ms": 1300,
+      "maxFinalAfterEndpointP95Ms": 2000,
+      "maxSyntheticCorpusWer": 0.25,
+      "maxHumanCorpusWer": 0.25,
+      "maxPerCaseWer": 0.5,
+      "minCriticalPhraseRecall": 1,
+      "maxLostFrames": 0,
+      "maxBufferedAmountBytes": 16384,
+      "maxRejectedFrames": 0,
+      "maxProtocolErrors": 0,
+      "requireSilenceControl": true
+    }
+  },
+  "definitions": {
+    "synthetic": {
+      "id": "saudacao",
+      "cohort": "synthetic",
+      "evidence": "windows-tts",
+      "category": "greeting",
+      "expected": "Oi, tudo bem?",
+      "requiredPhrases": ["oi", "tudo bem"]
+    },
+    "human": {
+      "id": "humano",
+      "cohort": "human",
+      "evidence": "coraa-human-speech",
+      "category": "noise",
+      "expected": "me vê dois pastel e um chopes"
+    },
+    "control": {
+      "id": "silencio",
+      "cohort": "control",
+      "evidence": "synthetic-silence",
+      "category": "false-activation",
+      "expectSpeech": false
+    }
+  },
+  "observations": {
+    "synthetic": {
+      "realtime": true,
+      "frameMs": 20,
+      "streamStartedAtMs": 100,
+      "audioDurationMs": 1100,
+      "activeStartOffsetMs": 40,
+      "activeEndOffsetMs": 1000,
+      "intendedFrames": 100,
+      "sentFrames": 100,
+      "maxBufferedAmountBytes": 0,
+      "audioFlush": {
+        "watermark": {
+          "expectedSequence": 99,
+          "expectedSampleEnd": 32000,
+          "expectedFullWindowEnd": 31744,
+          "receivedSequence": 99,
+          "receivedSampleEnd": 32000
+        },
+        "vadControl": {
+          "health": { "engine": "adaptive-energy-vad" },
+          "telemetry": null
+        },
+        "vadShadow": {
+          "health": { "state": "disabled" },
+          "telemetry": null
+        },
+        "pipeline": {
+          "overflowCount": 0,
+          "processingErrorCount": 0,
+          "lastProcessedSequence": 99,
+          "lastProcessedSampleEnd": 32000,
+          "queueDelayMs": { "p99": 1 }
+        }
+      },
+      "events": [
+        {
+          "type": "user.speech.started",
+          "turnId": "turn-1",
+          "receivedAtMs": 180
+        },
+        {
+          "type": "transcript.partial",
+          "turnId": "turn-1",
+          "text": "E...",
+          "receivedAtMs": 500
+        },
+        {
+          "type": "transcript.partial",
+          "turnId": "turn-1",
+          "text": "Oi, tudo",
+          "receivedAtMs": 900
+        },
+        {
+          "type": "endpoint.committed",
+          "turnId": "turn-1",
+          "receivedAtMs": 1650
+        },
+        {
+          "type": "transcript.final",
+          "turnId": "turn-1",
+          "text": "Oi, tudo bem.",
+          "receivedAtMs": 1850
+        }
+      ]
+    },
+    "human": {
+      "realtime": true,
+      "frameMs": 20,
+      "streamStartedAtMs": 2000,
+      "audioDurationMs": 2100,
+      "activeStartOffsetMs": 0,
+      "activeEndOffsetMs": 2000,
+      "intendedFrames": 190,
+      "sentFrames": 190,
+      "maxBufferedAmountBytes": 0,
+      "audioFlush": {
+        "watermark": {
+          "expectedSequence": 189,
+          "expectedSampleEnd": 60800,
+          "expectedFullWindowEnd": 60416,
+          "receivedSequence": 189,
+          "receivedSampleEnd": 60800
+        },
+        "vadControl": {
+          "health": { "engine": "adaptive-energy-vad" },
+          "telemetry": null
+        },
+        "vadShadow": {
+          "health": { "state": "disabled" },
+          "telemetry": null
+        },
+        "pipeline": {
+          "overflowCount": 0,
+          "processingErrorCount": 0,
+          "lastProcessedSequence": 189,
+          "lastProcessedSampleEnd": 60800,
+          "queueDelayMs": { "p99": 1 }
+        }
+      },
+      "events": [
+        {
+          "type": "user.speech.started",
+          "turnId": "turn-1",
+          "receivedAtMs": 2040
+        },
+        {
+          "type": "transcript.partial",
+          "turnId": "turn-1",
+          "text": "Me vi",
+          "receivedAtMs": 2700
+        },
+        {
+          "type": "endpoint.committed",
+          "turnId": "turn-1",
+          "receivedAtMs": 4550
+        },
+        {
+          "type": "transcript.final",
+          "turnId": "turn-1",
+          "text": "Me vi das pastéis e nos shopps",
+          "receivedAtMs": 5000
+        }
+      ]
+    },
+    "control": {
+      "realtime": true,
+      "frameMs": 20,
+      "streamStartedAtMs": 6000,
+      "audioDurationMs": 2200,
+      "activeStartOffsetMs": null,
+      "activeEndOffsetMs": null,
+      "intendedFrames": 110,
+      "sentFrames": 110,
+      "maxBufferedAmountBytes": 0,
+      "audioFlush": {
+        "watermark": {
+          "expectedSequence": 109,
+          "expectedSampleEnd": 35200,
+          "expectedFullWindowEnd": 34816,
+          "receivedSequence": 109,
+          "receivedSampleEnd": 35200
+        },
+        "vadControl": {
+          "health": { "engine": "adaptive-energy-vad" },
+          "telemetry": null
+        },
+        "vadShadow": {
+          "health": { "state": "disabled" },
+          "telemetry": null
+        },
+        "pipeline": {
+          "overflowCount": 0,
+          "processingErrorCount": 0,
+          "lastProcessedSequence": 109,
+          "lastProcessedSampleEnd": 35200,
+          "queueDelayMs": { "p99": 1 }
+        }
+      },
+      "events": []
+    }
+  }
+}

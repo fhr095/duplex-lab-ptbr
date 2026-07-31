@@ -1,0 +1,392 @@
+{
+  "schemaVersion": 1,
+  "id": "mvp-ptbr-v0.1",
+  "locale": "pt-BR",
+  "frozen": true,
+  "scenarios": [
+    {
+      "id": "turno-simples",
+      "category": "turn-taking",
+      "description": "Responde rapidamente depois de uma fala simples concluída.",
+      "timeline": [
+        {
+          "atMs": 0,
+          "type": "user.speech.started"
+        },
+        {
+          "atMs": 250,
+          "type": "user.transcript.final",
+          "payload": {
+            "text": "Oi, tudo bem?"
+          }
+        },
+        {
+          "atMs": 800,
+          "type": "user.speech.ended"
+        }
+      ],
+      "expectations": [
+        {
+          "id": "resposta-dentro-da-meta",
+          "kind": "latency",
+          "from": "user.speech.ended",
+          "to": "assistant.speech.started",
+          "maxMs": 500,
+          "metric": "response_start_latency_ms"
+        },
+        {
+          "id": "resposta-direta",
+          "kind": "payload",
+          "event": "assistant.speech.started",
+          "path": "kind",
+          "equals": "direct"
+        }
+      ]
+    },
+    {
+      "id": "hesitacao-nao-e-fim",
+      "category": "pause-and-backchannel",
+      "description": "Uma pausa com hesitação recebe confirmação curta, mas não é tratada como fim de turno.",
+      "timeline": [
+        {
+          "atMs": 0,
+          "type": "user.speech.started"
+        },
+        {
+          "atMs": 700,
+          "type": "user.speech.paused"
+        },
+        {
+          "atMs": 760,
+          "type": "user.hesitation"
+        },
+        {
+          "atMs": 1000,
+          "type": "user.speech.resumed"
+        },
+        {
+          "atMs": 1500,
+          "type": "user.transcript.final",
+          "payload": {
+            "text": "Eu queria, ahn, mudar a data da reunião."
+          }
+        },
+        {
+          "atMs": 1800,
+          "type": "user.speech.ended"
+        }
+      ],
+      "expectations": [
+        {
+          "id": "backchannel-curto",
+          "kind": "required",
+          "event": "assistant.backchannel",
+          "after": "user.speech.paused",
+          "withinMs": 250,
+          "metric": "backchannel_latency_ms"
+        },
+        {
+          "id": "nao-corta-na-pausa",
+          "kind": "forbidden",
+          "event": "assistant.speech.started",
+          "after": "user.speech.paused",
+          "until": "user.speech.ended"
+        },
+        {
+          "id": "responde-ao-fim-real",
+          "kind": "latency",
+          "from": "user.speech.ended",
+          "to": "assistant.speech.started",
+          "maxMs": 500,
+          "metric": "response_start_latency_ms"
+        }
+      ]
+    },
+    {
+      "id": "interrupcao-barge-in",
+      "category": "interruption",
+      "description": "Para a própria fala quando o usuário começa uma interrupção real.",
+      "timeline": [
+        {
+          "atMs": 0,
+          "type": "assistant.speech.started",
+          "payload": {
+            "durationMs": 5000,
+            "kind": "seed"
+          }
+        },
+        {
+          "atMs": 1000,
+          "type": "user.speech.started"
+        },
+        {
+          "atMs": 1200,
+          "type": "user.transcript.final",
+          "payload": {
+            "text": "Espera, eu quis dizer outra coisa."
+          }
+        },
+        {
+          "atMs": 1700,
+          "type": "user.speech.ended"
+        }
+      ],
+      "expectations": [
+        {
+          "id": "para-rapido",
+          "kind": "latency",
+          "from": "user.speech.started",
+          "to": "assistant.speech.stopped",
+          "maxMs": 200,
+          "metric": "stop_decision_latency_ms"
+        },
+        {
+          "id": "ordem-da-interrupcao",
+          "kind": "sequence",
+          "events": [
+            "assistant.speech.started",
+            "user.speech.started",
+            "assistant.speech.stopped"
+          ]
+        },
+        {
+          "id": "recupera-depois-da-interrupcao",
+          "kind": "latency",
+          "from": "user.speech.ended",
+          "to": "assistant.speech.started",
+          "toOccurrence": 1,
+          "maxMs": 500,
+          "metric": "response_start_latency_ms"
+        }
+      ]
+    },
+    {
+      "id": "autocorrecao-com-rollback",
+      "category": "correction",
+      "description": "Mantém apenas a última escolha depois de duas autocorreções.",
+      "timeline": [
+        {
+          "atMs": 0,
+          "type": "user.speech.started"
+        },
+        {
+          "atMs": 400,
+          "type": "user.transcript.final",
+          "payload": {
+            "text": "Marque para sexta."
+          }
+        },
+        {
+          "atMs": 800,
+          "type": "user.correction",
+          "payload": {
+            "previous": "sexta",
+            "current": "sábado"
+          }
+        },
+        {
+          "atMs": 1100,
+          "type": "user.correction",
+          "payload": {
+            "previous": "sábado",
+            "current": "domingo"
+          }
+        },
+        {
+          "atMs": 1700,
+          "type": "user.speech.ended"
+        }
+      ],
+      "expectations": [
+        {
+          "id": "rollback-rapido",
+          "kind": "latency",
+          "from": "user.correction",
+          "to": "state.rollback",
+          "maxMs": 50,
+          "metric": "rollback_latency_ms"
+        },
+        {
+          "id": "valor-final-domingo",
+          "kind": "payload",
+          "event": "state.rollback",
+          "occurrence": 2,
+          "path": "current",
+          "equals": "domingo"
+        },
+        {
+          "id": "nao-delega-estado-provisorio",
+          "kind": "forbidden",
+          "event": "task.delegated"
+        }
+      ]
+    },
+    {
+      "id": "delegacao-e-cancelamento",
+      "category": "delegation",
+      "description": "Delega uma pesquisa, confirma sem bloquear e cancela quando o usuário muda de ideia.",
+      "timeline": [
+        {
+          "atMs": 0,
+          "type": "user.speech.started"
+        },
+        {
+          "atMs": 500,
+          "type": "user.transcript.final",
+          "payload": {
+            "text": "Pesquise e compare as três melhores opções para mim."
+          }
+        },
+        {
+          "atMs": 800,
+          "type": "user.speech.ended"
+        },
+        {
+          "atMs": 1300,
+          "type": "user.speech.started"
+        },
+        {
+          "atMs": 1450,
+          "type": "user.cancelled"
+        },
+        {
+          "atMs": 1550,
+          "type": "user.transcript.final",
+          "payload": {
+            "text": "Deixa para lá."
+          }
+        },
+        {
+          "atMs": 1700,
+          "type": "user.speech.ended"
+        }
+      ],
+      "expectations": [
+        {
+          "id": "delega-cedo",
+          "kind": "latency",
+          "from": "user.speech.ended",
+          "to": "task.delegated",
+          "maxMs": 120,
+          "metric": "delegation_latency_ms"
+        },
+        {
+          "id": "confirma-sem-esperar-tarefa",
+          "kind": "latency",
+          "from": "user.speech.ended",
+          "to": "assistant.speech.started",
+          "maxMs": 450,
+          "metric": "response_start_latency_ms"
+        },
+        {
+          "id": "para-confirmacao-interrompida",
+          "kind": "latency",
+          "from": "user.speech.started",
+          "fromOccurrence": 2,
+          "to": "assistant.speech.stopped",
+          "maxMs": 200,
+          "metric": "stop_decision_latency_ms"
+        },
+        {
+          "id": "cancela-tarefa",
+          "kind": "latency",
+          "from": "user.cancelled",
+          "to": "task.cancelled",
+          "maxMs": 100,
+          "metric": "task_cancel_latency_ms"
+        }
+      ]
+    },
+    {
+      "id": "resultado-assincrono",
+      "category": "delegation",
+      "description": "Reincorpora um resultado assíncrono sem travar o primeiro retorno ao usuário.",
+      "timeline": [
+        {
+          "atMs": 0,
+          "type": "user.speech.started"
+        },
+        {
+          "atMs": 500,
+          "type": "user.transcript.final",
+          "payload": {
+            "text": "Verifique a previsão e compare os dois dias."
+          }
+        },
+        {
+          "atMs": 800,
+          "type": "user.speech.ended"
+        },
+        {
+          "atMs": 2200,
+          "type": "task.result",
+          "payload": {
+            "taskId": "task-1",
+            "summary": "O segundo dia tem menor chance de chuva."
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "id": "primeiro-retorno-rapido",
+          "kind": "latency",
+          "from": "user.speech.ended",
+          "to": "assistant.speech.started",
+          "maxMs": 450,
+          "metric": "response_start_latency_ms"
+        },
+        {
+          "id": "resultado-volta-rapido",
+          "kind": "latency",
+          "from": "task.result",
+          "to": "assistant.speech.started",
+          "maxMs": 200,
+          "metric": "task_result_reentry_latency_ms"
+        },
+        {
+          "id": "fala-contem-resultado",
+          "kind": "payload",
+          "event": "assistant.speech.started",
+          "occurrence": 2,
+          "path": "kind",
+          "equals": "delegated-result"
+        }
+      ]
+    },
+    {
+      "id": "fala-ambiente-nao-direcionada",
+      "category": "robustness",
+      "description": "Ignora fala ambiente explicitamente marcada como não direcionada ao assistente.",
+      "timeline": [
+        {
+          "atMs": 0,
+          "type": "environment.speech.detected",
+          "payload": {
+            "addressedToAssistant": false,
+            "text": "Você viu onde deixaram a chave?"
+          }
+        },
+        {
+          "atMs": 1500,
+          "type": "environment.speech.detected",
+          "payload": {
+            "addressedToAssistant": false,
+            "text": "A televisão está muito alta."
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "id": "nao-responde-ao-ambiente",
+          "kind": "forbidden",
+          "event": "assistant.speech.started"
+        },
+        {
+          "id": "nao-delega-fala-ambiente",
+          "kind": "forbidden",
+          "event": "task.delegated"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+node_modules/
+.python/
+.venv/
+.venv-parakeet/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+eval/generated/
+# Resultados brutos podem ser grandes e conter caminhos específicos da máquina.
+# O agregado canônico pequeno permanece versionado como evidência de referência.
+eval/reports/*
+!eval/reports/eval-factory-campaign-v0.2.json
+coverage/
+tmp/

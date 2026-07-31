@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "live-audio-endpoint-ab-ptbr-v1",
+  "description": "Comparação pareada e contrabalanceada de endpoint/VAD, centrada em tempo fim de fala→final e preservação de correções.",
+  "pack": "eval/scenarios/live-audio-campaign.pt-BR.json",
+  "repetitions": 5,
+  "minRepetitionsPerScenario": 5,
+  "minAggregateSamplesForP95": 20,
+  "minP95TailObservations": 2,
+  "bootstrapIterations": 2000,
+  "server": {
+    "port": 4273,
+    "readyTimeoutMs": 45000,
+    "finalTimeoutMs": 6000,
+    "tailSilenceMs": 1800
+  },
+  "caseIds": [
+    "silencio-controle",
+    "saudacao-tts",
+    "hesitacao-tts",
+    "correcao-tts",
+    "delegacao-tts",
+    "numeros-tts"
+  ],
+  "baselineId": "baseline-520-vad10",
+  "challengerId": "fast-450-vad5",
+  "candidates": [
+    {
+      "id": "baseline-520-vad10",
+      "endpointCompleteMs": 520,
+      "endpointIncompleteMs": 1050,
+      "endpointNoTranscriptMs": 900,
+      "vadPauseFrames": 10,
+      "mergeWindowMs": 1400
+    },
+    {
+      "id": "fast-450-vad5",
+      "endpointCompleteMs": 450,
+      "endpointIncompleteMs": 1050,
+      "endpointNoTranscriptMs": 900,
+      "vadPauseFrames": 5,
+      "mergeWindowMs": 1400
+    }
+  ],
+  "decisionGate": {
+    "minPairedEndpointSamples": 25,
+    "minPairedSpeechEndToFinalSamples": 25,
+    "minMedianEndpointGainMs": 40,
+    "maxMedianSpeechEndToFinalRegressionMs": 50,
+    "maxFinalizationRateDrop": 0,
+    "maxCoherenceRateDrop": 0,
+    "maxCorrectionSuccessRateDrop": 0,
+    "maxRawPrematureRateIncrease": 0,
+    "maxCorpusWerIncrease": 0.02,
+    "maxLostFrames": 0,
+    "maxRejectedFrames": 0,
+    "maxProtocolErrors": 0,
+    "maxBufferedAmountBytes": 16384,
+    "requireAllChallengerFinals": true,
+    "requireAllChallengerCorrectionsCoherent": true
+  }
+}

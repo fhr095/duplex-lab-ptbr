@@ -1,0 +1,6 @@
+{
+  "id": "asr-autonomy-gate-v0.1",
+  "maxCorpusWer": 0.25,
+  "maxP95RealtimeFactor": 1.5,
+  "minLanguageProbability": 0.8
+}

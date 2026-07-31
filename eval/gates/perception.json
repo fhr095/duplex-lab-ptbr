@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "perception-automated-gate-v0.1",
+  "decisionScope": "autonomous-experiment",
+  "minAutomatedPassRate": 0.9,
+  "maxFailedGuardrails": 0,
+  "requiredMetricSamples": {
+    "first_useful_speech_latency_ms": 1,
+    "post_hesitation_useful_speech_latency_ms": 1,
+    "backchannel_perceived_latency_ms": 1,
+    "stop_command_latency_ms": 2,
+    "interruption_recovery_latency_ms": 1,
+    "correction_rollback_latency_ms": 1,
+    "delegation_commit_latency_ms": 1,
+    "delegation_acknowledgment_latency_ms": 1,
+    "task_cancellation_latency_ms": 1,
+    "async_result_recovery_latency_ms": 1,
+    "false_cut_count": 1,
+    "false_activation_count": 1
+  },
+  "metricLimits": {
+    "first_useful_speech_latency_ms": {
+      "stat": "p95",
+      "max": 500
+    },
+    "post_hesitation_useful_speech_latency_ms": {
+      "stat": "p95",
+      "max": 500
+    },
+    "backchannel_perceived_latency_ms": {
+      "stat": "p95",
+      "max": 250
+    },
+    "stop_command_latency_ms": {
+      "stat": "p95",
+      "max": 200
+    },
+    "interruption_recovery_latency_ms": {
+      "stat": "p95",
+      "max": 500
+    },
+    "delegation_commit_latency_ms": {
+      "stat": "p95",
+      "max": 120
+    },
+    "delegation_acknowledgment_latency_ms": {
+      "stat": "p95",
+      "max": 450
+    },
+    "task_cancellation_latency_ms": {
+      "stat": "p95",
+      "max": 100
+    },
+    "async_result_recovery_latency_ms": {
+      "stat": "p95",
+      "max": 200
+    },
+    "false_cut_count": {
+      "stat": "max",
+      "max": 0
+    },
+    "false_activation_count": {
+      "stat": "max",
+      "max": 0
+    }
+  }
+}

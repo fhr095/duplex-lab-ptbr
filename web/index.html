@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Primeiro laboratório mensurável de interação full-duplex em português brasileiro."
+    />
+    <title>Duplex Lab PT-BR</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">VERTICAL 0 · INTERAÇÃO MENSURÁVEL</p>
+          <h1>Duplex Lab <span>PT-BR</span></h1>
+          <p class="lede">
+            Fale naturalmente, interrompa a resposta e acompanhe os eventos que
+            formam a conversa.
+          </p>
+        </div>
+        <div class="status-card">
+          <span class="status-dot" id="statusDot"></span>
+          <div>
+            <small>ESTADO</small>
+            <strong id="status">parado</strong>
+          </div>
+        </div>
+      </header>
+
+      <section class="controls" aria-label="Controles da sessão">
+        <button class="primary" id="startButton">Iniciar microfone</button>
+        <button class="secondary" id="stopButton" disabled>Encerrar</button>
+        <button class="ghost" id="demoButton">
+          Ouvir resposta longa para interromper
+        </button>
+      </section>
+
+      <section class="conversation" aria-live="polite">
+        <article class="turn user-turn">
+          <div class="turn-label">VOCÊ</div>
+          <p id="userText">A transcrição aparecerá aqui.</p>
+        </article>
+        <article class="turn assistant-turn">
+          <div class="turn-label">ASSISTENTE</div>
+          <p id="assistantText">
+            O cérebro é substituível e roda localmente por padrão. Providers
+            externos entram somente em experimentos explicitamente ativados.
+          </p>
+        </article>
+      </section>
+
+      <section class="metrics" aria-label="Métricas da sessão">
+        <article>
+          <span id="responseMetric">—</span>
+          <small>fim da fala → voz</small>
+        </article>
+        <article>
+          <span id="stopMetric">—</span>
+          <small>comando de parada</small>
+        </article>
+        <article>
+          <span id="interruptMetric">0</span>
+          <small>interrupções</small>
+        </article>
+      </section>
+
+      <section class="trace-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">TRACE DA SESSÃO</p>
+            <h2>Relógio conversacional</h2>
+          </div>
+          <button class="text-button" id="clearButton">limpar</button>
+        </div>
+        <ol id="eventLog" class="event-log"></ol>
+      </section>
+
+      <aside class="notice">
+        <strong>Configuração ativa:</strong>
+        cérebro <span id="brainLabel">verificando…</span>; entrada
+        <span id="inputLabel">verificando…</span>; voz provisória do Windows.
+        O microfone continua ativo durante a fala para permitir interrupção.
+        Use fones para reduzir auto-interrupções enquanto o cancelamento de eco
+        é validado no seu dispositivo.
+      </aside>
+    </main>
+
+    <script type="module" src="/app.mjs"></script>
+  </body>
+</html>

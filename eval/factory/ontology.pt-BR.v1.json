@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "interaction-ptbr-v1",
+  "locale": "pt-BR",
+  "purpose": "Avaliar decisões causais percebidas pelo usuário sem permitir que o gerador defina a resposta correta.",
+  "phenomena": {
+    "correction": {
+      "decision": "a última revisão estável substitui versões anteriores",
+      "invariants": [
+        "nenhuma fala principal antes do fim real",
+        "exatamente um commit por turno",
+        "nenhum efeito usa o slot obsoleto",
+        "o assistente confirma o slot final"
+      ]
+    }
+  },
+  "coverage": {
+    "dimensions": {
+      "stimulus.slotType": [
+        "weekday",
+        "time",
+        "amount",
+        "name"
+      ],
+      "stimulus.marker": [
+        "não",
+        "na verdade",
+        "quer dizer",
+        "melhor"
+      ],
+      "stimulus.timingPattern": [
+        "same-turn-continuous",
+        "same-turn-after-pause",
+        "barge-in",
+        "cross-turn"
+      ],
+      "stimulus.effectRisk": [
+        "none",
+        "reversible",
+        "irreversible"
+      ]
+    },
+    "minCases": 24,
+    "minPerValue": 4,
+    "minUniqueTextRatio": 1,
+    "minPairwiseRatio": 0.85
+  },
+  "oracles": [
+    {
+      "ref": "correction-last-value-wins@1",
+      "owner": "deterministic-code",
+      "generatorMayOverride": false
+    }
+  ]
+}

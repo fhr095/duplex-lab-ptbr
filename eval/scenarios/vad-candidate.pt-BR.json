@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "id": "vad-candidate-ptbr-v1",
+  "description": "Triagem offline pareada. CORAA testa capacidade de fala humana em quatro ganhos; clips físicos de autoativação testam especificidade. Não é pack de promoção.",
+  "gates": {
+    "promotionAllowed": false,
+    "reason": "faltam double-talk, usuário físico quieto, eco rotulado e onset anotado"
+  },
+  "cases": [
+    {
+      "id": "coraa-coral-515",
+      "audio": "eval/generated/coraa/audio/test--CORAL--515_CO_bfammn26.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "filled-pause",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-nurc-143276",
+      "audio": "eval/generated/coraa/audio/test--NURC_RE--NURC_RE_EF--NURC_RE_EF_332--143276_nurc_.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "filled-pause",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-sp-48796",
+      "audio": "eval/generated/coraa/audio/test--sp--48796_sp_.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "noise-low-voice",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-sp-47827",
+      "audio": "eval/generated/coraa/audio/test--sp--47827_sp_.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "second-voice",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-ted-0121",
+      "audio": "eval/generated/coraa/audio/test--Ted_part1--aETOz3IGfG0-0121.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "prepared",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-alip-80375",
+      "audio": "eval/generated/coraa/audio/test--alip--80375_alip_.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "spontaneous",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-coral-15752",
+      "audio": "eval/generated/coraa/audio/test--CORAL--15752_CO_bfammn12.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "hesitation",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-nurc-142911",
+      "audio": "eval/generated/coraa/audio/test--NURC_RE--NURC_RE_EF--NURC_RE_EF_332--142911_nurc_.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "prepared",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-sp-71194",
+      "audio": "eval/generated/coraa/audio/test--sp--71194_sp_.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "short-spontaneous",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-ted-0015",
+      "audio": "eval/generated/coraa/audio/test--Ted_part1--A0dfeodJL8Q-0015.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "prepared",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-alip-9890",
+      "audio": "eval/generated/coraa/audio/test--alip--9890_alip_.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "filled-pause",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "coraa-ted-0087",
+      "audio": "eval/generated/coraa/audio/test--Ted_part1--aETOz3IGfG0-0087.wav",
+      "expectSpeech": true,
+      "cohort": "human",
+      "category": "prepared",
+      "evidence": "CORAA ASR v1.1",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "tts-nao-curto",
+      "audio": "eval/generated/asr/audio/nao-curto--rate-1.wav",
+      "expectSpeech": true,
+      "cohort": "synthetic-short",
+      "category": "short-command",
+      "evidence": "Microsoft Maria Desktop",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "tts-espera-curto",
+      "audio": "eval/generated/asr/audio/espera-curto--rate-1.wav",
+      "expectSpeech": true,
+      "cohort": "synthetic-short",
+      "category": "short-command",
+      "evidence": "Microsoft Maria Desktop",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "tts-muda-terca",
+      "audio": "eval/generated/asr/audio/muda-terca--rate-1.wav",
+      "expectSpeech": true,
+      "cohort": "synthetic-short",
+      "category": "short-correction",
+      "evidence": "Microsoft Maria Desktop",
+      "gains": [1, 0.5, 0.25, 0.125]
+    },
+    {
+      "id": "physical-false-activation-0",
+      "audio": "eval/reports/browser-10min-aec-all-recovery--audio-0.wav",
+      "expectSpeech": false,
+      "cohort": "physical-control",
+      "category": "assistant-output-residual-or-noise",
+      "evidence": "Chrome físico; Parakeet e Whisper retornaram transcrição vazia"
+    },
+    {
+      "id": "physical-false-activation-1",
+      "audio": "eval/reports/browser-10min-aec-all-recovery--audio-1.wav",
+      "expectSpeech": false,
+      "cohort": "physical-control",
+      "category": "assistant-output-residual-or-noise",
+      "evidence": "Chrome físico; Parakeet e Whisper retornaram transcrição vazia"
+    },
+    {
+      "id": "physical-silero-false-activation-0",
+      "audio": "eval/reports/browser-silero-control-probe--audio-0.wav",
+      "expectSpeech": false,
+      "cohort": "physical-control",
+      "category": "short-low-energy-transient",
+      "evidence": "Chrome físico; Silero 0.5×2 abriu turno, mas Parakeet e Whisper offline retornaram vazio"
+    },
+    {
+      "id": "silence-30s",
+      "generatedSilenceMs": 30000,
+      "expectSpeech": false,
+      "cohort": "synthetic-control",
+      "category": "silence",
+      "evidence": "zeros PCM gerados"
+    }
+  ]
+}

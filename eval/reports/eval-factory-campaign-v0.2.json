@@ -1,0 +1,366 @@
+{
+  "schemaVersion": 1,
+  "id": "eval-factory-campaign-v0.2",
+  "generatedAt": "2026-07-31T16:41:38.741Z",
+  "subject": {
+    "packId": "corrections-ptbr-v0.2",
+    "packSha256": "788bd57e1b6abb111cc7be0baa95482d3d4fea7388224b5282d1a95bd9a1398d",
+    "buildSha256": "f9be30987613d5f11ce42a34136a63cc922e2cfaabe506068bca37af8b9cda8e"
+  },
+  "inputs": [
+    {
+      "path": "eval/reports/eval-factory-latest.json",
+      "fileSha256": "e8e7f45f5aca72295bec8d951a8f1cbacfa43600573992e42b46143f95e01ddd"
+    },
+    {
+      "path": "eval/reports/eval-factory-audio-latest.json",
+      "fileSha256": "634a17597bc2587b5576f11e2784bf1faf6c2face766fce65bcf56049dde15e6"
+    },
+    {
+      "path": "eval/reports/eval-factory-acoustic-latest.json",
+      "fileSha256": "b5d84251ff26b556459e9a31db4a630547366b1fb8178412ffbe21dfa887a195"
+    },
+    {
+      "path": "eval/reports/eval-factory-live-audio-current.json",
+      "fileSha256": "006be78ac086ed525f0571afdd80f851c8d55fed9eb57b0fd56c9e414caaa81c"
+    },
+    {
+      "path": "eval/reports/eval-factory-acoustic-live-latest.json",
+      "fileSha256": "594a18ff3869bc7a4a57282bb99d37630d40166db41ca37a22a5b70c37e5ab8e"
+    },
+    {
+      "path": "eval/reports/eval-factory-browser-latest.json",
+      "fileSha256": "abb5b158b51efb3ce0b4b7ded0213c21a765065005f9a64c5d775f51e52c11cf"
+    },
+    {
+      "path": "eval/reports/eval-factory-browser-pcm-latest.json",
+      "fileSha256": "0bf4637016af8fefa4e41c5bae0f4abd775df9d0c8bd1004aee24b42e51ffeb6"
+    },
+    {
+      "path": "eval/reports/eval-factory-browser-pcm-noise-10db-latest.json",
+      "fileSha256": "71421ceed13c9f47c49f7fea9c598e6f007ede3156ec6a9f2a8164a2398bc030"
+    },
+    {
+      "path": "eval/generated/factory/builds/f9be30987613d5f1/artifact-manifest.json",
+      "fileSha256": "785431148b5985de2eab056e0549306237ee2f0bfdca071e1d3134e2a15f0aab"
+    },
+    {
+      "path": "eval/generated/factory/builds/f9be30987613d5f1/live-audio-pack.json",
+      "fileSha256": "8cd1533dba516840966af7369078ee1d623ba7efb2c4fc87d6e66be4d57bf602"
+    },
+    {
+      "path": "eval/generated/factory/builds/f9be30987613d5f1/browser-cases.json",
+      "fileSha256": "a9b0040fababd8ce937cf7315eed25e19bb287410c193cf42e66b7557c475ed6"
+    },
+    {
+      "path": "eval/generated/factory/acoustic/live-audio-pack.json",
+      "fileSha256": "527b1d603d34a7bdd7bb11a8cbde977089517ba12f4cbb10faf4cbbcb78adc0e"
+    }
+  ],
+  "integrity": {
+    "manifest": true,
+    "livePack": true,
+    "browserPack": true,
+    "acousticPack": true,
+    "browserText": true,
+    "browserPcm": true,
+    "browserPcmNoise": true,
+    "audio": true,
+    "acousticAudio": true,
+    "executionAudio": true,
+    "toolchain": true,
+    "evaluator": true,
+    "runtime": true,
+    "costTelemetry": true
+  },
+  "derivedEvidence": {
+    "live": {
+      "complete": true,
+      "operabilityPass": true,
+      "fidelityPass": false,
+      "corpusWer": 0.06666666666666667,
+      "criticalRecall": 0.9722222222222222,
+      "speechCaseCount": 12
+    },
+    "acousticLive": {
+      "complete": true,
+      "operabilityPass": true,
+      "fidelityPass": false,
+      "corpusWer": 0.07142857142857142,
+      "criticalRecall": 0.9166666666666666,
+      "speechCaseCount": 12
+    },
+    "browserText": {
+      "complete": true,
+      "diagnosticsPass": true,
+      "semanticPass": true,
+      "criticalSafetyPass": true,
+      "renderStopPass": true,
+      "semanticCases": 6,
+      "safeCases": 6,
+      "interruptionCases": 5
+    },
+    "browserPcm": {
+      "complete": true,
+      "diagnosticsPass": true,
+      "semanticPass": false,
+      "criticalSafetyPass": true,
+      "renderStopPass": true,
+      "semanticCases": 5,
+      "safeCases": 6,
+      "interruptionCases": 5
+    },
+    "browserPcmNoise": {
+      "complete": true,
+      "diagnosticsPass": true,
+      "semanticPass": false,
+      "criticalSafetyPass": false,
+      "renderStopPass": true,
+      "semanticCases": 3,
+      "safeCases": 5,
+      "interruptionCases": 5
+    }
+  },
+  "gates": {
+    "factoryToolchain": {
+      "status": "pass",
+      "decision": "promote",
+      "pass": true,
+      "cases": 24,
+      "mutationAudit": {
+        "killed": 288,
+        "total": 288
+      },
+      "pairwiseCoverage": 0.8571428571428571
+    },
+    "ttsFixtureIntegrity": {
+      "status": "pass",
+      "decision": "promote",
+      "pass": true,
+      "cases": 12,
+      "uniqueWaves": 12
+    },
+    "acousticFixtureIntegrity": {
+      "status": "pass",
+      "decision": "promote",
+      "pass": true,
+      "scenes": 12
+    },
+    "pcmPipelineOperability": {
+      "status": "pass",
+      "decision": "promote",
+      "pass": true,
+      "clean": "promote",
+      "acoustic": "promote"
+    },
+    "websocketTranscriptFidelity": {
+      "status": "fail",
+      "decision": "hold",
+      "pass": false,
+      "observedFailureCount": 4,
+      "cleanCriticalRecall": 0.9722222222222222,
+      "acousticCriticalRecall": 0.9166666666666666
+    },
+    "browserTextSemanticCorrection": {
+      "status": "pass",
+      "decision": "promote",
+      "pass": true,
+      "cases": 6
+    },
+    "browserPcmSemanticCompletion": {
+      "status": "hold",
+      "decision": "hold",
+      "pass": false,
+      "completedCases": 5,
+      "requiredCases": 6,
+      "safeRepairs": 1
+    },
+    "criticalSlotSafety": {
+      "status": "pass",
+      "decision": "promote",
+      "pass": true,
+      "safeRepairCaseIds": [
+        "corr-amount-nao-barge-surface-a"
+      ]
+    },
+    "browserNoiseCurrentValueSafety": {
+      "status": "fail",
+      "decision": "hold",
+      "pass": false,
+      "cases": 6,
+      "strictSemanticCases": 3,
+      "currentValueSafeCases": 5
+    },
+    "browserRenderStop": {
+      "status": "pass",
+      "decision": "promote",
+      "pass": true,
+      "measuredCases": 5,
+      "maximumMs": 48
+    },
+    "responsiveness": {
+      "status": "hold",
+      "decision": "hold",
+      "pass": false,
+      "reason": "amostra menor que 20; p95 promocional não é publicado",
+      "measuredCases": 6,
+      "budgetMs": 1200,
+      "observedBudgetViolations": [
+        1517,
+        1339
+      ]
+    },
+    "temporalPatternFidelity": {
+      "status": "hold",
+      "decision": "hold",
+      "pass": false,
+      "reason": "pausas físicas e cross-turn dependente de memória ainda não correspondem a todos os rótulos"
+    },
+    "downstreamEffectFidelity": {
+      "status": "hold",
+      "decision": "hold",
+      "pass": false,
+      "reason": "nenhum ledger/adaptador de efeito externo foi instrumentado"
+    },
+    "holdoutIndependence": {
+      "status": "hold",
+      "decision": "hold",
+      "pass": false,
+      "reason": "holdout v0.2 foi exposto durante o PDCA e não é evidência independente"
+    },
+    "acousticDiversity": {
+      "status": "hold",
+      "decision": "hold",
+      "pass": false,
+      "reason": "ganho e ruído foram cobertos, mas a voz sintética ainda é apenas Maria"
+    },
+    "humanValidity": {
+      "status": "hold",
+      "decision": "hold",
+      "pass": false,
+      "reason": "julgamento humano fica para depois da vertical funcional"
+    }
+  },
+  "decisions": {
+    "factoryToolchain": "promote",
+    "runtimeEngineering": "hold",
+    "userFacingReadiness": "hold"
+  },
+  "observedFailures": [
+    {
+      "source": "websocket-clean",
+      "caseId": "corr-name-nao-cross-surface-a",
+      "kind": "transcript-fidelity",
+      "finalTranscript": "Conversa com o Lucas, não, com Luísa.",
+      "criticalPhraseRecall": 0.6667,
+      "wer": 0.3333
+    },
+    {
+      "source": "websocket-acoustic",
+      "caseId": "corr-weekday-quer-dizer-cross-surface-a--noise-10db",
+      "kind": "transcript-fidelity",
+      "finalTranscript": "A reserva fica para quinta, quer dizer, para o mundo.",
+      "criticalPhraseRecall": 0.6667,
+      "wer": 0.2222
+    },
+    {
+      "source": "websocket-acoustic",
+      "caseId": "corr-time-na-verdade-cross-surface-a--noise-10db",
+      "kind": "transcript-fidelity",
+      "finalTranscript": "Agenda às 4h11 horas, na verdade, às 16 horas.",
+      "criticalPhraseRecall": 0.6667,
+      "wer": 0.1111
+    },
+    {
+      "source": "websocket-acoustic",
+      "caseId": "corr-amount-nao-barge-surface-a--noise-10db",
+      "kind": "transcript-fidelity",
+      "finalTranscript": "Sete mil e quinhentos reais. Não, mil centro e cinquenta reais.",
+      "criticalPhraseRecall": 0.6667,
+      "wer": 0.1818
+    },
+    {
+      "source": "browser-pcm-noise",
+      "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+      "kind": "unsafe-current-value",
+      "finalTranscript": "A reserva fica para quinta, quer dizer, para o mundo.",
+      "semanticState": null,
+      "commitCount": 1,
+      "failedChecks": [
+        "final-transcript-current",
+        "single-semantic-revision",
+        "assistant-confirms-current"
+      ]
+    }
+  ],
+  "observedSafeRepairs": [
+    {
+      "caseId": "corr-amount-nao-barge-surface-a",
+      "conflict": {
+        "kind": "numeric-correction-conflict",
+        "finalValue": 150,
+        "provisionalValue": 1150,
+        "alternatives": [
+          150,
+          1150
+        ],
+        "policy": "clarify-before-commit"
+      },
+      "expectedAlternativeObserved": true,
+      "assistantText": "Só confirmando: R$ 150 ou R$ 1.150?",
+      "committed": false
+    }
+  ],
+  "honestHolds": [
+    {
+      "id": "websocketTranscriptFidelity",
+      "status": "fail",
+      "reason": null
+    },
+    {
+      "id": "browserPcmSemanticCompletion",
+      "status": "hold",
+      "reason": null
+    },
+    {
+      "id": "browserNoiseCurrentValueSafety",
+      "status": "fail",
+      "reason": null
+    },
+    {
+      "id": "responsiveness",
+      "status": "hold",
+      "reason": "amostra menor que 20; p95 promocional não é publicado"
+    },
+    {
+      "id": "temporalPatternFidelity",
+      "status": "hold",
+      "reason": "pausas físicas e cross-turn dependente de memória ainda não correspondem a todos os rótulos"
+    },
+    {
+      "id": "downstreamEffectFidelity",
+      "status": "hold",
+      "reason": "nenhum ledger/adaptador de efeito externo foi instrumentado"
+    },
+    {
+      "id": "holdoutIndependence",
+      "status": "hold",
+      "reason": "holdout v0.2 foi exposto durante o PDCA e não é evidência independente"
+    },
+    {
+      "id": "acousticDiversity",
+      "status": "hold",
+      "reason": "ganho e ruído foram cobertos, mas a voz sintética ainda é apenas Maria"
+    },
+    {
+      "id": "humanValidity",
+      "status": "hold",
+      "reason": "julgamento humano fica para depois da vertical funcional"
+    }
+  ],
+  "cost": {
+    "paidApiCalls": 0,
+    "externalLlmCallsDuringRegression": 0,
+    "totalTokens": 0
+  }
+}

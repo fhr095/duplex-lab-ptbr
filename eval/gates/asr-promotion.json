@@ -1,0 +1,8 @@
+{
+  "id": "asr-promotion-gate-v0.1",
+  "minAbsoluteWerGain": 0.02,
+  "maxCandidateP50RealtimeFactor": 1,
+  "maxCandidateP95RealtimeFactor": 1.5,
+  "maxMaterialCaseRegressionRate": 0.25,
+  "materialCaseRegressionWer": 0.2
+}

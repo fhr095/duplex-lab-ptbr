@@ -1,0 +1,55 @@
+{
+  "name": "duplex-lab-ptbr",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Laboratório orientado a avaliação para interação de voz full-duplex em português brasileiro.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "test:watch": "node --test --watch",
+    "setup:asr": "uv venv --python 3.12 --allow-existing .venv && uv pip install --python .venv/bin/python -r requirements-asr.txt",
+    "setup:vad": "node scripts/setup-silero-vad.mjs",
+    "fetch:real-audio": ".venv/bin/python scripts/fetch_coraa_sample.py",
+    "eval": "node src/cli/eval.mjs",
+    "eval:report": "node src/cli/eval.mjs --out eval/reports/baseline-v0.json",
+    "eval:asr": "node scripts/eval-asr.mjs",
+    "eval:asr:real": "npm run fetch:real-audio && node scripts/eval-asr.mjs --pack eval/generated/coraa/manifest.json --out eval/reports/asr-real-latest.json",
+    "eval:asr:compare": "node scripts/compare-asr.mjs",
+    "eval:perception": "node scripts/eval-perception.mjs",
+    "eval:factory": "node scripts/build-eval-factory.mjs",
+    "eval:factory:check": "node scripts/build-eval-factory.mjs --check",
+    "eval:factory:audio": "node scripts/materialize-eval-factory-audio.mjs",
+    "eval:factory:acoustics": "node scripts/materialize-eval-factory-acoustics.mjs",
+    "eval:factory:acoustics:run": "node scripts/live-audio-campaign.mjs --pack eval/generated/factory/acoustic/live-audio-pack.json --out eval/reports/eval-factory-acoustic-live-latest.json --no-fail",
+    "eval:factory:browser": "node scripts/run-eval-factory-browser.mjs",
+    "eval:factory:browser:pcm": "node scripts/run-eval-factory-browser.mjs --input pcm",
+    "eval:factory:browser:pcm:noise": "node scripts/run-eval-factory-browser.mjs --input pcm --acoustic-condition noise-10db",
+    "eval:factory:summary": "node scripts/report-eval-factory.mjs",
+    "eval:live-audio": "node scripts/live-audio-probe.mjs",
+    "eval:live-campaign": "node scripts/live-audio-campaign.mjs --no-fail",
+    "eval:browser:campaign": "node scripts/browser-perception-campaign.mjs",
+    "eval:vad:silero": ".venv/bin/python scripts/eval_silero_vad.py --manifest eval/scenarios/vad-candidate.pt-BR.json --out eval/reports/vad-candidate-ptbr-latest.json",
+    "eval:vad:compare": "node scripts/compare-vad-control.mjs",
+    "eval:asr:parakeet": "node scripts/eval-asr.mjs --engine parakeet --model nemo-parakeet-tdt-0.6b-v3",
+    "eval:auto": "node scripts/autonomous-campaign.mjs",
+    "eval:auto:deep": "AUTONOMOUS_DEEP=1 node scripts/autonomous-campaign.mjs",
+    "eval:auto:silero": "AUTONOMOUS_VAD_CONTROL=silero node scripts/autonomous-campaign.mjs",
+    "start": "BRAIN_PROVIDER=local node src/cli/serve.mjs",
+    "start:shadow": "npm run setup:vad && BRAIN_PROVIDER=local VAD_SHADOW=silero node src/cli/serve.mjs",
+    "start:silero-candidate": "npm run setup:vad && BRAIN_PROVIDER=local VAD_CONTROL=silero VAD_SHADOW=silero SILERO_VAD_THRESHOLD=0.85 SILERO_VAD_ONSET_WINDOWS=1 node src/cli/serve.mjs",
+    "start:openai": "BRAIN_PROVIDER=openai node src/cli/serve.mjs",
+    "probe:openai": "node scripts/openai-canary.mjs",
+    "smoke:chrome": "node scripts/windows-chrome-smoke.mjs",
+    "check": "npm test && npm run eval"
+  },
+  "dependencies": {
+    "onnxruntime-node": "^1.27.0",
+    "ws": "^8.21.1"
+  },
+  "overrides": {
+    "adm-zip": "0.6.0"
+  }
+}

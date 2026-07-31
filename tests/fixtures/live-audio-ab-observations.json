@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "experiment": {
+    "id": "ab-test-fixture",
+    "repetitions": 3,
+    "minRepetitionsPerScenario": 3,
+    "minAggregateSamplesForP95": 6,
+    "minP95TailObservations": 1,
+    "bootstrapIterations": 500,
+    "caseIds": ["silencio", "saudacao", "correcao"],
+    "baselineId": "baseline",
+    "challengerId": "challenger",
+    "candidates": [
+      {"id": "baseline"},
+      {"id": "challenger"}
+    ],
+    "decisionGate": {
+      "minPairedEndpointSamples": 6,
+      "minPairedSpeechEndToFinalSamples": 6,
+      "minMedianEndpointGainMs": 40,
+      "maxMedianSpeechEndToFinalRegressionMs": 50,
+      "maxFinalizationRateDrop": 0,
+      "maxCoherenceRateDrop": 0,
+      "maxCorrectionSuccessRateDrop": 0,
+      "maxRawPrematureRateIncrease": 0,
+      "maxCorpusWerIncrease": 0.02,
+      "maxLostFrames": 0,
+      "maxRejectedFrames": 0,
+      "maxProtocolErrors": 0,
+      "maxBufferedAmountBytes": 16384,
+      "requireAllChallengerFinals": true,
+      "requireAllChallengerCorrectionsCoherent": true
+    }
+  },
+  "series": {
+    "baselineEndpointMs": [520, 525, 515, 522, 518, 521],
+    "challengerEndpointMs": [450, 455, 445, 452, 448, 451],
+    "baselineFinalMs": [1380, 1420, 1390, 1410, 1370, 1400],
+    "challengerFinalMs": [1300, 1340, 1320, 1330, 1290, 1310]
+  }
+}

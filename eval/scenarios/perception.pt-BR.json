@@ -1,0 +1,293 @@
+{
+  "schemaVersion": 1,
+  "id": "perception-ptbr-v0.1",
+  "tracePackId": "mvp-ptbr-v0.1",
+  "locale": "pt-BR",
+  "scenarios": [
+    {
+      "id": "primeiro-retorno-util",
+      "sourceScenarioId": "turno-simples",
+      "category": "responsiveness",
+      "userPerception": "O sistema começa uma resposta com conteúdo útil sem deixar um silêncio constrangedor.",
+      "checks": [
+        {
+          "id": "primeira-fala-util",
+          "kind": "useful_speech_latency",
+          "severity": "critical",
+          "proxyFor": "tempo até a primeira fala semanticamente útil",
+          "anchor": {
+            "type": "user.speech.ended"
+          },
+          "usableKinds": [
+            "direct"
+          ],
+          "requireText": true,
+          "minWords": 2,
+          "maxMs": 500,
+          "metric": "first_useful_speech_latency_ms"
+        }
+      ]
+    },
+    {
+      "id": "pausa-natural",
+      "sourceScenarioId": "hesitacao-nao-e-fim",
+      "category": "turn-taking",
+      "userPerception": "O sistema acompanha a hesitação sem tomar o turno e responde apenas quando a pessoa termina.",
+      "checks": [
+        {
+          "id": "backchannel-no-ritmo",
+          "kind": "backchannel_adequacy",
+          "severity": "guardrail",
+          "proxyFor": "backchannel curto, único e no momento esperado",
+          "anchor": {
+            "type": "user.speech.paused"
+          },
+          "until": {
+            "type": "user.speech.resumed"
+          },
+          "minMs": 80,
+          "maxMs": 250,
+          "maxWords": 2,
+          "allowedTexts": [
+            "aham",
+            "sim",
+            "entendi"
+          ]
+        },
+        {
+          "id": "nao-toma-o-turno-na-pausa",
+          "kind": "false_cut",
+          "severity": "critical",
+          "proxyFor": "taxa de cortes indevidos durante pausas internas",
+          "from": {
+            "type": "user.speech.paused"
+          },
+          "until": {
+            "type": "user.speech.ended"
+          },
+          "maxCount": 0
+        },
+        {
+          "id": "responde-apos-fim-real",
+          "kind": "useful_speech_latency",
+          "severity": "critical",
+          "proxyFor": "recuperação do turno após hesitação",
+          "anchor": {
+            "type": "user.speech.ended"
+          },
+          "usableKinds": [
+            "direct"
+          ],
+          "requireText": true,
+          "minWords": 2,
+          "maxMs": 500,
+          "metric": "post_hesitation_useful_speech_latency_ms"
+        }
+      ]
+    },
+    {
+      "id": "interrupcao-e-recuperacao",
+      "sourceScenarioId": "interrupcao-barge-in",
+      "category": "interruption",
+      "userPerception": "Ao interromper, a pessoa recupera o chão rapidamente e a conversa continua sem travar.",
+      "checks": [
+        {
+          "id": "para-ao-ser-interrompido",
+          "kind": "interruption_stop",
+          "severity": "critical",
+          "proxyFor": "rapidez percebida de barge-in",
+          "trigger": {
+            "type": "user.speech.started"
+          },
+          "maxMs": 200
+        },
+        {
+          "id": "retoma-com-resposta-util",
+          "kind": "useful_speech_latency",
+          "severity": "critical",
+          "proxyFor": "recuperação conversacional depois de uma interrupção",
+          "anchor": {
+            "type": "user.speech.ended"
+          },
+          "usableKinds": [
+            "direct"
+          ],
+          "requireText": true,
+          "minWords": 2,
+          "maxMs": 500,
+          "metric": "interruption_recovery_latency_ms"
+        }
+      ]
+    },
+    {
+      "id": "correcao-preservada",
+      "sourceScenarioId": "autocorrecao-com-rollback",
+      "category": "correction",
+      "userPerception": "A última correção substitui de fato as versões anteriores e não dispara trabalho provisório.",
+      "checks": [
+        {
+          "id": "ultima-versao-vence",
+          "kind": "correction_preserved",
+          "severity": "critical",
+          "proxyFor": "fidelidade da correção no estado interno instrumentado",
+          "correction": {
+            "type": "user.correction",
+            "occurrence": 2
+          },
+          "expectedCurrent": "domingo",
+          "maxRollbackMs": 50,
+          "forbidDelegationBeforeEnd": true
+        }
+      ]
+    },
+    {
+      "id": "delegacao-cancelavel",
+      "sourceScenarioId": "delegacao-e-cancelamento",
+      "category": "delegation",
+      "userPerception": "A tarefa começa sem bloquear a conversa, para de verdade ao cancelar e a voz cede à nova fala.",
+      "checks": [
+        {
+          "id": "delega-e-confirma",
+          "kind": "delegation_ack",
+          "severity": "critical",
+          "proxyFor": "delegação no momento certo com confirmação imediata",
+          "anchor": {
+            "type": "user.speech.ended"
+          },
+          "maxDelegationMs": 120,
+          "maxAcknowledgmentMs": 450,
+          "minAcknowledgmentWords": 3,
+          "requireTranscriptMatch": true
+        },
+        {
+          "id": "cede-ao-cancelamento-falado",
+          "kind": "interruption_stop",
+          "severity": "critical",
+          "proxyFor": "cessão de turno durante cancelamento",
+          "trigger": {
+            "type": "user.speech.started",
+            "occurrence": 2
+          },
+          "maxMs": 200
+        },
+        {
+          "id": "cancela-a-mesma-tarefa",
+          "kind": "cancellation_integrity",
+          "severity": "critical",
+          "proxyFor": "cancelamento efetivo sem resultado obsoleto posterior",
+          "cancellation": {
+            "type": "user.cancelled"
+          },
+          "maxMs": 100
+        }
+      ]
+    },
+    {
+      "id": "resultado-reentra",
+      "sourceScenarioId": "resultado-assincrono",
+      "category": "recovery",
+      "userPerception": "A conversa recebe confirmação rápida e reincorpora o resultado quando ele chega.",
+      "checks": [
+        {
+          "id": "confirma-delegacao-sem-bloquear",
+          "kind": "useful_speech_latency",
+          "severity": "critical",
+          "proxyFor": "primeiro retorno útil enquanto a tarefa trabalha",
+          "anchor": {
+            "type": "user.speech.ended"
+          },
+          "usableKinds": [
+            "acknowledgment"
+          ],
+          "requireText": true,
+          "minWords": 3,
+          "maxMs": 450,
+          "metric": "delegated_first_useful_speech_latency_ms"
+        },
+        {
+          "id": "reincorpora-resultado",
+          "kind": "async_result_recovery",
+          "severity": "critical",
+          "proxyFor": "recuperação útil quando uma tarefa assíncrona termina",
+          "result": {
+            "type": "task.result"
+          },
+          "maxMs": 200,
+          "requireSummaryMatch": true
+        }
+      ]
+    },
+    {
+      "id": "ignora-conversa-ambiente",
+      "sourceScenarioId": "fala-ambiente-nao-direcionada",
+      "category": "robustness",
+      "userPerception": "O sistema não se intromete em conversas que não foram dirigidas a ele.",
+      "checks": [
+        {
+          "id": "sem-ativacao-indevida",
+          "kind": "environment_silence",
+          "severity": "critical",
+          "proxyFor": "falsas ativações diante de fala ambiente rotulada",
+          "from": {
+            "type": "environment.speech.detected"
+          },
+          "forbiddenTypes": [
+            "assistant.backchannel",
+            "assistant.speech.started",
+            "task.delegated"
+          ]
+        }
+      ]
+    }
+  ],
+  "deferredMeasurements": [
+    {
+      "id": "parada-acustica-real",
+      "metric": "acoustic_stop_latency_ms",
+      "requires": "physical_audio",
+      "whyProxyIsInsufficient": "O trace mede o comando de stop; buffers, driver, alto-falante e eco podem continuar audíveis.",
+      "blocksUserFacingRelease": true,
+      "target": "p95 <= 250 ms desde o início da fala do usuário até o som do assistente cessar"
+    },
+    {
+      "id": "primeiro-som-util-audivel",
+      "metric": "end_to_audible_useful_speech_ms",
+      "requires": "physical_audio",
+      "whyProxyIsInsufficient": "assistant.speech.started não prova quando o primeiro fonema saiu fisicamente nem se ele foi inteligível.",
+      "blocksUserFacingRelease": true,
+      "target": "p95 <= 1200 ms"
+    },
+    {
+      "id": "falsos-cortes-em-fala-espontanea",
+      "metric": "false_cut_rate_real_speech",
+      "requires": "physical_audio",
+      "whyProxyIsInsufficient": "Cenários rotulados não cobrem a variabilidade acústica de pausas, ruído, eco e sobreposição reais.",
+      "blocksUserFacingRelease": true,
+      "target": "<= 1 corte indevido a cada 20 turnos"
+    },
+    {
+      "id": "naturalidade-da-voz",
+      "metric": "voice_naturalness_mos",
+      "requires": "human_judgment",
+      "whyProxyIsInsufficient": "Duração, eventos e texto não medem prosódia, expressividade, conforto ou fadiga.",
+      "blocksUserFacingRelease": true,
+      "target": "MOS >= 4/5 com avaliadores PT-BR"
+    },
+    {
+      "id": "adequacao-subjetiva-de-backchannel",
+      "metric": "backchannel_appropriateness_rate",
+      "requires": "human_judgment",
+      "whyProxyIsInsufficient": "Texto curto e janela temporal são proxies; intenção, tom e contexto determinam se a confirmação soa natural.",
+      "blocksUserFacingRelease": true,
+      "target": ">= 85% de preferência/adequação em avaliação cega"
+    },
+    {
+      "id": "fidelidade-semantica-pos-correcao",
+      "metric": "downstream_correction_fidelity",
+      "requires": "human_judgment",
+      "whyProxyIsInsufficient": "O rollback instrumentado preserva um campo, mas não prova que toda a resposta e os efeitos externos respeitaram a correção.",
+      "blocksUserFacingRelease": true,
+      "target": ">= 95% das correções refletidas na resposta e na ação final"
+    }
+  ]
+}

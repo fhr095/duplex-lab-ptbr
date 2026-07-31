@@ -1,0 +1,1163 @@
+{
+  "schemaVersion": 2,
+  "id": "corrections-ptbr-v0.2",
+  "locale": "pt-BR",
+  "frozen": true,
+  "ontology": {
+    "id": "interaction-ptbr-v1",
+    "sha256": "5aeebddc5f7a80dc1313941321a47038d1d5ea33b0dee1d31a442b2c398504c0"
+  },
+  "provenance": {
+    "method": "ai-assisted-surfaces-over-trusted-blueprints",
+    "proposalBatchIds": [
+      "correction-surfaces-bootstrap-2026-07-31"
+    ],
+    "providers": [
+      {
+        "batchId": "correction-surfaces-bootstrap-2026-07-31",
+        "id": "openai-codex-session",
+        "model": "codex-session-model",
+        "promptSha256": "e46c41dee36f5817b6cc356e78ea6fa458ee5ddcb2cb055edc7d73abd906efa5",
+        "inputSha256": "38a0c4ed162cc66c0f0a2c3ee964907e20f10612ab7861f359b134f530ddbcb3",
+        "outputSha256": "f6f9e5a6abf22be908d7ce60a92316a09f5611af394506032e650a0fbfe9d446"
+      }
+    ]
+  },
+  "coverage": {
+    "dimensions": {
+      "stimulus.slotType": [
+        "weekday",
+        "time",
+        "amount",
+        "name"
+      ],
+      "stimulus.marker": [
+        "não",
+        "na verdade",
+        "quer dizer",
+        "melhor"
+      ],
+      "stimulus.timingPattern": [
+        "same-turn-continuous",
+        "same-turn-after-pause",
+        "barge-in",
+        "cross-turn"
+      ],
+      "stimulus.effectRisk": [
+        "none",
+        "reversible",
+        "irreversible"
+      ]
+    },
+    "minCases": 24,
+    "minPerValue": 4,
+    "minUniqueTextRatio": 1,
+    "minPairwiseRatio": 0.85
+  },
+  "cases": [
+    {
+      "id": "corr-weekday-quer-dizer-cross-surface-a",
+      "familyRootId": "corr-weekday-quer-dizer-cross",
+      "split": "development",
+      "seed": 4102,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "A reserva fica para quinta... quer dizer, para domingo.",
+        "slotType": "weekday",
+        "marker": "quer dizer",
+        "timingPattern": "cross-turn",
+        "effectRisk": "irreversible",
+        "slots": {
+          "obsolete": "quinta",
+          "current": "domingo"
+        },
+        "canonicalSlots": {
+          "obsolete": "quinta",
+          "current": "domingo"
+        },
+        "styleTags": [
+          "hesitation",
+          "explicit-repair"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "weekday",
+          "obsolete": "quinta",
+          "current": "domingo",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": -2,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-weekday-quer-dizer-cross-surface-b",
+      "familyRootId": "corr-weekday-quer-dizer-cross",
+      "split": "development",
+      "seed": 4103,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "Pode deixar na quinta. Quer dizer, muda para domingo.",
+        "slotType": "weekday",
+        "marker": "quer dizer",
+        "timingPattern": "cross-turn",
+        "effectRisk": "irreversible",
+        "slots": {
+          "obsolete": "quinta",
+          "current": "domingo"
+        },
+        "canonicalSlots": {
+          "obsolete": "quinta",
+          "current": "domingo"
+        },
+        "styleTags": [
+          "two-clause",
+          "informal"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "weekday",
+          "obsolete": "quinta",
+          "current": "domingo",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": -2,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": "corr-weekday-quer-dizer-cross-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-name-melhor-barge-surface-a",
+      "familyRootId": "corr-name-melhor-barge",
+      "split": "development",
+      "seed": 4112,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "Fala com Bruno... melhor, com Caio.",
+        "slotType": "name",
+        "marker": "melhor",
+        "timingPattern": "barge-in",
+        "effectRisk": "reversible",
+        "slots": {
+          "obsolete": "Bruno",
+          "current": "Caio"
+        },
+        "canonicalSlots": {
+          "obsolete": "Bruno",
+          "current": "Caio"
+        },
+        "styleTags": [
+          "short",
+          "restart"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "name",
+          "obsolete": "Bruno",
+          "current": "Caio",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 1,
+        "gain": 0.5
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-name-melhor-barge-surface-b",
+      "familyRootId": "corr-name-melhor-barge",
+      "split": "development",
+      "seed": 4113,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "No nome de Bruno; melhor, no nome de Caio.",
+        "slotType": "name",
+        "marker": "melhor",
+        "timingPattern": "barge-in",
+        "effectRisk": "reversible",
+        "slots": {
+          "obsolete": "Bruno",
+          "current": "Caio"
+        },
+        "canonicalSlots": {
+          "obsolete": "Bruno",
+          "current": "Caio"
+        },
+        "styleTags": [
+          "elliptical",
+          "explicit-repair"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "name",
+          "obsolete": "Bruno",
+          "current": "Caio",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 1,
+        "gain": 0.5
+      },
+      "lineage": {
+        "parentId": "corr-name-melhor-barge-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-amount-na-verdade-continuous-surface-a",
+      "familyRootId": "corr-amount-na-verdade-continuous",
+      "split": "development",
+      "seed": 4122,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Era só uma estimativa de R$ 80... na verdade, R$ 18.",
+        "slotType": "amount",
+        "marker": "na verdade",
+        "timingPattern": "same-turn-continuous",
+        "effectRisk": "none",
+        "slots": {
+          "obsolete": "R$ 80",
+          "current": "R$ 18"
+        },
+        "canonicalSlots": {
+          "obsolete": "BRL 80",
+          "current": "BRL 18"
+        },
+        "styleTags": [
+          "hesitation",
+          "amount"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "amount",
+          "obsolete": "BRL 80",
+          "current": "BRL 18",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 3,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-amount-na-verdade-continuous-surface-b",
+      "familyRootId": "corr-amount-na-verdade-continuous",
+      "split": "development",
+      "seed": 4123,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Anota R$ 80; na verdade, deixa R$ 18.",
+        "slotType": "amount",
+        "marker": "na verdade",
+        "timingPattern": "same-turn-continuous",
+        "effectRisk": "none",
+        "slots": {
+          "obsolete": "R$ 80",
+          "current": "R$ 18"
+        },
+        "canonicalSlots": {
+          "obsolete": "BRL 80",
+          "current": "BRL 18"
+        },
+        "styleTags": [
+          "imperative",
+          "informal"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "amount",
+          "obsolete": "BRL 80",
+          "current": "BRL 18",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 3,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": "corr-amount-na-verdade-continuous-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-name-na-verdade-pause-surface-a",
+      "familyRootId": "corr-name-na-verdade-pause",
+      "split": "development",
+      "seed": 4132,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "Autoriza no nome de Ana... na verdade, no nome de Marina.",
+        "slotType": "name",
+        "marker": "na verdade",
+        "timingPattern": "same-turn-after-pause",
+        "effectRisk": "irreversible",
+        "slots": {
+          "obsolete": "Ana",
+          "current": "Marina"
+        },
+        "canonicalSlots": {
+          "obsolete": "Ana",
+          "current": "Marina"
+        },
+        "styleTags": [
+          "effectful",
+          "hesitation"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "name",
+          "obsolete": "Ana",
+          "current": "Marina",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": -2,
+        "gain": 0.25
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-name-na-verdade-pause-surface-b",
+      "familyRootId": "corr-name-na-verdade-pause",
+      "split": "development",
+      "seed": 4133,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "Fala com Ana; na verdade, com Marina.",
+        "slotType": "name",
+        "marker": "na verdade",
+        "timingPattern": "same-turn-after-pause",
+        "effectRisk": "irreversible",
+        "slots": {
+          "obsolete": "Ana",
+          "current": "Marina"
+        },
+        "canonicalSlots": {
+          "obsolete": "Ana",
+          "current": "Marina"
+        },
+        "styleTags": [
+          "short",
+          "explicit-repair"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "name",
+          "obsolete": "Ana",
+          "current": "Marina",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": -2,
+        "gain": 0.25
+      },
+      "lineage": {
+        "parentId": "corr-name-na-verdade-pause-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-weekday-nao-continuous-surface-a",
+      "familyRootId": "corr-weekday-nao-continuous",
+      "split": "development",
+      "seed": 4142,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Marca para terça... não, para sexta.",
+        "slotType": "weekday",
+        "marker": "não",
+        "timingPattern": "same-turn-continuous",
+        "effectRisk": "reversible",
+        "slots": {
+          "obsolete": "terça",
+          "current": "sexta"
+        },
+        "canonicalSlots": {
+          "obsolete": "terça",
+          "current": "sexta"
+        },
+        "styleTags": [
+          "direct",
+          "hesitation"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "weekday",
+          "obsolete": "terça",
+          "current": "sexta",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 1,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-weekday-nao-continuous-surface-b",
+      "familyRootId": "corr-weekday-nao-continuous",
+      "split": "development",
+      "seed": 4143,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Pode deixar na terça; não, muda para sexta.",
+        "slotType": "weekday",
+        "marker": "não",
+        "timingPattern": "same-turn-continuous",
+        "effectRisk": "reversible",
+        "slots": {
+          "obsolete": "terça",
+          "current": "sexta"
+        },
+        "canonicalSlots": {
+          "obsolete": "terça",
+          "current": "sexta"
+        },
+        "styleTags": [
+          "informal",
+          "two-clause"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "weekday",
+          "obsolete": "terça",
+          "current": "sexta",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 1,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": "corr-weekday-nao-continuous-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-time-na-verdade-cross-surface-a",
+      "familyRootId": "corr-time-na-verdade-cross",
+      "split": "development",
+      "seed": 4152,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "Agenda às 14h... na verdade, às 16h.",
+        "slotType": "time",
+        "marker": "na verdade",
+        "timingPattern": "cross-turn",
+        "effectRisk": "reversible",
+        "slots": {
+          "obsolete": "14h",
+          "current": "16h"
+        },
+        "canonicalSlots": {
+          "obsolete": "14:00",
+          "current": "16:00"
+        },
+        "styleTags": [
+          "time",
+          "hesitation"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "time",
+          "obsolete": "14:00",
+          "current": "16:00",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 3,
+        "gain": 0.5
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-time-na-verdade-cross-surface-b",
+      "familyRootId": "corr-time-na-verdade-cross",
+      "split": "development",
+      "seed": 4153,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "O horário seria às 14h; na verdade, às 16h.",
+        "slotType": "time",
+        "marker": "na verdade",
+        "timingPattern": "cross-turn",
+        "effectRisk": "reversible",
+        "slots": {
+          "obsolete": "14h",
+          "current": "16h"
+        },
+        "canonicalSlots": {
+          "obsolete": "14:00",
+          "current": "16:00"
+        },
+        "styleTags": [
+          "polite",
+          "explicit-repair"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "time",
+          "obsolete": "14:00",
+          "current": "16:00",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 3,
+        "gain": 0.5
+      },
+      "lineage": {
+        "parentId": "corr-time-na-verdade-cross-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-amount-nao-barge-surface-a",
+      "familyRootId": "corr-amount-nao-barge",
+      "split": "development",
+      "seed": 4162,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "Transfere R$ 1500... não, R$ 1150.",
+        "slotType": "amount",
+        "marker": "não",
+        "timingPattern": "barge-in",
+        "effectRisk": "irreversible",
+        "slots": {
+          "obsolete": "R$ 1500",
+          "current": "R$ 1150"
+        },
+        "canonicalSlots": {
+          "obsolete": "BRL 1500",
+          "current": "BRL 1150"
+        },
+        "styleTags": [
+          "irreversible",
+          "short"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "amount",
+          "obsolete": "BRL 1500",
+          "current": "BRL 1150",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": -2,
+        "gain": 0.25
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-amount-nao-barge-surface-b",
+      "familyRootId": "corr-amount-nao-barge",
+      "split": "development",
+      "seed": 4163,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "O pagamento é R$ 1500; não, troca para R$ 1150.",
+        "slotType": "amount",
+        "marker": "não",
+        "timingPattern": "barge-in",
+        "effectRisk": "irreversible",
+        "slots": {
+          "obsolete": "R$ 1500",
+          "current": "R$ 1150"
+        },
+        "canonicalSlots": {
+          "obsolete": "BRL 1500",
+          "current": "BRL 1150"
+        },
+        "styleTags": [
+          "effectful",
+          "explicit-repair"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "amount",
+          "obsolete": "BRL 1500",
+          "current": "BRL 1150",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": -2,
+        "gain": 0.25
+      },
+      "lineage": {
+        "parentId": "corr-amount-nao-barge-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-time-quer-dizer-barge-surface-a",
+      "familyRootId": "corr-time-quer-dizer-barge",
+      "split": "development",
+      "seed": 4172,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "Eu pensei às 9h... quer dizer, às 11h.",
+        "slotType": "time",
+        "marker": "quer dizer",
+        "timingPattern": "barge-in",
+        "effectRisk": "none",
+        "slots": {
+          "obsolete": "9h",
+          "current": "11h"
+        },
+        "canonicalSlots": {
+          "obsolete": "09:00",
+          "current": "11:00"
+        },
+        "styleTags": [
+          "hesitation",
+          "time"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "time",
+          "obsolete": "09:00",
+          "current": "11:00",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 1,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-time-quer-dizer-barge-surface-b",
+      "familyRootId": "corr-time-quer-dizer-barge",
+      "split": "development",
+      "seed": 4173,
+      "phenomenon": "correction",
+      "critical": true,
+      "stimulus": {
+        "text": "Pode ser às 9h; quer dizer, às 11h.",
+        "slotType": "time",
+        "marker": "quer dizer",
+        "timingPattern": "barge-in",
+        "effectRisk": "none",
+        "slots": {
+          "obsolete": "9h",
+          "current": "11h"
+        },
+        "canonicalSlots": {
+          "obsolete": "09:00",
+          "current": "11:00"
+        },
+        "styleTags": [
+          "informal",
+          "explicit-repair"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "time",
+          "obsolete": "09:00",
+          "current": "11:00",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 1,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": "corr-time-quer-dizer-barge-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-amount-quer-dizer-pause-surface-a",
+      "familyRootId": "corr-amount-quer-dizer-pause",
+      "split": "validation",
+      "seed": 4182,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Reserva R$ 45... quer dizer, R$ 54.",
+        "slotType": "amount",
+        "marker": "quer dizer",
+        "timingPattern": "same-turn-after-pause",
+        "effectRisk": "reversible",
+        "slots": {
+          "obsolete": "R$ 45",
+          "current": "R$ 54"
+        },
+        "canonicalSlots": {
+          "obsolete": "BRL 45",
+          "current": "BRL 54"
+        },
+        "styleTags": [
+          "amount",
+          "hesitation"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "amount",
+          "obsolete": "BRL 45",
+          "current": "BRL 54",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 3,
+        "gain": 0.5
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-amount-quer-dizer-pause-surface-b",
+      "familyRootId": "corr-amount-quer-dizer-pause",
+      "split": "validation",
+      "seed": 4183,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "O limite era R$ 45; quer dizer, R$ 54.",
+        "slotType": "amount",
+        "marker": "quer dizer",
+        "timingPattern": "same-turn-after-pause",
+        "effectRisk": "reversible",
+        "slots": {
+          "obsolete": "R$ 45",
+          "current": "R$ 54"
+        },
+        "canonicalSlots": {
+          "obsolete": "BRL 45",
+          "current": "BRL 54"
+        },
+        "styleTags": [
+          "declarative",
+          "explicit-repair"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "amount",
+          "obsolete": "BRL 45",
+          "current": "BRL 54",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 3,
+        "gain": 0.5
+      },
+      "lineage": {
+        "parentId": "corr-amount-quer-dizer-pause-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-name-nao-cross-surface-a",
+      "familyRootId": "corr-name-nao-cross",
+      "split": "validation",
+      "seed": 4192,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Conversa com Lucas... não, com Luiza.",
+        "slotType": "name",
+        "marker": "não",
+        "timingPattern": "cross-turn",
+        "effectRisk": "none",
+        "slots": {
+          "obsolete": "Lucas",
+          "current": "Luiza"
+        },
+        "canonicalSlots": {
+          "obsolete": "Lucas",
+          "current": "Luiza"
+        },
+        "styleTags": [
+          "name",
+          "hesitation"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "name",
+          "obsolete": "Lucas",
+          "current": "Luiza",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": -2,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-name-nao-cross-surface-b",
+      "familyRootId": "corr-name-nao-cross",
+      "split": "validation",
+      "seed": 4193,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Fala com Lucas; não, com Luiza.",
+        "slotType": "name",
+        "marker": "não",
+        "timingPattern": "cross-turn",
+        "effectRisk": "none",
+        "slots": {
+          "obsolete": "Lucas",
+          "current": "Luiza"
+        },
+        "canonicalSlots": {
+          "obsolete": "Lucas",
+          "current": "Luiza"
+        },
+        "styleTags": [
+          "short",
+          "informal"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "name",
+          "obsolete": "Lucas",
+          "current": "Luiza",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": -2,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": "corr-name-nao-cross-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-time-melhor-continuous-surface-a",
+      "familyRootId": "corr-time-melhor-continuous",
+      "split": "holdout",
+      "seed": 4202,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Executa às 8h... melhor, às 18h.",
+        "slotType": "time",
+        "marker": "melhor",
+        "timingPattern": "same-turn-continuous",
+        "effectRisk": "irreversible",
+        "slots": {
+          "obsolete": "8h",
+          "current": "18h"
+        },
+        "canonicalSlots": {
+          "obsolete": "08:00",
+          "current": "18:00"
+        },
+        "styleTags": [
+          "effectful",
+          "time"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "time",
+          "obsolete": "08:00",
+          "current": "18:00",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 1,
+        "gain": 0.25
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-time-melhor-continuous-surface-b",
+      "familyRootId": "corr-time-melhor-continuous",
+      "split": "holdout",
+      "seed": 4203,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Faz às 8h; melhor, às 18h.",
+        "slotType": "time",
+        "marker": "melhor",
+        "timingPattern": "same-turn-continuous",
+        "effectRisk": "irreversible",
+        "slots": {
+          "obsolete": "8h",
+          "current": "18h"
+        },
+        "canonicalSlots": {
+          "obsolete": "08:00",
+          "current": "18:00"
+        },
+        "styleTags": [
+          "short",
+          "imperative"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "time",
+          "obsolete": "08:00",
+          "current": "18:00",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 1,
+        "gain": 0.25
+      },
+      "lineage": {
+        "parentId": "corr-time-melhor-continuous-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-weekday-melhor-pause-surface-a",
+      "familyRootId": "corr-weekday-melhor-pause",
+      "split": "holdout",
+      "seed": 4212,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Eu iria na quarta... melhor, no sábado.",
+        "slotType": "weekday",
+        "marker": "melhor",
+        "timingPattern": "same-turn-after-pause",
+        "effectRisk": "none",
+        "slots": {
+          "obsolete": "quarta",
+          "current": "sábado"
+        },
+        "canonicalSlots": {
+          "obsolete": "quarta",
+          "current": "sábado"
+        },
+        "styleTags": [
+          "hesitation",
+          "weekday"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "weekday",
+          "obsolete": "quarta",
+          "current": "sábado",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 3,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": null,
+        "relation": "root",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    },
+    {
+      "id": "corr-weekday-melhor-pause-surface-b",
+      "familyRootId": "corr-weekday-melhor-pause",
+      "split": "holdout",
+      "seed": 4213,
+      "phenomenon": "correction",
+      "critical": false,
+      "stimulus": {
+        "text": "Pode ser quarta; melhor, sábado.",
+        "slotType": "weekday",
+        "marker": "melhor",
+        "timingPattern": "same-turn-after-pause",
+        "effectRisk": "none",
+        "slots": {
+          "obsolete": "quarta",
+          "current": "sábado"
+        },
+        "canonicalSlots": {
+          "obsolete": "quarta",
+          "current": "sábado"
+        },
+        "styleTags": [
+          "short",
+          "informal"
+        ]
+      },
+      "oracle": {
+        "ref": "correction-last-value-wins@1",
+        "args": {
+          "slot": "weekday",
+          "obsolete": "quarta",
+          "current": "sábado",
+          "allowProvisionalEffect": false
+        }
+      },
+      "audioPlan": {
+        "ttsRef": "windows-maria-local",
+        "rate": 3,
+        "gain": 1
+      },
+      "lineage": {
+        "parentId": "corr-weekday-melhor-pause-surface-a",
+        "relation": "ai-surface-variation",
+        "proposalBatchId": "correction-surfaces-bootstrap-2026-07-31"
+      }
+    }
+  ]
+}

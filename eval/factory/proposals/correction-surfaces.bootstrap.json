@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "batchId": "correction-surfaces-bootstrap-2026-07-31",
+  "provider": {
+    "id": "openai-codex-session",
+    "model": "codex-session-model",
+    "promptSha256": "e46c41dee36f5817b6cc356e78ea6fa458ee5ddcb2cb055edc7d73abd906efa5",
+    "inputSha256": "38a0c4ed162cc66c0f0a2c3ee964907e20f10612ab7861f359b134f530ddbcb3",
+    "outputSha256": "f6f9e5a6abf22be908d7ce60a92316a09f5611af394506032e650a0fbfe9d446"
+  },
+  "seed": 4102,
+  "proposals": [
+    {
+      "blueprintId": "corr-weekday-quer-dizer-cross",
+      "text": "A reserva fica para quinta... quer dizer, para domingo.",
+      "styleTags": ["hesitation", "explicit-repair"]
+    },
+    {
+      "blueprintId": "corr-weekday-quer-dizer-cross",
+      "text": "Pode deixar na quinta. Quer dizer, muda para domingo.",
+      "styleTags": ["two-clause", "informal"]
+    },
+    {
+      "blueprintId": "corr-name-melhor-barge",
+      "text": "Fala com Bruno... melhor, com Caio.",
+      "styleTags": ["short", "restart"]
+    },
+    {
+      "blueprintId": "corr-name-melhor-barge",
+      "text": "No nome de Bruno; melhor, no nome de Caio.",
+      "styleTags": ["elliptical", "explicit-repair"]
+    },
+    {
+      "blueprintId": "corr-amount-na-verdade-continuous",
+      "text": "Era só uma estimativa de R$ 80... na verdade, R$ 18.",
+      "styleTags": ["hesitation", "amount"]
+    },
+    {
+      "blueprintId": "corr-amount-na-verdade-continuous",
+      "text": "Anota R$ 80; na verdade, deixa R$ 18.",
+      "styleTags": ["imperative", "informal"]
+    },
+    {
+      "blueprintId": "corr-name-na-verdade-pause",
+      "text": "Autoriza no nome de Ana... na verdade, no nome de Marina.",
+      "styleTags": ["effectful", "hesitation"]
+    },
+    {
+      "blueprintId": "corr-name-na-verdade-pause",
+      "text": "Fala com Ana; na verdade, com Marina.",
+      "styleTags": ["short", "explicit-repair"]
+    },
+    {
+      "blueprintId": "corr-weekday-nao-continuous",
+      "text": "Marca para terça... não, para sexta.",
+      "styleTags": ["direct", "hesitation"]
+    },
+    {
+      "blueprintId": "corr-weekday-nao-continuous",
+      "text": "Pode deixar na terça; não, muda para sexta.",
+      "styleTags": ["informal", "two-clause"]
+    },
+    {
+      "blueprintId": "corr-time-na-verdade-cross",
+      "text": "Agenda às 14h... na verdade, às 16h.",
+      "styleTags": ["time", "hesitation"]
+    },
+    {
+      "blueprintId": "corr-time-na-verdade-cross",
+      "text": "O horário seria às 14h; na verdade, às 16h.",
+      "styleTags": ["polite", "explicit-repair"]
+    },
+    {
+      "blueprintId": "corr-amount-nao-barge",
+      "text": "Transfere R$ 1500... não, R$ 1150.",
+      "styleTags": ["irreversible", "short"]
+    },
+    {
+      "blueprintId": "corr-amount-nao-barge",
+      "text": "O pagamento é R$ 1500; não, troca para R$ 1150.",
+      "styleTags": ["effectful", "explicit-repair"]
+    },
+    {
+      "blueprintId": "corr-time-quer-dizer-barge",
+      "text": "Eu pensei às 9h... quer dizer, às 11h.",
+      "styleTags": ["hesitation", "time"]
+    },
+    {
+      "blueprintId": "corr-time-quer-dizer-barge",
+      "text": "Pode ser às 9h; quer dizer, às 11h.",
+      "styleTags": ["informal", "explicit-repair"]
+    },
+    {
+      "blueprintId": "corr-amount-quer-dizer-pause",
+      "text": "Reserva R$ 45... quer dizer, R$ 54.",
+      "styleTags": ["amount", "hesitation"]
+    },
+    {
+      "blueprintId": "corr-amount-quer-dizer-pause",
+      "text": "O limite era R$ 45; quer dizer, R$ 54.",
+      "styleTags": ["declarative", "explicit-repair"]
+    },
+    {
+      "blueprintId": "corr-name-nao-cross",
+      "text": "Conversa com Lucas... não, com Luiza.",
+      "styleTags": ["name", "hesitation"]
+    },
+    {
+      "blueprintId": "corr-name-nao-cross",
+      "text": "Fala com Lucas; não, com Luiza.",
+      "styleTags": ["short", "informal"]
+    },
+    {
+      "blueprintId": "corr-time-melhor-continuous",
+      "text": "Executa às 8h... melhor, às 18h.",
+      "styleTags": ["effectful", "time"]
+    },
+    {
+      "blueprintId": "corr-time-melhor-continuous",
+      "text": "Faz às 8h; melhor, às 18h.",
+      "styleTags": ["short", "imperative"]
+    },
+    {
+      "blueprintId": "corr-weekday-melhor-pause",
+      "text": "Eu iria na quarta... melhor, no sábado.",
+      "styleTags": ["hesitation", "weekday"]
+    },
+    {
+      "blueprintId": "corr-weekday-melhor-pause",
+      "text": "Pode ser quarta; melhor, sábado.",
+      "styleTags": ["short", "informal"]
+    }
+  ]
+}

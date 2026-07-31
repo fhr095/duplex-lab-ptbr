@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "asr-autonomy-ptbr-v0.1",
+  "locale": "pt-BR",
+  "voice": "Microsoft Maria Desktop",
+  "rates": [-2, 1, 3],
+  "utterances": [
+    {
+      "id": "saudacao",
+      "category": "simple",
+      "text": "Oi, tudo bem?"
+    },
+    {
+      "id": "hesitacao",
+      "category": "disfluency",
+      "text": "Eu queria, ahn, mudar a data da reunião."
+    },
+    {
+      "id": "interrupcao",
+      "category": "barge-in",
+      "text": "Espera, eu quis dizer outra coisa."
+    },
+    {
+      "id": "correcao",
+      "category": "correction",
+      "text": "Marque para sexta. Não, na verdade, para domingo."
+    },
+    {
+      "id": "delegacao",
+      "category": "delegation",
+      "text": "Pesquise e compare as três melhores opções para mim."
+    },
+    {
+      "id": "cancelamento",
+      "category": "cancellation",
+      "text": "Deixa para lá, não precisa mais pesquisar."
+    },
+    {
+      "id": "numeros",
+      "category": "semantic-detail",
+      "text": "Mude a reunião do dia quinze para o dia vinte e três."
+    },
+    {
+      "id": "nao-curto",
+      "category": "short-command",
+      "text": "Não."
+    },
+    {
+      "id": "espera-curto",
+      "category": "short-command",
+      "text": "Espera."
+    },
+    {
+      "id": "muda-terca",
+      "category": "short-correction",
+      "text": "Muda para terça."
+    }
+  ]
+}
