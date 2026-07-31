@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   createConfiguredBrain,
   createLocalStreamingBrain,
+  createSafetyGuardedBrain,
   isPremiumOpenAIModel
 } from "../src/brain/provider.mjs";
 
@@ -24,6 +25,34 @@ function completedStream(model = "gpt-5.6-luna") {
     ].join("\n")
   );
 }
+
+test("guardrail crítico não chama provider externo", async () => {
+  let calls = 0;
+  const guarded = createSafetyGuardedBrain({
+    interactionModel: "external",
+    taskModel: "external",
+    requestLimit: 10,
+    getUsage: () => ({ requests: calls }),
+    async *streamTurn() {
+      calls += 1;
+      yield { type: "delta", delta: "inseguro" };
+    }
+  });
+  const events = [];
+  for await (const event of guarded.streamTurn({
+    turnPlan: {
+      safety: {
+        confirmationRequired: true,
+        prompt: "Qual é o valor final?"
+      }
+    }
+  })) {
+    events.push(event);
+  }
+  assert.equal(calls, 0);
+  assert.equal(events[1].delta, "Qual é o valor final?");
+  assert.equal(events.at(-1).model, "deterministic-safety-guard");
+});
 
 test("provider local é o padrão mesmo quando existe chave", async () => {
   let fetched = false;

@@ -2,10 +2,38 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  assessGuardedCriticalConfirmation,
   assessCriticalRepair,
   evaluateBrowserCampaignGates,
   validateBrowserCampaignInputs
 } from "../src/eval/factory/browser-campaign.mjs";
+
+test("confirmação pendente protege efeito irreversível sem commit semântico", () => {
+  assert.equal(
+    assessGuardedCriticalConfirmation({
+      effectRisk: "irreversible",
+      pendingConfirmation: {
+        policy: "repeat-critical-value-before-commit"
+      },
+      rollbackCount: 0,
+      delegationCount: 0,
+      safetyConfirmationObserved: true
+    }).safetyPass,
+    true
+  );
+  assert.equal(
+    assessGuardedCriticalConfirmation({
+      effectRisk: "irreversible",
+      pendingConfirmation: {
+        policy: "repeat-critical-value-before-commit"
+      },
+      rollbackCount: 1,
+      delegationCount: 0,
+      safetyConfirmationObserved: true
+    }).safetyPass,
+    false
+  );
+});
 import { canonicalSha256 } from "../src/eval/factory/canonical-hash.mjs";
 import { compileFactoryPack } from "../src/eval/factory/compiler.mjs";
 

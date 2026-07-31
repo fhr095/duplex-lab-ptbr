@@ -35,7 +35,7 @@ npm run eval:auto
 10. relatório consolidado em `eval/reports/autonomous-latest.json`.
 
 Esse comando preserva a baseline ampla histórica. Ele ainda não orquestra a
-fábrica v0.2 nem o EXP-0007; portanto, “rodar `eval:auto`” não equivale a
+fábrica v0.2 nem os EXP-0007–0009; portanto, “rodar `eval:auto`” não equivale a
 avançar automaticamente o roadmap atual.
 
 O runner abre uma porta livre, força `BRAIN_PROVIDER=local`, verifica no
@@ -69,11 +69,12 @@ casos, superfícies geradas, oráculos determinísticos, mutações adversariais
 áudio/ambientes seeded e replay WebSocket/Chrome. Geradores/críticos autônomos
 amplos, multivoz, eco e agrupamento automático continuam pendentes.
 
-O próximo loop não é “ampliar tudo”. Ele segue a
-[ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada):
-executa agora o screening EXP-0007 e só segue sua ramificação se houver sinal
-confirmado. O roadmap, e não este documento de método, define os fechamentos
-posteriores.
+O próximo loop não é “ampliar tudo”. EXP-0007 classificou a fronteira acústica,
+EXP-0008 reteve o verificador forte por latência e EXP-0009 bloqueou a
+confirmação monetária insegura. A
+[ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada) agora
+fecha a baseline e inicia M2.5. O roadmap, e não este documento de método,
+define os fechamentos posteriores.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O
@@ -141,13 +142,10 @@ comparação ou desbloquear M4a. Cada ramificação declara timebox e regra de
 parada; duas hipóteses são o orçamento comum, com exceção explícita para falha
 grave.
 
-O maior gargalo automatizado conhecido é a correção: fim de fala até nova voz
-teve p95 de 1.746 ms, enquanto o harness textual simples marcou 187 ms de fim
-sintético até `onplaying`. Essas métricas têm caminhos diferentes e não são
-uma comparação de produto. O EXP-0007 primeiro classifica se framing/merge,
-nondeterminismo do decoder, commit grace ou TTS explica a cauda. Somente se o
-decoder for a causa, a hipótese seguinte é verificação seletiva, não uma segunda
-passagem indiscriminada:
+O EXP-0007 mostrou que framing/merge explicava o PCM variável, mas sua variante
+não venceu segurança nem latência. O EXP-0008 comprovou que um verificador forte
+recupera o valor, porém a 3,1 s p95; por isso não entrou como segunda passagem
+indiscriminada. A arquitetura seletiva permanece uma opção futura:
 
 ```text
 tiny → parcial e sinal de intenção

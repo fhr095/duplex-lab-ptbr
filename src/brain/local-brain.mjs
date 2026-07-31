@@ -1,6 +1,9 @@
 import { randomUUID } from "node:crypto";
 
 import { analyzeCorrection } from "../interaction/correction-semantics.mjs";
+import {
+  planCriticalConfirmation
+} from "../interaction/critical-confirmation.mjs";
 
 function normalize(text) {
   return text.trim().replace(/\s+/gu, " ");
@@ -24,9 +27,13 @@ function spokenValue(value) {
   return normalized;
 }
 
-function directAnswer(text, semantic) {
+function directAnswer(text, semantic, safety) {
   if (/\b(oi|olá|bom dia|boa tarde|boa noite)\b/iu.test(text)) {
     return "Oi! Estou te ouvindo. Pode falar naturalmente e me interromper quando quiser.";
+  }
+
+  if (safety?.confirmationRequired) {
+    return safety.prompt;
   }
 
   if (semantic?.correction) {
@@ -61,6 +68,20 @@ export function createLocalBrain(options = {}) {
       const semantic = correction.isCorrection
         ? { correction: correction.correction }
         : { correction: null };
+      const safety = planCriticalConfirmation(
+        text,
+        semantic.correction
+      );
+
+      if (safety) {
+        return {
+          mode: "direct",
+          effectiveText,
+          semantic,
+          safety,
+          response: directAnswer(effectiveText, semantic, safety)
+        };
+      }
 
       if (requiresExternalWork(effectiveText)) {
         return {
@@ -84,7 +105,7 @@ export function createLocalBrain(options = {}) {
         mode: "direct",
         effectiveText,
         semantic,
-        response: directAnswer(effectiveText, semantic)
+        response: directAnswer(effectiveText, semantic, safety)
       };
     }
   };

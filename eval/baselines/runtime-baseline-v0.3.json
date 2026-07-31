@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "id": "runtime-baseline-ptbr-v0.3",
+  "frozenAt": "2026-07-31T23:10:31.194Z",
+  "status": "frozen-development-comparator",
+  "scope": {
+    "promoted": [
+      "vertical local de engenharia",
+      "fábrica de avaliação como instrumento",
+      "guardrail monetário de abstention"
+    ],
+    "held": [
+      "prontidão humana e de produto",
+      "efeitos externos reais",
+      "verificador Whisper no caminho bloqueante",
+      "prefinal acústica eager"
+    ]
+  },
+  "runtimeFingerprint": {
+    "algorithm": "sha256-source-tree-v1",
+    "sha256": "fb69038367f3ef2922db1d18f3ad33c2eb25634ef4751246b58e8bbc78a1b2f5",
+    "fileCount": 73,
+    "roots": [
+      "src",
+      "web",
+      "package.json",
+      "package-lock.json",
+      "requirements-asr.txt"
+    ]
+  },
+  "configuration": {
+    "brain": {
+      "provider": "local",
+      "interactionModel": "deterministic-mock",
+      "taskModel": "deterministic-mock"
+    },
+    "vad": {
+      "control": "silero-vad-v6.2",
+      "modelSha256": "1a153a22f4509e292a94e67d6f9b85e8deb25b4988682b7e174c65279d8788e3",
+      "threshold": 0.85,
+      "onsetWindows": 1,
+      "offThreshold": 0.35,
+      "offsetWindows": 7
+    },
+    "asr": {
+      "partialEngine": "whisper",
+      "partialModel": "tiny",
+      "partialThreads": 1,
+      "finalEngine": "parakeet",
+      "finalModel": "nemo-parakeet-tdt-0.6b-v3",
+      "finalThreads": 3,
+      "device": "cpu",
+      "computeType": "int8"
+    },
+    "interaction": {
+      "audioPipelineMaxFrames": 16,
+      "endpoint": {
+        "completeSilenceMs": 520,
+        "incompleteSilenceMs": 1050,
+        "noTranscriptSilenceMs": 900
+      },
+      "effectfulFinalCommitGraceMs": 650,
+      "criticalFinalCommitGraceMs": 1100,
+      "finalCommitGraceMs": 220,
+      "mergeWindowMs": 1400,
+      "prefinalPolicy": "linguistic-complete",
+      "vad": {
+        "minimumOnThreshold": 0.025,
+        "onMultiplier": 4,
+        "onsetFrames": 4,
+        "pauseFrames": 10
+      }
+    },
+    "safety": {
+      "criticalAmountCorrection": "repeat-critical-value-before-commit",
+      "externalProviderBypass": true,
+      "semanticCommitBeforeConfirmation": false
+    },
+    "tts": {
+      "engine": "windows-system-speech",
+      "voice": "Microsoft Maria Desktop",
+      "culture": "pt-BR"
+    }
+  },
+  "freezeChecks": {
+    "runtimeHealthy": true,
+    "runtimeFingerprintCurrent": true,
+    "localBrainDefault": true,
+    "sileroControlReady": true,
+    "asrCascadeReady": true,
+    "safePrefinalDefault": true,
+    "factoryToolchainPromoted": true,
+    "acousticPrefinalRejected": true,
+    "shadowVerifierHeld": true,
+    "criticalAmountGuardPromoted": true,
+    "zeroPaidCallsInFreezeEvidence": true
+  },
+  "evidence": {
+    "factory": {
+      "path": "eval/reports/eval-factory-campaign-v0.2.json",
+      "sha256": "55872544f338537479d7d3fe64091744458272a60bdc99b7095a24eeaaa2d0b7",
+      "decision": {
+        "factoryToolchain": "promote",
+        "runtimeEngineering": "hold",
+        "userFacingReadiness": "hold"
+      }
+    },
+    "exp0007": {
+      "path": "eval/reports/exp-0007-screening-v1.json",
+      "sha256": "f6c5c4cacc6f6b13a11b2d3d8ccd4d51704d4f349e909fc74779f7067c55cc14",
+      "decision": "reject-safety"
+    },
+    "exp0008": {
+      "path": "eval/reports/exp-0008-shadow-v1.json",
+      "sha256": "7f4abfe77f5af16e3b3c2ab488d550342daa8da025a1a76395c6913d89e6438e",
+      "decision": "hold-latency"
+    },
+    "exp0009": {
+      "path": "eval/reports/exp-0009-critical-amount-guard-v1.json",
+      "sha256": "ff141d0c9f5d870ef0d1d7ce710c0513b336d08d863b5fcc4f2ee23e8899ae7b",
+      "decision": "promote-safety-guard"
+    }
+  },
+  "knownLimitations": [
+    "Uma única voz sintética e cinco conteúdos principais dominam os EXP-0007–0009.",
+    "O ASR final ainda confunde R$ 1.150 com R$ 150 e domingo com mundo em fixtures conhecidas.",
+    "A pergunta de segurança não implementa ainda o ledger do turno de confirmação seguinte.",
+    "A métrica do renderer não mede a cauda física de alto-falante e sala.",
+    "Não há alegação de naturalidade, preferência humana ou generalização acústica."
+  ],
+  "nextMilestone": "M2.5 InteractionKernel/Runtime/LocalAudioReflex"
+}

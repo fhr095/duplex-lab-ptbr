@@ -1,0 +1,1138 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "EXP-0008",
+  "generatedAt": "2026-07-31T22:51:13.750Z",
+  "evidenceLevel": "offline-shadow-feasibility",
+  "matrix": {
+    "cases": 5,
+    "candidates": 3,
+    "repetitions": 3,
+    "observations": 45
+  },
+  "gates": {
+    "exactPcmReconstruction": true,
+    "qualityCeilingSemanticSignal": true,
+    "deployableCandidate": false,
+    "zeroPaidApiCalls": true
+  },
+  "decision": "hold-latency",
+  "authorizedAuthority": "none",
+  "deployableCandidates": [],
+  "reconstructions": [
+    {
+      "id": "corr-amount-nao-barge-surface-a",
+      "sourceWaveSha256": "b930922761db30c07ff35a2d8e3a33a7a04a2731830a34a6091c778d3a5519dc",
+      "sourceSampleRate": 22050,
+      "sampleRate": 16000,
+      "sampleCount": 110528,
+      "finalPcmSha256": "9bde647ea21e2070dd888d3517acde1c86e9f268cadb3f1b980e32c3758f0dc1",
+      "segments": [
+        {
+          "sampleStart": 320,
+          "sampleEnd": 49664,
+          "sampleCount": 49344,
+          "sha256": "45a9121f3f3a3f4e9f0e484c7049d9145585d652ee705273dd2b82c1eb89cce6"
+        },
+        {
+          "sampleStart": 65280,
+          "sampleEnd": 126464,
+          "sampleCount": 61184,
+          "sha256": "c635e0db74304f27ee786a23814705fb26fde4b5972be09204ffdea150ce19f5"
+        }
+      ],
+      "pass": true,
+      "artifact": "eval/generated/exp-0008/corr-amount-nao-barge-surface-a.wav",
+      "artifactWaveSha256": "25c8df74f574355f7e0fb64ef5f17793a9fb8c3bb02550ac5ac032c7b37db2cf"
+    },
+    {
+      "id": "corr-time-na-verdade-cross-surface-a",
+      "sourceWaveSha256": "fc047f396796d4fd9b4b2b3bc0d2d7496941aa3dd7a827c62b544905e1b3f3e4",
+      "sourceSampleRate": 16000,
+      "sampleRate": 16000,
+      "sampleCount": 59392,
+      "finalPcmSha256": "9989f1efba8854dfda4a76e17b206d3731a7daaf5cfe00a44b4108568618e1d4",
+      "segments": [
+        {
+          "sampleStart": 0,
+          "sampleEnd": 59392,
+          "sampleCount": 59392,
+          "sha256": "9989f1efba8854dfda4a76e17b206d3731a7daaf5cfe00a44b4108568618e1d4"
+        }
+      ],
+      "pass": true,
+      "artifact": "eval/generated/exp-0008/corr-time-na-verdade-cross-surface-a.wav",
+      "artifactWaveSha256": "4f0acd354677e599e4e4e1b0ca204f7fa8dd0064a5d2af623ce6f1593eaa70ef"
+    },
+    {
+      "id": "corr-weekday-quer-dizer-cross-surface-a",
+      "sourceWaveSha256": "6d1398679d67e24c932d9e37dcb6e838e5434b027e18367e88c78509a7ed3bb9",
+      "sourceSampleRate": 16000,
+      "sampleRate": 16000,
+      "sampleCount": 93696,
+      "finalPcmSha256": "602cfa5963beca0050578ecb57c28a743f340feefef5da6f4c75c1956743b78d",
+      "segments": [
+        {
+          "sampleStart": 0,
+          "sampleEnd": 93696,
+          "sampleCount": 93696,
+          "sha256": "602cfa5963beca0050578ecb57c28a743f340feefef5da6f4c75c1956743b78d"
+        }
+      ],
+      "pass": true,
+      "artifact": "eval/generated/exp-0008/corr-weekday-quer-dizer-cross-surface-a.wav",
+      "artifactWaveSha256": "11d6f351a744f9c86474e1323f52448a78ad5bb7075f9c55e458a3e937c4c7d1"
+    },
+    {
+      "id": "corr-name-na-verdade-pause-surface-a",
+      "sourceWaveSha256": "cf3875e1b738d83f10d0125d2679ca4550d839d9cdd1562eba9acb399ffd6a32",
+      "sourceSampleRate": 16000,
+      "sampleRate": 16000,
+      "sampleCount": 93184,
+      "finalPcmSha256": "cf3bb96f9a2dd4ef9e5de6393baf1f06ba28d198e0d1c23d4bc5d048683959fc",
+      "segments": [
+        {
+          "sampleStart": 0,
+          "sampleEnd": 93184,
+          "sampleCount": 93184,
+          "sha256": "cf3bb96f9a2dd4ef9e5de6393baf1f06ba28d198e0d1c23d4bc5d048683959fc"
+        }
+      ],
+      "pass": true,
+      "artifact": "eval/generated/exp-0008/corr-name-na-verdade-pause-surface-a.wav",
+      "artifactWaveSha256": "9eed0602abeca7b94929aad4aa1a555e604af8b5ee73ac50efe328182f188f80"
+    },
+    {
+      "id": "corr-time-quer-dizer-barge-surface-a",
+      "sourceWaveSha256": "0b714a0f6ef9fbd499d7ba73feae781bd34c577910195fa97c9f057ff9b4d289",
+      "sourceSampleRate": 16000,
+      "sampleRate": 16000,
+      "sampleCount": 64512,
+      "finalPcmSha256": "0cab30b7d39f4e7a6e73f72cfeab89cc992775a58694906fc4c39ffd862b7c48",
+      "segments": [
+        {
+          "sampleStart": 0,
+          "sampleEnd": 64512,
+          "sampleCount": 64512,
+          "sha256": "0cab30b7d39f4e7a6e73f72cfeab89cc992775a58694906fc4c39ffd862b7c48"
+        }
+      ],
+      "pass": true,
+      "artifact": "eval/generated/exp-0008/corr-time-quer-dizer-barge-surface-a.wav",
+      "artifactWaveSha256": "769fb9ed66c77d08657ec196e7553898a6f10262aa226cd3be19048d039470a5"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "whisper-small",
+      "engine": "whisper",
+      "model": "small",
+      "role": "quality-ceiling",
+      "modelLoadMs": 2259,
+      "observationCount": 15,
+      "metrics": {
+        "amountCatchRate": 1,
+        "numericAgreementRate": 1,
+        "transcriptStabilityRate": 1,
+        "inferenceP95Ms": 3100
+      },
+      "gates": {
+        "amountCatch": true,
+        "numericControlAgreement": true,
+        "transcriptStability": true,
+        "deployableLatency": false
+      },
+      "semanticPass": true,
+      "deployablePass": false,
+      "cases": {
+        "corr-amount-nao-barge-surface-a": {
+          "slot": "amount",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 1,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 2590,
+            "p95": 3100,
+            "max": 3100
+          },
+          "transcripts": [
+            "Transferir 1.500 reais. Não, 1.150 reais."
+          ]
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "slot": "time",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 1,
+          "primaryAgreementRate": 1,
+          "vetoRate": 0,
+          "inferenceMs": {
+            "p50": 2816,
+            "p95": 2904,
+            "max": 2904
+          },
+          "transcripts": [
+            "Agenda às 14 horas, na verdade às 16 horas."
+          ]
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "slot": "weekday",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 0,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 2757,
+            "p95": 2842,
+            "max": 2842
+          },
+          "transcripts": [
+            "A reserva fica para quinta, quer dizer, para do mundo."
+          ]
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "slot": "name",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 1,
+          "primaryAgreementRate": 1,
+          "vetoRate": 0,
+          "inferenceMs": {
+            "p50": 2701,
+            "p95": 2847,
+            "max": 2847
+          },
+          "transcripts": [
+            "autoriza no nome de Ana, na verdade, no nome de Marina."
+          ]
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "slot": "time",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 1,
+          "primaryAgreementRate": 1,
+          "vetoRate": 0,
+          "inferenceMs": {
+            "p50": 2528,
+            "p95": 2820,
+            "max": 2820
+          },
+          "transcripts": [
+            "Eu pensei às 9 horas, quer dizer às 11 horas."
+          ]
+        }
+      },
+      "observations": [
+        {
+          "caseId": "corr-amount-nao-barge-surface-a",
+          "repetition": 1,
+          "elapsedMs": 3100,
+          "languageProbability": 1,
+          "transcript": "Transferir 1.500 reais. Não, 1.150 reais.",
+          "parsedSlot": "amount",
+          "parsedObsolete": "BRL 1500",
+          "parsedCurrent": "BRL 1150",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-time-na-verdade-cross-surface-a",
+          "repetition": 1,
+          "elapsedMs": 2816,
+          "languageProbability": 1,
+          "transcript": "Agenda às 14 horas, na verdade às 16 horas.",
+          "parsedSlot": "time",
+          "parsedObsolete": "14:00",
+          "parsedCurrent": "16:00",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+          "repetition": 1,
+          "elapsedMs": 2842,
+          "languageProbability": 1,
+          "transcript": "A reserva fica para quinta, quer dizer, para do mundo.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-name-na-verdade-pause-surface-a",
+          "repetition": 1,
+          "elapsedMs": 2847,
+          "languageProbability": 1,
+          "transcript": "autoriza no nome de Ana, na verdade, no nome de Marina.",
+          "parsedSlot": "name",
+          "parsedObsolete": "Ana",
+          "parsedCurrent": "Marina",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-quer-dizer-barge-surface-a",
+          "repetition": 1,
+          "elapsedMs": 2820,
+          "languageProbability": 1,
+          "transcript": "Eu pensei às 9 horas, quer dizer às 11 horas.",
+          "parsedSlot": "time",
+          "parsedObsolete": "09:00",
+          "parsedCurrent": "11:00",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-na-verdade-cross-surface-a",
+          "repetition": 2,
+          "elapsedMs": 2773,
+          "languageProbability": 1,
+          "transcript": "Agenda às 14 horas, na verdade às 16 horas.",
+          "parsedSlot": "time",
+          "parsedObsolete": "14:00",
+          "parsedCurrent": "16:00",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+          "repetition": 2,
+          "elapsedMs": 2724,
+          "languageProbability": 1,
+          "transcript": "A reserva fica para quinta, quer dizer, para do mundo.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-name-na-verdade-pause-surface-a",
+          "repetition": 2,
+          "elapsedMs": 2699,
+          "languageProbability": 1,
+          "transcript": "autoriza no nome de Ana, na verdade, no nome de Marina.",
+          "parsedSlot": "name",
+          "parsedObsolete": "Ana",
+          "parsedCurrent": "Marina",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-quer-dizer-barge-surface-a",
+          "repetition": 2,
+          "elapsedMs": 2390,
+          "languageProbability": 1,
+          "transcript": "Eu pensei às 9 horas, quer dizer às 11 horas.",
+          "parsedSlot": "time",
+          "parsedObsolete": "09:00",
+          "parsedCurrent": "11:00",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-amount-nao-barge-surface-a",
+          "repetition": 2,
+          "elapsedMs": 2590,
+          "languageProbability": 1,
+          "transcript": "Transferir 1.500 reais. Não, 1.150 reais.",
+          "parsedSlot": "amount",
+          "parsedObsolete": "BRL 1500",
+          "parsedCurrent": "BRL 1150",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+          "repetition": 3,
+          "elapsedMs": 2757,
+          "languageProbability": 1,
+          "transcript": "A reserva fica para quinta, quer dizer, para do mundo.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-name-na-verdade-pause-surface-a",
+          "repetition": 3,
+          "elapsedMs": 2701,
+          "languageProbability": 1,
+          "transcript": "autoriza no nome de Ana, na verdade, no nome de Marina.",
+          "parsedSlot": "name",
+          "parsedObsolete": "Ana",
+          "parsedCurrent": "Marina",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-quer-dizer-barge-surface-a",
+          "repetition": 3,
+          "elapsedMs": 2528,
+          "languageProbability": 1,
+          "transcript": "Eu pensei às 9 horas, quer dizer às 11 horas.",
+          "parsedSlot": "time",
+          "parsedObsolete": "09:00",
+          "parsedCurrent": "11:00",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-amount-nao-barge-surface-a",
+          "repetition": 3,
+          "elapsedMs": 2444,
+          "languageProbability": 1,
+          "transcript": "Transferir 1.500 reais. Não, 1.150 reais.",
+          "parsedSlot": "amount",
+          "parsedObsolete": "BRL 1500",
+          "parsedCurrent": "BRL 1150",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-time-na-verdade-cross-surface-a",
+          "repetition": 3,
+          "elapsedMs": 2904,
+          "languageProbability": 1,
+          "transcript": "Agenda às 14 horas, na verdade às 16 horas.",
+          "parsedSlot": "time",
+          "parsedObsolete": "14:00",
+          "parsedCurrent": "16:00",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        }
+      ]
+    },
+    {
+      "id": "whisper-base",
+      "engine": "whisper",
+      "model": "base",
+      "role": "latency-challenger",
+      "modelLoadMs": 955,
+      "observationCount": 15,
+      "metrics": {
+        "amountCatchRate": 1,
+        "numericAgreementRate": 0,
+        "transcriptStabilityRate": 1,
+        "inferenceP95Ms": 1708
+      },
+      "gates": {
+        "amountCatch": true,
+        "numericControlAgreement": false,
+        "transcriptStability": true,
+        "deployableLatency": false
+      },
+      "semanticPass": false,
+      "deployablePass": false,
+      "cases": {
+        "corr-amount-nao-barge-surface-a": {
+          "slot": "amount",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 1,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 1043,
+            "p95": 1294,
+            "max": 1294
+          },
+          "transcripts": [
+            "Transferir 1.500 reais. Não, 1.150 reais."
+          ]
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "slot": "time",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 0,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 995,
+            "p95": 1037,
+            "max": 1037
+          },
+          "transcripts": [
+            "agenda as 14h na verdade a vezes 3h."
+          ]
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "slot": "weekday",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 0,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 979,
+            "p95": 1024,
+            "max": 1024
+          },
+          "transcripts": [
+            "A reserva fica para quinta que é a deseja para o mundo."
+          ]
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "slot": "name",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 1,
+          "primaryAgreementRate": 1,
+          "vetoRate": 0,
+          "inferenceMs": {
+            "p50": 972,
+            "p95": 1708,
+            "max": 1708
+          },
+          "transcripts": [
+            "a uncoriza no nome de Ana, na verdade, o nome de Marina."
+          ]
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "slot": "time",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 0,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 931,
+            "p95": 1092,
+            "max": 1092
+          },
+          "transcripts": [
+            "Eu pensei às 9 horas que é dizer às 11 horas."
+          ]
+        }
+      },
+      "observations": [
+        {
+          "caseId": "corr-amount-nao-barge-surface-a",
+          "repetition": 1,
+          "elapsedMs": 1294,
+          "languageProbability": 1,
+          "transcript": "Transferir 1.500 reais. Não, 1.150 reais.",
+          "parsedSlot": "amount",
+          "parsedObsolete": "BRL 1500",
+          "parsedCurrent": "BRL 1150",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-time-na-verdade-cross-surface-a",
+          "repetition": 1,
+          "elapsedMs": 1037,
+          "languageProbability": 1,
+          "transcript": "agenda as 14h na verdade a vezes 3h.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+          "repetition": 1,
+          "elapsedMs": 1024,
+          "languageProbability": 1,
+          "transcript": "A reserva fica para quinta que é a deseja para o mundo.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-name-na-verdade-pause-surface-a",
+          "repetition": 1,
+          "elapsedMs": 928,
+          "languageProbability": 1,
+          "transcript": "a uncoriza no nome de Ana, na verdade, o nome de Marina.",
+          "parsedSlot": "name",
+          "parsedObsolete": "Ana",
+          "parsedCurrent": "Marina",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-quer-dizer-barge-surface-a",
+          "repetition": 1,
+          "elapsedMs": 916,
+          "languageProbability": 1,
+          "transcript": "Eu pensei às 9 horas que é dizer às 11 horas.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-time-na-verdade-cross-surface-a",
+          "repetition": 2,
+          "elapsedMs": 847,
+          "languageProbability": 1,
+          "transcript": "agenda as 14h na verdade a vezes 3h.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+          "repetition": 2,
+          "elapsedMs": 899,
+          "languageProbability": 1,
+          "transcript": "A reserva fica para quinta que é a deseja para o mundo.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-name-na-verdade-pause-surface-a",
+          "repetition": 2,
+          "elapsedMs": 972,
+          "languageProbability": 1,
+          "transcript": "a uncoriza no nome de Ana, na verdade, o nome de Marina.",
+          "parsedSlot": "name",
+          "parsedObsolete": "Ana",
+          "parsedCurrent": "Marina",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-quer-dizer-barge-surface-a",
+          "repetition": 2,
+          "elapsedMs": 931,
+          "languageProbability": 1,
+          "transcript": "Eu pensei às 9 horas que é dizer às 11 horas.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-amount-nao-barge-surface-a",
+          "repetition": 2,
+          "elapsedMs": 1022,
+          "languageProbability": 1,
+          "transcript": "Transferir 1.500 reais. Não, 1.150 reais.",
+          "parsedSlot": "amount",
+          "parsedObsolete": "BRL 1500",
+          "parsedCurrent": "BRL 1150",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+          "repetition": 3,
+          "elapsedMs": 979,
+          "languageProbability": 1,
+          "transcript": "A reserva fica para quinta que é a deseja para o mundo.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-name-na-verdade-pause-surface-a",
+          "repetition": 3,
+          "elapsedMs": 1708,
+          "languageProbability": 1,
+          "transcript": "a uncoriza no nome de Ana, na verdade, o nome de Marina.",
+          "parsedSlot": "name",
+          "parsedObsolete": "Ana",
+          "parsedCurrent": "Marina",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-quer-dizer-barge-surface-a",
+          "repetition": 3,
+          "elapsedMs": 1092,
+          "languageProbability": 1,
+          "transcript": "Eu pensei às 9 horas que é dizer às 11 horas.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-amount-nao-barge-surface-a",
+          "repetition": 3,
+          "elapsedMs": 1043,
+          "languageProbability": 1,
+          "transcript": "Transferir 1.500 reais. Não, 1.150 reais.",
+          "parsedSlot": "amount",
+          "parsedObsolete": "BRL 1500",
+          "parsedCurrent": "BRL 1150",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-time-na-verdade-cross-surface-a",
+          "repetition": 3,
+          "elapsedMs": 995,
+          "languageProbability": 1,
+          "transcript": "agenda as 14h na verdade a vezes 3h.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        }
+      ]
+    },
+    {
+      "id": "whisper-tiny",
+      "engine": "whisper",
+      "model": "tiny",
+      "role": "latency-challenger",
+      "modelLoadMs": 464,
+      "observationCount": 15,
+      "metrics": {
+        "amountCatchRate": 0,
+        "numericAgreementRate": 0,
+        "transcriptStabilityRate": 1,
+        "inferenceP95Ms": 638
+      },
+      "gates": {
+        "amountCatch": false,
+        "numericControlAgreement": false,
+        "transcriptStability": true,
+        "deployableLatency": true
+      },
+      "semanticPass": false,
+      "deployablePass": false,
+      "cases": {
+        "corr-amount-nao-barge-surface-a": {
+          "slot": "amount",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 0,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 548,
+            "p95": 619,
+            "max": 619
+          },
+          "transcripts": [
+            "Transferem 15 reais. Não. 1550 reais."
+          ]
+        },
+        "corr-time-na-verdade-cross-surface-a": {
+          "slot": "time",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 0,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 496,
+            "p95": 638,
+            "max": 638
+          },
+          "transcripts": [
+            "A gente nas 4 horas na verdade, a visita e em horas."
+          ]
+        },
+        "corr-weekday-quer-dizer-cross-surface-a": {
+          "slot": "weekday",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 0,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 572,
+            "p95": 606,
+            "max": 606
+          },
+          "transcripts": [
+            "A reserva fica para a quinta que é de vez para a domina."
+          ]
+        },
+        "corr-name-na-verdade-pause-surface-a": {
+          "slot": "name",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 1,
+          "primaryAgreementRate": 1,
+          "vetoRate": 0,
+          "inferenceMs": {
+            "p50": 522,
+            "p95": 553,
+            "max": 553
+          },
+          "transcripts": [
+            "A uncorizam o nome de Ana, na verdade, o nome de Marina."
+          ]
+        },
+        "corr-time-quer-dizer-barge-surface-a": {
+          "slot": "time",
+          "observations": 3,
+          "stable": true,
+          "currentRecoveryRate": 0,
+          "primaryAgreementRate": 0,
+          "vetoRate": 1,
+          "inferenceMs": {
+            "p50": 498,
+            "p95": 551,
+            "max": 551
+          },
+          "transcripts": [
+            "Eu pensei as novas nores que a viver as vons nores."
+          ]
+        }
+      },
+      "observations": [
+        {
+          "caseId": "corr-amount-nao-barge-surface-a",
+          "repetition": 1,
+          "elapsedMs": 619,
+          "languageProbability": 1,
+          "transcript": "Transferem 15 reais. Não. 1550 reais.",
+          "parsedSlot": "amount",
+          "parsedObsolete": "BRL 15",
+          "parsedCurrent": "BRL 1550",
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-time-na-verdade-cross-surface-a",
+          "repetition": 1,
+          "elapsedMs": 638,
+          "languageProbability": 1,
+          "transcript": "A gente nas 4 horas na verdade, a visita e em horas.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+          "repetition": 1,
+          "elapsedMs": 606,
+          "languageProbability": 1,
+          "transcript": "A reserva fica para a quinta que é de vez para a domina.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-name-na-verdade-pause-surface-a",
+          "repetition": 1,
+          "elapsedMs": 522,
+          "languageProbability": 1,
+          "transcript": "A uncorizam o nome de Ana, na verdade, o nome de Marina.",
+          "parsedSlot": "name",
+          "parsedObsolete": "Ana",
+          "parsedCurrent": "Marina",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-quer-dizer-barge-surface-a",
+          "repetition": 1,
+          "elapsedMs": 495,
+          "languageProbability": 1,
+          "transcript": "Eu pensei as novas nores que a viver as vons nores.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-time-na-verdade-cross-surface-a",
+          "repetition": 2,
+          "elapsedMs": 496,
+          "languageProbability": 1,
+          "transcript": "A gente nas 4 horas na verdade, a visita e em horas.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+          "repetition": 2,
+          "elapsedMs": 522,
+          "languageProbability": 1,
+          "transcript": "A reserva fica para a quinta que é de vez para a domina.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-name-na-verdade-pause-surface-a",
+          "repetition": 2,
+          "elapsedMs": 517,
+          "languageProbability": 1,
+          "transcript": "A uncorizam o nome de Ana, na verdade, o nome de Marina.",
+          "parsedSlot": "name",
+          "parsedObsolete": "Ana",
+          "parsedCurrent": "Marina",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-quer-dizer-barge-surface-a",
+          "repetition": 2,
+          "elapsedMs": 498,
+          "languageProbability": 1,
+          "transcript": "Eu pensei as novas nores que a viver as vons nores.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-amount-nao-barge-surface-a",
+          "repetition": 2,
+          "elapsedMs": 537,
+          "languageProbability": 1,
+          "transcript": "Transferem 15 reais. Não. 1550 reais.",
+          "parsedSlot": "amount",
+          "parsedObsolete": "BRL 15",
+          "parsedCurrent": "BRL 1550",
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-weekday-quer-dizer-cross-surface-a",
+          "repetition": 3,
+          "elapsedMs": 572,
+          "languageProbability": 1,
+          "transcript": "A reserva fica para a quinta que é de vez para a domina.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-name-na-verdade-pause-surface-a",
+          "repetition": 3,
+          "elapsedMs": 553,
+          "languageProbability": 1,
+          "transcript": "A uncorizam o nome de Ana, na verdade, o nome de Marina.",
+          "parsedSlot": "name",
+          "parsedObsolete": "Ana",
+          "parsedCurrent": "Marina",
+          "currentRecovered": true,
+          "obsoleteRecovered": true,
+          "primaryAgreement": true,
+          "wouldVetoPrimary": false
+        },
+        {
+          "caseId": "corr-time-quer-dizer-barge-surface-a",
+          "repetition": 3,
+          "elapsedMs": 551,
+          "languageProbability": 1,
+          "transcript": "Eu pensei as novas nores que a viver as vons nores.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-amount-nao-barge-surface-a",
+          "repetition": 3,
+          "elapsedMs": 548,
+          "languageProbability": 1,
+          "transcript": "Transferem 15 reais. Não. 1550 reais.",
+          "parsedSlot": "amount",
+          "parsedObsolete": "BRL 15",
+          "parsedCurrent": "BRL 1550",
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        },
+        {
+          "caseId": "corr-time-na-verdade-cross-surface-a",
+          "repetition": 3,
+          "elapsedMs": 496,
+          "languageProbability": 1,
+          "transcript": "A gente nas 4 horas na verdade, a visita e em horas.",
+          "parsedSlot": null,
+          "parsedObsolete": null,
+          "parsedCurrent": null,
+          "currentRecovered": false,
+          "obsoleteRecovered": false,
+          "primaryAgreement": false,
+          "wouldVetoPrimary": true
+        }
+      ]
+    }
+  ],
+  "execution": {
+    "paidApiCalls": 0
+  },
+  "provenance": {
+    "pack": {
+      "path": "eval/experiments/exp-0008-critical-slot-shadow.pt-BR.json",
+      "sha256": "30d13457c6c7cacf1225d6d277994e66d088c2f4b119dcc7b118d67b06370ed6"
+    },
+    "source": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "a75ce43d875d0cdbff2354c311f6486f8f836f0d2374e7b5d7728e6e64a2e737",
+      "fileCount": 10,
+      "roots": [
+        "src/asr/pcm.mjs",
+        "src/audio/wav.mjs",
+        "src/interaction/correction-semantics.mjs",
+        "src/interaction/ptbr-number.mjs",
+        "scripts/transcribe_audio.py",
+        "scripts/run-exp-0008-shadow.mjs",
+        "scripts/lib/exact-pcm-snapshot.mjs",
+        "scripts/lib/exp-0008-analysis.mjs",
+        "eval/experiments/exp-0008-critical-slot-shadow.pt-BR.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "models": {
+      "whisper-small": {
+        "revision": "536b0662742c02347bc0e980a01041f333bce120",
+        "device": "cpu",
+        "computeType": "int8",
+        "decoding": {
+          "beamSize": 1,
+          "bestOf": 1,
+          "temperature": 0,
+          "conditionOnPreviousText": false,
+          "vadFilter": true
+        }
+      },
+      "whisper-base": {
+        "revision": "ebe41f70d5b6dfa9166e2c581c45c9c0cfc57b66",
+        "device": "cpu",
+        "computeType": "int8",
+        "decoding": {
+          "beamSize": 1,
+          "bestOf": 1,
+          "temperature": 0,
+          "conditionOnPreviousText": false,
+          "vadFilter": true
+        }
+      },
+      "whisper-tiny": {
+        "revision": "d90ca5fe260221311c53c58e660288d3deb8d356",
+        "device": "cpu",
+        "computeType": "int8",
+        "decoding": {
+          "beamSize": 1,
+          "bestOf": 1,
+          "temperature": 0,
+          "conditionOnPreviousText": false,
+          "vadFilter": true
+        }
+      }
+    }
+  }
+}

@@ -109,8 +109,8 @@ instrumento, não como prova de prontidão do runtime.
 
 ## Fase 2.5 — validade experimental do runtime
 
-Status: **planejada; próximo fechamento estrutural depois da ramificação causal
-de segurança aberta pelo EXP-0007**.
+Status: **próximo fechamento estrutural; ramificação causal encerrada pelos
+EXP-0008/0009**.
 
 Objetivo: eliminar a diferença entre “política avaliada” e “política realmente
 executada”. Hoje a decisão está distribuída entre a política do evaluator, o
@@ -268,13 +268,14 @@ card de dados e splits por família, gerador e pessoa.
 | --- | --- | --- | --- |
 | 1 | EXP-0007: screening de prefinal acústica — **concluído, `reject-safety`** | PCM determinístico, mas uma confirmação crítica incorreta | 100/100 observações; challenger não promovido |
 | 2 | Confirmação do vencedor — **não autorizada** | screening não produziu vencedor seguro | gate preservado; não gastar mais amostra na variante rejeitada |
-| 3 | EXP-0008: verificador independente de slot crítico — **próximo** | saber se um segundo ASR recupera `1.150` sem depender da parcial | shadow, sem autoridade, corpus crítico pequeno e custo pago zero |
-| 4 | Baseline experimental versionada | configuração, artefatos, métricas e nível de evidência congelados | não confundir confirmação de desenvolvimento com promoção ampla |
-| 5 | M2.5: kernel/runtime/reflex equivalentes | mesma semântica no evaluator, backend e navegador | migração incremental; STOP físico permanece local |
-| 6 | Trace treinável + efeitos + generalização | `training-trace-v1`, ledger e holdout novo | derivados acústicos fora do formato canônico |
-| 7 | M4a: shadow estreito | ciclo de aprendizado completo sem autoridade | uma capacidade e um candidato por vez |
-| 8 | Calibração humana pequena | corrigir timing/rótulos antes de M4b | não é alegação de preferência de produto |
-| 9 | M4b e próximo PDCA | ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
+| 3 | EXP-0008: verificador independente — **`hold-latency`** | `small` recuperou `1.150`, mas nenhum candidato venceu semântica e 650 ms | 45/45 observações; nenhum modelo integrado |
+| 4 | EXP-0009: interlock monetário — **`promote-safety-guard`** | valor incerto vira pergunta neutra, sem estado, delegação ou LLM | proteção estreita; não alega recuperar o slot |
+| 5 | Baseline experimental versionada — **concluída, v0.3** | configuração, artefatos, métricas e nível de evidência congelados | comparador de desenvolvimento; prontidão humana permanece hold |
+| 6 | M2.5: kernel/runtime/reflex equivalentes — **próximo** | mesma semântica no evaluator, backend e navegador | migração incremental; STOP físico permanece local |
+| 7 | Trace treinável + efeitos + generalização | `training-trace-v1`, ledger e holdout novo | derivados acústicos fora do formato canônico |
+| 8 | M4a: shadow estreito | ciclo de aprendizado completo sem autoridade | uma capacidade e um candidato por vez |
+| 9 | Calibração humana pequena | corrigir timing/rótulos antes de M4b | não é alegação de preferência de produto |
+| 10 | M4b e próximo PDCA | ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
 
 Depois da baseline congelada e do item de trace/generalização, um desafio
 nativo pode rodar em paralelo para validar

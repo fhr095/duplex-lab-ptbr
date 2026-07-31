@@ -69,7 +69,7 @@ test("negação comum não inventa rollback", () => {
   }
 });
 
-test("cérebro local confirma o valor final e usa texto efetivo", () => {
+test("cérebro local confirma correção reversível e usa texto efetivo", () => {
   const brain = createLocalBrain({ idFactory: () => "task-fixed" });
   const direct = brain.planTurn("Marca para terça... não, sexta.");
   assert.equal(direct.mode, "direct");
@@ -83,4 +83,18 @@ test("cérebro local confirma o valor final e usa texto efetivo", () => {
   assert.equal(delegated.mode, "delegate");
   assert.match(delegated.task.query, /sexta/iu);
   assert.doesNotMatch(delegated.task.query, /terça/iu);
+});
+
+test("cérebro local pede repetição antes de afirmar transferência corrigida", () => {
+  const brain = createLocalBrain();
+  const plan = brain.planTurn(
+    "Transfere 1500 reais... não, 150 reais."
+  );
+  assert.equal(plan.safety.confirmationRequired, true);
+  assert.equal(
+    plan.safety.policy,
+    "repeat-critical-value-before-commit"
+  );
+  assert.match(plan.response, /qual é o valor final/iu);
+  assert.doesNotMatch(plan.response, /\b150\b/u);
 });

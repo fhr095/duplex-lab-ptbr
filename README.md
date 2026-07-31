@@ -213,16 +213,19 @@ capacidade implementada.
 - [EXP-0005 — Silero no controle](docs/experiments/EXP-0005-silero-control-candidate.md)
 - [EXP-0006 — fábrica v0.2 e correções](docs/experiments/EXP-0006-ai-evaluation-factory.md)
 - [EXP-0007 — prefinal acústica determinística](docs/experiments/EXP-0007-deterministic-acoustic-prefinal.md)
+- [EXP-0008 — verificador ASR de slot crítico em shadow](docs/experiments/EXP-0008-critical-slot-shadow-asr.md)
+- [EXP-0009 — interlock de confirmação monetária](docs/experiments/EXP-0009-critical-amount-confirmation-interlock.md)
+- [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
 
 A mecânica local e a fundação da fábrica estão fechadas o bastante para seguir
-sem usar pessoas como depuradores de problemas básicos. O EXP-0007 completou
-100 observações e rejeitou a prefinal acústica por uma confirmação numérica
-incorreta, embora tenha tornado o PCM determinístico. A ordem executável existe
-somente no [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada):
-o próximo passo é verificar slots críticos com um segundo ASR em shadow; depois,
-congelar a baseline e iniciar o fechamento estrutural M2.5.
+sem usar pessoas como depuradores de problemas básicos. O EXP-0007 rejeitou a
+prefinal acústica, o EXP-0008 encontrou um verificador semanticamente útil mas
+lento, e o EXP-0009 bloqueou a confirmação monetária insegura sem LLM. A ordem
+executável existe somente no
+[roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada): a baseline
+v0.3 está congelada e o próximo fechamento é M2.5.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

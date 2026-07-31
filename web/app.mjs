@@ -981,7 +981,23 @@ async function processTurn() {
         context.mode =
           event.mode === "delegate" ? "delegate" : "direct";
         log("turn.routed", event.mode);
-        if (event.semantic?.correction) {
+        if (
+          event.semantic?.correction &&
+          event.safety?.confirmationRequired
+        ) {
+          log(
+            "state.pending-confirmation",
+            JSON.stringify({
+              ...event.safety,
+              proposedValue: event.semantic.correction.current,
+              revisionId: event.semantic.correction.id
+            })
+          );
+          log(
+            "assistant.safety-confirmation",
+            event.safety.policy ?? "critical-confirmation"
+          );
+        } else if (event.semantic?.correction) {
           const correction = event.semantic.correction;
           session.semanticState = {
             slot: correction.slot,

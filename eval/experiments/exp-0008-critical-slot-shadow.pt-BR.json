@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "id": "exp-0008-critical-slot-shadow-ptbr-v1",
+  "experimentId": "EXP-0008",
+  "locale": "pt-BR",
+  "description": "Viabilidade sem autoridade de um segundo ASR para vetar commits de slots críticos.",
+  "sourceExperiment": "EXP-0007",
+  "sampleRate": 16000,
+  "repetitions": 3,
+  "candidates": [
+    { "engine": "whisper", "model": "small", "role": "quality-ceiling" },
+    { "engine": "whisper", "model": "base", "role": "latency-challenger" },
+    { "engine": "whisper", "model": "tiny", "role": "latency-challenger" }
+  ],
+  "gate": {
+    "requiredReconstructionRate": 1,
+    "requiredAmountCatchRate": 1,
+    "requiredNumericAgreementRate": 1,
+    "requiredTranscriptStabilityRate": 1,
+    "maxDeployableInferenceP95Ms": 650,
+    "paidApiCalls": 0,
+    "authority": "shadow-veto-only"
+  },
+  "cases": [
+    {
+      "id": "corr-amount-nao-barge-surface-a",
+      "audio": "eval/generated/factory/audio/corr-amount-nao-barge-surface-a.wav",
+      "sourceWaveSha256": "b930922761db30c07ff35a2d8e3a33a7a04a2731830a34a6091c778d3a5519dc",
+      "expected": "Transfere R$ 1500... não, R$ 1150.",
+      "slot": "amount",
+      "obsolete": "BRL 1500",
+      "current": "BRL 1150",
+      "primaryTranscript": "Transfere 1500 reais. Não, 150 reais.",
+      "primaryCurrent": "BRL 150",
+      "knownUnsafe": true,
+      "finalPcmSha256": "9bde647ea21e2070dd888d3517acde1c86e9f268cadb3f1b980e32c3758f0dc1",
+      "finalPcmSamples": 110528,
+      "segments": [
+        {
+          "sampleStart": 320,
+          "sampleEnd": 49664,
+          "sha256": "45a9121f3f3a3f4e9f0e484c7049d9145585d652ee705273dd2b82c1eb89cce6"
+        },
+        {
+          "sampleStart": 65280,
+          "sampleEnd": 126464,
+          "sha256": "c635e0db74304f27ee786a23814705fb26fde4b5972be09204ffdea150ce19f5"
+        }
+      ]
+    },
+    {
+      "id": "corr-time-na-verdade-cross-surface-a",
+      "audio": "eval/generated/factory/acoustic/corr-time-na-verdade-cross-surface-a--noise-10db.wav",
+      "sourceWaveSha256": "fc047f396796d4fd9b4b2b3bc0d2d7496941aa3dd7a827c62b544905e1b3f3e4",
+      "expected": "Agenda às 14h... na verdade, às 16h.",
+      "slot": "time",
+      "obsolete": "14:00",
+      "current": "16:00",
+      "primaryTranscript": "Agenda às 41 horas, na verdade, às 16 horas.",
+      "primaryCurrent": "16:00",
+      "knownUnsafe": false,
+      "finalPcmSha256": "9989f1efba8854dfda4a76e17b206d3731a7daaf5cfe00a44b4108568618e1d4",
+      "finalPcmSamples": 59392,
+      "segments": [
+        {
+          "sampleStart": 0,
+          "sampleEnd": 59392,
+          "sha256": "9989f1efba8854dfda4a76e17b206d3731a7daaf5cfe00a44b4108568618e1d4"
+        }
+      ]
+    },
+    {
+      "id": "corr-weekday-quer-dizer-cross-surface-a",
+      "audio": "eval/generated/factory/acoustic/corr-weekday-quer-dizer-cross-surface-a--noise-10db.wav",
+      "sourceWaveSha256": "6d1398679d67e24c932d9e37dcb6e838e5434b027e18367e88c78509a7ed3bb9",
+      "expected": "A reserva fica para quinta... quer dizer, para domingo.",
+      "slot": "weekday",
+      "obsolete": "quinta",
+      "current": "domingo",
+      "primaryTranscript": "A reserva fica para quinta, quer dizer, para o mundo.",
+      "primaryCurrent": null,
+      "knownUnsafe": false,
+      "finalPcmSha256": "602cfa5963beca0050578ecb57c28a743f340feefef5da6f4c75c1956743b78d",
+      "finalPcmSamples": 93696,
+      "segments": [
+        {
+          "sampleStart": 0,
+          "sampleEnd": 93696,
+          "sha256": "602cfa5963beca0050578ecb57c28a743f340feefef5da6f4c75c1956743b78d"
+        }
+      ]
+    },
+    {
+      "id": "corr-name-na-verdade-pause-surface-a",
+      "audio": "eval/generated/factory/acoustic/corr-name-na-verdade-pause-surface-a--noise-10db.wav",
+      "sourceWaveSha256": "cf3875e1b738d83f10d0125d2679ca4550d839d9cdd1562eba9acb399ffd6a32",
+      "expected": "Autoriza no nome de Ana... na verdade, no nome de Marina.",
+      "slot": "name",
+      "obsolete": "Ana",
+      "current": "Marina",
+      "primaryTranscript": "Autoriza no nome de Ana, na verdade, no nome de Marina.",
+      "primaryCurrent": "Marina",
+      "knownUnsafe": false,
+      "finalPcmSha256": "cf3bb96f9a2dd4ef9e5de6393baf1f06ba28d198e0d1c23d4bc5d048683959fc",
+      "finalPcmSamples": 93184,
+      "segments": [
+        {
+          "sampleStart": 0,
+          "sampleEnd": 93184,
+          "sha256": "cf3bb96f9a2dd4ef9e5de6393baf1f06ba28d198e0d1c23d4bc5d048683959fc"
+        }
+      ]
+    },
+    {
+      "id": "corr-time-quer-dizer-barge-surface-a",
+      "audio": "eval/generated/factory/acoustic/corr-time-quer-dizer-barge-surface-a--noise-10db.wav",
+      "sourceWaveSha256": "0b714a0f6ef9fbd499d7ba73feae781bd34c577910195fa97c9f057ff9b4d289",
+      "expected": "Eu pensei às 9h... quer dizer, às 11h.",
+      "slot": "time",
+      "obsolete": "09:00",
+      "current": "11:00",
+      "primaryTranscript": "Eu pensei às 9 horas, quer dizer às 11 horas.",
+      "primaryCurrent": "11:00",
+      "knownUnsafe": false,
+      "finalPcmSha256": "0cab30b7d39f4e7a6e73f72cfeab89cc992775a58694906fc4c39ffd862b7c48",
+      "finalPcmSamples": 64512,
+      "segments": [
+        {
+          "sampleStart": 0,
+          "sampleEnd": 64512,
+          "sha256": "0cab30b7d39f4e7a6e73f72cfeab89cc992775a58694906fc4c39ffd862b7c48"
+        }
+      ]
+    }
+  ]
+}

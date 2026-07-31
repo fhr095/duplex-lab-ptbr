@@ -78,6 +78,44 @@ export function createLocalStreamingBrain(options = {}) {
   };
 }
 
+export function createSafetyGuardedBrain(upstream) {
+  if (!upstream || typeof upstream.streamTurn !== "function") {
+    throw new TypeError("upstream precisa implementar streamTurn");
+  }
+  return {
+    interactionModel: upstream.interactionModel,
+    taskModel: upstream.taskModel,
+    requestLimit: upstream.requestLimit,
+
+    getUsage() {
+      return upstream.getUsage();
+    },
+
+    async *streamTurn(input) {
+      const safety = input.turnPlan?.safety;
+      if (!safety?.confirmationRequired) {
+        yield* upstream.streamTurn(input);
+        return;
+      }
+      if (input.signal?.aborted) {
+        throw abortError();
+      }
+      yield {
+        type: "started",
+        responseId: null,
+        model: "deterministic-safety-guard"
+      };
+      yield { type: "delta", delta: safety.prompt };
+      yield {
+        type: "done",
+        responseId: null,
+        model: "deterministic-safety-guard",
+        usage: null
+      };
+    }
+  };
+}
+
 export function createConfiguredBrain(options = {}) {
   const environment = options.environment ?? process.env;
   const planner = options.planner ?? createLocalBrain();
@@ -90,7 +128,9 @@ export function createConfiguredBrain(options = {}) {
   if (provider === "local") {
     return {
       provider,
-      brain: createLocalStreamingBrain({ planner })
+      brain: createSafetyGuardedBrain(
+        createLocalStreamingBrain({ planner })
+      )
     };
   }
 
@@ -113,7 +153,7 @@ export function createConfiguredBrain(options = {}) {
 
     return {
       provider,
-      brain: createOpenAIBrain({
+      brain: createSafetyGuardedBrain(createOpenAIBrain({
         apiKey: environment.OPENAI_API_KEY,
         apiUrl: environment.OPENAI_RESPONSES_URL,
         fetchImpl: options.fetchImpl,
@@ -124,7 +164,7 @@ export function createConfiguredBrain(options = {}) {
         maxRequests: premiumTask
           ? 5
           : environment.OPENAI_MAX_REQUESTS_PER_PROCESS
-      })
+      }))
     };
   }
 

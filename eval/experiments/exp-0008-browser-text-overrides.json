@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "EXP-0008",
+  "description": "Reproduz no navegador a hipótese em que parcial e final concordam no valor incorreto.",
+  "overrides": {
+    "corr-amount-nao-barge-surface-a": "Transfere 1500 reais. Não, 150 reais."
+  }
+}

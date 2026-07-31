@@ -202,6 +202,11 @@ Implementado:
 - graça de commit padrão de 220 ms, elevada a 650 ms para ações potencialmente
   corrigíveis e 1.100 ms para slots críticos, antes de publicar texto ou
   disparar trabalho;
+- interlock determinístico para correção monetária em ação irreversível: pede
+  repetição do valor sem ecoar a hipótese, não atualiza estado e contorna tanto
+  provider local quanto externo;
+- identidade SHA-256 e ranges de amostras do PCM final/prefinal; a política
+  acústica eager permanece disponível somente como flag experimental rejeitada;
 - TTS provisório do Windows entregue como WAV por worker aquecido;
 - player Web Audio instrumentado até o último quantum renderizado;
 - barge-in fechado PCM→WebSocket→VAD→STOP→renderer;
@@ -220,6 +225,9 @@ Implementado:
 - fábrica v0.2 de correções com 24 casos, superfícies geradas, oráculos
   determinísticos, mutação adversarial, áudio/ambientes seeded, replay
   WebSocket/Chrome e relatório agregado por hash.
+- baseline de desenvolvimento v0.3 congelada com configuração, fingerprint,
+  evidências e limites de alegação em
+  [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
 
 Ainda não implementado:
 

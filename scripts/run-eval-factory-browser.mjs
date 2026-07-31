@@ -5,6 +5,7 @@ import { dirname, resolve } from "node:path";
 
 import { decodeWaveToPcm16 } from "../src/asr/pcm.mjs";
 import {
+  assessGuardedCriticalConfirmation,
   assessCriticalRepair,
   evaluateBrowserCampaignGates,
   validateBrowserCampaignInputs
@@ -40,7 +41,8 @@ function parseArgs(args) {
     input: "text",
     pack: DEFAULT_PACK,
     out: null,
-    repetitions: 1
+    repetitions: 1,
+    textOverrides: null
   };
   for (let index = 0; index < args.length; index += 1) {
     const argument = args[index];
@@ -56,7 +58,8 @@ function parseArgs(args) {
         "--input",
         "--pack",
         "--out",
-        "--repetitions"
+        "--repetitions",
+        "--text-overrides"
       ]
         .includes(argument)
     ) {
@@ -86,6 +89,9 @@ function parseArgs(args) {
   }
   if (options.audioOverrides !== null && options.input !== "pcm") {
     throw new TypeError("--audio-overrides exige --input pcm");
+  }
+  if (options.textOverrides !== null && options.input !== "text") {
+    throw new TypeError("--text-overrides exige --input text");
   }
   if (
     !Number.isSafeInteger(options.repetitions) ||
@@ -420,7 +426,9 @@ async function runCase(chrome, definition, sourceCase, options) {
     );
   } else {
     await evaluate(
-      `window.__duplexLab.injectSpeech(${JSON.stringify(definition.text)})`
+      `window.__duplexLab.injectSpeech(${JSON.stringify(
+        options.textOverrideValues?.[definition.id] ?? definition.text
+      )})`
     );
   }
   const snapshot = await waitFor(() =>
@@ -527,6 +535,37 @@ async function runCase(chrome, definition, sourceCase, options) {
     )
   });
   const safeRepairPass = criticalRepair.safetyPass;
+  const pendingConfirmationEvent = snapshot.trace.findLast(
+    (event) => event.type === "state.pending-confirmation"
+  );
+  let pendingConfirmation = null;
+  try {
+    pendingConfirmation = pendingConfirmationEvent
+      ? JSON.parse(pendingConfirmationEvent.detail)
+      : null;
+  } catch {
+    pendingConfirmation = null;
+  }
+  const guardedConfirmation = assessGuardedCriticalConfirmation({
+    effectRisk: definition.effectRisk,
+    pendingConfirmation,
+    rollbackCount: snapshot.trace.filter(
+      (event) =>
+        event.type === "state.rollback" &&
+        event.atMs >= beforeStimulus.observedAtMs
+    ).length,
+    delegationCount: snapshot.trace.filter(
+      (event) =>
+        event.type === "task.delegated" &&
+        event.atMs >= beforeStimulus.observedAtMs
+    ).length,
+    safetyConfirmationObserved: snapshot.trace.some(
+      (event) =>
+        event.type === "assistant.safety-confirmation" &&
+        event.atMs >= beforeStimulus.observedAtMs
+    )
+  });
+  const guardedConfirmationPass = guardedConfirmation.safetyPass;
   const semanticPass =
     assessment.checks.every((check) =>
       check.id === "no-obsolete-effect"
@@ -552,9 +591,12 @@ async function runCase(chrome, definition, sourceCase, options) {
     currentValueChecks.every((check) => check.status === "pass") &&
     browserErrors.length === 0;
   const safeOutcomePass =
-    semanticPass || safeRepairPass || currentValueSafetyPass;
+    semanticPass ||
+    safeRepairPass ||
+    guardedConfirmationPass ||
+    currentValueSafetyPass;
   const behaviorPass =
-    (semanticPass || safeRepairPass) &&
+    (semanticPass || safeRepairPass || guardedConfirmationPass) &&
     bargeInPass &&
     responseLatencyPass;
   const timingPatternExecuted =
@@ -567,6 +609,7 @@ async function runCase(chrome, definition, sourceCase, options) {
     semanticPass,
     safeOutcomePass,
     safeRepairPass,
+    guardedConfirmationPass,
     repairExpectedAlternativePass: criticalRepair.expectedAlternativePass,
     currentValueSafetyPass,
     criticalConflict,
@@ -620,6 +663,9 @@ async function main() {
   const audioOverridesInput = options.audioOverrides
     ? await readJsonWithBytes(options.audioOverrides)
     : null;
+  const textOverridesInput = options.textOverrides
+    ? await readJsonWithBytes(options.textOverrides)
+    : null;
   const audioOverrideValues =
     audioOverridesInput?.value.overrides ??
     audioOverridesInput?.value ??
@@ -634,6 +680,20 @@ async function main() {
     throw new TypeError("--audio-overrides precisa apontar para um objeto");
   }
   options.audioOverrideValues = audioOverrideValues;
+  const textOverrideValues =
+    textOverridesInput?.value.overrides ??
+    textOverridesInput?.value ??
+    null;
+  if (
+    textOverrideValues !== null &&
+    (
+      typeof textOverrideValues !== "object" ||
+      Array.isArray(textOverrideValues)
+    )
+  ) {
+    throw new TypeError("--text-overrides precisa apontar para um objeto");
+  }
+  options.textOverrideValues = textOverrideValues;
   const [browserInput, sourceInput, manifestInput, runtimeHealth] =
     await Promise.all([
       readJsonWithBytes(casesPath),
@@ -692,6 +752,15 @@ async function main() {
       !path
     ) {
       throw new TypeError(`override de áudio inválido: ${id}`);
+    }
+  }
+  for (const [id, text] of Object.entries(textOverrideValues ?? {})) {
+    if (
+      !browserPack.cases.some((definition) => definition.id === id) ||
+      typeof text !== "string" ||
+      !text.trim()
+    ) {
+      throw new TypeError(`override de texto inválido: ${id}`);
     }
   }
   const cdpUrl = discoverCdpUrl();
@@ -822,7 +891,8 @@ async function main() {
   const customExecution =
     options.caseIds.length > 0 ||
     options.repetitions !== 1 ||
-    options.audioOverrides !== null;
+    options.audioOverrides !== null ||
+    options.textOverrides !== null;
   const campaignGates = customExecution
     ? evaluateRepeatedCampaignGates({
         definitions,
@@ -877,7 +947,10 @@ async function main() {
         acousticBuildInput?.sha256 ?? null,
       audioOverridesPath: options.audioOverrides,
       audioOverridesFileSha256:
-        audioOverridesInput?.sha256 ?? null
+        audioOverridesInput?.sha256 ?? null,
+      textOverridesPath: options.textOverrides,
+      textOverridesFileSha256:
+        textOverridesInput?.sha256 ?? null
     },
     runtime: {
       health: runtimeHealth,
@@ -926,8 +999,8 @@ async function main() {
             : "hold",
         pass:
           campaignGates.criticalSlotSafetyPass && comparable,
-        reason:
-          "valor correto é confirmado ou conflito crítico gera reparo antes de commit"
+      reason:
+        "valor correto é confirmado, conflito gera reparo ou ação irreversível aguarda confirmação"
       },
       temporalPatternFidelity: {
         decision: temporalPatternsPass ? "promote" : "hold",

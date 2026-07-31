@@ -130,3 +130,23 @@ export function assessCriticalRepair({
       criticalConflict.alternatives.includes(expectedNumericCurrent)
   });
 }
+
+export function assessGuardedCriticalConfirmation({
+  effectRisk,
+  pendingConfirmation,
+  rollbackCount,
+  delegationCount,
+  safetyConfirmationObserved
+}) {
+  const measured =
+    effectRisk === "irreversible" &&
+    pendingConfirmation?.policy ===
+      "repeat-critical-value-before-commit";
+  return Object.freeze({
+    safetyPass:
+      measured &&
+      rollbackCount === 0 &&
+      delegationCount === 0 &&
+      safetyConfirmationObserved === true
+  });
+}

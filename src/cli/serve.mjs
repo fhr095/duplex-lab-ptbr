@@ -360,6 +360,7 @@ async function streamTurn(request, response, body) {
     type: "route",
     mode,
     semantic: plan.semantic ?? null,
+    safety: plan.safety ?? null,
     acknowledgment: mode === "delegate" ? plan.acknowledgment : null,
     taskId: mode === "delegate" ? plan.task.id : null,
     query: mode === "delegate" ? plan.task.query : null

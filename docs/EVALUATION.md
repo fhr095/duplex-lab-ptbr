@@ -272,6 +272,18 @@ execuções, toolchain, evaluator, runtime e telemetria. A toolchain da fábrica
 promovida; runtime e prontidão de usuário permanecem em `hold`. O relatório
 canônico é `eval/reports/eval-factory-campaign-v0.2.json`.
 
+## Evidência causal posterior da baseline v0.3
+
+| Experimento | Evidência | Decisão |
+| --- | --- | --- |
+| EXP-0007 | 100 observações; PCM final idêntico em 5/5 casos, mas uma confirmação de `R$ 150` | `reject-safety` |
+| EXP-0008 | 45 inferências; Whisper `small` recuperou `1.150` e controles, p95 3.100 ms | `hold-latency`; zero autoridade |
+| EXP-0009 | transcript errado injetado 5× no Chrome; 5/5 abstentions, p95 122 ms, estado nulo | `promote-safety-guard` |
+
+A configuração resultante está congelada em
+[`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
+Ela é um comparador de desenvolvimento, não uma promoção de prontidão humana.
+
 A evidência acústica ainda usa uma única voz sintética e ruído branco. Não mede
 microfone real, AEC, eco de alto-falante, reverberação, double-talk, cauda física
 da sala ou preferência humana.
