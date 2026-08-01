@@ -32,15 +32,18 @@ microfone ─► AEC/NS/VAD ─► LocalAudioReflex ─────► player PA
                 (substituível)        (cancelável)         (TTS ou tokens)
 ```
 
-O reflexo local pode pausar áudio diante de fala antes da classificação final.
-O kernel decide depois se confirma a interrupção, retoma ou ignora ruído. Isso
-preserva latência física sem criar uma segunda política conversacional.
+O reflexo local pode armar, pausar ou preservar áudio antes da classificação
+final. Na v0.1 promovida, duas janelas Silero ou uma parcial útil confirmam a
+pausa; uma hipótese não confirmada continua a saída e bloqueia somente a final
+tardia daquele turno. A reconciliação completa deve migrar para o lifecycle do
+kernel/runtime sem mover o comando físico rápido para o backend.
 
 A separação está parcialmente materializada. Correção e confirmação monetária
 passam pelo `InteractionKernel` v0.1 e por uma autoridade stateful no backend;
-o navegador somente projeta a transição versionada. Política temporal do
-evaluator, controle acústico e `LocalAudioReflex` ainda migram
-incrementalmente, sem reescrita big-bang.
+o navegador somente projeta a transição versionada. O `LocalAudioReflex` v0.1
+já é um reducer isolado no caminho físico, mas WAIT/STOP/retomada ainda não são
+um único lifecycle compartilhado. Política temporal do evaluator e controle
+acústico migram incrementalmente, sem reescrita big-bang.
 
 ## Portas estáveis
 
@@ -217,6 +220,8 @@ Implementado:
 - `InteractionKernel` v0.1 puro, `InteractionRuntime` stateful com LRU/retry
   idempotente, coordenador autoritativo no backend e adaptador de projeção no
   navegador para a fatia de correções/confirmação;
+- `LocalAudioReflex` v0.1 puro no navegador, com modo evidence-gated padrão,
+  controle imediato comparável, trace de evidência e tombstone de final tardia;
 - identidade SHA-256 e ranges de amostras do PCM final/prefinal; a política
   acústica eager permanece disponível somente como flag experimental rejeitada;
 - TTS provisório do Windows entregue como WAV por worker aquecido;
@@ -245,7 +250,7 @@ Ainda não implementado:
 
 - kernel comum para política temporal, evaluator, backend e áudio — somente a
   fatia semântica crítica está migrada;
-- `LocalAudioReflex` extraído e conciliado sob teste de equivalência;
+- reconciliação de `LocalAudioReflex`/WAIT/STOP/retomada sob o lifecycle comum;
 - clocks, filas, epochs, tarefas e efeitos sob o `InteractionRuntime` comum;
 - `training-trace-v1` materializado pelo caminho real;
 - ledger verificável de efeitos externos e holdout independente novo;

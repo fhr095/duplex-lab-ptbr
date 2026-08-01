@@ -72,8 +72,10 @@ Evidência congelada da promoção M1:
 O comparador registra `engineering-promote`. Ainda faltam loopback acústico
 calibrado, diversidade humana e preferência cega; por isso a fase não recebe
 `done` de produto. Essa campanha histórica não apaga instabilidade física nova:
-o EXP-0010 encontrou autoativação em 3/4 smokes longos na configuração atual e
-mantém o runtime global em `hold-acoustic-stability`.
+o EXP-0010 encontrou atividade não rotulada em 3/4 smokes longos. O EXP-0011
+removeu o efeito percebido de um pico marginal em A/B causal e passou um probe
+físico corrente de 30,147 s, mas loopback causal e escala por dispositivo ainda
+permanecem em `hold`.
 
 ## Fase 2 — fábrica autônoma de avaliações
 
@@ -111,8 +113,8 @@ instrumento, não como prova de prontidão do runtime.
 
 ## Fase 2.5 — validade experimental do runtime
 
-Status: **em andamento; primeira fatia stateful promovida pelo EXP-0010 e
-runtime global em `hold-acoustic-stability`**.
+Status: **em andamento; fatias stateful e de reflexo local promovidas pelos
+EXP-0010/0011; lifecycle comum e validade física ampla ainda em `hold`**.
 
 Objetivo: eliminar a diferença entre “política avaliada” e “política realmente
 executada”. Hoje a decisão está distribuída entre a política do evaluator, o
@@ -127,7 +129,8 @@ Entregas:
    **sessão autoritativa, LRU e retry idempotente implementados; clocks, filas,
    lifecycle acústico e efeitos pendentes**;
 3. `LocalAudioReflex`: pausa/STOP imediato no navegador, conciliado depois
-   com o kernel — **próximo experimento**;
+   com o kernel — **reducer evidence-gated e integração browser promovidos;
+   reconciliação completa com o runtime pendente**;
 4. adaptadores para evaluator, backend e navegador sob a mesma semântica, com
    uma única instância autoritativa por sessão real — **backend e navegador
    implementados na fatia crítica; evaluator e áudio pendentes**;
@@ -146,9 +149,16 @@ paralela.
 Evidência EXP-0010: 270/270 testes, 5/5 ciclos Chrome stateful, zero commit
 antes da confirmação, exatamente um rollback/commit para `BRL 1150` depois da
 repetição, p95 de 94,9/399,9 ms e zero chamada paga. A promoção vale somente
-para essa fatia. O smoke longo passou o eixo stateful em 4/4 campanhas, mas o
-eixo acústico em apenas 1/4; portanto o próximo comparador ataca vazamento da
-fala do assistente no VAD sem relaxar a parada real.
+para essa fatia. Os smokes físicos suplementares continham atividade sem rótulo
+e não sustentam atribuição causal de eco.
+
+Evidência EXP-0011: 283/283 testes e A/B no mesmo fingerprint; o controle
+pausou/criou turno diante do pico marginal e final tardia, enquanto o candidato
+preservou a fala e suprimiu ambos. O barge-in legítimo fechou em 157,39 ms
+contra teto de 350 ms;
+o candidato passou 30,147 s físicos sem ativação e zero erro/API paga. A decisão
+é `promote-local-audio-reflex-slice`, não promoção de M2.5 nem de especificidade
+física universal.
 
 ## Fase 3 — qualidade modular e local
 
@@ -288,8 +298,8 @@ card de dados e splits por família, gerador e pessoa.
 | 4 | EXP-0009: interlock monetário — **`promote-safety-guard`** | valor incerto vira pergunta neutra, sem estado, delegação ou LLM | proteção estreita; não alega recuperar o slot |
 | 5 | Baseline experimental versionada — **concluída, v0.3** | configuração, artefatos, métricas e nível de evidência congelados | comparador de desenvolvimento; prontidão humana permanece hold |
 | 6 | EXP-0010: kernel stateful crítico — **`promote-stateful-kernel-slice`** | confirmação em dois turnos, autoridade backend e projeção browser | 5/5 causal; não promove M2.5 inteiro |
-| 7 | `LocalAudioReflex` contra autoativação — **próximo** | reduzir pausas pelo próprio áudio sem piorar barge-in real | estado atual 1/4 no eixo acústico longo |
-| 8 | Completar M2.5: runtime/reflex/evaluator equivalentes | mesma semântica, lifecycle e clocks nos caminhos relevantes | migração incremental; STOP físico permanece local |
+| 7 | EXP-0011: `LocalAudioReflex` evidence-gated — **`promote-local-audio-reflex-slice`** | pico marginal não pausa/não cria turno; barge-in legítimo preservado | 157,39 ms < 350 ms; causalidade de eco não alegada |
+| 8 | Completar M2.5: runtime/reflex/evaluator equivalentes — **próximo** | reconciliar WAIT/STOP/retomada, lifecycle e clocks | migração incremental; STOP físico permanece local |
 | 9 | Trace treinável + efeitos + generalização | `training-trace-v1`, ledger e holdout novo | derivados acústicos fora do formato canônico |
 | 10 | M4a: shadow estreito | ciclo de aprendizado completo sem autoridade | uma capacidade e um candidato por vez |
 | 11 | Calibração humana pequena | corrigir timing/rótulos antes de M4b | não é alegação de preferência de produto |

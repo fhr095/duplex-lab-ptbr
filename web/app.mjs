@@ -11,15 +11,27 @@ import {
   projectInteractionTransition
 } from "/interaction-browser-adapter.mjs";
 import {
+  LOCAL_AUDIO_REFLEX_MODES,
+  LocalAudioReflex
+} from "/local-audio-reflex.mjs";
+import {
   classifyPotentialBargeIn,
   isExplicitTaskCancellation
 } from "/turn-taking.mjs";
 
 const Recognition =
   window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
+const pageParameters = new URLSearchParams(window.location.search);
 const automationEnabled =
-  new URLSearchParams(window.location.search).get("automation") === "1" &&
+  pageParameters.get("automation") === "1" &&
   ["localhost", "127.0.0.1"].includes(window.location.hostname);
+const localAudioReflexMode =
+  pageParameters.get("audioReflex") === LOCAL_AUDIO_REFLEX_MODES.IMMEDIATE
+    ? LOCAL_AUDIO_REFLEX_MODES.IMMEDIATE
+    : LOCAL_AUDIO_REFLEX_MODES.EVIDENCE_GATED;
+const localAudioReflex = new LocalAudioReflex({
+  mode: localAudioReflexMode
+});
 const AUTOMATION_AUDIT_PRE_ROLL_FRAMES = 100;
 const AUTOMATION_AUDIT_POST_ROLL_FRAMES = 100;
 const AUDIO_RECONNECT_DELAYS_MS = Object.freeze([100, 250, 500]);
@@ -265,6 +277,9 @@ function clearPotentialBargeIn(reason = "cleared") {
   session.potentialBargeIn = null;
   session.assistantResumeReason = null;
   potential?.settle?.({ kind: reason });
+  if (localAudioReflex.snapshot.status !== "idle") {
+    localAudioReflex.reset(reason);
+  }
 }
 
 function releaseAssistantAudio() {
@@ -734,6 +749,67 @@ function interruptAssistant() {
   }
 }
 
+function dispatchLocalAudioReflex(reflexEvent, sourceEvent = {}) {
+  const event = reflexEvent.type === "USER_SPEECH_STARTED"
+    ? {
+        ...reflexEvent,
+        assistantAudible: session.assistantSpeaking,
+        assistantPending:
+          session.assistantPreparing ||
+          session.assistantSpeaking ||
+          Boolean(session.assistantAudio) ||
+          session.audioQueue.length > 0 ||
+          session.responseActive
+      }
+    : reflexEvent;
+  const transition = localAudioReflex.dispatch(event);
+  for (const intent of transition.intents) {
+    if (intent.type === "WAIT_FOR_EVIDENCE") {
+      log(
+        "local-audio-reflex.armed",
+        JSON.stringify({
+          mode: localAudioReflexMode,
+          reason: intent.reason,
+          turnId: intent.turnId,
+          ...intent.evidence
+        })
+      );
+    } else if (intent.type === "PAUSE_OUTPUT") {
+      log(
+        "local-audio-reflex.pause",
+        JSON.stringify({
+          mode: localAudioReflexMode,
+          reason: intent.reason,
+          turnId: intent.turnId,
+          ...intent.evidence
+        })
+      );
+      pauseAssistantForPotentialBargeIn(sourceEvent);
+    } else if (intent.type === "CONTINUE_OUTPUT") {
+      log(
+        "local-audio-reflex.suppressed",
+        JSON.stringify({
+          mode: localAudioReflexMode,
+          reason: intent.reason,
+          turnId: intent.turnId,
+          ...intent.evidence
+        })
+      );
+    } else if (intent.type === "SUPPRESS_TRANSCRIPT") {
+      log(
+        "local-audio-reflex.transcript-suppressed",
+        JSON.stringify({
+          mode: localAudioReflexMode,
+          reason: intent.reason,
+          turnId: intent.turnId,
+          ...intent.evidence
+        })
+      );
+    }
+  }
+  return transition;
+}
+
 function pauseAssistantForPotentialBargeIn(event = {}) {
   const current = session.potentialBargeIn;
   if (current) {
@@ -880,6 +956,7 @@ async function dismissPotentialBargeIn(reason) {
   ) {
     session.potentialBargeIn = null;
     potential.settle({ kind: "dismissed-without-audio" });
+    localAudioReflex.reset("dismissed-without-audio");
     setListeningStatus();
     return true;
   }
@@ -910,6 +987,7 @@ async function dismissPotentialBargeIn(reason) {
   }
   session.potentialBargeIn = null;
   potential.settle({ kind: "dismissed-and-resumed" });
+  localAudioReflex.reset("dismissed-and-resumed");
   setListeningStatus();
   return true;
 }
@@ -922,6 +1000,7 @@ function confirmPotentialBargeIn(reason) {
   clearTimeout(potential.timer);
   session.potentialBargeIn = null;
   potential.settle({ kind: "confirmed" });
+  localAudioReflex.reset("confirmed");
   session.interruptCount += 1;
   elements.interruptMetric.textContent = String(session.interruptCount);
   log("barge-in.confirmed", reason);
@@ -1445,6 +1524,15 @@ function handleLocalAudioEvent(event) {
     session.audioPipelineTelemetry = event.snapshot ?? null;
     return;
   }
+  if (event.type === "vad.control.window") {
+    dispatchLocalAudioReflex({
+      type: "VAD_CONTROL_WINDOW",
+      turnId: event.turnId ?? null,
+      probability: event.probability,
+      sampleStart: event.sampleStart
+    }, event);
+    return;
+  }
 
   if (event.type === "audio.level") {
     session.audioLevel = {
@@ -1462,7 +1550,13 @@ function handleLocalAudioEvent(event) {
     startAutomationPcmAuditClip(event);
     clearTimeout(session.endpointTimer);
     session.userSpeaking = true;
-    pauseAssistantForPotentialBargeIn(event);
+    dispatchLocalAudioReflex({
+      type: "USER_SPEECH_STARTED",
+      turnId: event.turnId ?? null,
+      detector: event.detector ?? null,
+      probability: event.probability ?? null,
+      triggerSampleStart: event.triggerSampleStart ?? null
+    }, event);
     setStatus("usuário falando", "user");
     log(
       "user.speech.started",
@@ -1477,6 +1571,10 @@ function handleLocalAudioEvent(event) {
   }
   if (event.type === "user.speech.paused") {
     session.userSpeaking = false;
+    dispatchLocalAudioReflex({
+      type: "USER_SPEECH_PAUSED",
+      turnId: event.turnId ?? null
+    }, event);
     if (session.potentialBargeIn) {
       session.potentialBargeIn.userPausedAt = performance.now();
     }
@@ -1492,12 +1590,23 @@ function handleLocalAudioEvent(event) {
     if (event.turnId) {
       session.earlyBackchannelTurnIds.delete(event.turnId);
     }
-    pauseAssistantForPotentialBargeIn(event);
+    dispatchLocalAudioReflex({
+      type: "USER_SPEECH_STARTED",
+      turnId: event.turnId ?? null,
+      detector: event.detector ?? null,
+      probability: event.probability ?? null,
+      triggerSampleStart: event.triggerSampleStart ?? null
+    }, event);
     setStatus("usuário falando", "user");
     log("user.speech.resumed", audioEventDetail(event));
     return;
   }
   if (event.type === "transcript.partial") {
+    dispatchLocalAudioReflex({
+      type: "TRANSCRIPT_PARTIAL",
+      turnId: event.turnId ?? null,
+      text: event.text ?? ""
+    }, event);
     if (session.potentialBargeIn && session.userSpeaking) {
       schedulePotentialBargeInTimeout(
         "timeout de segurança durante fala",
@@ -1541,8 +1650,23 @@ function handleLocalAudioEvent(event) {
   }
   if (event.type === "transcript.final") {
     const text = String(event.text ?? "").trim();
+    const reflexTransition = dispatchLocalAudioReflex({
+      type: "TRANSCRIPT_FINAL",
+      turnId: event.turnId ?? null,
+      text
+    }, event);
     elements.userText.textContent = text || "Não identifiquei fala útil.";
     log("user.transcript.final", text);
+    if (
+      reflexTransition.intents.some(
+        (intent) => intent.type === "SUPPRESS_TRANSCRIPT"
+      )
+    ) {
+      session.finalText = "";
+      elements.userText.textContent =
+        "Ruído acústico descartado; continuando a resposta.";
+      return;
+    }
     if (event.criticalConflict) {
       if (session.potentialBargeIn) {
         confirmPotentialBargeIn("conflito numérico crítico");
@@ -1613,6 +1737,9 @@ function handleLocalAudioEvent(event) {
       session.earlyBackchannelTurnIds.delete(event.turnId);
     }
     session.userSpeaking = false;
+    if (!session.potentialBargeIn) {
+      localAudioReflex.reset("transcript-rejected");
+    }
     if (session.potentialBargeIn) {
       elements.userText.textContent =
         "Ruído descartado; continuando a resposta.";
@@ -1640,6 +1767,9 @@ function handleLocalAudioEvent(event) {
       session.earlyBackchannelTurnIds.delete(event.turnId);
     }
     log("user.transcript.cancelled", event.reason ?? "");
+    if (!session.potentialBargeIn) {
+      localAudioReflex.reset("transcript-cancelled");
+    }
     void dismissPotentialBargeIn("transcrição cancelada");
     return;
   }
@@ -2205,6 +2335,10 @@ function automationSnapshot() {
       vadControl: {
         ...session.vadControl,
         telemetry: session.vadControlTelemetry
+      },
+      localAudioReflex: {
+        ...localAudioReflex.snapshot,
+        config: { ...localAudioReflex.snapshot.config }
       },
       runtimeEvidence:
         session.audioRuntimeEvidence.map((event) => ({ ...event }))

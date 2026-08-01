@@ -27,6 +27,9 @@ A primeira vertical local já é funcional de ponta a ponta:
   decidir rollback ou commit em paralelo;
 - cérebro local e adaptador OpenAI obedecem ao mesmo contrato cancelável;
 - TTS PT-BR aquecido do Windows entrega WAV ao player Web Audio;
+- `LocalAudioReflex` evidence-gated aguarda duas janelas Silero durante saída
+  já audível, evita pausa por pico isolado e bloqueia a final tardia daquele
+  turno quando a acústica e as parciais não o confirmam;
 - fala do usuário mantém a captura contínua, mas cancela resposta, tarefa,
   síntese/player e áudio já enfileirado até o último quantum do renderer;
 - campanhas reproduzíveis cobrem fala sintética, CORAA, silêncio, correção,
@@ -74,12 +77,12 @@ ainda parcialmente rotulada, diversidade acústica limitada a uma voz e ausênci
 de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
 
-Após o EXP-0010, a suíte corrente possui **270/270 testes**, incluindo a
-consistência documental, o kernel puro, isolamento/idempotência de sessões e a
-projeção browser. Os 223/223 acima pertencem à execução congelada da campanha
-v0.2 e não são reescritos retrospectivamente.
+Após o EXP-0011, a suíte corrente possui **283/283 testes** e também cobre o
+reducer do reflexo, finais tardias, o comparador A/B e seus casos adversariais.
+Os 223/223 acima pertencem à execução congelada da campanha v0.2 e não são
+reescritos retrospectivamente.
 
-## Primeira fatia do runtime comum
+## Fatias promovidas do runtime comum
 
 O EXP-0010 fechou o ciclo crítico em dois turnos: diante de uma transferência
 corrigida, o sistema pergunta o valor sem ecoar a hipótese; somente uma nova
@@ -87,11 +90,17 @@ fala com um único valor não negado registra o commit. No Chrome real foram
 **5/5 ciclos**, com p95 de 94,9 ms para iniciar a pergunta e 399,9 ms para
 aceitar a repetição, sempre sem API paga.
 
-Isso promove a fatia stateful, não o M2.5 inteiro. Em quatro smokes completos,
-a nova semântica passou 4/4, mas a sessão acústica longa passou apenas 1/4 sem
-um pico de autoativação causado pela própria fala do assistente. O runtime
-global permanece em `hold-acoustic-stability`; o próximo ataque é o
-`LocalAudioReflex`, preservando a interrupção rápida.
+Isso promove a fatia stateful, não o M2.5 inteiro. As quatro sessões físicas
+exploratórias daquele experimento continham marcador antigo ou fala sem rótulo;
+elas encontraram atividade durante o probe, mas não provaram autoeco.
+
+O EXP-0011 isolou a consequência percebida com A/B causal no mesmo fingerprint.
+No controle, um pico marginal seguido da final tardia `I'm` pausou a voz e
+criou turno; no candidato, a fala continuou, a final foi descartada e nenhum
+turno surgiu. A interrupção PCM legítima permaneceu em **157,39 ms** até o
+último quantum, abaixo do teto de 350 ms, e o candidato passou 30,147 s físicos
+sem ativação. A decisão é `promote-local-audio-reflex-slice`; causalidade de eco,
+cauda da sala e M2.5 completo continuam fora da alegação.
 
 ## Rodar
 
@@ -210,8 +219,9 @@ e efeitos externos só poderão promover quando houver ledger verificável.
 
 O fechamento M2.5 está em migração incremental. Correção e confirmação crítica
 já usam decisão pura (`InteractionKernel`) e autoridade stateful no backend;
-lifecycle acústico, evaluator comum, efeitos e o STOP físico imediato
-(`LocalAudioReflex`) ainda precisam entrar no mesmo contrato.
+o STOP físico imediato já usa o `LocalAudioReflex` promovido. Lifecycle/clocks,
+reconciliação completa com o kernel, evaluator comum e efeitos ainda precisam
+entrar no mesmo contrato.
 
 ## Documentos de decisão
 
@@ -238,6 +248,7 @@ lifecycle acústico, evaluator comum, efeitos e o STOP físico imediato
 - [EXP-0008 — verificador ASR de slot crítico em shadow](docs/experiments/EXP-0008-critical-slot-shadow-asr.md)
 - [EXP-0009 — interlock de confirmação monetária](docs/experiments/EXP-0009-critical-amount-confirmation-interlock.md)
 - [EXP-0010 — primeira fatia stateful do InteractionKernel](docs/experiments/EXP-0010-stateful-interaction-kernel.md)
+- [EXP-0011 — reflexo local com evidência acústica](docs/experiments/EXP-0011-local-audio-reflex.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -248,8 +259,9 @@ prefinal acústica, o EXP-0008 encontrou um verificador semanticamente útil mas
 lento, e o EXP-0009 bloqueou a confirmação monetária insegura sem LLM. A ordem
 executável existe somente no
 [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada): a baseline
-v0.3 está congelada, a primeira fatia do M2.5 foi promovida e o próximo
-fechamento é o reflexo local contra autoativação acústica.
+v0.3 está congelada, as fatias stateful e de reflexo local do M2.5 foram
+promovidas, e o próximo fechamento reconcilia WAIT/STOP/retomada e clocks no
+runtime comum sem mover o comando físico rápido para o backend.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

@@ -38,6 +38,8 @@ const FALSE_ACTIVATION_PROBE_MS = Math.max(
 );
 const REQUIRE_VAD_SHADOW =
   process.env.REQUIRE_VAD_SHADOW === "1";
+const ALLOW_FAILED_GATES =
+  process.env.ALLOW_FAILED_GATES === "1";
 const CRITICAL_CONFIRMATION_REPETITIONS = Math.max(
   1,
   Number.parseInt(
@@ -329,6 +331,31 @@ async function waitFor(check, timeoutMs = 10_000) {
   throw new Error(`Condição não satisfeita em ${timeoutMs} ms.`);
 }
 
+async function waitForStable(
+  check,
+  stableMs,
+  timeoutMs = 10_000
+) {
+  const deadline = Date.now() + timeoutMs;
+  let stableSince = null;
+  while (Date.now() < deadline) {
+    const value = await check();
+    if (value) {
+      stableSince ??= Date.now();
+      if (Date.now() - stableSince >= stableMs) {
+        return value;
+      }
+    } else {
+      stableSince = null;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  throw new Error(
+    `Condição não permaneceu estável por ${stableMs} ms ` +
+      `dentro de ${timeoutMs} ms.`
+  );
+}
+
 function assessStatefulCriticalConfirmation({ pending, accepted }) {
   const transitions = accepted.trace
     .filter((event) => event.type === "interaction.transition")
@@ -388,7 +415,8 @@ try {
     input: document.querySelector("#inputLabel")?.textContent,
     automation: Boolean(window.__duplexLab),
     recognition: Boolean(window.SpeechRecognition || window.webkitSpeechRecognition),
-    secureContext: window.isSecureContext
+    secureContext: window.isSecureContext,
+    localAudioReflex: window.__duplexLab.snapshot().audio.localAudioReflex
   })`);
 
   originalMicrophonePermission = await evaluate(
@@ -424,25 +452,74 @@ try {
   let falseActivationControlStartWindows = null;
   let falseActivationShadowStart = null;
   let falseActivationStartDrain = null;
+  let falseActivationPreflight = null;
   const falseActivationPlaybackRestarts = 0;
   if (microphoneProbe.state.inputMode === "local-pcm") {
-    await evaluate(
-      `window.__duplexLab.speakLoop(
-        ${JSON.stringify(FALSE_ACTIVATION_TEXT)}
-      )`
+    const preflightStartedAt = Date.now();
+    const quietSnapshot = await waitForStable(
+      () =>
+        evaluate(`(() => {
+          const snapshot = window.__duplexLab.snapshot();
+          const quiet = !snapshot.state.userSpeaking &&
+            !snapshot.state.potentialBargeIn &&
+            !snapshot.state.assistantPreparing &&
+            !snapshot.state.assistantSpeaking &&
+            !snapshot.state.responseActive &&
+            snapshot.state.audioQueueLength === 0;
+          return quiet ? snapshot : null;
+        })()`),
+      1_500,
+      60_000
+    );
+    const preflightTrace = quietSnapshot.trace.slice(
+      microphoneProbe.trace.length
+    );
+    falseActivationPreflight = {
+      waitedMs: Date.now() - preflightStartedAt,
+      requiredStableQuietMs: 1_500,
+      observedUserSpeechEvents: preflightTrace.filter(
+        (event) => event.type === "user.speech.started"
+      ).length,
+      committedTurns: preflightTrace.filter(
+        (event) => event.type === "turn.committed"
+      ).length,
+      scope:
+        "protege o início causal do probe contra fala ambiente já ativa; " +
+        "não rotula o ambiente durante a janela medida"
+    };
+    const falseActivationRequest = await evaluate(
+      `(() => {
+        const traceStartIndex = window.__duplexLab.snapshot().trace.length;
+        const requestedAtMs = performance.now();
+        window.__duplexLab.speakLoop(
+          ${JSON.stringify(FALSE_ACTIVATION_TEXT)}
+        );
+        return { traceStartIndex, requestedAtMs };
+      })()`
     );
     const startedSnapshot = await waitFor(
       () =>
         evaluate(`(() => {
           const snapshot = window.__duplexLab.snapshot();
-          return snapshot.trace.some(
-            (event) => event.type === "assistant.speech.started"
+          return snapshot.trace.slice(
+            ${JSON.stringify(falseActivationRequest.traceStartIndex)}
+          ).some(
+            (event) =>
+              event.type === "assistant.speech.started" &&
+              event.detail === "automation-probe" &&
+              event.atMs >= ${JSON.stringify(
+                falseActivationRequest.requestedAtMs
+              )}
           ) ? snapshot : null;
         })()`),
       15_000
     );
-    falseActivationStarted = startedSnapshot.trace.findLast(
-      (event) => event.type === "assistant.speech.started"
+    falseActivationStarted = startedSnapshot.trace.find(
+      (event, index) =>
+        index >= falseActivationRequest.traceStartIndex &&
+        event.type === "assistant.speech.started" &&
+        event.detail === "automation-probe" &&
+        event.atMs >= falseActivationRequest.requestedAtMs
     );
     falseActivationStartDrain = await evaluate(
       `window.__duplexLab.flushAudio()`
@@ -471,8 +548,12 @@ try {
   const microphoneCaptureSnapshot = await evaluate(
     `window.__duplexLab.refreshCaptureTelemetry()`
   );
-  const rawAudioAudit = await evaluate(
-    `window.__duplexLab.audioAudit()`
+  const rawAudioAudit = (
+    await evaluate(`window.__duplexLab.audioAudit()`)
+  ).filter(
+    (clip) =>
+      falseActivationStarted === null ||
+      clip.receivedAtMs >= falseActivationStarted.atMs
   );
   const audioAudit = [];
   for (const clip of rawAudioAudit) {
@@ -535,6 +616,7 @@ try {
   const microphoneCapture = {
     ...microphoneCaptureSnapshot,
     falseActivationProbe: {
+      preflight: falseActivationPreflight,
       requestedDurationMs: FALSE_ACTIVATION_PROBE_MS,
       observedDurationMs: falseActivationStarted
         ? Math.round(
@@ -891,6 +973,90 @@ try {
       })()`),
     10_000
   );
+
+  await evaluate(`window.__duplexLab.reset()`);
+  await evaluate(
+    `window.__duplexLab.speakLoop(
+      "Vou continuar falando durante um pico acústico isolado de teste."
+    )`
+  );
+  await waitFor(
+    () =>
+      evaluate(`window.__duplexLab.snapshot().state.assistantSpeaking`),
+    15_000
+  );
+  await evaluate(`(() => {
+    window.__duplexLab.simulateAudioEvent({
+      type: "user.speech.started",
+      turnId: "automation-marginal-reflex",
+      detector: "silero-vad-v6.2",
+      probability: 0.87,
+      triggerSampleStart: 1000
+    });
+    return window.__duplexLab.snapshot();
+  })()`);
+  const marginalReflexStarted = await waitFor(
+    () =>
+      evaluate(`(() => {
+        const snapshot = window.__duplexLab.snapshot();
+        const mode = snapshot.audio.localAudioReflex.config.mode;
+        const types = snapshot.trace.map((event) => event.type);
+        const observed = mode === "evidence-gated"
+          ? types.includes("local-audio-reflex.armed") &&
+            !types.includes("assistant.speech.paused")
+          : types.includes("local-audio-reflex.pause") &&
+            types.includes("assistant.speech.paused");
+        return observed ? snapshot : null;
+      })()`),
+    10_000
+  );
+  await evaluate(`window.__duplexLab.simulateAudioEvent({
+    type: "vad.control.window",
+    turnId: "automation-marginal-reflex",
+    probability: 0.79,
+    sampleStart: 1512
+  })`);
+  await evaluate(`window.__duplexLab.simulateAudioEvent({
+    type: "vad.control.window",
+    turnId: "automation-marginal-reflex",
+    probability: 0.71,
+    sampleStart: 2024
+  })`);
+  await evaluate(`window.__duplexLab.simulateAudioEvent({
+    type: "user.speech.paused",
+    turnId: "automation-marginal-reflex"
+  })`);
+  const marginalFinalText = "I'm";
+  await evaluate(`window.__duplexLab.simulateAudioEvent({
+    type: "transcript.final",
+    turnId: "automation-marginal-reflex",
+    text: ${JSON.stringify(marginalFinalText)}
+  })`);
+  const marginalReflexSettled = await waitFor(
+    () =>
+      evaluate(`(() => {
+        const snapshot = window.__duplexLab.snapshot();
+        const mode = snapshot.audio.localAudioReflex.config.mode;
+        const types = snapshot.trace.map((event) => event.type);
+        const settled = mode === "evidence-gated"
+          ? types.includes("local-audio-reflex.suppressed") &&
+            types.includes(
+              "local-audio-reflex.transcript-suppressed"
+            ) &&
+            !types.includes("assistant.speech.paused") &&
+            !types.includes("turn.committed") &&
+            snapshot.state.assistantSpeaking
+          : types.includes("assistant.speech.paused") &&
+            types.includes("barge-in.confirmed") &&
+            types.includes("turn.committed");
+        return settled ? snapshot : null;
+      })()`),
+    10_000
+  );
+  const marginalReflex = {
+    started: marginalReflexStarted,
+    settled: marginalReflexSettled
+  };
 
   await evaluate(`window.__duplexLab.reset()`);
   await evaluate(
@@ -1378,21 +1544,30 @@ try {
     })(),
     noSelfInterruptionUnderDeviceAec: (() => {
       const assistantStartIndex = microphoneCapture.trace.findIndex(
-        (event) => event.type === "assistant.speech.started"
+        (event) =>
+          falseActivationStarted !== null &&
+          event.type === falseActivationStarted.type &&
+          event.atMs === falseActivationStarted.atMs &&
+          event.detail === falseActivationStarted.detail
       );
       return (
         assistantStartIndex >= 0 &&
         !microphoneCapture.trace.slice(assistantStartIndex + 1).some(
           (event) =>
-            event.type === "user.speech.started" ||
             event.type === "assistant.speech.stopped" ||
-            event.type === "assistant.speech.paused"
+            event.type === "assistant.speech.paused" ||
+            event.type === "barge-in.confirmed" ||
+            event.type === "turn.committed"
         )
       );
     })(),
     longSessionNoFalseActivation: (() => {
       const assistantStartIndex = microphoneCapture.trace.findIndex(
-        (event) => event.type === "assistant.speech.started"
+        (event) =>
+          falseActivationStarted !== null &&
+          event.type === falseActivationStarted.type &&
+          event.atMs === falseActivationStarted.atMs &&
+          event.detail === falseActivationStarted.detail
       );
       const tail = assistantStartIndex < 0
         ? []
@@ -1534,6 +1709,55 @@ try {
           event.type === "turn.committed" ||
           event.type === "assistant.speech.stopped"
       ),
+    localAudioReflexAdvertised:
+      pageState.localAudioReflex?.reflexVersion ===
+        "local-audio-reflex-v0.1" &&
+      ["immediate", "evidence-gated"].includes(
+        pageState.localAudioReflex?.config?.mode
+      ),
+    marginalSpikeHandledByReflex: (() => {
+      const mode =
+        marginalReflex.settled.audio.localAudioReflex.config.mode;
+      const startedTypes = marginalReflex.started.trace.map(
+        (event) => event.type
+      );
+      const settledTypes = marginalReflex.settled.trace.map(
+        (event) => event.type
+      );
+      if (mode === "evidence-gated") {
+        return (
+          startedTypes.includes("local-audio-reflex.armed") &&
+          !startedTypes.includes("assistant.speech.paused") &&
+          settledTypes.includes("local-audio-reflex.suppressed") &&
+          settledTypes.includes(
+            "local-audio-reflex.transcript-suppressed"
+          ) &&
+          !settledTypes.includes("assistant.speech.paused") &&
+          !settledTypes.includes("turn.committed") &&
+          marginalReflex.settled.state.assistantSpeaking
+        );
+      }
+      return false;
+    })(),
+    marginalSpikeControlObserved: (() => {
+      const mode =
+        marginalReflex.settled.audio.localAudioReflex.config.mode;
+      if (mode === "evidence-gated") {
+        return true;
+      }
+      const startedTypes = marginalReflex.started.trace.map(
+        (event) => event.type
+      );
+      const settledTypes = marginalReflex.settled.trace.map(
+        (event) => event.type
+      );
+      return (
+        startedTypes.includes("local-audio-reflex.pause") &&
+        startedTypes.includes("assistant.speech.paused") &&
+        settledTypes.includes("barge-in.confirmed") &&
+        settledTypes.includes("turn.committed")
+      );
+    })(),
     earlyBackchannelPartialCanReopen:
       reopenedBackchannel.metrics.interruptions === 1 &&
       reopenedBackchannel.metrics.dismissedBackchannels === 0 &&
@@ -1614,6 +1838,30 @@ try {
       !bargeIn.trace.some(
         (event) => event.type === "assistant.speech.resumed"
       ),
+    localAudioReflexPreservesBargeIn: (() => {
+      const mode = bargeIn.audio.localAudioReflex.config.mode;
+      const armedAt = bargeIn.trace.findIndex(
+        (event) => event.type === "local-audio-reflex.armed"
+      );
+      const pausedAt = bargeIn.trace.findIndex(
+        (event) => event.type === "local-audio-reflex.pause"
+      );
+      if (mode === "evidence-gated") {
+        return (
+          armedAt >= 0 &&
+          pausedAt > armedAt &&
+          /sustained-acoustic-evidence|transcript-evidence/u.test(
+            bargeIn.trace[pausedAt].detail
+          )
+        );
+      }
+      return (
+        pausedAt >= 0 &&
+        /immediate-or-non-gateable/u.test(
+          bargeIn.trace[pausedAt].detail
+        )
+      );
+    })(),
     closedLoopPcmBargeIn:
       bargeIn.closedLoop.kind === "pcm-vad-to-browser-render" &&
       bargeIn.closedLoop.speechOnsetToVadObservedMs !== null &&
@@ -1776,6 +2024,8 @@ try {
       preparingBargeInHeld,
       preparingBargeInReleased,
       potentialBargeInRecovery,
+      marginalReflex.started,
+      marginalReflex.settled,
       reopenedBackchannel,
       realBackchannel,
       localAudio,
@@ -1846,6 +2096,7 @@ try {
       released: preparingBargeInReleased
     },
     potentialBargeInRecovery,
+    marginalReflex,
     reopenedBackchannel,
     realBackchannel,
     localAudio: {
@@ -1900,7 +2151,7 @@ try {
       report: REPORT_PATH
     })
   );
-  if (!ok) {
+  if (!ok && !ALLOW_FAILED_GATES) {
     process.exitCode = 1;
   }
 } finally {

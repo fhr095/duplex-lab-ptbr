@@ -176,6 +176,15 @@ Hoje existem três medições explicitamente separadas:
 Somente a terceira fecha a parada física completa. A segunda já impede que um
 `cancel()` rápido esconda áudio ainda enfileirado no navegador.
 
+Um probe com microfone real e saída padrão, sem canal de loopback ou rótulo de
+quem falou, é **não rotulado**. Atividade durante a saída pode ser fala ambiente,
+usuário, vazamento do sistema ou combinação; ela não deve ser reportada como
+autoeco. O harness aguarda 1,5 s estável antes da janela causal e classifica o
+resultado em `quiet-no-activation`, `unlabelled-activation-suppressed`,
+`unlabelled-activation-resolved`, `unlabelled-concurrent-speech` ou
+`unresolved`. Só a primeira sustenta especificidade naquela janela; nenhuma
+delas, sozinha, prova causalidade de eco.
+
 ## Estatística de promoção
 
 - CI: cenários determinísticos, resultado exato.
@@ -280,6 +289,7 @@ canônico é `eval/reports/eval-factory-campaign-v0.2.json`.
 | EXP-0008 | 45 inferências; Whisper `small` recuperou `1.150` e controles, p95 3.100 ms | `hold-latency`; zero autoridade |
 | EXP-0009 | transcript errado injetado 5× no Chrome; 5/5 abstentions, p95 122 ms, estado nulo | `promote-safety-guard` |
 | EXP-0010 | 5/5 ciclos stateful no Chrome; p95 94,9/399,9 ms; zero commit antes da repetição e um depois | `promote-stateful-kernel-slice`; runtime global em `hold-acoustic-stability` |
+| EXP-0011 | A/B causal de fonte idêntica; pico marginal preservado, final tardia bloqueada; barge-in 157,39 ms; probe físico 30,147 s limpo | `promote-local-audio-reflex-slice`; M2.5 e causalidade de eco não promovidos |
 
 A configuração resultante está congelada em
 [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
@@ -287,10 +297,11 @@ Ela é um comparador de desenvolvimento, não uma promoção de prontidão human
 
 A fábrica acústica ainda usa uma única voz sintética e ruído branco. O EXP-0010
 também exercitou microfone/AEC/VAD físicos em sessões longas suplementares: só
-1/4 passou sem pico Silero associado à fala do assistente. Esse eixo é separado
-do gate stateful com texto injetado e ainda não mede loopback calibrado, eco e
-reverberação controlados, double-talk sistemático, cauda física da sala ou
-preferência humana.
+1/4 passou sem atividade Silero, mas aquelas janelas não tinham rótulo causal e
+uma usava marcador antigo. O EXP-0011 corrigiu o marcador, isolou o efeito em
+A/B determinístico e passou a preservar interferência prévia fora do probe. O
+eixo ainda não mede loopback calibrado, eco/reverberação controlados,
+double-talk sistemático, cauda física da sala ou preferência humana.
 
 O ciclo completo e seus limites estão em
 [AUTONOMOUS_LOOP.md](AUTONOMOUS_LOOP.md).

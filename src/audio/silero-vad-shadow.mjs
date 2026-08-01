@@ -560,6 +560,20 @@ export class SileroVadController {
           this.#onsetSampleStart = null;
           this.#onsetSequence = null;
         }
+        if (this.#vadState === "speaking") {
+          events.push({
+            type: "vad.control.window",
+            atMs: this.#atMs(sampleStart),
+            payload: {
+              detector: "silero-vad-v6.2",
+              probability,
+              threshold: this.#threshold,
+              sampleStart,
+              sampleEnd: sampleStart + WINDOW_SAMPLES,
+              state: this.#vadState
+            }
+          });
+        }
         continue;
       }
 
@@ -591,6 +605,20 @@ export class SileroVadController {
       } else {
         this.#negativeStreak = 0;
         this.#onsetSampleStart = null;
+      }
+      if (this.#vadState === "speaking") {
+        events.push({
+          type: "vad.control.window",
+          atMs: this.#atMs(sampleStart),
+          payload: {
+            detector: "silero-vad-v6.2",
+            probability,
+            threshold: this.#threshold,
+            sampleStart,
+            sampleEnd: sampleStart + WINDOW_SAMPLES,
+            state: this.#vadState
+          }
+        });
       }
     }
     return events;

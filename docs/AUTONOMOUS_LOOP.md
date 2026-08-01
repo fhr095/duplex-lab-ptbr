@@ -73,14 +73,16 @@ O próximo loop não é “ampliar tudo”. EXP-0007 classificou a fronteira ac�
 EXP-0008 reteve o verificador forte por latência e EXP-0009 bloqueou a
 confirmação monetária insegura. O EXP-0010 promoveu a primeira máquina de
 estados compartilhada: 270/270 testes e 5/5 ciclos causais no Chrome, sem commit
-prematuro e sem LLM pago. Durante quatro smokes completos, porém, a fatia
-stateful passou 4/4 e o eixo acústico longo apenas 1/4, por autoativação próxima
-ao limiar durante a fala do assistente.
+prematuro e sem LLM pago. Seus quatro smokes suplementares encontraram atividade
+acústica não rotulada, sem base para atribuir autoeco.
 
 A [ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada)
-ataca agora `LocalAudioReflex`. Esse é o maior gargalo observado e pode ser
-comparado de forma isolada: reduzir pausas falsas sem piorar a latência de STOP
-para fala humana real. O roadmap, e não este documento de método, define os
+registra que o EXP-0011 já atacou esse efeito: no A/B causal, o controle
+imediato pausou/criou turno e o `LocalAudioReflex` evidence-gated preservou a
+fala e descartou a final tardia; o STOP legítimo ficou em 157,39 ms e 30,147 s
+físicos passaram sem ativação. O próximo loop reconcilia
+`WAIT_FOR_EVIDENCE`/STOP/retomada com o runtime comum e melhora a validade causal
+do probe físico. O roadmap, e não este documento de método, define os
 fechamentos posteriores.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;

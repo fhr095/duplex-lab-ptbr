@@ -52,11 +52,12 @@ O relatório canônico é
 ## Resultado adversarial paralelo
 
 O smoke completo foi executado quatro vezes ao longo da implementação. A fatia
-stateful passou em 4/4 campanhas, mas apenas 1/4 sessões longas passou sem um
-pico Silero causado pela própria fala do assistente. Os picos foram próximos ao
-limiar e ocorreram antes de qualquer evento do kernel; em ao menos uma execução
-o ASR vazio descartou o falso barge-in e retomou o player, mas a pausa provisória
-continua perceptível.
+stateful passou em 4/4 campanhas, mas apenas 1/4 sessões longas passou sem
+atividade Silero durante o probe físico. Ao menos uma das quatro execuções usou
+um marcador antigo que podia selecionar uma fala anterior; nas demais, a sessão
+não possuía rótulo de fala ambiente nem loopback capaz de atribuir a origem ao
+assistente. Em ao menos uma execução o ASR vazio descartou o barge-in potencial
+e retomou o player, mas a pausa provisória continuou perceptível.
 
 Esse achado não é apagado pelo gate causal. O status global do runtime é
 `hold-acoustic-stability` e passa a orientar a próxima fatia do M2.5.
@@ -82,7 +83,6 @@ Não promovido:
 
 ## Próximo experimento
 
-Extrair e comparar `LocalAudioReflex` durante a fala do assistente. O candidato
-deve reduzir pausas por vazamento do próprio áudio sem piorar a parada real no
-renderer. Depois, WAIT/BACKCHANNEL/STOP e clocks entram incrementalmente no
-runtime comum.
+Executado pelo EXP-0011: `LocalAudioReflex` foi extraído e comparado durante a
+fala do assistente. O próximo passo é reconciliar WAIT/STOP/retomada e clocks
+com o runtime comum e adicionar rótulo causal/loopback ao eixo físico.

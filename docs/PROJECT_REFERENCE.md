@@ -238,10 +238,16 @@ paralela. Em 5/5 ciclos de dois turnos houve zero commit prematuro e exatamente
 um commit após a repetição inequívoca, com p95 de 94,9 ms para a pergunta neutra
 e 399,9 ms para o aceite.
 
-Isso não fecha M2.5. Nos quatro smokes completos usados durante a implementação,
-a fatia stateful passou 4/4, mas apenas 1/4 sessões longas passou o eixo acústico
-sem autoativação pelo áudio do assistente. O status global permanece
-`hold-acoustic-stability`; `LocalAudioReflex` é o próximo fechamento medido.
+Isso não fecha M2.5. Os quatro smokes suplementares registraram atividade
+acústica em três execuções, mas marcador antigo, ausência de rótulo humano e
+falta de loopback impedem atribuir a origem ao áudio do assistente.
+
+O EXP-0011 fechou a fatia seguinte. `LocalAudioReflex` v0.1 evidence-gated é o
+padrão: no A/B de fonte idêntica, preservou a fala e bloqueou uma final tardia
+onde o controle pausou/criou turno. O barge-in legítimo permaneceu em 157,39 ms
+até o renderer e o probe físico corrente passou 30,147 s sem ativação. A decisão
+é `promote-local-audio-reflex-slice`; lifecycle/clocks comuns, equivalência ampla
+e especificidade física causal continuam em `hold`.
 
 ### M3 — qualidade modular local
 
@@ -288,9 +294,9 @@ Esta referência preserva apenas a lógica macro:
 2. manter o interlock monetário EXP-0009 como guardrail, sem alegar que ele
    recupera o valor;
 3. usar a baseline v0.3 congelada como comparador de desenvolvimento;
-4. preservar a fatia promovida do kernel e fechar primeiro o reflexo local
-   contra autoativação, sem piorar barge-in real;
-5. completar M2.5 com clocks/lifecycle comuns, trace treinável, ledger e
+4. preservar as fatias promovidas do kernel e do reflexo local;
+5. completar M2.5 reconciliando WAIT/STOP/retomada, clocks/lifecycle comuns,
+   trace treinável, ledger e
    holdout novo;
 6. provar M4a com uma capacidade estreita e sem autoridade;
 7. desafiar contrato/evaluator com referência nativa apenas quando houver uma

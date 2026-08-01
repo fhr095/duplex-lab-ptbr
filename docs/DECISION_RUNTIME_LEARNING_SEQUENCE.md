@@ -58,10 +58,28 @@ arquitetura:
 - 270/270 testes e zero chamada paga sustentam
   `promote-stateful-kernel-slice`.
 
-M2.5 continua aberto. Em quatro smokes completos, o gate stateful passou 4/4,
-mas o eixo acústico longo passou 1/4 devido a picos próximos ao limiar durante
-a fala do assistente. A próxima extração é `LocalAudioReflex`, comparada pela
-redução de pausas falsas e pela preservação do STOP real.
+M2.5 continua aberto. Em quatro smokes completos, o gate stateful passou 4/4;
+o eixo físico registrou atividade em três, mas sem rótulo/loopback capaz de
+atribuir a origem ao assistente. O achado definiu o comparador seguinte sem ser
+promovido a alegação causal.
+
+## Atualização após o EXP-0011
+
+O `LocalAudioReflex` v0.1 foi extraído como reducer puro e integrado ao caminho
+real. Durante saída audível, o modo promovido arma no primeiro início Silero e
+exige duas janelas adicionais com `p >= 0,75` ou parcial textual útil. Um turno
+sem essa confirmação não pausa e sua final tardia não pode criar resposta.
+
+No A/B de fonte idêntica, o controle imediato pausou e criou um turno diante do
+mesmo pico marginal e `I'm`; o candidato preservou a voz e suprimiu o final. A
+interrupção legítima terminou no renderer em 157,39 ms, abaixo do teto de
+350 ms, e a sessão física corrente passou 30,147 s sem ativação. Isso sustenta
+`promote-local-audio-reflex-slice`, não M2.5 completo nem causalidade de eco.
+
+O próximo fechamento é reconciliar `WAIT_FOR_EVIDENCE`, STOP, retomada e efeito
+observado com o lifecycle/clocks do `InteractionRuntime`, mantendo o comando
+físico rápido no navegador. Loopback ou rótulo causal permanece necessário
+antes de usar o probe físico como prova de autoeco.
 
 ## Pontos incorporados
 

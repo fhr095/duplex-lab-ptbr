@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "EXP-0011",
+  "evidenceLevel": "causal-browser-reflex-plus-unlabelled-physical",
+  "generatedAt": "2026-08-01T00:31:50.433Z",
+  "decision": "promote-local-audio-reflex-slice",
+  "pass": true,
+  "scope": "assistant-output-barge-in-reflex",
+  "globalRuntimeStatus": "pass-current-physical-probe",
+  "gates": {
+    "candidateConfigured": true,
+    "sourceIdenticalAb": true,
+    "controlExposesMarginalFailure": true,
+    "marginalSpikePreservesOutput": true,
+    "lateTranscriptCannotLeak": true,
+    "realBargeInPreserved": true,
+    "physicalInteractionResolved": true,
+    "nonAcousticBrowserRegression": true,
+    "sourceAndRuntimeComparable": true,
+    "localZeroPaidExecution": true
+  },
+  "contextGates": {
+    "fullSmokePass": true,
+    "rawPhysicalSpecificity": true,
+    "physicalSpecificityConclusive": true
+  },
+  "metrics": {
+    "controlMarginalPaused": true,
+    "candidateMarginalOutputPreserved": true,
+    "candidateLateTranscriptSuppressed": true,
+    "closedLoopBargeInMs": 157.39,
+    "closedLoopLimitMs": 350,
+    "physical": {
+      "pass": true,
+      "classification": "quiet-no-activation",
+      "specificityConclusive": true,
+      "rawStarts": 0,
+      "pauses": 0,
+      "confirmed": 0,
+      "suppressed": 0,
+      "orphanedPauses": 0,
+      "resolutions": [],
+      "preflight": {
+        "waitedMs": 33673,
+        "requiredStableQuietMs": 1500,
+        "observedUserSpeechEvents": 3,
+        "committedTurns": 2,
+        "scope": "protege o início causal do probe contra fala ambiente já ativa; não rotula o ambiente durante a janela medida"
+      }
+    }
+  },
+  "observations": {
+    "control": {
+      "mode": "immediate",
+      "passCandidate": false,
+      "passControl": true,
+      "armedWithoutPause": false,
+      "outputPreserved": false,
+      "lateTranscriptSuppressed": false,
+      "turnCommitted": true,
+      "immediateAdverseOutcome": true
+    },
+    "candidate": {
+      "mode": "evidence-gated",
+      "passCandidate": true,
+      "passControl": false,
+      "armedWithoutPause": true,
+      "outputPreserved": true,
+      "lateTranscriptSuppressed": true,
+      "turnCommitted": false,
+      "immediateAdverseOutcome": false
+    },
+    "bargeIn": {
+      "pass": true,
+      "sustainedEvidence": true,
+      "latencyMs": 157.39,
+      "limitMs": 350
+    },
+    "supplemental": [
+      {
+        "runNonce": "exp-0011-control-1b",
+        "mode": "immediate",
+        "ok": false,
+        "physical": {
+          "pass": true,
+          "classification": "quiet-no-activation",
+          "specificityConclusive": true,
+          "rawStarts": 0,
+          "pauses": 0,
+          "confirmed": 0,
+          "suppressed": 0,
+          "orphanedPauses": 0,
+          "resolutions": [],
+          "preflight": null
+        },
+        "marginal": {
+          "mode": "immediate",
+          "passCandidate": false,
+          "passControl": false,
+          "armedWithoutPause": false,
+          "outputPreserved": false,
+          "lateTranscriptSuppressed": false,
+          "turnCommitted": false,
+          "immediateAdverseOutcome": false
+        },
+        "bargeIn": {
+          "pass": false,
+          "sustainedEvidence": false,
+          "latencyMs": 81.15,
+          "limitMs": 350
+        }
+      },
+      {
+        "runNonce": "exp-0011-candidate-1",
+        "mode": "evidence-gated",
+        "ok": false,
+        "physical": {
+          "pass": true,
+          "classification": "unlabelled-concurrent-speech",
+          "specificityConclusive": false,
+          "rawStarts": 2,
+          "pauses": 2,
+          "confirmed": 1,
+          "suppressed": 0,
+          "orphanedPauses": 0,
+          "resolutions": [
+            {
+              "pausedAtMs": 4218.9,
+              "resolution": "barge-in.dismissed",
+              "resolvedAtMs": 6162.9,
+              "latencyMs": 1944
+            },
+            {
+              "pausedAtMs": 7348.3,
+              "resolution": "barge-in.confirmed",
+              "resolvedAtMs": 9940.6,
+              "latencyMs": 2592.3
+            }
+          ],
+          "preflight": null
+        },
+        "marginal": {
+          "mode": "evidence-gated",
+          "passCandidate": false,
+          "passControl": false,
+          "armedWithoutPause": true,
+          "outputPreserved": false,
+          "lateTranscriptSuppressed": false,
+          "turnCommitted": false,
+          "immediateAdverseOutcome": false
+        },
+        "bargeIn": {
+          "pass": true,
+          "sustainedEvidence": true,
+          "latencyMs": 155.33,
+          "limitMs": 350
+        }
+      },
+      {
+        "runNonce": "exp-0011-candidate-2",
+        "mode": "evidence-gated",
+        "ok": false,
+        "physical": {
+          "pass": true,
+          "classification": "unlabelled-activation-suppressed",
+          "specificityConclusive": false,
+          "rawStarts": 1,
+          "pauses": 0,
+          "confirmed": 0,
+          "suppressed": 1,
+          "orphanedPauses": 0,
+          "resolutions": [],
+          "preflight": null
+        },
+        "marginal": {
+          "mode": "evidence-gated",
+          "passCandidate": false,
+          "passControl": false,
+          "armedWithoutPause": true,
+          "outputPreserved": false,
+          "lateTranscriptSuppressed": false,
+          "turnCommitted": false,
+          "immediateAdverseOutcome": false
+        },
+        "bargeIn": {
+          "pass": true,
+          "sustainedEvidence": true,
+          "latencyMs": 150.46,
+          "limitMs": 350
+        }
+      },
+      {
+        "runNonce": "exp-0011-candidate-3b",
+        "mode": "evidence-gated",
+        "ok": false,
+        "physical": {
+          "pass": true,
+          "classification": "unlabelled-concurrent-speech",
+          "specificityConclusive": false,
+          "rawStarts": 1,
+          "pauses": 1,
+          "confirmed": 1,
+          "suppressed": 0,
+          "orphanedPauses": 0,
+          "resolutions": [
+            {
+              "pausedAtMs": 82574.4,
+              "resolution": "barge-in.confirmed",
+              "resolvedAtMs": 83926.1,
+              "latencyMs": 1351.7
+            }
+          ],
+          "preflight": {
+            "waitedMs": 52796,
+            "requiredStableQuietMs": 1500,
+            "observedUserSpeechEvents": 7,
+            "committedTurns": 5,
+            "scope": "protege o início causal do probe contra fala ambiente já ativa; não rotula o ambiente durante a janela medida"
+          }
+        },
+        "marginal": {
+          "mode": "evidence-gated",
+          "passCandidate": true,
+          "passControl": false,
+          "armedWithoutPause": true,
+          "outputPreserved": true,
+          "lateTranscriptSuppressed": true,
+          "turnCommitted": false,
+          "immediateAdverseOutcome": false
+        },
+        "bargeIn": {
+          "pass": true,
+          "sustainedEvidence": true,
+          "latencyMs": 181.12,
+          "limitMs": 350
+        }
+      }
+    ]
+  },
+  "interpretation": {
+    "promoted": "Reflexo local evidence-gated durante saída audível: aguarda duas janelas de suporte, preserva a voz em pico isolado e impede que um final tardio não confirmado crie turno.",
+    "notPromoted": "Especificidade acústica física global, causalidade de eco, calibração por dispositivo, generalização humana ou M2.5 completo.",
+    "physicalFinding": "A janela física corrente permaneceu sem ativação bruta."
+  },
+  "limitations": [
+    "O A/B causal usa eventos Silero determinísticos no navegador; a sessão física complementar não possui rótulo de quem falou.",
+    "Duas janelas adicionais acrescentam cerca de 64 ms e foram verificadas em uma fixture principal de barge-in, não em população humana.",
+    "O STOP medido termina no último quantum não silencioso do Chrome e não inclui a cauda do alto-falante ou da sala.",
+    "A promoção é somente da fatia de reflexo; especificidade física rotulada e testes humanos continuam pendentes."
+  ],
+  "provenance": {
+    "controlInput": {
+      "path": "eval/reports/exp-0011-control-current.json",
+      "sha256": "ae821bf0c561b99db94d26e29c98c71b8681f0f04a21ff93cf8e8c939c33765f",
+      "runNonce": "exp-0011-control-current"
+    },
+    "candidateInput": {
+      "path": "eval/reports/exp-0011-candidate-current.json",
+      "sha256": "4d5c963785289510f65850c39a643b6f4544f687c2fd44437d689180bc29511f",
+      "runNonce": "exp-0011-candidate-current"
+    },
+    "supplementalInputs": [
+      {
+        "path": "eval/reports/exp-0011-control-1b.json",
+        "sha256": "14dfb469e2aff28fa7ca7b4a0a6b2603b80a315f73384dbcabb64461ebfef69a",
+        "runNonce": "exp-0011-control-1b",
+        "sourceFingerprint": "4c487f08df416962428c10afa3bbf8d5451382003a492e8a6e31193c8efa8d51"
+      },
+      {
+        "path": "eval/reports/exp-0011-candidate-1.json",
+        "sha256": "d8a8d828a9aeadb1a2585832a89941423114356d950cd5ccb23e4302fa6f361c",
+        "runNonce": "exp-0011-candidate-1",
+        "sourceFingerprint": "3803dfbb8a38dd5a79a2a767443a2adaccbccc42ca4445f62ef7fe3548ed42cf"
+      },
+      {
+        "path": "eval/reports/exp-0011-candidate-2.json",
+        "sha256": "e5d079d0df6224eea6f6fb678fc4fae7482047c796d3e6a37c050ed8d221f3a0",
+        "runNonce": "exp-0011-candidate-2",
+        "sourceFingerprint": "3803dfbb8a38dd5a79a2a767443a2adaccbccc42ca4445f62ef7fe3548ed42cf"
+      },
+      {
+        "path": "eval/reports/exp-0011-candidate-3b.json",
+        "sha256": "2b45495f2b4283458c9599c88d7ac68fd222de58543a61c0a1088659676081bf",
+        "runNonce": "exp-0011-candidate-3b",
+        "sourceFingerprint": "80815a594dc009235e675e4a20ebb912f95a9ac7be064ab0bd964a9f4568b7db"
+      }
+    ],
+    "campaignFingerprint": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "56bb0c0cec0141419b8eda7007b2ff42502128c91e4ddd0ef82eb4700ab0dcb7",
+      "fileCount": 209,
+      "roots": [
+        "src",
+        "web",
+        "scripts",
+        "tests",
+        "eval/factory",
+        "eval/gates",
+        "eval/scenarios",
+        "package.json",
+        "package-lock.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "runtimeFingerprint": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "57bbcd44921ded74735a480c3035974cde464fe92ea1f84e7b001f8a4f006ef5",
+      "fileCount": 78,
+      "roots": [
+        "src",
+        "web",
+        "package.json",
+        "package-lock.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "runtimeRunId": "d9af047e-2dbd-4770-8752-2381d5fd475a",
+    "runtimeProvider": "local",
+    "paidApiRequests": 0
+  }
+}

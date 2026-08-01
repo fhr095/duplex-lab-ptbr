@@ -190,12 +190,17 @@ test("controle Silero produz início, pausa e retomada sem evento shadow", async
   }
 
   assert.deepEqual(
-    events.map((event) => event.type),
+    events
+      .filter((event) => event.type !== "vad.control.window")
+      .map((event) => event.type),
     [
       "user.speech.started",
       "user.speech.paused",
       "user.speech.resumed"
     ]
+  );
+  assert.ok(
+    events.filter((event) => event.type === "vad.control.window").length >= 2
   );
   assert.ok(
     events.every(
