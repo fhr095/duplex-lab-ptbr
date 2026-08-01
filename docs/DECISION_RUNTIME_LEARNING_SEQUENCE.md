@@ -1,6 +1,7 @@
 # Decisão — runtime comum e sequência até o primeiro peso
 
-Status: **aceita em 31/07/2026; execução incremental em andamento**
+Status: **aceita em 31/07/2026; atualizada em 01/08/2026 após o piloto e a
+revisão EXP-0015 v0.2; execução incremental em andamento**
 
 ## Contexto
 
@@ -142,17 +143,22 @@ novo para M4b; a política determinística continua autoritativa.
 ## Atualização após o EXP-0015
 
 O instrumento da calibração foi concluído sem confundir automação com opinião
-humana. O pack contém 12 cenas e 36 trajetórias estéreo cegas; o Chrome do
-Windows confirmou que as três alternativas precisam terminar antes da escolha.
-IDs semânticos e ações não chegam à interface, o token local é hasheado antes
-da persistência e o smoke não envia anotação.
+humana. O pack contém 12 cenas e 36 trajetórias estéreo cegas. Duas execuções da
+v0.1 revelaram opções byte a byte idênticas apresentadas separadamente,
+atribuição da fala misturada com timing e ausência de papel interno/externo; por
+isso elas permanecem piloto de usabilidade e não foram migradas. A v0.2 agrupa
+equivalências, aceita empate, pergunta atribuição separadamente e mantém
+comentário opcional somente local. O Chrome do Windows confirmou cenas com 2 e
+3 alternativas, escuta obrigatória, empate e atribuição. IDs semânticos e ações
+não chegam à interface, o token local é hasheado antes da persistência e o smoke
+não envia anotação.
 
-Treze gates técnicos sustentam `promote-timing-calibration-instrument`. O
-agregado corrente registra `await-human-calibration`, com 0/3 participantes,
-zero cena rotulada e zero item `fit-eligible`. CORAA permanece apenas avaliação
-e o sintético apenas desenvolvimento. Mesmo após o piloto, M4b exigirá um novo
-artefato treinável e holdout ainda não observado; a política determinística
-continua autoritativa.
+Quinze gates técnicos sustentam `promote-timing-calibration-instrument`. O
+agregado v0.2 registra `await-human-calibration`, com 0/3 participantes
+externos, zero cena rotulada e zero item `fit-eligible`; avaliações internas
+não contam para o mínimo. CORAA permanece apenas avaliação e o sintético apenas
+desenvolvimento. Mesmo após o piloto, M4b exigirá um novo artefato treinável e
+holdout ainda não observado; a política determinística continua autoritativa.
 
 ## Pontos incorporados
 
@@ -223,7 +229,8 @@ Não são bloqueadores do fechamento M2.5:
 - primeira família comparável de M4b e desenho do holdout pós-calibração;
 - candidato nativo e provedor de GPU, somente após pergunta/orçamento;
 - expansão da amostra após o piloto EXP-0015; o protocolo mínimo de 3
-  participantes, atenção, consenso e cobertura já está congelado;
+  participantes externos, atenção, votos singulares, consenso e cobertura já
+  está congelado;
 - licença do código, escolhida pelo proprietário em trilha de governança.
 
 ## Gatilhos para rever esta decisão

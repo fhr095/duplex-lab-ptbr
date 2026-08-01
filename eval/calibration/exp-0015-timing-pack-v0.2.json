@@ -1,0 +1,1223 @@
+{
+  "schemaVersion": "timing-calibration-pack-v2",
+  "packId": "exp-0015-timing-calibration-v0.2",
+  "locale": "pt-BR",
+  "purpose": "small-human-timing-label-calibration-before-m4b",
+  "experimentConfig": {
+    "path": "eval/experiments/exp-0015-timing-calibration.pt-BR.json",
+    "sha256": "sha256:98513820f90576b00b039a7aea5c7462b69dae4f4531212c2a84af38db36a81e"
+  },
+  "actions": [
+    "WAIT_FOR_EVIDENCE",
+    "PAUSE_OUTPUT",
+    "CONTINUE_OUTPUT"
+  ],
+  "protocol": {
+    "version": "blind-timing-preference-and-attribution-v2",
+    "minimumCompletedPlaybacksPerOption": 1,
+    "maximumCommentCharacters": 280,
+    "allowedReasonTags": [
+      "cortou-cedo",
+      "demorou-para-parar",
+      "ignorou-fala",
+      "sobreposicao-desconfortavel",
+      "ritmo-natural",
+      "dificil",
+      "fala-parecia-fundo",
+      "nao-ficou-claro-se-fala-era-dirigida",
+      "opcoes-pareciam-iguais"
+    ],
+    "minimumExternalParticipants": 3,
+    "minimumVotesPerScene": 3,
+    "minimumConsensusShare": 0.6666666666666666,
+    "minimumLabelCoverage": 0.6,
+    "minimumAttentionPassRate": 0.8,
+    "unitOfAnalysis": "participant",
+    "identityPolicy": "pseudonymous-local-token-hashed-before-persistence"
+  },
+  "audio": {
+    "sampleRate": 16000,
+    "channels": 2,
+    "channelMeaning": {
+      "left": "assistant-dominant",
+      "right": "near-end-user-dominant"
+    },
+    "engine": {
+      "id": "windows-system-speech",
+      "voice": "Microsoft Maria Desktop",
+      "culture": "pt-BR"
+    }
+  },
+  "sources": {
+    "humanManifestSha256": "sha256:84bbc50ee8c140261b40ed33cdf71dd1b0515b77b8bcfe9cbbbf169b32b7d5d5",
+    "humanLicense": "CC BY-NC-ND 4.0",
+    "boundary": "public human audio is evaluation-only and never enters model fit"
+  },
+  "scenes": [
+    {
+      "sceneId": "negation-short-early",
+      "family": "negation-short",
+      "fitEligibility": "evaluation-only",
+      "assistant": {
+        "promptId": "explanation",
+        "textSha256": "sha256:cf7597fbb2733f11900d1a6146ca20bfc4d8da03d46d597d523ded66618db608",
+        "waveSha256": "sha256:c3f86af3cb203f696d1acfcf1ba28acac0b8daa1742569d523a983a980efff4f",
+        "decodedPcmSha256": "sha256:28c8002cbb741b2497dd30d14da283628154879ec800125976576bb019d9169c"
+      },
+      "userSource": {
+        "kind": "human-public-evaluation-anchor",
+        "ref": "test/sp/71194_sp_",
+        "category": "spontaneous-clean",
+        "dataset": "SP2010",
+        "license": "CC BY-NC-ND 4.0",
+        "waveSha256": "sha256:1a8315b588cbe2d860bb97a29c25df19ff0095534f31391543be27018f0fabd8",
+        "decodedPcmSha256": "sha256:4ce99522fd3759d62d5dc96fd2db31869609e41375305de5281afad85ac06204",
+        "transcriptSha256": "sha256:6c5ed20272129564149c89eb1287ded14a57a4060ad5b17a5ba57731c397bc80",
+        "redistribution": "source audio and local mixes are not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 83200,
+        "userStartSample": 27200,
+        "decisionSample": 29760,
+        "waitStopSample": 33280,
+        "userSampleCount": 7040,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 0,
+        "endSample": 3200,
+        "activeFrames": 10,
+        "peakRmsDb": -26.522335423374873,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/negation-short-early--wait_for_evidence.wav",
+          "sha256": "sha256:cb0072dbca605db6b3598fd68f794ab60e2b6cd621cf7f84374c92629be711c3",
+          "pcmSha256": "sha256:4989494eb602065d49c890fd8bd8112b25a99c638cb7172eb679d9716e352014",
+          "durationMs": 5200,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 29760,
+            "waitStopSample": 33280,
+            "outputStopSample": 33280,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/negation-short-early--pause_output.wav",
+          "sha256": "sha256:9a8c858c29dc07402c0076592f9f09c32619bd60034bee06842cf4fea61193de",
+          "pcmSha256": "sha256:79d16035a5e9fcbb399bfd4482b8a8019178f20e4a233ac81c9c44da9785b12c",
+          "durationMs": 5200,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 29760,
+            "waitStopSample": 33280,
+            "outputStopSample": 29760,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/negation-short-early--continue_output.wav",
+          "sha256": "sha256:444632b6f4b8ebfbb0dc341b8d66918a0eced9b34381428259a43b98e0effd16",
+          "pcmSha256": "sha256:5e79dea4eb730bc9ea7bd02bfbabe30cb4cd83c2d6122408a48c25e52a8e1ca5",
+          "durationMs": 5200,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 29760,
+            "waitStopSample": 33280,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": null,
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "hesitation-early",
+      "family": "hesitation",
+      "fitEligibility": "evaluation-only",
+      "assistant": {
+        "promptId": "steps",
+        "textSha256": "sha256:2af1938f7bcc800cf5f0de69100e451181ecc9c7b8858f343239eb0099661cf3",
+        "waveSha256": "sha256:ff7e0bde08191202c52112a24e4112535bab9f3cc642bc286d4151250ba792c9",
+        "decodedPcmSha256": "sha256:2480e4b7661c9250cf82f6f6c5623030ff2367b5a8998ba950ff3583a7a874d6"
+      },
+      "userSource": {
+        "kind": "human-public-evaluation-anchor",
+        "ref": "test/CORAL/15752_CO_bfammn12",
+        "category": "hesitation",
+        "dataset": "C-ORAL-BRASIL I",
+        "license": "CC BY-NC-ND 4.0",
+        "waveSha256": "sha256:e95825b5e63a28d9e1afb8f98bd4533ff9c83b1b9cf9172fef69b97a63842627",
+        "decodedPcmSha256": "sha256:3f94a9b48010953692b805338f42d659ea1a3b43829f54fc8070a0a72caa6472",
+        "transcriptSha256": "sha256:9c88b41594b0148a31f5b6881459b1858ebcfbc90cebb15e23e9cbe09d4dca82",
+        "redistribution": "source audio and local mixes are not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 86400,
+        "userStartSample": 28800,
+        "decisionSample": 31360,
+        "waitStopSample": 35200,
+        "userSampleCount": 15136,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 0,
+        "endSample": 3200,
+        "activeFrames": 6,
+        "peakRmsDb": -27.237587466419583,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/hesitation-early--wait_for_evidence.wav",
+          "sha256": "sha256:2f301799104344f1271ff97bc7987b6c877acf5dec3bc9b8b7cc911ff0c4e34a",
+          "pcmSha256": "sha256:99621c1192b9806806180d8d16a80c7b119fa9438e7bd237e4564707a14d0647",
+          "durationMs": 5400,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 31360,
+            "waitStopSample": 35200,
+            "outputStopSample": 35200,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/hesitation-early--pause_output.wav",
+          "sha256": "sha256:5716f77583b16d94b17615be42ac279c6c1fc1d28919bbba1c72cb036ba51035",
+          "pcmSha256": "sha256:23db40f37b62359a64b97cfcd3b28b6dda29a5bb5760119e924924e89a7b6b02",
+          "durationMs": 5400,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 31360,
+            "waitStopSample": 35200,
+            "outputStopSample": 31360,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/hesitation-early--continue_output.wav",
+          "sha256": "sha256:8facd9a7309f5c95493fab3b8b58baa178b85397cf9b9fcc4a36ad1caab71852",
+          "pcmSha256": "sha256:9571bc96f511dac253284fe25e70c5a9be5a780521021bc47ef15ce6b38c6832",
+          "durationMs": 5400,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 31360,
+            "waitStopSample": 35200,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": null,
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "filled-pause-mid",
+      "family": "filled-pause",
+      "fitEligibility": "evaluation-only",
+      "assistant": {
+        "promptId": "summary",
+        "textSha256": "sha256:a385703b8e532c1c846418ac7ae9a946b981fa2f8234de42c3585e871c4b0bfa",
+        "waveSha256": "sha256:af1b44ce9fc7ba635893d0338b76dd50fc7bf677df0cb6b693b9e8f9d6fbbcd1",
+        "decodedPcmSha256": "sha256:7e3fc28c63e08fe5471b665a74410e0aed87e60555a5454217c6b1837a0812ad"
+      },
+      "userSource": {
+        "kind": "human-public-evaluation-anchor",
+        "ref": "test/NURC_RE/NURC_RE_EF/NURC_RE_EF_332/143276_nurc_",
+        "category": "filled-pause",
+        "dataset": "NURC-Recife",
+        "license": "CC BY-NC-ND 4.0",
+        "waveSha256": "sha256:cc6d4a0ee21a063cd335fb1cfdfbb6b7bb538abb92c7f3dbc8e4409f116af802",
+        "decodedPcmSha256": "sha256:2344464d930f2f2b4c6823d413e89b38aaa27317a90eff9ad80e228b5dff00aa",
+        "transcriptSha256": "sha256:12f2da51c278c9ac0a5c391d1b1c6d785553aef92d813be260578770d39d6bf0",
+        "redistribution": "source audio and local mixes are not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 92800,
+        "userStartSample": 28800,
+        "decisionSample": 39040,
+        "waitStopSample": 42880,
+        "userSampleCount": 27794,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 7040,
+        "endSample": 10880,
+        "activeFrames": 8,
+        "peakRmsDb": -21.731192394534936,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/filled-pause-mid--wait_for_evidence.wav",
+          "sha256": "sha256:f0d615caff99924a3934af64f2aa3e630749bb1b78d08279b180d91c2e39c65a",
+          "pcmSha256": "sha256:a5b1fb1c303a81d894b612d692fb12ed3782df8d6e7d8624b6a470d50357a19a",
+          "durationMs": 5800,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 39040,
+            "waitStopSample": 42880,
+            "outputStopSample": 42880,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/filled-pause-mid--pause_output.wav",
+          "sha256": "sha256:05fbcd61dc74e2bb31bea694ec170e147792148a0844467bdea07f510314e83c",
+          "pcmSha256": "sha256:cace14e5088988c02444e900529c8f5d69d8a5cd7e434b01540337d6a2b92634",
+          "durationMs": 5800,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 39040,
+            "waitStopSample": 42880,
+            "outputStopSample": 39040,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/filled-pause-mid--continue_output.wav",
+          "sha256": "sha256:20c1405fe86d0e3ae864007070fbc41d3713801d0511bd36a2beb4b079a7aa84",
+          "pcmSha256": "sha256:b4e356a5b8199f41401cb5164a5e7fd051494e26c6e36f1fd4b9ce1af5ffc9b1",
+          "durationMs": 5800,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 39040,
+            "waitStopSample": 42880,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": null,
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "noisy-speech-mid",
+      "family": "noisy-speech",
+      "fitEligibility": "evaluation-only",
+      "assistant": {
+        "promptId": "explanation",
+        "textSha256": "sha256:cf7597fbb2733f11900d1a6146ca20bfc4d8da03d46d597d523ded66618db608",
+        "waveSha256": "sha256:c3f86af3cb203f696d1acfcf1ba28acac0b8daa1742569d523a983a980efff4f",
+        "decodedPcmSha256": "sha256:28c8002cbb741b2497dd30d14da283628154879ec800125976576bb019d9169c"
+      },
+      "userSource": {
+        "kind": "human-public-evaluation-anchor",
+        "ref": "test/sp/48796_sp_",
+        "category": "noise",
+        "dataset": "SP2010",
+        "license": "CC BY-NC-ND 4.0",
+        "waveSha256": "sha256:5c7a59fda4629003f1d0d194a2318078e55bbf1ad845dc2ce43884d6c2c4cbb8",
+        "decodedPcmSha256": "sha256:eee129ec4f5ed04298340c1a7c2d88ee8651b6d03dafb0974cc366c9256efda1",
+        "transcriptSha256": "sha256:e9ce511c83984277c7905ce3b881d6128a28b17ee9b3d6aee10dd7f997b93dbc",
+        "redistribution": "source audio and local mixes are not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 96000,
+        "userStartSample": 30400,
+        "decisionSample": 35520,
+        "waitStopSample": 39680,
+        "userSampleCount": 33920,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 1920,
+        "endSample": 5760,
+        "activeFrames": 11,
+        "peakRmsDb": -33.44100100799344,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/noisy-speech-mid--wait_for_evidence.wav",
+          "sha256": "sha256:35ddf2813319d9bca25c9c0d6ee69876e62e35e735acdd0b273cc1deb6a114af",
+          "pcmSha256": "sha256:cb7532b658a7a39483cfd6c2eebf21c5563f844acd24bccf9929bedfaf802d35",
+          "durationMs": 6000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 30400,
+            "decisionSample": 35520,
+            "waitStopSample": 39680,
+            "outputStopSample": 39680,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/noisy-speech-mid--pause_output.wav",
+          "sha256": "sha256:08b9def5700de74b051c0935feafed6756ee44ca5b5d787ef3c3e739958c991e",
+          "pcmSha256": "sha256:6f0c9ba64859439f355b3b20f6e44eca7858126d25391680418b6e26b1f3a7c8",
+          "durationMs": 6000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 30400,
+            "decisionSample": 35520,
+            "waitStopSample": 39680,
+            "outputStopSample": 35520,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/noisy-speech-mid--continue_output.wav",
+          "sha256": "sha256:33b9390b00ff0893f39740a620c3d905f2943ad863aa1f91c74f57cfd5767554",
+          "pcmSha256": "sha256:d12ddea224cfb8c499b78f15282d8a5a49dee9cb6228bcee985ed07fcf6cc239",
+          "durationMs": 6000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 30400,
+            "decisionSample": 35520,
+            "waitStopSample": 39680,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": null,
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "second-voice-mid",
+      "family": "second-voice",
+      "fitEligibility": "evaluation-only",
+      "assistant": {
+        "promptId": "steps",
+        "textSha256": "sha256:2af1938f7bcc800cf5f0de69100e451181ecc9c7b8858f343239eb0099661cf3",
+        "waveSha256": "sha256:ff7e0bde08191202c52112a24e4112535bab9f3cc642bc286d4151250ba792c9",
+        "decodedPcmSha256": "sha256:2480e4b7661c9250cf82f6f6c5623030ff2367b5a8998ba950ff3583a7a874d6"
+      },
+      "userSource": {
+        "kind": "human-public-evaluation-anchor",
+        "ref": "test/sp/47827_sp_",
+        "category": "second-voice",
+        "dataset": "SP2010",
+        "license": "CC BY-NC-ND 4.0",
+        "waveSha256": "sha256:4d985575a72928c3ee3d76c6804ee8c4186cfde9d95a7c8c69a14d7b8ad1e695",
+        "decodedPcmSha256": "sha256:095a2194e80ca4f4bc34809e6e226e8c01dace7da9258c510773dd2dd4ca1bf4",
+        "transcriptSha256": "sha256:dc7e65c964248bb61ef42f7cac946115a9c05003ccd36356760143a4a9591250",
+        "redistribution": "source audio and local mixes are not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 89600,
+        "userStartSample": 27200,
+        "decisionSample": 35520,
+        "waitStopSample": 39680,
+        "userSampleCount": 17697,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 5120,
+        "endSample": 8960,
+        "activeFrames": 7,
+        "peakRmsDb": -26.085520235889774,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/second-voice-mid--wait_for_evidence.wav",
+          "sha256": "sha256:982ffb5fd7f013efa07498964b40b9e744a64f97b220214cb5c569a4680b5b94",
+          "pcmSha256": "sha256:9c4beecebaec795d1c3cb02163638c0a60eb47996aed71df4b68929689eed561",
+          "durationMs": 5600,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 35520,
+            "waitStopSample": 39680,
+            "outputStopSample": 39680,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/second-voice-mid--pause_output.wav",
+          "sha256": "sha256:e1f06284baa8bad5a409eb95b376cabae0f9a4348f56944a8234535b16343387",
+          "pcmSha256": "sha256:87412fa1fa4153aa8fb774832518cf0ab4e0e709ab3b63de2a03ef3109887ce3",
+          "durationMs": 5600,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 35520,
+            "waitStopSample": 39680,
+            "outputStopSample": 35520,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/second-voice-mid--continue_output.wav",
+          "sha256": "sha256:ae60180670de6e2b40802af4fc7d29c02a8712122dfaccd0b70c33c6d4b95d97",
+          "pcmSha256": "sha256:829c892ba86a61ce56f99d8c4ea954c89096c6f49e8f240ba7357dc1f4c45fd7",
+          "durationMs": 5600,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 35520,
+            "waitStopSample": 39680,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": null,
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "spontaneous-clean-late",
+      "family": "spontaneous-clean",
+      "fitEligibility": "evaluation-only",
+      "assistant": {
+        "promptId": "summary",
+        "textSha256": "sha256:a385703b8e532c1c846418ac7ae9a946b981fa2f8234de42c3585e871c4b0bfa",
+        "waveSha256": "sha256:af1b44ce9fc7ba635893d0338b76dd50fc7bf677df0cb6b693b9e8f9d6fbbcd1",
+        "decodedPcmSha256": "sha256:7e3fc28c63e08fe5471b665a74410e0aed87e60555a5454217c6b1837a0812ad"
+      },
+      "userSource": {
+        "kind": "human-public-evaluation-anchor",
+        "ref": "test/alip/80375_alip_",
+        "category": "spontaneous-clean",
+        "dataset": "ALIP",
+        "license": "CC BY-NC-ND 4.0",
+        "waveSha256": "sha256:9b2aaf8cb26fb60df49fc808cb9506c460f92edd65758d1cb86bf291b069f5d6",
+        "decodedPcmSha256": "sha256:1d25e0ff663f32c8cf85bfcf2c5c9617c400cede09786d4e1b4b59857849a7dc",
+        "transcriptSha256": "sha256:4a46906d62a5a44fee2eb3001db5c8dc5678b0d88bfcebc38e057ba20851e6cc",
+        "redistribution": "source audio and local mixes are not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 96000,
+        "userStartSample": 28800,
+        "decisionSample": 39040,
+        "waitStopSample": 42880,
+        "userSampleCount": 32640,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 7040,
+        "endSample": 10880,
+        "activeFrames": 12,
+        "peakRmsDb": -21.961656655875007,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/spontaneous-clean-late--wait_for_evidence.wav",
+          "sha256": "sha256:21ad89d29b54bb5b0d82128fb1fe0676934385ef47e1e48457ce6304ed4ecebc",
+          "pcmSha256": "sha256:13a4943930189fb80c047fed76d56b31eff723f60d94fd1c7acf074e3d746aba",
+          "durationMs": 6000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 39040,
+            "waitStopSample": 42880,
+            "outputStopSample": 42880,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/spontaneous-clean-late--pause_output.wav",
+          "sha256": "sha256:d3719fa349670464a543dcd1b70915a852eef32b0a9631eff82a19661229ee51",
+          "pcmSha256": "sha256:f5c89575edab2a644a39bad82d94c7d6423810a0ca2b6511091ac12b692c6e46",
+          "durationMs": 6000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 39040,
+            "waitStopSample": 42880,
+            "outputStopSample": 39040,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/spontaneous-clean-late--continue_output.wav",
+          "sha256": "sha256:d67f758a7845fc9d7da01728d59648f8aff5dac708555c42b2546d27e56df885",
+          "pcmSha256": "sha256:3e94a71a6c09e1d4297d02517b7b3cdb8c0796ea9def02f85e30484e06dcf93e",
+          "durationMs": 6000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 39040,
+            "waitStopSample": 42880,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": null,
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "short-backchannel-sim",
+      "family": "synthetic-backchannel",
+      "fitEligibility": "development-synthetic",
+      "assistant": {
+        "promptId": "explanation",
+        "textSha256": "sha256:cf7597fbb2733f11900d1a6146ca20bfc4d8da03d46d597d523ded66618db608",
+        "waveSha256": "sha256:c3f86af3cb203f696d1acfcf1ba28acac0b8daa1742569d523a983a980efff4f",
+        "decodedPcmSha256": "sha256:28c8002cbb741b2497dd30d14da283628154879ec800125976576bb019d9169c"
+      },
+      "userSource": {
+        "kind": "local-synthetic-speech",
+        "engine": "windows-system-speech",
+        "recipeSha256": "sha256:7997b09ed824e3d2d473544193f90a8411704dcd80219267eea3e8c67695bd53",
+        "textSha256": "sha256:507a9a8be3d145a86daa9644b28bf42a8dc0720d8baeabdf0406c393692bf082",
+        "waveSha256": "sha256:fa08493ca5e8613dcbbf49310e410163a4e539cd1ed3e1c42697b6cd036dd866",
+        "decodedPcmSha256": "sha256:aded26150c2acaf011ef506b4452b388418d510f4f5d21ad5fd2b1cf5497f394",
+        "redistribution": "generated wave is not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 80000,
+        "userStartSample": 27200,
+        "decisionSample": 32320,
+        "waitStopSample": null,
+        "userSampleCount": 14400,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 1920,
+        "endSample": 5760,
+        "activeFrames": 8,
+        "peakRmsDb": -20.63642300021666,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/short-backchannel-sim--wait_for_evidence.wav",
+          "sha256": "sha256:6a949fac847b374c31982b0d573a1ac923c52f87eb78c5b19cc3f92e6b7611aa",
+          "pcmSha256": "sha256:4d3d85ce143deb650a9faa30fe78158d4ad889c6a9afbecbabb97d7fae3275fb",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 32320,
+            "waitStopSample": null,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/short-backchannel-sim--pause_output.wav",
+          "sha256": "sha256:afb83c3f20a60efedd529574611d2a78605835e2bd480ee39f31ac05203a362f",
+          "pcmSha256": "sha256:037786e0823976538701d43addb00c5bc7f136aa77b5edc29d375538cc3324c0",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 32320,
+            "waitStopSample": null,
+            "outputStopSample": 32320,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/short-backchannel-sim--continue_output.wav",
+          "sha256": "sha256:6a949fac847b374c31982b0d573a1ac923c52f87eb78c5b19cc3f92e6b7611aa",
+          "pcmSha256": "sha256:4d3d85ce143deb650a9faa30fe78158d4ad889c6a9afbecbabb97d7fae3275fb",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 32320,
+            "waitStopSample": null,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": null,
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "explicit-correction",
+      "family": "synthetic-correction",
+      "fitEligibility": "development-synthetic",
+      "assistant": {
+        "promptId": "steps",
+        "textSha256": "sha256:2af1938f7bcc800cf5f0de69100e451181ecc9c7b8858f343239eb0099661cf3",
+        "waveSha256": "sha256:ff7e0bde08191202c52112a24e4112535bab9f3cc642bc286d4151250ba792c9",
+        "decodedPcmSha256": "sha256:2480e4b7661c9250cf82f6f6c5623030ff2367b5a8998ba950ff3583a7a874d6"
+      },
+      "userSource": {
+        "kind": "local-synthetic-speech",
+        "engine": "windows-system-speech",
+        "recipeSha256": "sha256:255c17a5bbad76b2a6a6dd51f1c0896bfbfdd5e14c0c3932161ae2291fc1881e",
+        "textSha256": "sha256:6b623aa00f001393ece941150ed0558b96aa27bd13d92113b8810eefa0a24b96",
+        "waveSha256": "sha256:d8d3aab9989216e28ad0e4cb5bfd466ab667bc07c717c5f9ad659f4f808820ad",
+        "decodedPcmSha256": "sha256:7b06af72ad17abca0eae597b8800c07d6dfc83bfda0644f00f65da54dca30470",
+        "redistribution": "generated wave is not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 96000,
+        "userStartSample": 28800,
+        "decisionSample": 33920,
+        "waitStopSample": 37440,
+        "userSampleCount": 41600,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 1920,
+        "endSample": 5760,
+        "activeFrames": 12,
+        "peakRmsDb": -17.028613664225695,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/explicit-correction--wait_for_evidence.wav",
+          "sha256": "sha256:714046c1e0b4ca04324308457e168dca527bedd30225dcce9acd9cc16f1e16a0",
+          "pcmSha256": "sha256:fc574837e3986f963238273d5024fd1bb17ea747cd7cbae207edc223b3023934",
+          "durationMs": 6000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 33920,
+            "waitStopSample": 37440,
+            "outputStopSample": 37440,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/explicit-correction--pause_output.wav",
+          "sha256": "sha256:2f18303e9956d383431ef321a0bf2c9e0cf6c0f67821afd202c8fb7efc260e29",
+          "pcmSha256": "sha256:b855d70c6169f1d6fc32325b769eb1c1bde76546549ede9e92cda59e32c30eb6",
+          "durationMs": 6000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 33920,
+            "waitStopSample": 37440,
+            "outputStopSample": 33920,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/explicit-correction--continue_output.wav",
+          "sha256": "sha256:f1389688875fc77ff70a24000db676bbe3c450ef8c7dcce081405bbb52a468cd",
+          "pcmSha256": "sha256:8f7694c5c5356793bdd622d6f420039a7413823e7d9bee82add52b206c332555",
+          "durationMs": 6000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 28800,
+            "decisionSample": 33920,
+            "waitStopSample": 37440,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": {
+        "expectedActions": [
+          "WAIT_FOR_EVIDENCE",
+          "PAUSE_OUTPUT"
+        ],
+        "expectedSpeakerRelevance": "DIRECTED_TO_ASSISTANT"
+      },
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "short-backchannel-aham",
+      "family": "synthetic-backchannel",
+      "fitEligibility": "development-synthetic",
+      "assistant": {
+        "promptId": "summary",
+        "textSha256": "sha256:a385703b8e532c1c846418ac7ae9a946b981fa2f8234de42c3585e871c4b0bfa",
+        "waveSha256": "sha256:af1b44ce9fc7ba635893d0338b76dd50fc7bf677df0cb6b693b9e8f9d6fbbcd1",
+        "decodedPcmSha256": "sha256:7e3fc28c63e08fe5471b665a74410e0aed87e60555a5454217c6b1837a0812ad"
+      },
+      "userSource": {
+        "kind": "local-synthetic-speech",
+        "engine": "windows-system-speech",
+        "recipeSha256": "sha256:bde788f03bf21bfd70fd4b3cfd2712e8ade1622517b5ed4c9be6cb1ae75ec690",
+        "textSha256": "sha256:58ea7466a16c46f3b105a116c9eb4a51e3271c709db34750fdeddbfee006d7ff",
+        "waveSha256": "sha256:57451a9f5e2ea413ebcde139165dfa06c95dd53eb7428d2ffca630e3b7c16e69",
+        "decodedPcmSha256": "sha256:c8352d07ca0a26dd23b8316ded21ce4f7ac6f867bb8a5effcb85dae69b4a314d",
+        "redistribution": "generated wave is not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 80000,
+        "userStartSample": 30400,
+        "decisionSample": 32960,
+        "waitStopSample": null,
+        "userSampleCount": 14400,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 0,
+        "endSample": 3200,
+        "activeFrames": 6,
+        "peakRmsDb": -19.876014911920244,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/short-backchannel-aham--wait_for_evidence.wav",
+          "sha256": "sha256:cac27313c26647fe240e1b85493bacdb35dcec3d91a523d28f47801dfe89c51b",
+          "pcmSha256": "sha256:65b8cdf8dc681e312396090487bb472c31d1a8c9563b8fe6e3bfed4155fea305",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 30400,
+            "decisionSample": 32960,
+            "waitStopSample": null,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/short-backchannel-aham--pause_output.wav",
+          "sha256": "sha256:59787b4e2faed08c6f23b91bf04329d522c692b106b2569f40fbda8d4d20810b",
+          "pcmSha256": "sha256:44440218c3588fb48102f86304060aba189d04466c5759d031556901872aefc5",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 30400,
+            "decisionSample": 32960,
+            "waitStopSample": null,
+            "outputStopSample": 32960,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/short-backchannel-aham--continue_output.wav",
+          "sha256": "sha256:cac27313c26647fe240e1b85493bacdb35dcec3d91a523d28f47801dfe89c51b",
+          "pcmSha256": "sha256:65b8cdf8dc681e312396090487bb472c31d1a8c9563b8fe6e3bfed4155fea305",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 30400,
+            "decisionSample": 32960,
+            "waitStopSample": null,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": null,
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "transient-noise-control",
+      "family": "noise-control",
+      "fitEligibility": "control-only",
+      "assistant": {
+        "promptId": "explanation",
+        "textSha256": "sha256:cf7597fbb2733f11900d1a6146ca20bfc4d8da03d46d597d523ded66618db608",
+        "waveSha256": "sha256:c3f86af3cb203f696d1acfcf1ba28acac0b8daa1742569d523a983a980efff4f",
+        "decodedPcmSha256": "sha256:28c8002cbb741b2497dd30d14da283628154879ec800125976576bb019d9169c"
+      },
+      "userSource": {
+        "kind": "seeded-white-noise-control",
+        "durationSamples": 2880,
+        "seed": 15015,
+        "targetRms": 0.035,
+        "pcmSha256": "sha256:c5f4b578114183a84714b59eb2db0305299596dbf1feed2042109eb4e9321313"
+      },
+      "timing": {
+        "sceneSampleCount": 80000,
+        "userStartSample": 27200,
+        "decisionSample": 28736,
+        "waitStopSample": null,
+        "userSampleCount": 2880,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 0,
+        "endSample": 2176,
+        "activeFrames": 6,
+        "peakRmsDb": -28.64357288332284,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/transient-noise-control--wait_for_evidence.wav",
+          "sha256": "sha256:be947ca843b1f1cb8b6393ea956044d9e93b2ff0c6b74b42ba122e009fded7c9",
+          "pcmSha256": "sha256:25040c4100940315e0eaea26ba9a8c6592337050dd250898a6440b4d357c9c64",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 28736,
+            "waitStopSample": null,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/transient-noise-control--pause_output.wav",
+          "sha256": "sha256:4084e9f52f48958adb3d9489a8f5e341c0d5ef3a68cf77828cab13bb972f54f6",
+          "pcmSha256": "sha256:cc0f89653107fbbe87efda1088b910ebd44da5c2dc9ce0ca1afa6489dc69965e",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 28736,
+            "waitStopSample": null,
+            "outputStopSample": 28736,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/transient-noise-control--continue_output.wav",
+          "sha256": "sha256:be947ca843b1f1cb8b6393ea956044d9e93b2ff0c6b74b42ba122e009fded7c9",
+          "pcmSha256": "sha256:25040c4100940315e0eaea26ba9a8c6592337050dd250898a6440b4d357c9c64",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 28736,
+            "waitStopSample": null,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": {
+        "expectedActions": [
+          "WAIT_FOR_EVIDENCE",
+          "CONTINUE_OUTPUT"
+        ],
+        "expectedSpeakerRelevance": "BACKGROUND_OR_NOT_DIRECTED"
+      },
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "silence-control",
+      "family": "silence-control",
+      "fitEligibility": "control-only",
+      "assistant": {
+        "promptId": "steps",
+        "textSha256": "sha256:2af1938f7bcc800cf5f0de69100e451181ecc9c7b8858f343239eb0099661cf3",
+        "waveSha256": "sha256:ff7e0bde08191202c52112a24e4112535bab9f3cc642bc286d4151250ba792c9",
+        "decodedPcmSha256": "sha256:2480e4b7661c9250cf82f6f6c5623030ff2367b5a8998ba950ff3583a7a874d6"
+      },
+      "userSource": {
+        "kind": "deterministic-silence-control",
+        "durationSamples": 4800
+      },
+      "timing": {
+        "sceneSampleCount": 80000,
+        "userStartSample": 27200,
+        "decisionSample": 29760,
+        "waitStopSample": null,
+        "userSampleCount": 4800,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 0,
+        "endSample": 3200,
+        "activeFrames": 0,
+        "peakRmsDb": -180,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/silence-control--wait_for_evidence.wav",
+          "sha256": "sha256:e92f54ae1c818bb32b5983cb385a558de9b574e3e1d629c7f19376f67414bf40",
+          "pcmSha256": "sha256:7858a0400c331328dac6240e110b1908ef1fbc30b3cfac4375b5d94b15673d37",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 29760,
+            "waitStopSample": null,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/silence-control--pause_output.wav",
+          "sha256": "sha256:41afbfe13ea1ebfc603f0e9ab03937d6440d422158ac6a9f226b257136cdfb4e",
+          "pcmSha256": "sha256:766b7d0f43667937658eb0e74c618fd1c037beb553e3aceda0ef8db66b17384a",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 29760,
+            "waitStopSample": null,
+            "outputStopSample": 29760,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/silence-control--continue_output.wav",
+          "sha256": "sha256:e92f54ae1c818bb32b5983cb385a558de9b574e3e1d629c7f19376f67414bf40",
+          "pcmSha256": "sha256:7858a0400c331328dac6240e110b1908ef1fbc30b3cfac4375b5d94b15673d37",
+          "durationMs": 5000,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 27200,
+            "decisionSample": 29760,
+            "waitStopSample": null,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": {
+        "expectedActions": [
+          "WAIT_FOR_EVIDENCE",
+          "CONTINUE_OUTPUT"
+        ],
+        "expectedSpeakerRelevance": "BACKGROUND_OR_NOT_DIRECTED"
+      },
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    },
+    {
+      "sceneId": "prepared-speech-late",
+      "family": "prepared-speech",
+      "fitEligibility": "evaluation-only",
+      "assistant": {
+        "promptId": "summary",
+        "textSha256": "sha256:a385703b8e532c1c846418ac7ae9a946b981fa2f8234de42c3585e871c4b0bfa",
+        "waveSha256": "sha256:af1b44ce9fc7ba635893d0338b76dd50fc7bf677df0cb6b693b9e8f9d6fbbcd1",
+        "decodedPcmSha256": "sha256:7e3fc28c63e08fe5471b665a74410e0aed87e60555a5454217c6b1837a0812ad"
+      },
+      "userSource": {
+        "kind": "human-public-evaluation-anchor",
+        "ref": "test/Ted_part1/aETOz3IGfG0-0121",
+        "category": "spontaneous-clean",
+        "dataset": "TEDx Talks",
+        "license": "CC BY-NC-ND 4.0",
+        "waveSha256": "sha256:93d960616b51bfa47f22c0521a83470bd78e4656abcc287ab87a5056913a9cf8",
+        "decodedPcmSha256": "sha256:b75f3677ae536ca4d4f308c5a96851ceafe20c547bf9066a8389447a18d7eb98",
+        "transcriptSha256": "sha256:f3f948bb2d35b79a313d5a535bc6ea95e95749789bf047f6a951750abe0e243e",
+        "redistribution": "source audio and local mixes are not committed"
+      },
+      "timing": {
+        "sceneSampleCount": 99200,
+        "userStartSample": 30400,
+        "decisionSample": 45760,
+        "waitStopSample": 49600,
+        "userSampleCount": 40000,
+        "fadeSamples": 640
+      },
+      "decisionEvidence": {
+        "frameSamples": 320,
+        "startSample": 12160,
+        "endSample": 16000,
+        "activeFrames": 10,
+        "peakRmsDb": -20.15808933251303,
+        "minimumRmsDb": -40
+      },
+      "artifacts": {
+        "WAIT_FOR_EVIDENCE": {
+          "path": "eval/generated/exp-0015/v0.2/audio/prepared-speech-late--wait_for_evidence.wav",
+          "sha256": "sha256:2147d89af2d693aeb84a228fef2f0a0d58e3680c8358842eb4458a44c06616ea",
+          "pcmSha256": "sha256:b7584efe562bbaa30050f8813bd4a94ae491a6cfc7b5c4b891b5d6755cf97a01",
+          "durationMs": 6200,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 30400,
+            "decisionSample": 45760,
+            "waitStopSample": 49600,
+            "outputStopSample": 49600,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "PAUSE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/prepared-speech-late--pause_output.wav",
+          "sha256": "sha256:abd625f9c4d980d34ec40c616ad4dde1791076b7d6482b1aa9383d78c788e3f5",
+          "pcmSha256": "sha256:ff24482cd6477e0841cefbd595551f57c46cc90ffd5708bad7ff66d5291cb632",
+          "durationMs": 6200,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 30400,
+            "decisionSample": 45760,
+            "waitStopSample": 49600,
+            "outputStopSample": 45760,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        },
+        "CONTINUE_OUTPUT": {
+          "path": "eval/generated/exp-0015/v0.2/audio/prepared-speech-late--continue_output.wav",
+          "sha256": "sha256:0e92f2021b799c5aa7ba62329cf31ffcf01c8f511709daa146e016f813f79570",
+          "pcmSha256": "sha256:7f1d320b6181b7a237b953c5ab8327dc8589bd3acf878f88f2189f09864f415d",
+          "durationMs": 6200,
+          "sampleRate": 16000,
+          "channels": 2,
+          "timing": {
+            "userStartSample": 30400,
+            "decisionSample": 45760,
+            "waitStopSample": 49600,
+            "outputStopSample": null,
+            "fadeSamples": 640
+          },
+          "preClipSamples": 0
+        }
+      },
+      "attentionControl": null,
+      "checks": {
+        "noClipping": true,
+        "decisionHasAcousticEvidence": true,
+        "minimumDistinctTrajectories": true,
+        "allActionsMaterialized": true
+      }
+    }
+  ],
+  "retention": {
+    "audioInGit": false,
+    "annotationsContainRawAudio": false,
+    "annotationsMayContainOptionalComment": true,
+    "publicHumanMixesRedistributed": false,
+    "committedArtifacts": "recipes, hashes, pack and comment-free aggregate only"
+  },
+  "limitations": [
+    "instrumento de calibração pequena, não avaliação humana de produto",
+    "cenas CORAA são âncoras evaluation-only por licença CC BY-NC-ND 4.0",
+    "TTS sintético atual usa uma única voz PT-BR",
+    "comentários opcionais ficam somente na coleta local ignorada pelo Git",
+    "preferência humana futura não concede autoridade ao modelo"
+  ],
+  "paidApiCalls": 0,
+  "buildGate": {
+    "expectedScenes": true,
+    "allChecks": true,
+    "humanAnchors": true,
+    "attentionControls": true,
+    "noPaidApi": true,
+    "pass": true
+  },
+  "packSha256": "sha256:30e62d9b64c4781939c3a7d46d5a8c8a54be6eaa8bc4396405436512750d2b65"
+}

@@ -54,14 +54,16 @@ test("servidor entrega sessão cega, áudio íntegro e persiste sem PII", async 
     };
   }
   const pack = finalizeTimingCalibrationPack({
-    schemaVersion: "timing-calibration-pack-v1",
-    packId: "server-pack-v1",
+    schemaVersion: "timing-calibration-pack-v2",
+    packId: "server-pack-v2",
     locale: "pt-BR",
     actions,
     protocol: {
+      version: "blind-timing-preference-and-attribution-v2",
       minimumCompletedPlaybacksPerOption: 1,
+      maximumCommentCharacters: 280,
       allowedReasonTags: [],
-      minimumParticipants: 3,
+      minimumExternalParticipants: 3,
       minimumVotesPerScene: 3,
       minimumConsensusShare: 2 / 3,
       minimumLabelCoverage: 1,
@@ -101,6 +103,7 @@ test("servidor entrega sessão cega, áudio íntegro e persiste sem PII", async 
   );
   assert.equal(health.ok, true);
   assert.equal(health.paidApiCalls, 0);
+  assert.equal(health.externalParticipants, 0);
 
   const malformed = await fetch(`${origin}/api/session`, {
     method: "POST",
@@ -110,10 +113,20 @@ test("servidor entrega sessão cega, áudio íntegro e persiste sem PII", async 
   assert.equal(malformed.status, 400);
 
   const participantToken = "participant-secret-local";
-  const sessionResponse = await fetch(`${origin}/api/session`, {
+  const missingRole = await fetch(`${origin}/api/session`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ participantToken })
+  });
+  assert.equal(missingRole.status, 400);
+
+  const sessionResponse = await fetch(`${origin}/api/session`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      participantToken,
+      participantRole: "external"
+    })
   });
   assert.equal(sessionResponse.status, 201);
   const session = await sessionResponse.json();
@@ -132,20 +145,25 @@ test("servidor entrega sessão cega, áudio íntegro e persiste sem PII", async 
   const concurrentSessionResponse = await fetch(`${origin}/api/session`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ participantToken })
+    body: JSON.stringify({
+      participantToken,
+      participantRole: "external"
+    })
   });
   assert.equal(concurrentSessionResponse.status, 201);
   const concurrentSession = await concurrentSessionResponse.json();
   const submissionFor = (candidate) => ({
-    schemaVersion: "timing-calibration-submission-v1",
+    schemaVersion: "timing-calibration-submission-v2",
     sessionId: candidate.sessionId,
     packSha256: candidate.packSha256,
     responses: candidate.scenes.map((scene) => ({
       sceneId: scene.sceneId,
-      selectedOptionId: null,
+      selectedOptionIds: [],
       uncertain: true,
+      speakerRelevance: "UNCERTAIN",
       confidence: 2,
       reasonTags: [],
+      comment: null,
       playbacks: scene.options.map((entry) => ({
         optionId: entry.optionId,
         completed: 1
@@ -171,12 +189,16 @@ test("servidor entrega sessão cega, áudio íntegro e persiste sem PII", async 
   ));
   assert.equal(JSON.stringify(stored).includes(participantToken), false);
   assert.match(stored.participantHash, /^sha256:[a-f0-9]{64}$/u);
+  assert.equal(stored.participantRole, "external");
   assert.equal(stored.submittedAtEpochMs, 1_234);
 
   const duplicateResponse = await fetch(`${origin}/api/session`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ participantToken })
+    body: JSON.stringify({
+      participantToken,
+      participantRole: "external"
+    })
   });
   assert.equal(duplicateResponse.status, 409);
 

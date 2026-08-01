@@ -14,10 +14,10 @@ import {
 
 const PROJECT_ROOT = resolve(import.meta.dirname, "..");
 const DEFAULTS = Object.freeze({
-  annotations: "eval/generated/exp-0015/annotations",
+  annotations: "eval/generated/exp-0015/v0.2/annotations",
   browser: "eval/reports/exp-0015-calibration-browser-current.json",
-  out: "eval/reports/exp-0015-timing-calibration-instrument-v1.json",
-  pack: "eval/calibration/exp-0015-timing-pack-v0.1.json"
+  out: "eval/reports/exp-0015-timing-calibration-instrument-v2.json",
+  pack: "eval/calibration/exp-0015-timing-pack-v0.2.json"
 });
 
 function parseArgs(args) {
@@ -88,7 +88,7 @@ const aggregate = aggregateTimingCalibration(
   pack,
   annotationSource.records,
   {
-    minimumParticipants: protocol.minimumParticipants,
+    minimumExternalParticipants: protocol.minimumExternalParticipants,
     minimumVotesPerScene: protocol.minimumVotesPerScene,
     minimumConsensusShare: protocol.minimumConsensusShare,
     minimumLabelCoverage: protocol.minimumLabelCoverage,
@@ -126,7 +126,8 @@ console.log(
 );
 console.log(
   `Calibração humana: ${report.humanCalibrationPass ? "READY" : "AWAIT"} · ` +
-    `${report.metrics.participants}/${protocol.minimumParticipants} participantes`
+    `${report.metrics.externalParticipants}/` +
+    `${protocol.minimumExternalParticipants} participantes externos`
 );
 console.log(`Evidência canônica: ${options.out}`);
 if (!report.instrumentPass) {

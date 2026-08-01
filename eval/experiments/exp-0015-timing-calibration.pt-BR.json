@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "exp-0015-timing-calibration-v0.1",
+  "id": "exp-0015-timing-calibration-v0.2",
   "locale": "pt-BR",
-  "question": "Uma campanha local cega consegue coletar uma âncora pequena de preferência para WAIT/PAUSE/CONTINUE sem gravar áudio novo, expor a ação ou transformar CORAA em dado de treino?",
+  "question": "Uma campanha local cega consegue separar preferência de timing, atribuição da fala e equivalência entre alternativas sem gravar áudio novo, expor a ação ou transformar CORAA em dado de treino?",
   "assistantPrompts": [
     {
       "id": "explanation",
@@ -32,17 +32,21 @@
     "decisionEvidenceMinimumRmsDb": -40
   },
   "protocol": {
-    "version": "blind-three-way-timing-preference-v1",
+    "version": "blind-timing-preference-and-attribution-v2",
     "minimumCompletedPlaybacksPerOption": 1,
+    "maximumCommentCharacters": 280,
     "allowedReasonTags": [
       "cortou-cedo",
       "demorou-para-parar",
       "ignorou-fala",
       "sobreposicao-desconfortavel",
       "ritmo-natural",
-      "dificil"
+      "dificil",
+      "fala-parecia-fundo",
+      "nao-ficou-claro-se-fala-era-dirigida",
+      "opcoes-pareciam-iguais"
     ],
-    "minimumParticipants": 3,
+    "minimumExternalParticipants": 3,
     "minimumVotesPerScene": 3,
     "minimumConsensusShare": 0.6666666666666666,
     "minimumLabelCoverage": 0.6,
@@ -184,7 +188,8 @@
         "expectedActions": [
           "WAIT_FOR_EVIDENCE",
           "PAUSE_OUTPUT"
-        ]
+        ],
+        "expectedSpeakerRelevance": "DIRECTED_TO_ASSISTANT"
       }
     },
     {
@@ -225,7 +230,8 @@
         "expectedActions": [
           "WAIT_FOR_EVIDENCE",
           "CONTINUE_OUTPUT"
-        ]
+        ],
+        "expectedSpeakerRelevance": "BACKGROUND_OR_NOT_DIRECTED"
       }
     },
     {
@@ -247,7 +253,8 @@
         "expectedActions": [
           "WAIT_FOR_EVIDENCE",
           "CONTINUE_OUTPUT"
-        ]
+        ],
+        "expectedSpeakerRelevance": "BACKGROUND_OR_NOT_DIRECTED"
       }
     },
     {

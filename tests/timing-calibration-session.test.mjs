@@ -17,21 +17,28 @@ const ACTIONS = [
 ];
 
 function packFixture() {
-  const artifact = (sceneId, action) => ({
+  const artifact = (sceneId, action, suffix) => ({
     path: `eval/generated/${sceneId}-${action}.wav`,
-    sha256: `sha256:${"a".repeat(63)}${ACTIONS.indexOf(action)}`,
+    sha256: `sha256:${"a".repeat(63)}${suffix}`,
     durationMs: 1_000,
     channels: 2
   });
   return finalizeTimingCalibrationPack({
-    schemaVersion: "timing-calibration-pack-v1",
-    packId: "timing-pack-test-v1",
+    schemaVersion: "timing-calibration-pack-v2",
+    packId: "timing-pack-test-v2",
     locale: "pt-BR",
     actions: ACTIONS,
     protocol: {
+      version: "blind-timing-preference-and-attribution-v2",
       minimumCompletedPlaybacksPerOption: 1,
-      allowedReasonTags: ["cortou-cedo", "ignorou-fala", "dificil"],
-      minimumParticipants: 3,
+      maximumCommentCharacters: 280,
+      allowedReasonTags: [
+        "cortou-cedo",
+        "ignorou-fala",
+        "dificil",
+        "opcoes-pareciam-iguais"
+      ],
+      minimumExternalParticipants: 3,
       minimumVotesPerScene: 3,
       minimumConsensusShare: 2 / 3,
       minimumLabelCoverage: 1,
@@ -45,49 +52,62 @@ function packFixture() {
         sceneId: "scene-clear",
         family: "clear-speech",
         fitEligibility: "development-synthetic",
-        artifacts: Object.fromEntries(
-          ACTIONS.map((action) => [action, artifact("clear", action)])
-        ),
+        artifacts: {
+          WAIT_FOR_EVIDENCE: artifact("clear", "wait", "0"),
+          PAUSE_OUTPUT: artifact("clear", "pause", "1"),
+          CONTINUE_OUTPUT: artifact("clear", "continue", "2")
+        },
         attentionControl: null
       },
       {
         sceneId: "scene-silence",
         family: "silence-control",
         fitEligibility: "control-only",
-        artifacts: Object.fromEntries(
-          ACTIONS.map((action) => [action, artifact("silence", action)])
-        ),
-        attentionControl: { expectedActions: ["CONTINUE_OUTPUT"] }
+        artifacts: {
+          WAIT_FOR_EVIDENCE: artifact("silence", "wait", "3"),
+          PAUSE_OUTPUT: artifact("silence", "pause", "4"),
+          CONTINUE_OUTPUT: artifact("silence", "continue", "3")
+        },
+        attentionControl: {
+          expectedActions: ["WAIT_FOR_EVIDENCE", "CONTINUE_OUTPUT"],
+          expectedSpeakerRelevance: "BACKGROUND_OR_NOT_DIRECTED"
+        }
       }
     ],
     retention: {
       audioInGit: false,
-      annotationsContainRawAudio: false
+      annotationsContainRawAudio: false,
+      annotationsMayContainOptionalComment: true
     }
   });
 }
 
-function completedSubmission(session, selections = {}) {
+function completedSubmission(session, input = {}) {
   return {
-    schemaVersion: "timing-calibration-submission-v1",
+    schemaVersion: "timing-calibration-submission-v2",
     sessionId: session.publicSession.sessionId,
     packSha256: session.publicSession.packSha256,
     responses: session.publicSession.scenes.map((scene) => {
       const assignment = session.internalSession.assignments
         .find((entry) => entry.publicSceneId === scene.sceneId);
-      const selectedAction = selections[assignment.sceneId] ??
+      const desiredActions = input.selections?.[assignment.sceneId] ??
         (assignment.sceneId === "scene-silence"
-          ? "CONTINUE_OUTPUT"
-          : "WAIT_FOR_EVIDENCE");
-      const selected = assignment.options.find(
-        (option) => option.action === selectedAction
+          ? ["CONTINUE_OUTPUT"]
+          : ["WAIT_FOR_EVIDENCE"]);
+      const selectedOptions = assignment.options.filter((option) =>
+        desiredActions.some((action) => option.actions.includes(action))
       );
       return {
         sceneId: scene.sceneId,
-        selectedOptionId: selected.optionId,
+        selectedOptionIds: selectedOptions.map((option) => option.optionId),
         uncertain: false,
+        speakerRelevance: input.relevance?.[assignment.sceneId] ??
+          (assignment.sceneId === "scene-silence"
+            ? "BACKGROUND_OR_NOT_DIRECTED"
+            : "DIRECTED_TO_ASSISTANT"),
         confidence: 4,
-        reasonTags: [],
+        reasonTags: input.reasonTags ?? [],
+        comment: input.comments?.[assignment.sceneId] ?? null,
         playbacks: scene.options.map((option) => ({
           optionId: option.optionId,
           completed: 1
@@ -97,38 +117,72 @@ function completedSubmission(session, selections = {}) {
   };
 }
 
-test("sessão cega randomiza deterministicamente sem expor a ação", () => {
+function completedRecord(pack, index, input = {}) {
+  const session = createBlindCalibrationSession(pack, {
+    sessionId: `session-record-${index}`,
+    participantToken: `participant-${index}`,
+    participantRole: input.participantRole ?? "external"
+  });
+  const validation = validateTimingCalibrationSubmission(
+    pack,
+    session.internalSession,
+    completedSubmission(session, input)
+  );
+  assert.equal(validation.valid, true, validation.errors.join("; "));
+  return validation.record;
+}
+
+test("sessão cega agrupa WAVs idênticos sem expor ações", () => {
   const pack = packFixture();
   const first = createBlindCalibrationSession(pack, {
     sessionId: "session-0001",
-    participantToken: "participant-local-1"
+    participantToken: "participant-local-1",
+    participantRole: "external"
   });
   const repeated = createBlindCalibrationSession(pack, {
     sessionId: "session-0001",
-    participantToken: "participant-local-1"
+    participantToken: "participant-local-1",
+    participantRole: "external"
   });
 
   assert.deepEqual(first, repeated);
   assert.equal(first.publicSession.scenes.length, 2);
-  assert.equal(first.publicSession.scenes[0].options.length, 3);
+  assert.deepEqual(
+    first.publicSession.scenes.map((scene) => scene.options.length).sort(),
+    [2, 3]
+  );
   assert.equal(
     JSON.stringify(first.publicSession).includes("PAUSE_OUTPUT"),
     false
   );
   assert.match(first.internalSession.participantHash, /^sha256:[a-f0-9]{64}$/u);
+  assert.equal(first.internalSession.participantRole, "external");
   assert.equal(
     first.internalSession.participantHash.includes("participant-local-1"),
     false
   );
+  const equivalent = first.internalSession.assignments.find(
+    (assignment) => assignment.sceneId === "scene-silence"
+  ).options.find((option) => option.actions.length === 2);
+  assert.deepEqual(
+    equivalent.actions,
+    ["WAIT_FOR_EVIDENCE", "CONTINUE_OUTPUT"]
+  );
 });
 
-test("submissão exige ouvir todas as opções e materializa proveniência humana", () => {
+test("submissão preserva equivalência, empate, atribuição e comentário", () => {
   const pack = packFixture();
   const session = createBlindCalibrationSession(pack, {
     sessionId: "session-0002",
-    participantToken: "participant-local-2"
+    participantToken: "participant-local-2",
+    participantRole: "external"
   });
-  const submission = completedSubmission(session);
+  const submission = completedSubmission(session, {
+    comments: {
+      "scene-clear": "As duas pausas\nsoaram próximas."
+    },
+    reasonTags: ["opcoes-pareciam-iguais"]
+  });
   const validation = validateTimingCalibrationSubmission(
     pack,
     session.internalSession,
@@ -136,11 +190,39 @@ test("submissão exige ouvir todas as opções e materializa proveniência human
   );
 
   assert.equal(validation.valid, true, validation.errors.join("; "));
-  assert.equal(validation.record.responses[0].selectedAction,
-    "WAIT_FOR_EVIDENCE");
+  assert.deepEqual(
+    validation.record.responses.find(
+      (response) => response.sceneId === "scene-silence"
+    ).selectedActions,
+    ["WAIT_FOR_EVIDENCE", "CONTINUE_OUTPUT"]
+  );
   assert.equal(validation.record.attention.passed, 1);
   assert.equal(validation.record.source.kind, "human-annotation");
   assert.equal("participantToken" in validation.record, false);
+  assert.equal(
+    validation.record.responses.find(
+      (response) => response.sceneId === "scene-clear"
+    ).comment,
+    "As duas pausas soaram próximas."
+  );
+
+  const tied = completedSubmission(session, {
+    selections: {
+      "scene-clear": ["WAIT_FOR_EVIDENCE", "PAUSE_OUTPUT"]
+    }
+  });
+  const tiedValidation = validateTimingCalibrationSubmission(
+    pack,
+    session.internalSession,
+    tied
+  );
+  assert.equal(tiedValidation.valid, true, tiedValidation.errors.join("; "));
+  assert.deepEqual(
+    tiedValidation.record.responses.find(
+      (response) => response.sceneId === "scene-clear"
+    ).selectedActions,
+    ["WAIT_FOR_EVIDENCE", "PAUSE_OUTPUT"]
+  );
 
   const incomplete = structuredClone(submission);
   incomplete.responses[0].playbacks.pop();
@@ -150,72 +232,98 @@ test("submissão exige ouvir todas as opções e materializa proveniência human
     incomplete
   );
   assert.equal(rejected.valid, false);
-  assert.ok(rejected.errors.some((error) => /ouvida/u.test(error)));
+  assert.ok(rejected.errors.some((error) => /ouvida|playbacks/u.test(error)));
+
+  const unsafeComment = structuredClone(submission);
+  unsafeComment.responses[0].comment = "controle\u0000invisível";
+  const unsafeValidation = validateTimingCalibrationSubmission(
+    pack,
+    session.internalSession,
+    unsafeComment
+  );
+  assert.equal(unsafeValidation.valid, false);
+  assert.match(unsafeValidation.errors.join(" | "), /comment/u);
+
+  const oversizedComment = structuredClone(submission);
+  oversizedComment.responses[0].comment = "a".repeat(281);
+  const oversizedValidation = validateTimingCalibrationSubmission(
+    pack,
+    session.internalSession,
+    oversizedComment
+  );
+  assert.equal(oversizedValidation.valid, false);
+  assert.match(oversizedValidation.errors.join(" | "), /comment/u);
 });
 
-test("agregado conta participantes, atenção, consenso e ambiguidade", () => {
+test("agregado usa apenas externos e só cria rótulo com votos singulares", () => {
   const pack = packFixture();
-  const records = [];
-  for (let index = 0; index < 3; index += 1) {
-    const session = createBlindCalibrationSession(pack, {
-      sessionId: `session-aggregate-${index}`,
-      participantToken: `participant-${index}`
-    });
-    const validation = validateTimingCalibrationSubmission(
-      pack,
-      session.internalSession,
-      completedSubmission(session, {
-        "scene-clear": index === 2
-          ? "PAUSE_OUTPUT"
-          : "WAIT_FOR_EVIDENCE"
-      })
-    );
-    assert.equal(validation.valid, true);
-    records.push(validation.record);
-  }
+  const records = [
+    completedRecord(pack, 0),
+    completedRecord(pack, 1),
+    completedRecord(pack, 2, {
+      selections: { "scene-clear": ["PAUSE_OUTPUT"] }
+    }),
+    completedRecord(pack, 3, {
+      participantRole: "internal",
+      selections: { "scene-clear": ["CONTINUE_OUTPUT"] }
+    })
+  ];
 
-  const aggregate = aggregateTimingCalibration(pack, records, {
-    minimumParticipants: 3,
-    minimumVotesPerScene: 3,
-    minimumConsensusShare: 2 / 3,
-    minimumLabelCoverage: 1,
-    minimumAttentionPassRate: 0.8
-  });
+  const aggregate = aggregateTimingCalibration(pack, records, pack.protocol);
   assert.equal(aggregate.calibrationReady, true);
   assert.equal(aggregate.readyToFreezeM4bExperiment, true);
   assert.equal(aggregate.readyForDirectModelFit, false);
   assert.equal(selectFitEligibleTimingLabels(aggregate).length, 0);
   assert.equal(aggregate.labels.length, 1);
   assert.equal(aggregate.labels[0].value, "WAIT_FOR_EVIDENCE");
-  assert.equal(aggregate.metrics.participants, 3);
+  assert.equal(aggregate.metrics.totalParticipants, 4);
+  assert.equal(aggregate.metrics.externalParticipants, 3);
+  assert.equal(aggregate.metrics.internalParticipants, 1);
   assert.equal(aggregate.metrics.attentionPassRate, 1);
-
-  const duplicate = aggregateTimingCalibration(
-    pack,
-    [...records, structuredClone(records[0])],
-    { minimumParticipants: 3 }
+  assert.equal(
+    aggregate.speakerRelevance.find(
+      (scene) => scene.sceneId === "scene-clear"
+    ).counts.DIRECTED_TO_ASSISTANT,
+    3
   );
-  assert.equal(duplicate.calibrationReady, false);
-  assert.equal(duplicate.gates.uniqueParticipants, false);
+
+  const tiedRecords = [
+    completedRecord(pack, 10, {
+      selections: {
+        "scene-clear": ["WAIT_FOR_EVIDENCE", "PAUSE_OUTPUT"]
+      }
+    }),
+    completedRecord(pack, 11),
+    completedRecord(pack, 12)
+  ];
+  const tiedAggregate = aggregateTimingCalibration(
+    pack,
+    tiedRecords,
+    pack.protocol
+  );
+  const clear = tiedAggregate.scenes.find(
+    (scene) => scene.sceneId === "scene-clear"
+  );
+  assert.equal(clear.validSingleActionVotes, 2);
+  assert.equal(clear.tiedOrEquivalentPreferences, 1);
+  assert.equal(clear.labelled, false);
+  assert.equal(tiedAggregate.calibrationReady, false);
+
+  const internalOnly = aggregateTimingCalibration(
+    pack,
+    [completedRecord(pack, 20, { participantRole: "internal" })],
+    pack.protocol
+  );
+  assert.equal(internalOnly.gates.minimumExternalParticipants, false);
+  assert.equal(internalOnly.metrics.externalParticipants, 0);
 });
 
 test("registro persistido é validado e adulteração falha fechado", () => {
   const pack = packFixture();
-  const session = createBlindCalibrationSession(pack, {
-    sessionId: "session-integrity-1",
-    participantToken: "participant-integrity-1"
-  });
-  const validation = validateTimingCalibrationSubmission(
-    pack,
-    session.internalSession,
-    completedSubmission(session)
-  );
-  assert.equal(validateTimingCalibrationRecord(
-    pack,
-    validation.record
-  ).valid, true);
+  const record = completedRecord(pack, 30);
+  assert.equal(validateTimingCalibrationRecord(pack, record).valid, true);
 
-  const tampered = structuredClone(validation.record);
+  const tampered = structuredClone(record);
   tampered.responses[0].confidence = 1;
   const recordValidation = validateTimingCalibrationRecord(pack, tampered);
   assert.equal(recordValidation.valid, false);
@@ -228,7 +336,27 @@ test("registro persistido é validado e adulteração falha fechado", () => {
   assert.equal(aggregate.gates.recordsValid, false);
   assert.equal(aggregate.metrics.invalidRecords, 1);
 
-  const unknownScene = structuredClone(validation.record);
+  const structurallyMalformed = structuredClone(record);
+  structurallyMalformed.responses[0].selectedOptionActionSets = [null];
+  structurallyMalformed.responses[0].playbacks = {};
+  const malformedValidation = validateTimingCalibrationRecord(
+    pack,
+    structurallyMalformed
+  );
+  assert.equal(malformedValidation.valid, false);
+  assert.match(
+    malformedValidation.errors.join(" | "),
+    /conjuntos selecionados|playbacks persistidos/u
+  );
+
+  const duplicate = aggregateTimingCalibration(pack, [record, record], {
+    ...pack.protocol,
+    minimumExternalParticipants: 1
+  });
+  assert.equal(duplicate.calibrationReady, false);
+  assert.equal(duplicate.gates.uniqueParticipants, false);
+
+  const unknownScene = structuredClone(record);
   unknownScene.responses[0].sceneId = "scene-forged";
   const unknownValidation = validateTimingCalibrationRecord(
     pack,

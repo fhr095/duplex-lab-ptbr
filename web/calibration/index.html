@@ -18,15 +18,15 @@
           <p class="eyebrow">EXP-0015 · COMPARAÇÃO CEGA</p>
           <h1>Qual conversa <span>soa melhor?</span></h1>
           <p class="lede">
-            Ouça três versões da mesma situação e escolha a que parece mais
-            natural. Não existem respostas certas nas cenas comuns.
+            Ouça duas ou três versões da mesma situação e marque a que parece
+            mais natural. Se houver empate, você poderá marcar mais de uma.
           </p>
         </div>
         <div class="privacy-card">
           <span aria-hidden="true">◌</span>
           <div>
             <small>COLETA LOCAL</small>
-            <strong>sem nome, voz ou texto pessoal</strong>
+            <strong>sem nome, voz ou token bruto</strong>
           </div>
         </div>
       </header>
@@ -37,16 +37,30 @@
           <h2>Use fones e reserve cerca de 10 minutos.</h2>
           <p>
             Cada áudio separa as vozes em estéreo: assistente à esquerda e
-            pessoa à direita. Você precisará ouvir A, B e C por inteiro antes
-            de escolher. Se não houver diferença clara, marque dúvida.
+            fala ou som à direita. Esse som pode estar tentando falar com a
+            assistente ou pode ser apenas ambiente/outra conversa; você vai
+            avaliar isso separadamente. Ouça todas as alternativas antes de
+            escolher.
           </p>
         </div>
+        <fieldset class="role-panel" id="rolePanel">
+          <legend>Qual é sua relação com este projeto?</legend>
+          <label>
+            <input type="radio" name="participantRole" value="external" />
+            <span>Sou uma pessoa externa e não participei do desenvolvimento</span>
+          </label>
+          <label>
+            <input type="radio" name="participantRole" value="internal" />
+            <span>Participei do projeto ou do desenvolvimento</span>
+          </label>
+        </fieldset>
         <ul class="protocol-list">
           <li>12 situações em ordem aleatória</li>
           <li>alternativas embaralhadas para cada pessoa</li>
+          <li>áudios idênticos aparecem como uma única alternativa</li>
           <li>nenhuma alternativa identifica a decisão do sistema</li>
         </ul>
-        <button class="primary" id="startButton" type="button">
+        <button class="primary" id="startButton" type="button" disabled>
           Começar comparação
         </button>
       </section>
@@ -55,7 +69,7 @@
         <div class="progress-heading">
           <div>
             <p class="eyebrow" id="progressLabel">SITUAÇÃO 1 DE 12</p>
-            <h2>Ouça as três alternativas.</h2>
+            <h2 id="campaignHeading">Ouça todas as alternativas.</h2>
           </div>
           <span class="progress-count" id="completionLabel">0 concluídas</span>
         </div>
@@ -75,12 +89,45 @@
           <div class="option-grid" id="optionGrid"></div>
 
           <fieldset class="choice-panel" id="choicePanel" disabled>
-            <legend>Qual versão teve o ritmo mais natural?</legend>
+            <legend>
+              Qual versão teve o ritmo mais natural?
+              <small>(marque todas em caso de empate)</small>
+            </legend>
             <div class="choice-grid" id="choiceGrid"></div>
             <label class="uncertain-choice">
-              <input type="radio" name="preference" value="uncertain" />
-              <span>Não consigo distinguir / depende do contexto</span>
+              <input type="checkbox" id="uncertainChoice" />
+              <span>Não consigo avaliar esta situação</span>
             </label>
+          </fieldset>
+
+          <fieldset class="relevance-panel" id="relevancePanel" disabled>
+            <legend>A fala ou o som à direita parece dirigido à assistente?</legend>
+            <div class="relevance-grid" id="relevanceGrid">
+              <label>
+                <input
+                  type="radio"
+                  name="speakerRelevance"
+                  value="DIRECTED_TO_ASSISTANT"
+                />
+                <span>Sim, parece tentar tomar o turno</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="speakerRelevance"
+                  value="BACKGROUND_OR_NOT_DIRECTED"
+                />
+                <span>Não, parece ambiente ou outra conversa</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="speakerRelevance"
+                  value="UNCERTAIN"
+                />
+                <span>Não consigo saber</span>
+              </label>
+            </div>
           </fieldset>
 
           <fieldset class="confidence-panel" id="confidencePanel" disabled>
@@ -101,9 +148,22 @@
             <div class="reason-grid" id="reasonGrid"></div>
           </fieldset>
 
+          <fieldset class="comment-panel" id="commentPanel" disabled>
+            <legend>Quer explicar alguma dúvida? <small>(opcional)</small></legend>
+            <label for="commentInput" class="visually-hidden">
+              Comentário opcional
+            </label>
+            <textarea
+              id="commentInput"
+              maxlength="280"
+              rows="3"
+              placeholder="Até 280 caracteres. Não inclua nomes ou dados pessoais."
+            ></textarea>
+          </fieldset>
+
           <div class="scene-footer">
             <p class="hint" id="sceneHint" aria-live="polite">
-              Ouça A, B e C por inteiro para liberar a escolha.
+              Ouça todas as alternativas por inteiro para liberar a escolha.
             </p>
             <button class="primary" id="nextButton" type="button" disabled>
               Próxima situação

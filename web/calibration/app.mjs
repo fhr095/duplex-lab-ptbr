@@ -1,11 +1,22 @@
-const PARTICIPANT_KEY = "duplex-lab-timing-participant-v1";
+const PARTICIPANT_KEY = "duplex-lab-timing-participant-v2";
+const SPEAKER_RELEVANCE = Object.freeze([
+  "DIRECTED_TO_ASSISTANT",
+  "BACKGROUND_OR_NOT_DIRECTED",
+  "UNCERTAIN"
+]);
 const REASONS = Object.freeze([
   ["cortou-cedo", "A fala foi cortada cedo"],
   ["demorou-para-parar", "Demorou para parar"],
   ["ignorou-fala", "Pareceu ignorar a outra pessoa"],
   ["sobreposicao-desconfortavel", "A sobreposição incomodou"],
   ["ritmo-natural", "O ritmo pareceu natural"],
-  ["dificil", "Foi difícil perceber diferença"]
+  ["dificil", "Foi difícil perceber diferença"],
+  ["fala-parecia-fundo", "A fala parecia estar ao fundo"],
+  [
+    "nao-ficou-claro-se-fala-era-dirigida",
+    "Não ficou claro se a fala era dirigida à assistente"
+  ],
+  ["opcoes-pareciam-iguais", "Duas ou mais opções pareciam iguais"]
 ]);
 
 const elements = Object.freeze({
@@ -16,6 +27,7 @@ const elements = Object.freeze({
   errorMessage: document.querySelector("#errorMessage"),
   start: document.querySelector("#startButton"),
   retry: document.querySelector("#retryButton"),
+  campaignHeading: document.querySelector("#campaignHeading"),
   progressLabel: document.querySelector("#progressLabel"),
   completionLabel: document.querySelector("#completionLabel"),
   progressTrack: document.querySelector("#progressTrack"),
@@ -23,9 +35,13 @@ const elements = Object.freeze({
   optionGrid: document.querySelector("#optionGrid"),
   choicePanel: document.querySelector("#choicePanel"),
   choiceGrid: document.querySelector("#choiceGrid"),
+  uncertain: document.querySelector("#uncertainChoice"),
+  relevancePanel: document.querySelector("#relevancePanel"),
   confidencePanel: document.querySelector("#confidencePanel"),
   reasonPanel: document.querySelector("#reasonPanel"),
   reasonGrid: document.querySelector("#reasonGrid"),
+  commentPanel: document.querySelector("#commentPanel"),
+  comment: document.querySelector("#commentInput"),
   sceneHint: document.querySelector("#sceneHint"),
   next: document.querySelector("#nextButton"),
   resultDetails: document.querySelector("#resultDetails")
@@ -33,6 +49,7 @@ const elements = Object.freeze({
 
 const state = {
   phase: "intro",
+  participantRole: null,
   session: null,
   sceneIndex: 0,
   responses: new Map(),
@@ -103,15 +120,24 @@ function currentResponse() {
 
 function allOptionsCompleted(scene = currentScene()) {
   return Boolean(scene) && scene.options.every((option) =>
-    (state.playbackCounts.get(playbackKey(scene.sceneId, option.optionId)) ?? 0) >= 1
+    (state.playbackCounts.get(
+      playbackKey(scene.sceneId, option.optionId)
+    ) ?? 0) >= 1
+  );
+}
+
+function preferenceAnswered(response) {
+  return Boolean(response) && (
+    response.uncertain || response.selectedOptionIds.length > 0
   );
 }
 
 function sceneReady() {
   const response = currentResponse();
-  return allOptionsCompleted() && Boolean(response) &&
-    (response.uncertain || response.selectedOptionId !== null) &&
-    Number.isSafeInteger(response.confidence);
+  return allOptionsCompleted() &&
+    preferenceAnswered(response) &&
+    SPEAKER_RELEVANCE.includes(response?.speakerRelevance) &&
+    Number.isSafeInteger(response?.confidence);
 }
 
 function ensureResponse(scene = currentScene()) {
@@ -121,10 +147,12 @@ function ensureResponse(scene = currentScene()) {
   if (!state.responses.has(scene.sceneId)) {
     state.responses.set(scene.sceneId, {
       sceneId: scene.sceneId,
-      selectedOptionId: null,
+      selectedOptionIds: [],
       uncertain: false,
+      speakerRelevance: null,
       confidence: null,
-      reasonTags: []
+      reasonTags: [],
+      comment: null
     });
   }
   return state.responses.get(scene.sceneId);
@@ -133,21 +161,31 @@ function ensureResponse(scene = currentScene()) {
 function updateReadiness() {
   const unlocked = allOptionsCompleted();
   elements.choicePanel.disabled = !unlocked;
+  elements.relevancePanel.disabled = !unlocked;
   elements.confidencePanel.disabled = !unlocked;
   elements.reasonPanel.disabled = !unlocked;
+  elements.commentPanel.disabled = !unlocked;
   elements.next.disabled = !sceneReady();
+  const scene = currentScene();
+  const response = currentResponse();
   if (!unlocked) {
-    const heard = currentScene()?.options.filter((option) =>
+    const heard = scene?.options.filter((option) =>
       (state.playbackCounts.get(
-        playbackKey(currentScene().sceneId, option.optionId)
+        playbackKey(scene.sceneId, option.optionId)
       ) ?? 0) >= 1
     ).length ?? 0;
+    const remaining = (scene?.options.length ?? 0) - heard;
     elements.sceneHint.textContent =
-      `Ouça as ${3 - heard} alternativa${3 - heard === 1 ? "" : "s"} ` +
-      "restante(s) por inteiro.";
-  } else if (!currentResponse()?.selectedOptionId && !currentResponse()?.uncertain) {
-    elements.sceneHint.textContent = "Escolha uma alternativa ou marque dúvida.";
-  } else if (!Number.isSafeInteger(currentResponse()?.confidence)) {
+      `Ouça ${remaining === 1 ? "a" : "as"} ${remaining} alternativa` +
+      `${remaining === 1 ? "" : "s"} restante${remaining === 1 ? "" : "s"} ` +
+      "por inteiro.";
+  } else if (!preferenceAnswered(response)) {
+    elements.sceneHint.textContent =
+      "Escolha uma ou mais alternativas, ou marque que não consegue avaliar.";
+  } else if (!SPEAKER_RELEVANCE.includes(response?.speakerRelevance)) {
+    elements.sceneHint.textContent =
+      "Diga se a fala ou o som parece dirigido à assistente.";
+  } else if (!Number.isSafeInteger(response?.confidence)) {
     elements.sceneHint.textContent = "Marque seu nível de confiança.";
   } else {
     elements.sceneHint.textContent = "Resposta pronta para avançar.";
@@ -224,6 +262,42 @@ function audioOption(scene, option) {
   return card;
 }
 
+function renderPreferences(scene, response) {
+  elements.choiceGrid.replaceChildren(...scene.options.map((option) => {
+    const label = document.createElement("label");
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.name = "preferenceOption";
+    input.value = option.optionId;
+    input.checked = response.selectedOptionIds.includes(option.optionId);
+    const text = document.createElement("span");
+    text.textContent = `Alternativa ${option.displayLabel}`;
+    input.addEventListener("change", () => {
+      response.selectedOptionIds = [...elements.choiceGrid.querySelectorAll(
+        'input[name="preferenceOption"]:checked'
+      )].map((entry) => entry.value);
+      if (response.selectedOptionIds.length > 0) {
+        response.uncertain = false;
+        elements.uncertain.checked = false;
+      }
+      updateReadiness();
+    });
+    label.append(input, text);
+    return label;
+  }));
+  elements.uncertain.checked = response.uncertain;
+  elements.uncertain.onchange = () => {
+    response.uncertain = elements.uncertain.checked;
+    if (response.uncertain) {
+      response.selectedOptionIds = [];
+      for (const input of elements.choiceGrid.querySelectorAll("input")) {
+        input.checked = false;
+      }
+    }
+    updateReadiness();
+  };
+}
+
 function renderScene() {
   stopCurrentAudio();
   const scene = currentScene();
@@ -238,40 +312,26 @@ function renderScene() {
     `SITUAÇÃO ${state.sceneIndex + 1} DE ${total}`;
   elements.completionLabel.textContent =
     `${completed} concluída${completed === 1 ? "" : "s"}`;
+  elements.campaignHeading.textContent = scene.options.length === 2
+    ? "Ouça as duas alternativas."
+    : "Ouça as três alternativas.";
   elements.progressTrack.setAttribute("aria-valuemax", String(total));
   elements.progressTrack.setAttribute("aria-valuenow", String(completed));
   elements.progressFill.style.width = `${completed / total * 100}%`;
   elements.optionGrid.replaceChildren(
     ...scene.options.map((option) => audioOption(scene, option))
   );
+  renderPreferences(scene, response);
 
-  elements.choiceGrid.replaceChildren(...scene.options.map((option) => {
-    const label = document.createElement("label");
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "preference";
-    input.value = option.optionId;
-    input.checked = response.selectedOptionId === option.optionId;
-    const text = document.createElement("span");
-    text.textContent = `Alternativa ${option.displayLabel}`;
-    input.addEventListener("change", () => {
-      response.selectedOptionId = option.optionId;
-      response.uncertain = false;
+  for (const input of document.querySelectorAll(
+    'input[name="speakerRelevance"]'
+  )) {
+    input.checked = input.value === response.speakerRelevance;
+    input.onchange = () => {
+      response.speakerRelevance = input.value;
       updateReadiness();
-    });
-    label.append(input, text);
-    return label;
-  }));
-  const uncertain = document.querySelector(
-    'input[name="preference"][value="uncertain"]'
-  );
-  uncertain.checked = response.uncertain;
-  uncertain.onchange = () => {
-    response.selectedOptionId = null;
-    response.uncertain = true;
-    updateReadiness();
-  };
-
+    };
+  }
   for (const input of document.querySelectorAll('input[name="confidence"]')) {
     input.checked = Number(input.value) === response.confidence;
     input.onchange = () => {
@@ -295,6 +355,11 @@ function renderScene() {
     label.append(input, text);
     return label;
   }));
+  elements.comment.value = response.comment ?? "";
+  elements.comment.oninput = () => {
+    const value = elements.comment.value.trim();
+    response.comment = value.length === 0 ? null : value;
+  };
   elements.next.textContent = state.sceneIndex === total - 1
     ? "Concluir avaliação"
     : "Próxima situação";
@@ -321,12 +386,18 @@ function showError(error) {
 }
 
 async function startCampaign() {
+  if (!state.participantRole) {
+    return;
+  }
   elements.start.disabled = true;
   elements.retry.disabled = true;
   try {
     const session = await requestJson("/api/session", {
       method: "POST",
-      body: JSON.stringify({ participantToken: participantToken() })
+      body: JSON.stringify({
+        participantToken: participantToken(),
+        participantRole: state.participantRole
+      })
     });
     if (!Array.isArray(session.scenes) || session.scenes.length === 0) {
       throw new Error("A sessão não contém situações válidas.");
@@ -341,14 +412,14 @@ async function startCampaign() {
   } catch (error) {
     showError(error);
   } finally {
-    elements.start.disabled = false;
+    elements.start.disabled = state.participantRole === null;
     elements.retry.disabled = false;
   }
 }
 
 function submission() {
   return {
-    schemaVersion: "timing-calibration-submission-v1",
+    schemaVersion: "timing-calibration-submission-v2",
     sessionId: state.session.sessionId,
     packSha256: state.session.packSha256,
     responses: state.session.scenes.map((scene) => {
@@ -387,7 +458,9 @@ async function advance() {
     elements.resultDetails.replaceChildren();
     const details = [
       ["Registro", accepted.annotationId],
-      ["Participantes neste pack", String(accepted.participants)]
+      ["Avaliações externas neste pack", String(
+        accepted.externalParticipants
+      )]
     ];
     for (const [term, description] of details) {
       const dt = document.createElement("dt");
@@ -402,6 +475,14 @@ async function advance() {
   }
 }
 
+for (const input of document.querySelectorAll(
+  'input[name="participantRole"]'
+)) {
+  input.addEventListener("change", () => {
+    state.participantRole = input.value;
+    elements.start.disabled = false;
+  });
+}
 elements.start.addEventListener("click", startCampaign);
 elements.retry.addEventListener("click", () => {
   setPhase("intro");
@@ -411,13 +492,18 @@ elements.next.addEventListener("click", advance);
 window.__duplexCalibration = Object.freeze({
   snapshot() {
     const scene = currentScene();
+    const response = currentResponse();
     return Object.freeze({
-      schemaVersion: "timing-calibration-browser-snapshot-v1",
+      schemaVersion: "timing-calibration-browser-snapshot-v2",
       ready: true,
       phase: state.phase,
+      participantRole: state.participantRole,
       packId: state.session?.packId ?? null,
       packSha256: state.session?.packSha256 ?? null,
       sceneCount: state.session?.scenes.length ?? 0,
+      sessionOptionCounts: state.session?.scenes.map(
+        (entry) => entry.options.length
+      ) ?? [],
       currentSceneIndex: state.session ? state.sceneIndex : null,
       optionCount: scene?.options.length ?? 0,
       completedOptions: scene?.options.filter((option) =>
@@ -425,6 +511,10 @@ window.__duplexCalibration = Object.freeze({
           playbackKey(scene.sceneId, option.optionId)
         ) ?? 0) >= 1
       ).length ?? 0,
+      selectedOptionCount: response?.selectedOptionIds.length ?? 0,
+      speakerRelevanceAnswered: SPEAKER_RELEVANCE.includes(
+        response?.speakerRelevance
+      ),
       sceneReady: sceneReady(),
       lastError: state.lastError
     });

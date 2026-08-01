@@ -22,7 +22,7 @@ function constantWave(milliseconds, value = 8_000) {
 function configFixture() {
   return {
     schemaVersion: 1,
-    id: "exp-0015-pack-test-v1",
+    id: "exp-0015-pack-test-v2",
     locale: "pt-BR",
     assistantPrompts: [{
       id: "prompt",
@@ -41,9 +41,11 @@ function configFixture() {
       decisionEvidenceMinimumRmsDb: -40
     },
     protocol: {
+      version: "blind-timing-preference-and-attribution-v2",
       minimumCompletedPlaybacksPerOption: 1,
+      maximumCommentCharacters: 280,
       allowedReasonTags: [],
-      minimumParticipants: 3,
+      minimumExternalParticipants: 3,
       minimumVotesPerScene: 3,
       minimumConsensusShare: 2 / 3,
       minimumLabelCoverage: 1,
@@ -79,7 +81,8 @@ function configFixture() {
         waitDelayMs: 150,
         waitTrajectory: "continue",
         attentionControl: {
-          expectedActions: ["WAIT_FOR_EVIDENCE", "CONTINUE_OUTPUT"]
+          expectedActions: ["WAIT_FOR_EVIDENCE", "CONTINUE_OUTPUT"],
+          expectedSpeakerRelevance: "BACKGROUND_OR_NOT_DIRECTED"
         }
       }
     ],
@@ -137,12 +140,12 @@ test("builder materializa pack determinístico sem redistribuir áudio humano", 
 
   const unsafeCore = structuredClone(first.pack);
   delete unsafeCore.packSha256;
-  unsafeCore.protocol.minimumParticipants = 1;
+  unsafeCore.protocol.minimumExternalParticipants = 1;
   const unsafe = finalizeTimingCalibrationPack(unsafeCore);
   assert.equal(validateTimingCalibrationPack(unsafe).valid, false);
 
   const unsafeConfig = structuredClone(config);
-  unsafeConfig.protocol.minimumParticipants = 1;
+  unsafeConfig.protocol.minimumExternalParticipants = 1;
   await assert.rejects(
     buildTimingCalibrationPack({ ...input, config: unsafeConfig }),
     /pack de calibração construído é inválido/u

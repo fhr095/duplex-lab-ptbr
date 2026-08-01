@@ -103,6 +103,14 @@ opinião sintética. A calibração humana pequena de timing/rótulos é agora o
 deliberado de contato humano; ela não equivale a uma avaliação ampla de
 produto.
 
+Duas execuções humanas da v0.1 funcionaram como piloto de usabilidade e
+revelaram um problema que automação estrutural também confirmou: quatro pares
+de opções eram byte a byte idênticos, embora aparecessem como escolhas
+separadas. A v0.2 agrupa equivalências, permite empate, separa atribuição da fala
+de preferência temporal, aceita comentário opcional local e exclui
+participantes internos do mínimo externo. Os registros v0.1 foram preservados,
+mas não migrados nem contados no novo gate.
+
 O ciclo é reproduzido por:
 
 ```bash
@@ -206,8 +214,9 @@ mede a cauda acústica que sai fisicamente pelo alto-falante.
 Gravações do dono do projeto não são uma exigência. Depois de M4a, uma amostra
 humana pequena passa a ser a próxima evidência externa para calibrar timing e
 rótulos antes de M4b; protocolo, cenas e tooling já estão preparados no
-EXP-0015. O piloto exige ao menos três participantes únicos e preserva dúvida,
-atenção e consenso. Essa amostra não promove qualidade de produto. Pessoas entram
+EXP-0015. O piloto exige ao menos três participantes externos únicos, preserva
+empate, dúvida, atribuição da fala, atenção e consenso; avaliações internas não
+contam para o mínimo. Essa amostra não promove qualidade de produto. Pessoas entram
 como caminho crítico para preferência quando sessões e tarefas forem robustas
 sob grande diversidade, novas campanhas encontrarem principalmente caudas conhecidas e
 existirem finalistas maduros que só possam ser separados por percepção. Uma

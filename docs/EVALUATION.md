@@ -54,10 +54,12 @@ vontade de continuar. Ela entra como gate de produto quando as classes de falha
 estruturais já estiverem sob controle, não como depurador diário desta fase.
 
 Antes desse gate amplo, o EXP-0015 materializa uma calibração estreita de
-timing. Cada participante ouve três trajetórias A/B/C da mesma cena, em ordem
-cega, e só decide depois de concluir todas. Pode declarar dúvida e confiança;
-participante, não cena, é a unidade de análise. Esse piloto calibra rótulos
-sociais para desenhar M4b, mas não mede a experiência completa.
+timing. Cada participante ouve duas ou três trajetórias acusticamente distintas
+da mesma cena, em ordem cega, e só decide depois de concluir todas. Pode marcar
+empate ou dúvida, classifica separadamente se a fala parece dirigida à
+assistente e informa confiança. Participante, não cena, é a unidade de análise.
+Esse piloto calibra rótulos sociais para desenhar M4b, mas não mede a
+experiência completa.
 
 ## Fábrica iterativa de avaliação
 
@@ -203,9 +205,10 @@ causalidade de eco.
   não contam como evidência de preferência humana.
 - Avaliação humana: ordem randomizada, identidade escondida e análise por
   participante; não tratar turnos da mesma pessoa como amostras independentes.
-- Piloto EXP-0015: no mínimo 3 participantes únicos, 3 votos por cena,
-  consenso ≥2/3, cobertura rotulada ≥60% e atenção agregada ≥80%; empate ou
-  dúvida permanece sem rótulo.
+- Piloto EXP-0015 v0.2: no mínimo 3 participantes externos únicos, 3 votos de
+  ação singular por cena, consenso ≥2/3, cobertura rotulada ≥60% e atenção
+  externa agregada ≥80%; participante interno, equivalência, empate ou dúvida
+  não satisfazem o respectivo gate/rótulo.
 - Toda comparação registra hardware, região, rede, versão, seed e configuração.
 
 ## Dados
@@ -311,7 +314,7 @@ canônico é `eval/reports/eval-factory-campaign-v0.2.json`.
 | EXP-0012 | seis fluxos Chrome com replay exato; quatro fases/oito intenções; STOP 48 ms; onset PCM→renderer 183,66 ms; seis corridas protegidas | `promote-output-interruption-lifecycle-slice`; probe físico não iniciado e M2.5 amplo em `hold` |
 | EXP-0013 | seis bundles causais; 28 decisões reproduzidas; 22 efeitos encerrados; STOP 38 ms; onset PCM→renderer 169,82 ms; 12/12 gates formais | `promote-training-trace-interruption-slice`; áudio hasheado, clocks entre processos, M4a e generalização não promovidos |
 | EXP-0014 | 330 exemplos/60 streams; split por família; treino idêntico; 11 decisões Chrome cobrindo três classes; replay exato; p95 0,2 ms; zero efeitos | `promote-m4a-acoustic-shadow-infrastructure`; imitação da regra, sem ganho, autoridade ou generalização |
-| EXP-0015 | 12 cenas/36 WAVs; 7 âncoras CORAA; 13 gates técnicos; 3/3 opções no smoke Chrome; zero opinião submetida; 0/3 participantes | instrumento `promote`; humano `await`; zero fit direto e zero autoridade |
+| EXP-0015 v0.2 | 12 cenas/36 WAVs; 7 âncoras CORAA; 15 gates; cenas com 2/3 opções; empate e atribuição no Chrome; zero opinião submetida; 0/3 externos | instrumento `promote`; humano `await`; v0.1 preservada como piloto; zero fit direto e zero autoridade |
 
 A configuração resultante está congelada em
 [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
@@ -342,7 +345,9 @@ No EXP-0015, os trechos CORAA são `evaluation-only`, o TTS é
 `development-synthetic` e os controles são `control-only`. O agregado pode
 calibrar a direção do próximo experimento, mas nenhum rótulo corrente é
 selecionável para fit. O relatório canônico mantém separados
-`instrumentPass=true` e `humanCalibrationPass=false`.
+`instrumentPass=true` e `humanCalibrationPass=false`. Comentários opcionais e
+registros individuais ficam no armazenamento local ignorado pelo Git; o
+relatório público recebe apenas o agregado sem texto livre.
 
 O ciclo completo e seus limites estão em
 [AUTONOMOUS_LOOP.md](AUTONOMOUS_LOOP.md).

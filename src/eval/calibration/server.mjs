@@ -104,7 +104,7 @@ function sendBytes(request, response, bytes, contentType) {
 
 async function loadExistingParticipants(annotationsRoot, pack) {
   await mkdir(annotationsRoot, { recursive: true });
-  const participants = new Set();
+  const participants = new Map();
   for (const entry of await readdir(annotationsRoot, { withFileTypes: true })) {
     if (!entry.isFile() || !entry.name.endsWith(".json")) {
       continue;
@@ -127,7 +127,7 @@ async function loadExistingParticipants(annotationsRoot, pack) {
       if (participants.has(record.participantHash)) {
         throw new Error("anotações persistidas duplicam participante");
       }
-      participants.add(record.participantHash);
+      participants.set(record.participantHash, record.participantRole);
     }
   }
   return participants;
@@ -185,11 +185,17 @@ export async function createTimingCalibrationServer(options = {}) {
       if (request.method === "GET" && url.pathname === "/api/health") {
         sendJson(response, 200, {
           ok: true,
-          schemaVersion: "timing-calibration-server-v1",
+          schemaVersion: "timing-calibration-server-v2",
           packId: pack.packId,
           packSha256: pack.packSha256,
           scenes: pack.scenes.length,
           participants: existingParticipants.size,
+          externalParticipants: [...existingParticipants.values()].filter(
+            (role) => role === "external"
+          ).length,
+          internalParticipants: [...existingParticipants.values()].filter(
+            (role) => role === "internal"
+          ).length,
           paidApiCalls: 0
         });
         return;
@@ -198,7 +204,8 @@ export async function createTimingCalibrationServer(options = {}) {
         const body = await readJsonBody(request);
         const session = createBlindCalibrationSession(pack, {
           sessionId: `session-${idFactory()}`,
-          participantToken: body.participantToken
+          participantToken: body.participantToken,
+          participantRole: body.participantRole
         });
         if (
           existingParticipants.has(session.internalSession.participantHash) ||
@@ -257,12 +264,18 @@ export async function createTimingCalibrationServer(options = {}) {
             `${JSON.stringify(persisted, null, 2)}\n`,
             { flag: "wx" }
           );
-          existingParticipants.add(persisted.participantHash);
+          existingParticipants.set(
+            persisted.participantHash,
+            persisted.participantRole
+          );
           sessions.delete(body.sessionId);
           sendJson(response, 201, {
             accepted: true,
             annotationId: persisted.annotationId,
-            participants: existingParticipants.size
+            participants: existingParticipants.size,
+            externalParticipants: [...existingParticipants.values()].filter(
+              (role) => role === "external"
+            ).length
           });
         } finally {
           pendingParticipants.delete(result.record.participantHash);
@@ -328,6 +341,12 @@ export async function createTimingCalibrationServer(options = {}) {
         sessions: sessions.size,
         pendingParticipants: pendingParticipants.size,
         participants: existingParticipants.size,
+        externalParticipants: [...existingParticipants.values()].filter(
+          (role) => role === "external"
+        ).length,
+        internalParticipants: [...existingParticipants.values()].filter(
+          (role) => role === "internal"
+        ).length,
         artifacts: artifactBytes.size
       });
     },

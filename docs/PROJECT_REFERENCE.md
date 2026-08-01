@@ -1,7 +1,7 @@
 # Referência macro do projeto
 
-Status: **referência canônica — consolidada em 31/07/2026 após auditoria,
-contranálise, M4a acústico e promoção do instrumento EXP-0015**
+Status: **referência canônica — consolidada em 01/08/2026 após auditoria,
+contranálise, M4a acústico e revisão v0.2 do instrumento EXP-0015**
 
 ## Tese
 
@@ -280,11 +280,15 @@ inferência p95 de 0,2 ms e zero autoridade/efeito. Barge-in permaneceu em
 O EXP-0015 fechou o próximo artefato autônomo: um instrumento cego de
 calibração temporal com 12 cenas e 36 contrafactuais estéreo. Sete cenas usam
 CORAA somente como `evaluation-only`, três usam TTS local como
-`development-synthetic` e duas são controles; nenhuma é `fit-eligible`. O
-Chrome do Windows confirmou o gate de escuta e decisão sem expor ação ou cena,
-sem erro e sem submeter opinião artificial. A decisão técnica é
-`promote-timing-calibration-instrument`; a conclusão humana permanece
-`await-human-calibration` em 0/3 participantes e a política não ganhou
+`development-synthetic` e duas são controles; nenhuma é `fit-eligible`. Duas
+execuções da v0.1 foram um piloto de usabilidade: revelaram quatro pares de WAVs
+idênticos apresentados separadamente, atribuição da fala confundida com timing
+e falta de proveniência interno/externo. A v0.2 agrupa equivalências, aceita
+empates, separa atribuição, permite comentário local opcional e reserva o gate
+humano a participantes externos. O Chrome do Windows confirmou cenas com 2 e 3
+opções sem expor ação ou cena, sem erro e sem submeter opinião artificial. A
+decisão técnica é `promote-timing-calibration-instrument`; a conclusão humana
+permanece `await-human-calibration` em 0/3 externos e a política não ganhou
 autoridade.
 
 ### M3 — qualidade modular local
@@ -322,10 +326,12 @@ Ela não é uma avaliação de produto. Quando os erros estruturais estiverem
 raros, conversas cegas maiores medem naturalidade, conforto, sotaque, confiança
 e cauda acústica. Falhas reais voltam para a fábrica como novas famílias.
 
-**Instrumento do piloto promovido; coleta pendente.** O gate mínimo congelado
-é três participantes únicos, atenção agregada de 80%, três votos por cena,
-consenso de dois terços e cobertura de 60%. Trata-se de um detector barato de
-direção e ambiguidade, não de uma estimativa final de preferência.
+**Instrumento v0.2 do piloto promovido; coleta externa pendente.** O gate mínimo
+congelado é três participantes externos únicos, atenção externa agregada de
+80%, três votos de ação singular por cena, consenso de dois terços e cobertura
+de 60%. Participantes internos, equivalências, empates e dúvidas permanecem
+evidência, mas não satisfazem o respectivo mínimo/rótulo. Trata-se de um detector
+barato de direção e ambiguidade, não de uma estimativa final de preferência.
 
 ### M6 — adaptação nativa de áudio, se necessária
 
@@ -345,8 +351,9 @@ Esta referência preserva apenas a lógica macro:
 3. usar a baseline v0.3 congelada como comparador de desenvolvimento;
 4. preservar as fatias promovidas do kernel, reflexo, lifecycle, trace causal
    e M4a acústico local;
-5. preservar o instrumento EXP-0015 e coletar sua amostra humana pequena sem
-   tratá-la como avaliação de produto;
+5. preservar o instrumento EXP-0015 v0.2 e coletar ao menos três avaliações
+   externas, sem tratar avaliações internas como gate ou o piloto como
+   avaliação de produto;
 6. a partir do agregado, congelar famílias novas `fit-eligible` e comparar um
    M4b contra a regra no mesmo runtime;
 7. conceder autoridade somente se houver ganho percebido sem regressão dos

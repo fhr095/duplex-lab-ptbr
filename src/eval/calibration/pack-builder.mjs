@@ -252,7 +252,7 @@ export async function buildTimingCalibrationPack(input = {}) {
     configPath = "inline:exp-0015-config",
     engine,
     humanManifest = { cases: [], source: {} },
-    outputRoot = "eval/generated/exp-0015/audio",
+    outputRoot = "eval/generated/exp-0015/v0.2/audio",
     readWave,
     synthesize
   } = input;
@@ -431,7 +431,7 @@ export async function buildTimingCalibrationPack(input = {}) {
     noPaidApi: true
   };
   const packCore = {
-    schemaVersion: "timing-calibration-pack-v1",
+    schemaVersion: "timing-calibration-pack-v2",
     packId: config.id,
     locale: config.locale,
     purpose: "small-human-timing-label-calibration-before-m4b",
@@ -460,13 +460,16 @@ export async function buildTimingCalibrationPack(input = {}) {
     retention: {
       audioInGit: false,
       annotationsContainRawAudio: false,
+      annotationsMayContainOptionalComment: true,
       publicHumanMixesRedistributed: false,
-      committedArtifacts: "recipes, hashes, pack and aggregate only"
+      committedArtifacts:
+        "recipes, hashes, pack and comment-free aggregate only"
     },
     limitations: [
       "instrumento de calibração pequena, não avaliação humana de produto",
       "cenas CORAA são âncoras evaluation-only por licença CC BY-NC-ND 4.0",
       "TTS sintético atual usa uma única voz PT-BR",
+      "comentários opcionais ficam somente na coleta local ignorada pelo Git",
       "preferência humana futura não concede autoridade ao modelo"
     ],
     paidApiCalls: 0,

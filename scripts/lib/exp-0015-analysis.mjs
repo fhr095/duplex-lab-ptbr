@@ -60,6 +60,7 @@ export function evaluateExp0015Instrument(input) {
     retentionBoundary:
       pack.retention?.audioInGit === false &&
       pack.retention?.annotationsContainRawAudio === false &&
+      pack.retention?.annotationsMayContainOptionalComment === true &&
       pack.retention?.publicHumanMixesRedistributed === false,
     browserPackBinding:
       browser?.pass === true &&
@@ -70,16 +71,28 @@ export function evaluateExp0015Instrument(input) {
       browser?.observations?.exposedTokens?.length === 0,
     playbackGate:
       browser?.observations?.lockedBeforeListening === true &&
-      browser?.observations?.afterListening?.completedOptions === 3 &&
+      [2, 3].includes(
+        browser?.observations?.afterListening?.optionCount
+      ) &&
+      browser?.observations?.afterListening?.completedOptions ===
+        browser?.observations?.afterListening?.optionCount &&
       browser?.observations?.unlockedAfterListening === true &&
       browser?.observations?.readyToAdvance?.sceneReady === true,
+    equivalenceAndTieProtocol:
+      browser?.observations?.sessionReady?.sessionOptionCounts?.includes(2) &&
+      browser?.observations?.sessionReady?.sessionOptionCounts?.includes(3) &&
+      browser?.protocol?.tieSelectionExercised === true &&
+      browser?.observations?.readyToAdvance?.selectedOptionCount === 2,
+    speakerAttribution:
+      browser?.observations?.readyToAdvance
+        ?.speakerRelevanceAnswered === true,
     realBrowserClean:
       browser?.protocol?.realWindowsChrome === true &&
       browser?.observations?.browserErrors?.length === 0,
     noSyntheticHumanRecord:
       browser?.protocol?.annotationSubmitted === false,
     aggregateBinding:
-      aggregate?.schemaVersion === "timing-calibration-aggregate-v1" &&
+      aggregate?.schemaVersion === "timing-calibration-aggregate-v2" &&
       aggregate?.packId === pack.packId &&
       aggregate?.packSha256 === pack.packSha256,
     annotationIntegrity:
@@ -95,11 +108,11 @@ export function evaluateExp0015Instrument(input) {
   const instrumentPass = Object.values(gates).every(Boolean);
   const humanCalibrationPass = aggregate.calibrationReady === true;
   return {
-    schemaVersion: "exp-0015-timing-calibration-instrument-report-v1",
+    schemaVersion: "exp-0015-timing-calibration-instrument-report-v2",
     experimentId: pack.packId,
     question:
-      "O instrumento local cego está íntegro e pronto para coletar uma " +
-      "calibração humana pequena sem conceder autoridade ou contaminar treino?",
+      "O instrumento local cego separa timing, atribuição da fala e " +
+      "equivalência sem conceder autoridade ou contaminar treino?",
     instrumentPass,
     humanCalibrationPass,
     campaignComplete: instrumentPass && humanCalibrationPass,
@@ -125,7 +138,9 @@ export function evaluateExp0015Instrument(input) {
       attentionControls: attentionControls.length,
       decisionEvidenceAlignedScenes: evidenceAligned.length,
       decisionEvidenceRequiredScenes: evidenceRequired.length,
-      participants: aggregate.metrics.participants,
+      totalParticipants: aggregate.metrics.totalParticipants,
+      externalParticipants: aggregate.metrics.externalParticipants,
+      internalParticipants: aggregate.metrics.internalParticipants,
       validHumanRecords: aggregate.metrics.validRecords,
       labelledScenes: aggregate.metrics.labelledScenes,
       labelCoverage: aggregate.metrics.labelCoverage,
@@ -139,6 +154,15 @@ export function evaluateExp0015Instrument(input) {
         realWindowsChrome: browser?.protocol?.realWindowsChrome ?? false,
         completedAudioOptions:
           browser?.observations?.afterListening?.completedOptions ?? null,
+        currentAudioOptions:
+          browser?.observations?.afterListening?.optionCount ?? null,
+        sessionOptionCounts:
+          browser?.observations?.sessionReady?.sessionOptionCounts ?? [],
+        tieSelectionExercised:
+          browser?.protocol?.tieSelectionExercised ?? false,
+        speakerRelevanceAnswered:
+          browser?.observations?.readyToAdvance
+            ?.speakerRelevanceAnswered ?? false,
         annotationSubmitted:
           browser?.protocol?.annotationSubmitted ?? null
       },
@@ -149,7 +173,9 @@ export function evaluateExp0015Instrument(input) {
         ? [
             "pack local reproduzível",
             "interface cega executável no Chrome do Windows",
-            "coleta pseudônima com validação fail-closed"
+            "coleta pseudônima com validação fail-closed",
+            "equivalências exatas e empates preservados",
+            "atribuição da fala separada da preferência de timing"
           ]
         : [],
       held: [

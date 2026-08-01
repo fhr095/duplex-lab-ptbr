@@ -213,24 +213,32 @@ if (exposedTokens.length > 0) {
   throw new Error(`interface expôs tokens privados: ${exposedTokens.join(", ")}`);
 }
 
+await click('input[name="participantRole"][value="external"]');
+await waitFor("document.querySelector('#startButton').disabled === false");
 await click("#startButton");
 await waitFor("window.__duplexCalibration.snapshot().phase === 'campaign'");
 const sessionReady = await evaluate("window.__duplexCalibration.snapshot()");
-if (sessionReady.sceneCount !== 12 || sessionReady.optionCount !== 3) {
+if (
+  sessionReady.sceneCount !== 12 ||
+  !sessionReady.sessionOptionCounts.includes(2) ||
+  !sessionReady.sessionOptionCounts.includes(3) ||
+  ![2, 3].includes(sessionReady.optionCount)
+) {
   throw new Error(
     `sessão inesperada: ${sessionReady.sceneCount} cenas / ` +
-      `${sessionReady.optionCount} opções`
+      `${JSON.stringify(sessionReady.sessionOptionCounts)} opções`
   );
 }
 const lockedBeforeListening = await evaluate(
   "document.querySelector('#choicePanel').disabled && " +
+    "document.querySelector('#relevancePanel').disabled && " +
     "document.querySelector('#nextButton').disabled"
 );
 if (!lockedBeforeListening) {
-  throw new Error("decisão foi liberada antes das três reproduções");
+  throw new Error("decisão foi liberada antes das reproduções obrigatórias");
 }
 
-for (let index = 0; index < 3; index += 1) {
+for (let index = 0; index < sessionReady.optionCount; index += 1) {
   await evaluate(`(() => {
     const audio = document.querySelectorAll('.audio-option audio')[${index}];
     audio.playbackRate = 4;
@@ -245,12 +253,17 @@ for (let index = 0; index < 3; index += 1) {
 const afterListening = await evaluate("window.__duplexCalibration.snapshot()");
 const unlockedAfterListening = await evaluate(
   "!document.querySelector('#choicePanel').disabled && " +
+    "!document.querySelector('#relevancePanel').disabled && " +
     "document.querySelector('#nextButton').disabled"
 );
 if (!unlockedAfterListening) {
   throw new Error("escolha/confiança não respeitaram o gate de escuta");
 }
-await click('input[name="preference"][value="uncertain"]');
+await click('.choice-grid label:nth-child(1) input[name="preferenceOption"]');
+await click('.choice-grid label:nth-child(2) input[name="preferenceOption"]');
+await click(
+  'input[name="speakerRelevance"][value="UNCERTAIN"]'
+);
 await click('input[name="confidence"][value="3"]');
 await waitFor("window.__duplexCalibration.snapshot().sceneReady === true");
 const readyToAdvance = await evaluate("window.__duplexCalibration.snapshot()");
@@ -259,7 +272,7 @@ if (await evaluate("document.querySelector('#nextButton').disabled")) {
 }
 
 const report = {
-  schemaVersion: "exp-0015-calibration-browser-smoke-v1",
+  schemaVersion: "exp-0015-calibration-browser-smoke-v2",
   startedAt,
   completedAt: new Date().toISOString(),
   targetUrl,
@@ -272,6 +285,7 @@ const report = {
   protocol: {
     realWindowsChrome: true,
     audioPlaybackRate: 4,
+    tieSelectionExercised: true,
     annotationSubmitted: false,
     reason: "smoke técnico não pode contaminar julgamentos humanos"
   },
@@ -289,11 +303,15 @@ const report = {
   pass:
     initial.phase === "intro" &&
     sessionReady.sceneCount === 12 &&
-    sessionReady.optionCount === 3 &&
+    sessionReady.sessionOptionCounts.includes(2) &&
+    sessionReady.sessionOptionCounts.includes(3) &&
+    [2, 3].includes(sessionReady.optionCount) &&
     lockedBeforeListening &&
-    afterListening.completedOptions === 3 &&
+    afterListening.completedOptions === sessionReady.optionCount &&
     unlockedAfterListening &&
     readyToAdvance.sceneReady &&
+    readyToAdvance.selectedOptionCount === 2 &&
+    readyToAdvance.speakerRelevanceAnswered === true &&
     exposedTokens.length === 0 &&
     browserErrors.length === 0
 };
@@ -305,7 +323,8 @@ socket.close();
 
 console.log(
   `EXP-0015 Chrome: ${report.pass ? "PASS" : "FAIL"} · ` +
-    `${report.observations.afterListening.completedOptions}/3 WAVs concluídos · ` +
+    `${report.observations.afterListening.completedOptions}/` +
+    `${report.observations.afterListening.optionCount} WAVs concluídos · ` +
     `${report.durationMs.toFixed(0)} ms`
 );
 console.log(`Relatório bruto: ${REPORT_PATH}`);

@@ -9,12 +9,12 @@ import {
 const PROJECT_ROOT = resolve(import.meta.dirname, "..");
 const PACK_PATH = resolve(
   PROJECT_ROOT,
-  "eval/calibration/exp-0015-timing-pack-v0.1.json"
+  "eval/calibration/exp-0015-timing-pack-v0.2.json"
 );
 const WEB_ROOT = resolve(PROJECT_ROOT, "web/calibration");
 const ANNOTATIONS_ROOT = resolve(
   PROJECT_ROOT,
-  "eval/generated/exp-0015/annotations"
+  "eval/generated/exp-0015/v0.2/annotations"
 );
 const port = Number.parseInt(
   process.env.CALIBRATION_PORT ?? "4174",
@@ -53,7 +53,8 @@ if (wslIp) {
 }
 console.log(
   `${pack.scenes.length} cenas · ${calibration.snapshot.artifacts} WAVs · ` +
-    `${calibration.snapshot.participants} participantes já registrados`
+    `${calibration.snapshot.externalParticipants} externos / ` +
+    `${calibration.snapshot.internalParticipants} internos registrados`
 );
 console.log(`Pack: ${pack.packSha256}`);
 console.log("Execução local; nenhuma API paga é chamada.");

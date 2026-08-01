@@ -12,7 +12,7 @@ import {
 
 const pack = JSON.parse(await readFile(
   new URL(
-    "../eval/calibration/exp-0015-timing-pack-v0.1.json",
+    "../eval/calibration/exp-0015-timing-pack-v0.2.json",
     import.meta.url
   ),
   "utf8"
@@ -29,15 +29,23 @@ function browserFixture(candidatePack = pack) {
     browser: { product: { product: "Chrome/test" } },
     protocol: {
       realWindowsChrome: true,
+      tieSelectionExercised: true,
       annotationSubmitted: false
     },
     observations: {
-      sessionReady: { packSha256: candidatePack.packSha256 },
+      sessionReady: {
+        packSha256: candidatePack.packSha256,
+        sessionOptionCounts: [2, 3]
+      },
       exposedTokens: [],
       lockedBeforeListening: true,
-      afterListening: { completedOptions: 3 },
+      afterListening: { completedOptions: 2, optionCount: 2 },
       unlockedAfterListening: true,
-      readyToAdvance: { sceneReady: true },
+      readyToAdvance: {
+        sceneReady: true,
+        selectedOptionCount: 2,
+        speakerRelevanceAnswered: true
+      },
       browserErrors: []
     }
   };
@@ -63,7 +71,7 @@ test("instrumento promove sem fingir calibração humana", () => {
     report.decisions.humanCalibration,
     "await-human-calibration"
   );
-  assert.equal(report.metrics.participants, 0);
+  assert.equal(report.metrics.externalParticipants, 0);
   assert.equal(report.metrics.fitEligibleLabels, 0);
   assert.ok(report.aggregate.scenes.every((scene) => scene.winner === null));
 });

@@ -138,16 +138,19 @@ no dispositivo corrente sem falsa ativação. A decisão é
 `promote-m4a-acoustic-shadow-infrastructure`: 100% no holdout significa
 imitação consistente da regra, não ganho humano ou generalização.
 
-O EXP-0015 fechou o instrumento que antecede M4b, não a calibração humana.
-Doze cenas geraram **36 contrafactuais estéreo**; sete usam trechos públicos
-CORAA apenas como âncoras de avaliação, três usam fala sintética local e duas
-são controles. A ordem de cenas e alternativas é cega por participante, todas
-as três opções precisam terminar antes da escolha e dúvida pode ser registrada.
-No Chrome real do Windows, 3/3 WAVs da cena de smoke foram reproduzidos e os
-gates da interface passaram sem console error ou anotação artificial. A decisão
-é `promote-timing-calibration-instrument`; a campanha humana permanece
-`await-human-calibration` em **0/3 participantes**, e o pack atual contém zero
-rótulos autorizados para fit direto.
+O EXP-0015 fechou a v0.2 do instrumento que antecede M4b, não a calibração
+humana. Doze cenas geraram **36 contrafactuais estéreo**; sete usam trechos
+públicos CORAA apenas como âncoras de avaliação, três usam fala sintética local
+e duas são controles. Um piloto v0.1 com duas execuções revelou alternativas
+byte a byte idênticas apresentadas separadamente, atribuição da fala misturada
+ao timing e ausência de distinção entre avaliadores internos e externos.
+A v0.2 agrupa os quatro pares equivalentes, aceita empates, pergunta
+separadamente se a fala parece dirigida à assistente e preserva comentário
+curto opcional somente no armazenamento local. No Chrome real do Windows,
+cenas de 2 e 3 opções, empate e atribuição passaram sem erro ou anotação
+artificial. A decisão é `promote-timing-calibration-instrument`; a campanha
+nova permanece `await-human-calibration` em **0/3 participantes externos**, e
+o pack contém zero rótulos autorizados para fit direto.
 
 Com o servidor local e o Chrome de depuração abertos, a evidência é reproduzida
 por `npm run eval:exp:0013:browser` e consolidada por
@@ -341,7 +344,8 @@ executável existe somente no
 v0.3 está congelada e as fatias stateful, de reflexo, lifecycle, trace causal e
 M4a acústico em shadow foram promovidas. O instrumento EXP-0015 também está
 promovido e pronto; o próximo gate externo é obter ao menos três participantes
-únicos com atenção e consenso suficientes. Essa calibração orientará a criação
+externos únicos com atenção e consenso suficientes. Avaliações internas ajudam
+na usabilidade, mas não contam para esse mínimo. Essa calibração orientará a criação
 de um conjunto novo e legalmente elegível para M4b — os áudios CORAA e
 sintéticos atuais não entram diretamente em fit. O comparador M4b terá de
 superar a regra em famílias realmente não vistas. Até lá, o checkpoint não

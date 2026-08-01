@@ -15,8 +15,8 @@ const PROJECT_ROOT = resolve(import.meta.dirname, "..");
 const DEFAULTS = Object.freeze({
   config: "eval/experiments/exp-0015-timing-calibration.pt-BR.json",
   humanManifest: "eval/generated/coraa/manifest.json",
-  out: "eval/calibration/exp-0015-timing-pack-v0.1.json",
-  audioRoot: "eval/generated/exp-0015/audio"
+  out: "eval/calibration/exp-0015-timing-pack-v0.2.json",
+  audioRoot: "eval/generated/exp-0015/v0.2/audio"
 });
 
 function parseArgs(args) {
