@@ -81,6 +81,23 @@ observado com o lifecycle/clocks do `InteractionRuntime`, mantendo o comando
 físico rápido no navegador. Loopback ou rótulo causal permanece necessário
 antes de usar o probe físico como prova de autoeco.
 
+## Atualização após o EXP-0012
+
+Hold, retomada e confirmação da saída passaram a uma única máquina de estados
+local, `OutputInterruptionLifecycle` v0.1. O executor do navegador conserva
+recursos e executa PAUSE/`play()`, mas não decide mais transições em campos
+implícitos. Seis fluxos do Chrome cobriram as quatro fases e tiveram replay
+exato; seis corridas assíncronas adicionais falharam fechadas. O STOP terminou
+no renderer em 48 ms e onset PCM→último quantum em 183,66 ms, com zero chamada
+paga. Isso sustenta `promote-output-interruption-lifecycle-slice`.
+
+O probe causal físico não iniciou neste fingerprint; seus gates permaneceram
+falsos e o status global continua em `hold`. M2.5 também continua aberto para
+clocks/filas amplos e efeitos externos. O maior retorno seguinte não é extrair
+mais heurísticas: é materializar `training-trace-v1` e um ledger estreito sobre
+os caminhos já promovidos, migrando infraestrutura adicional apenas quando
+essa primeira vertical de aprendizado exigir.
+
 ## Pontos incorporados
 
 - congelar a cascata como referência, não como código intocável;

@@ -15,6 +15,9 @@ import {
   LocalAudioReflex
 } from "/local-audio-reflex.mjs";
 import {
+  OutputInterruptionLifecycle
+} from "/output-interruption-lifecycle.mjs";
+import {
   classifyPotentialBargeIn,
   isExplicitTaskCancellation
 } from "/turn-taking.mjs";
@@ -32,6 +35,7 @@ const localAudioReflexMode =
 const localAudioReflex = new LocalAudioReflex({
   mode: localAudioReflexMode
 });
+const outputInterruptionLifecycle = new OutputInterruptionLifecycle();
 const AUTOMATION_AUDIT_PRE_ROLL_FRAMES = 100;
 const AUTOMATION_AUDIT_POST_ROLL_FRAMES = 100;
 const AUDIO_RECONNECT_DELAYS_MS = Object.freeze([100, 250, 500]);
@@ -195,6 +199,36 @@ function log(type, detail = "") {
   elements.eventLog.prepend(item);
 }
 
+function dispatchOutputInterruption(event) {
+  const previous = outputInterruptionLifecycle.snapshot;
+  const transition = outputInterruptionLifecycle.dispatch(event);
+  if (
+    transition.state.version !== previous.version ||
+    transition.intents.length > 0 ||
+    event.type !== "CLEAR"
+  ) {
+    log(
+      "output-interruption.transition",
+      JSON.stringify({
+        lifecycleVersion: transition.lifecycleVersion,
+        previousStateVersion: transition.previousStateVersion,
+        stateVersion: transition.state.version,
+        eventType: transition.eventType,
+        event: { ...event },
+        previousPhase: previous.phase,
+        phase: transition.state.phase,
+        reason: transition.reason,
+        turnId: transition.state.turnId,
+        outputEpoch: transition.state.outputEpoch,
+        pauseKind: transition.state.pauseKind,
+        resumeAttempt: transition.state.resumeAttempt,
+        intents: transition.intents.map((intent) => ({ ...intent }))
+      })
+    );
+  }
+  return transition;
+}
+
 const assistantRenderProbe = new BrowserAudioRenderProbe({
   onEvent(event) {
     if (event.type === "assistant.render.probe.ready") {
@@ -274,6 +308,7 @@ function clearPotentialBargeIn(reason = "cleared") {
   if (potential?.timer) {
     clearTimeout(potential.timer);
   }
+  dispatchOutputInterruption({ type: "CLEAR", reason });
   session.potentialBargeIn = null;
   session.assistantResumeReason = null;
   potential?.settle?.({ kind: reason });
@@ -379,6 +414,21 @@ async function playPreparedSpeech(item) {
 
     session.finishCurrentAudio = () => settle();
     audio.onplaying = () => {
+      if (
+        session.potentialBargeIn?.audio === audio &&
+        ["held", "confirmed"].includes(
+          outputInterruptionLifecycle.snapshot.phase
+        )
+      ) {
+        audio.pause();
+        session.assistantSpeaking = false;
+        session.assistantResumeReason = null;
+        log(
+          "assistant.speech.resume.blocked",
+          outputInterruptionLifecycle.snapshot.phase
+        );
+        return;
+      }
       const startedAt = performance.now();
       session.assistantSpeaking = true;
       setStatus("falando e ouvindo", "speaking");
@@ -811,14 +861,45 @@ function dispatchLocalAudioReflex(reflexEvent, sourceEvent = {}) {
 }
 
 function pauseAssistantForPotentialBargeIn(event = {}) {
+  const hadAudibleOutput = session.assistantSpeaking === true;
+  const hadAcousticOutput =
+    session.assistantPreparing ||
+    session.assistantSpeaking ||
+    Boolean(session.assistantAudio) ||
+    session.audioQueue.length > 0;
+  const hadActiveResponse = session.responseActive;
+  const transition = dispatchOutputInterruption({
+    type: "PAUSE_REQUESTED",
+    turnId: event.turnId ?? null,
+    outputEpoch: session.audioEpoch,
+    hasAudibleOutput: hadAudibleOutput,
+    hasAcousticOutput: hadAcousticOutput,
+    hasActiveResponse: hadActiveResponse
+  });
+  const intentTypes = new Set(
+    transition.intents.map((intent) => intent.type)
+  );
   const current = session.potentialBargeIn;
-  if (current) {
+
+  if (
+    intentTypes.has("KEEP_OUTPUT_HELD") ||
+    intentTypes.has("CANCEL_RESUME_AND_PAUSE")
+  ) {
+    if (!current) {
+      log(
+        "output-interruption.invariant.error",
+        "lifecycle ativo sem recurso de hold"
+      );
+      dispatchOutputInterruption({
+        type: "CLEAR",
+        reason: "missing-hold-resource"
+      });
+      return;
+    }
     current.turnId ??= event.turnId ?? null;
     clearTimeout(current.timer);
     current.timer = null;
-    if (current.state === "resuming") {
-      current.state = "pending";
-      current.resumeAttempt += 1;
+    if (intentTypes.has("CANCEL_RESUME_AND_PAUSE")) {
       current.audio?.pause();
       session.assistantResumeReason = null;
       session.assistantSpeaking = false;
@@ -830,21 +911,28 @@ function pauseAssistantForPotentialBargeIn(event = {}) {
     );
     return;
   }
-  const hadAcousticOutput =
-    session.assistantPreparing ||
-    session.assistantSpeaking ||
-    Boolean(session.assistantAudio) ||
-    session.audioQueue.length > 0;
-  const hadActiveResponse = session.responseActive;
-  if (!hadAcousticOutput && !hadActiveResponse) {
+
+  const shouldCreateHold =
+    intentTypes.has("PAUSE_OUTPUT") ||
+    intentTypes.has("HOLD_OUTPUT");
+  if (!shouldCreateHold) {
     return;
+  }
+
+  if (current) {
+    clearTimeout(current.timer);
+    current.settle({ kind: "replaced-inconsistent-hold" });
+    session.potentialBargeIn = null;
+    log(
+      "output-interruption.invariant.error",
+      "recurso de hold substituído pelo lifecycle"
+    );
   }
 
   const requestedAt = performance.now();
   const renderStopGeneration = session.renderStopGeneration + 1;
   session.renderStopGeneration = renderStopGeneration;
   session.lastRenderStopEvidence = null;
-  const hadAudibleOutput = session.assistantSpeaking === true;
   const epoch = session.audioEpoch;
   const audio = session.assistantAudio;
   const renderStopPromise =
@@ -866,8 +954,6 @@ function pauseAssistantForPotentialBargeIn(event = {}) {
     turnId: event.turnId ?? null,
     userPausedAt: null,
     timer: null,
-    state: "pending",
-    resumeAttempt: 0,
     settle,
     settledPromise
   };
@@ -924,7 +1010,7 @@ function schedulePotentialBargeInTimeout(reason, delayMs = 5_000) {
   potential.timer = setTimeout(() => {
     if (
       session.potentialBargeIn !== potential ||
-      potential.state === "resuming"
+      outputInterruptionLifecycle.snapshot.phase !== "held"
     ) {
       return;
     }
@@ -938,67 +1024,118 @@ function schedulePotentialBargeInTimeout(reason, delayMs = 5_000) {
 
 async function dismissPotentialBargeIn(reason) {
   const potential = session.potentialBargeIn;
+  const hasResumableAudio = Boolean(
+    potential &&
+    potential.epoch === session.audioEpoch &&
+    potential.audio &&
+    session.assistantAudio === potential.audio
+  );
+  const transition = dispatchOutputInterruption({
+    type: "DISMISS_REQUESTED",
+    currentOutputEpoch: session.audioEpoch,
+    hasResumableAudio
+  });
+  const resumeIntent = transition.intents.find(
+    (intent) => intent.type === "RESUME_OUTPUT"
+  );
+  const settleWithoutResume = transition.intents.some(
+    (intent) => intent.type === "SETTLE_WITHOUT_RESUME"
+  );
+  if (!resumeIntent && !settleWithoutResume) {
+    return false;
+  }
   if (!potential) {
+    log(
+      "output-interruption.invariant.error",
+      "dismiss sem recurso de hold"
+    );
     return false;
   }
   clearTimeout(potential.timer);
   potential.timer = null;
-  potential.state = "resuming";
-  potential.resumeAttempt += 1;
-  const resumeAttempt = potential.resumeAttempt;
   log("barge-in.dismissed", reason);
   session.dismissedPotentialCount += 1;
 
-  if (
-    potential.epoch !== session.audioEpoch ||
-    !potential.audio ||
-    session.assistantAudio !== potential.audio
-  ) {
-    session.potentialBargeIn = null;
+  if (settleWithoutResume) {
+    if (session.potentialBargeIn === potential) {
+      session.potentialBargeIn = null;
+    }
     potential.settle({ kind: "dismissed-without-audio" });
     localAudioReflex.reset("dismissed-without-audio");
     setListeningStatus();
     return true;
   }
 
+  const resumeAttempt = resumeIntent.resumeAttempt;
+
   session.assistantResumeReason = reason;
   try {
     await potential.audio.play();
   } catch (error) {
-    session.assistantResumeReason = null;
-    log("assistant.speech.resume.error", error.message);
-    if (session.potentialBargeIn === potential) {
-      session.potentialBargeIn = null;
-      potential.settle({ kind: "resume-error" });
-      releaseAssistantAudio();
+    const failed = dispatchOutputInterruption({
+      type: "RESUME_FAILED",
+      resumeAttempt
+    });
+    if (
+      failed.intents.some((intent) => intent.type === "RELEASE_OUTPUT")
+    ) {
+      session.assistantResumeReason = null;
+      log("assistant.speech.resume.error", error.message);
+      if (session.potentialBargeIn === potential) {
+        session.potentialBargeIn = null;
+        potential.settle({ kind: "resume-error" });
+        localAudioReflex.reset("resume-error");
+        releaseAssistantAudio();
+      }
     }
     setListeningStatus();
     return false;
   }
+  const resumed = dispatchOutputInterruption({
+    type: "RESUME_SUCCEEDED",
+    resumeAttempt
+  });
   if (
-    session.potentialBargeIn !== potential ||
-    potential.state !== "resuming" ||
-    potential.resumeAttempt !== resumeAttempt
+    resumed.intents.some(
+      (intent) => intent.type === "PAUSE_STALE_RESUME"
+    )
   ) {
     potential.audio.pause();
     session.assistantSpeaking = false;
     setListeningStatus();
     return false;
   }
-  session.potentialBargeIn = null;
-  potential.settle({ kind: "dismissed-and-resumed" });
-  localAudioReflex.reset("dismissed-and-resumed");
+  if (
+    resumed.intents.some((intent) => intent.type === "SETTLE_RESUMED")
+  ) {
+    if (session.potentialBargeIn === potential) {
+      session.potentialBargeIn = null;
+    }
+    potential.settle({ kind: "dismissed-and-resumed" });
+    localAudioReflex.reset("dismissed-and-resumed");
+    setListeningStatus();
+    return true;
+  }
   setListeningStatus();
-  return true;
+  return false;
 }
 
 function confirmPotentialBargeIn(reason) {
   const potential = session.potentialBargeIn;
-  if (!potential) {
+  const transition = dispatchOutputInterruption({
+    type: "CONFIRM_REQUESTED",
+    reason
+  });
+  if (
+    !potential ||
+    !transition.intents.some(
+      (intent) => intent.type === "CONFIRM_INTERRUPTION"
+    )
+  ) {
     return false;
   }
   clearTimeout(potential.timer);
-  session.potentialBargeIn = null;
+  potential.timer = null;
   potential.settle({ kind: "confirmed" });
   localAudioReflex.reset("confirmed");
   session.interruptCount += 1;
@@ -1705,7 +1842,10 @@ function handleLocalAudioEvent(event) {
       pauseAssistantForPotentialBargeIn(event);
       confirmPotentialBargeIn(`parcial corrigido pelo final: ${text}`);
     }
-    if (session.potentialBargeIn) {
+    if (
+      session.potentialBargeIn &&
+      outputInterruptionLifecycle.snapshot.phase !== "confirmed"
+    ) {
       const decision = classifyPotentialBargeIn(text);
       if (!decision.shouldInterrupt) {
         session.userSpeaking = false;
@@ -2301,6 +2441,7 @@ function metricValue(element) {
 }
 
 function automationSnapshot() {
+  const outputInterruption = outputInterruptionLifecycle.snapshot;
   return {
     observedAtMs: Math.round(performance.now() * 100) / 100,
     state: {
@@ -2314,7 +2455,11 @@ function automationSnapshot() {
       responseGeneration: session.responseGeneration,
       inputMode: session.inputMode,
       userSpeaking: session.userSpeaking,
-      potentialBargeIn: session.potentialBargeIn?.state ?? null
+      potentialBargeIn: outputInterruption.phase === "idle"
+        ? null
+        : outputInterruption.phase === "held"
+          ? "pending"
+          : outputInterruption.phase
     },
     audio: {
       asrAvailable: session.asrAvailable,
@@ -2339,6 +2484,9 @@ function automationSnapshot() {
       localAudioReflex: {
         ...localAudioReflex.snapshot,
         config: { ...localAudioReflex.snapshot.config }
+      },
+      outputInterruptionLifecycle: {
+        ...outputInterruption
       },
       runtimeEvidence:
         session.audioRuntimeEvidence.map((event) => ({ ...event }))

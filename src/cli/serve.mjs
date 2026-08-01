@@ -278,6 +278,10 @@ const STATIC_ROUTES = new Map([
   ["/critical-conflict.mjs", "critical-conflict.mjs"],
   ["/interaction-browser-adapter.mjs", "interaction-browser-adapter.mjs"],
   ["/local-audio-reflex.mjs", "local-audio-reflex.mjs"],
+  [
+    "/output-interruption-lifecycle.mjs",
+    "output-interruption-lifecycle.mjs"
+  ],
   ["/pcm-capture-worklet.js", "pcm-capture-worklet.js"],
   ["/pcm-capture.mjs", "pcm-capture.mjs"],
   ["/pcm-dsp.mjs", "pcm-dsp.mjs"],

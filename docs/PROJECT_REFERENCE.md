@@ -249,6 +249,14 @@ até o renderer e o probe físico corrente passou 30,147 s sem ativação. A dec
 é `promote-local-audio-reflex-slice`; lifecycle/clocks comuns, equivalência ampla
 e especificidade física causal continuam em `hold`.
 
+O EXP-0012 fechou o lifecycle local da saída. Hold, retomada, confirmação e
+resultados tardios de `play()` agora passam por `OutputInterruptionLifecycle`
+v0.1; seis fluxos reais do Chrome foram reproduzidos exatamente pelo mesmo
+reducer. STOP no renderer ficou em 48 ms e onset PCM→último quantum em
+183,66 ms. A decisão é `promote-output-interruption-lifecycle-slice`. O probe
+físico causal não iniciou neste fingerprint e seus gates permaneceram falsos;
+clocks/filas globais, efeitos externos e M2.5 completo continuam em `hold`.
+
 ### M3 — qualidade modular local
 
 Melhorar correções, semântica, TTS aberto, sobreposição e execução offline sem
@@ -294,14 +302,14 @@ Esta referência preserva apenas a lógica macro:
 2. manter o interlock monetário EXP-0009 como guardrail, sem alegar que ele
    recupera o valor;
 3. usar a baseline v0.3 congelada como comparador de desenvolvimento;
-4. preservar as fatias promovidas do kernel e do reflexo local;
-5. completar M2.5 reconciliando WAIT/STOP/retomada, clocks/lifecycle comuns,
-   trace treinável, ledger e
-   holdout novo;
-6. provar M4a com uma capacidade estreita e sem autoridade;
-7. desafiar contrato/evaluator com referência nativa apenas quando houver uma
+4. preservar as fatias promovidas do kernel, reflexo e lifecycle local;
+5. materializar `training-trace-v1`, ledger estreito e holdout novo sobre os
+   caminhos já promovidos, migrando clocks/filas somente quando necessários;
+6. completar a validade M2.5 ampla exigida pela primeira vertical de treino;
+7. provar M4a com uma capacidade estreita e sem autoridade;
+8. desafiar contrato/evaluator com referência nativa apenas quando houver uma
    pergunta experimental concreta;
-8. calibrar rótulos com humanos antes de M4b e promover somente ganhos
+9. calibrar rótulos com humanos antes de M4b e promover somente ganhos
    percebidos sob os gates.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo

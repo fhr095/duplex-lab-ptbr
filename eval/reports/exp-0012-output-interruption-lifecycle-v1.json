@@ -1,0 +1,435 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "EXP-0012",
+  "evidenceLevel": "causal-browser-render-plus-exact-lifecycle-replay",
+  "generatedAt": "2026-08-01T01:08:37.818Z",
+  "decision": "promote-output-interruption-lifecycle-slice",
+  "pass": true,
+  "scope": "local-output-interruption-lifecycle",
+  "globalRuntimeStatus": "hold-labelled-physical-specificity",
+  "gates": {
+    "lifecycleVersionAdvertised": true,
+    "exactBrowserReplay": true,
+    "lifecycleCoverage": true,
+    "noRedundantLifecycleDecisions": true,
+    "asyncRaceContract": true,
+    "browserInteractionRegression": true,
+    "physicalBoundaryHonest": true,
+    "sourceAndRuntimeComparable": true,
+    "localZeroPaidExecution": true
+  },
+  "contextGates": {
+    "fullSmokePass": false,
+    "physicalSpecificityConclusive": false
+  },
+  "metrics": {
+    "responseStartMs": 178,
+    "stopCommandMs": 0,
+    "browserRenderStopMs": 48,
+    "pcmOnsetToBrowserRenderStopMs": 183.66,
+    "realBackchannelSpeechEndToResumeMs": 312.6
+  },
+  "observations": {
+    "replay": {
+      "version": "output-interruption-lifecycle-v0.1",
+      "expectedLabelsPresent": true,
+      "exact": true,
+      "noRedundantDecisions": true,
+      "phasesCovered": true,
+      "intentsCovered": true,
+      "replays": [
+        {
+          "label": "pending-audio",
+          "ok": true,
+          "errors": [],
+          "steps": [
+            {
+              "atMs": 34801.4,
+              "eventType": "PAUSE_REQUESTED",
+              "previousPhase": "idle",
+              "phase": "held",
+              "stateVersion": 7,
+              "intents": [
+                "HOLD_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 35249.2,
+              "eventType": "DISMISS_REQUESTED",
+              "previousPhase": "held",
+              "phase": "idle",
+              "stateVersion": 8,
+              "intents": [
+                "SETTLE_WITHOUT_RESUME"
+              ],
+              "equivalent": true
+            }
+          ],
+          "terminalPhase": "idle"
+        },
+        {
+          "label": "deterministic-backchannel",
+          "ok": true,
+          "errors": [],
+          "steps": [
+            {
+              "atMs": 35655,
+              "eventType": "PAUSE_REQUESTED",
+              "previousPhase": "idle",
+              "phase": "held",
+              "stateVersion": 9,
+              "intents": [
+                "PAUSE_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 35658.7,
+              "eventType": "DISMISS_REQUESTED",
+              "previousPhase": "held",
+              "phase": "resuming",
+              "stateVersion": 10,
+              "intents": [
+                "RESUME_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 35659.4,
+              "eventType": "RESUME_SUCCEEDED",
+              "previousPhase": "resuming",
+              "phase": "idle",
+              "stateVersion": 11,
+              "intents": [
+                "SETTLE_RESUMED"
+              ],
+              "equivalent": true
+            }
+          ],
+          "terminalPhase": "idle"
+        },
+        {
+          "label": "reopened-backchannel",
+          "ok": true,
+          "errors": [],
+          "steps": [
+            {
+              "atMs": 36084.7,
+              "eventType": "PAUSE_REQUESTED",
+              "previousPhase": "idle",
+              "phase": "held",
+              "stateVersion": 12,
+              "intents": [
+                "PAUSE_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 36085.1,
+              "eventType": "DISMISS_REQUESTED",
+              "previousPhase": "held",
+              "phase": "resuming",
+              "stateVersion": 13,
+              "intents": [
+                "RESUME_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 36088.7,
+              "eventType": "RESUME_SUCCEEDED",
+              "previousPhase": "resuming",
+              "phase": "idle",
+              "stateVersion": 14,
+              "intents": [
+                "SETTLE_RESUMED"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 36091,
+              "eventType": "PAUSE_REQUESTED",
+              "previousPhase": "idle",
+              "phase": "held",
+              "stateVersion": 15,
+              "intents": [
+                "PAUSE_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 36091.4,
+              "eventType": "CONFIRM_REQUESTED",
+              "previousPhase": "held",
+              "phase": "confirmed",
+              "stateVersion": 16,
+              "intents": [
+                "CONFIRM_INTERRUPTION"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 36091.4,
+              "eventType": "CLEAR",
+              "previousPhase": "confirmed",
+              "phase": "idle",
+              "stateVersion": 17,
+              "intents": [
+                "SETTLE_CLEARED"
+              ],
+              "equivalent": true
+            }
+          ],
+          "terminalPhase": "idle"
+        },
+        {
+          "label": "pcm-backchannel",
+          "ok": true,
+          "errors": [],
+          "steps": [
+            {
+              "atMs": 37682.6,
+              "eventType": "PAUSE_REQUESTED",
+              "previousPhase": "idle",
+              "phase": "held",
+              "stateVersion": 18,
+              "intents": [
+                "PAUSE_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 38533.6,
+              "eventType": "DISMISS_REQUESTED",
+              "previousPhase": "held",
+              "phase": "resuming",
+              "stateVersion": 19,
+              "intents": [
+                "RESUME_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 38535.1,
+              "eventType": "RESUME_SUCCEEDED",
+              "previousPhase": "resuming",
+              "phase": "idle",
+              "stateVersion": 20,
+              "intents": [
+                "SETTLE_RESUMED"
+              ],
+              "equivalent": true
+            }
+          ],
+          "terminalPhase": "idle"
+        },
+        {
+          "label": "pcm-barge-in",
+          "ok": true,
+          "errors": [],
+          "steps": [
+            {
+              "atMs": 39929.9,
+              "eventType": "PAUSE_REQUESTED",
+              "previousPhase": "idle",
+              "phase": "held",
+              "stateVersion": 21,
+              "intents": [
+                "PAUSE_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 43190.6,
+              "eventType": "CONFIRM_REQUESTED",
+              "previousPhase": "held",
+              "phase": "confirmed",
+              "stateVersion": 22,
+              "intents": [
+                "CONFIRM_INTERRUPTION"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 43190.7,
+              "eventType": "CLEAR",
+              "previousPhase": "confirmed",
+              "phase": "idle",
+              "stateVersion": 23,
+              "intents": [
+                "SETTLE_CLEARED"
+              ],
+              "equivalent": true
+            }
+          ],
+          "terminalPhase": "idle"
+        },
+        {
+          "label": "long-correction",
+          "ok": true,
+          "errors": [],
+          "steps": [
+            {
+              "atMs": 44746.4,
+              "eventType": "PAUSE_REQUESTED",
+              "previousPhase": "idle",
+              "phase": "held",
+              "stateVersion": 24,
+              "intents": [
+                "PAUSE_OUTPUT"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 46890.6,
+              "eventType": "PAUSE_REQUESTED",
+              "previousPhase": "held",
+              "phase": "held",
+              "stateVersion": 25,
+              "intents": [
+                "KEEP_OUTPUT_HELD"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 48574.8,
+              "eventType": "PAUSE_REQUESTED",
+              "previousPhase": "held",
+              "phase": "held",
+              "stateVersion": 26,
+              "intents": [
+                "KEEP_OUTPUT_HELD"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 51339.5,
+              "eventType": "CONFIRM_REQUESTED",
+              "previousPhase": "held",
+              "phase": "confirmed",
+              "stateVersion": 27,
+              "intents": [
+                "CONFIRM_INTERRUPTION"
+              ],
+              "equivalent": true
+            },
+            {
+              "atMs": 51339.6,
+              "eventType": "CLEAR",
+              "previousPhase": "confirmed",
+              "phase": "idle",
+              "stateVersion": 28,
+              "intents": [
+                "SETTLE_CLEARED"
+              ],
+              "equivalent": true
+            }
+          ],
+          "terminalPhase": "idle"
+        }
+      ],
+      "coverage": {
+        "phases": [
+          "confirmed",
+          "held",
+          "idle",
+          "resuming"
+        ],
+        "intents": [
+          "CONFIRM_INTERRUPTION",
+          "HOLD_OUTPUT",
+          "KEEP_OUTPUT_HELD",
+          "PAUSE_OUTPUT",
+          "RESUME_OUTPUT",
+          "SETTLE_CLEARED",
+          "SETTLE_RESUMED",
+          "SETTLE_WITHOUT_RESUME"
+        ],
+        "transitions": [
+          "confirmed->idle",
+          "held->confirmed",
+          "held->held",
+          "held->idle",
+          "held->resuming",
+          "idle->held",
+          "resuming->idle"
+        ]
+      }
+    },
+    "contractAudit": {
+      "version": "output-interruption-lifecycle-v0.1",
+      "pass": true,
+      "checks": {
+        "speechDuringResumeCancelsPlay": true,
+        "stalePlayCannotEscapeHold": true,
+        "oldResultCannotSabotageNewResume": true,
+        "confirmationInvalidatesPendingPlay": true,
+        "obsoleteEpochNeverResumes": true,
+        "noOutputCreatesNoHold": true
+      }
+    },
+    "physical": {
+      "classification": "unresolved-causal-probe",
+      "boundaryHonest": true,
+      "physicalPassed": false,
+      "failedGates": [
+        "noSelfInterruptionUnderDeviceAec",
+        "longSessionNoFalseActivation"
+      ],
+      "preflight": {
+        "status": "probe-start-unresolved",
+        "waitedMs": 1526,
+        "requiredStableQuietMs": 1500,
+        "observedUserSpeechEvents": 0,
+        "committedTurns": 0,
+        "scope": "silêncio inicial existiu, mas o probe causal não iniciou; gates físicos permanecem falsos",
+        "error": "Condição não satisfeita em 15000 ms."
+      }
+    }
+  },
+  "interpretation": {
+    "promoted": "Uma única máquina de estados local governa hold, retomada e confirmação; os traces do Chrome reproduzem exatamente seus efeitos e corridas assíncronas falham fechadas.",
+    "notPromoted": "M2.5 completo, especificidade acústica física global, loopback causal, política treinada ou generalização humana.",
+    "physicalFinding": "O probe causal físico não iniciou de forma válida; seus gates continuam em hold sem bloquear a promoção estreita do lifecycle."
+  },
+  "provenance": {
+    "candidateInput": {
+      "path": "eval/reports/exp-0012-browser-current.json",
+      "sha256": "ba9baefa05fe5c6349c52bb9bbfe1f8ac9f3ca8b639fb90c3309acc6df20cf11",
+      "runNonce": "exp-0012-candidate-current"
+    },
+    "campaignFingerprint": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "6840bfb03804af440670f4b9f02e80e9617d93d6ad23f64dc7000209e1bcb529",
+      "fileCount": 214,
+      "roots": [
+        "src",
+        "web",
+        "scripts",
+        "tests",
+        "eval/factory",
+        "eval/gates",
+        "eval/scenarios",
+        "package.json",
+        "package-lock.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "runtimeFingerprint": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "d89810ff24e8b296f98ffe2c4fad4d9d8923e3ff0e10d65e03d6ea26a909cb7e",
+      "fileCount": 79,
+      "roots": [
+        "src",
+        "web",
+        "package.json",
+        "package-lock.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "runtimeRunId": "d070f6af-925d-4b1c-9a60-852cbf5d1357",
+    "runtimeProvider": "local",
+    "paidApiRequests": 0
+  }
+}

@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+import { isDeepStrictEqual } from "node:util";
 
 import { decodeWaveToPcm16 } from "../src/asr/pcm.mjs";
 import { encodePcm16Wave } from "../src/audio/wav.mjs";
@@ -12,6 +13,11 @@ import {
 import {
   withinWindowCoverage
 } from "../src/eval/window-coverage.mjs";
+import {
+  OUTPUT_INTERRUPTION_LIFECYCLE_VERSION,
+  createOutputInterruptionState,
+  reduceOutputInterruption
+} from "../web/output-interruption-lifecycle.mjs";
 
 const TARGET_URL =
   process.env.DUPLEX_URL ?? "http://localhost:4173/?automation=1";
@@ -33,6 +39,13 @@ const FALSE_ACTIVATION_PROBE_MS = Math.max(
   5_000,
   Number.parseInt(
     process.env.FALSE_ACTIVATION_PROBE_MS ?? "30000",
+    10
+  )
+);
+const FALSE_ACTIVATION_PREFLIGHT_TIMEOUT_MS = Math.max(
+  5_000,
+  Number.parseInt(
+    process.env.FALSE_ACTIVATION_PREFLIGHT_TIMEOUT_MS ?? "60000",
     10
   )
 );
@@ -388,6 +401,125 @@ function assessStatefulCriticalConfirmation({ pending, accepted }) {
   );
 }
 
+function replayOutputInterruptionLifecycle(label, snapshot) {
+  const observed = snapshot.trace
+    .filter(
+      (event) => event.type === "output-interruption.transition"
+    )
+    .map((event) => {
+      try {
+        return { atMs: event.atMs, detail: JSON.parse(event.detail) };
+      } catch (error) {
+        return { atMs: event.atMs, parseError: error.message };
+      }
+    });
+  const errors = [];
+  const steps = [];
+  if (observed.length === 0) {
+    errors.push("nenhuma transição observada");
+    return {
+      label,
+      ok: false,
+      errors,
+      steps,
+      terminalPhase: null
+    };
+  }
+  if (observed[0].parseError) {
+    errors.push(`JSON inválido em ${observed[0].atMs} ms`);
+    return {
+      label,
+      ok: false,
+      errors,
+      steps,
+      terminalPhase: null
+    };
+  }
+
+  const first = observed[0].detail;
+  let state = {
+    ...createOutputInterruptionState(),
+    version: first.previousStateVersion
+  };
+  if (first.previousPhase !== "idle") {
+    errors.push(
+      `trace não autocontido: inicia em ${first.previousPhase}`
+    );
+  }
+
+  for (const item of observed) {
+    if (item.parseError) {
+      errors.push(`JSON inválido em ${item.atMs} ms`);
+      continue;
+    }
+    const detail = item.detail;
+    let replayed;
+    try {
+      replayed = reduceOutputInterruption(state, detail.event);
+    } catch (error) {
+      errors.push(
+        `${detail.eventType ?? "evento"}: ${error.message}`
+      );
+      continue;
+    }
+    const expectedProjection = {
+      lifecycleVersion: replayed.lifecycleVersion,
+      previousStateVersion: replayed.previousStateVersion,
+      stateVersion: replayed.state.version,
+      eventType: replayed.eventType,
+      previousPhase: state.phase,
+      phase: replayed.state.phase,
+      reason: replayed.reason,
+      turnId: replayed.state.turnId,
+      outputEpoch: replayed.state.outputEpoch,
+      pauseKind: replayed.state.pauseKind,
+      resumeAttempt: replayed.state.resumeAttempt,
+      intents: replayed.intents
+    };
+    const observedProjection = {
+      lifecycleVersion: detail.lifecycleVersion,
+      previousStateVersion: detail.previousStateVersion,
+      stateVersion: detail.stateVersion,
+      eventType: detail.eventType,
+      previousPhase: detail.previousPhase,
+      phase: detail.phase,
+      reason: detail.reason,
+      turnId: detail.turnId,
+      outputEpoch: detail.outputEpoch,
+      pauseKind: detail.pauseKind,
+      resumeAttempt: detail.resumeAttempt,
+      intents: detail.intents
+    };
+    const equivalent = isDeepStrictEqual(
+      observedProjection,
+      expectedProjection
+    );
+    if (!equivalent) {
+      errors.push(
+        `${detail.eventType}: efeito observado diverge do replay`
+      );
+    }
+    steps.push({
+      atMs: item.atMs,
+      eventType: detail.eventType,
+      previousPhase: detail.previousPhase,
+      phase: detail.phase,
+      stateVersion: detail.stateVersion,
+      intents: detail.intents.map((intent) => intent.type),
+      equivalent
+    });
+    state = replayed.state;
+  }
+
+  return {
+    label,
+    ok: errors.length === 0,
+    errors,
+    steps,
+    terminalPhase: state.phase
+  };
+}
+
 try {
   await Promise.all([
     send("Runtime.enable"),
@@ -416,7 +548,9 @@ try {
     automation: Boolean(window.__duplexLab),
     recognition: Boolean(window.SpeechRecognition || window.webkitSpeechRecognition),
     secureContext: window.isSecureContext,
-    localAudioReflex: window.__duplexLab.snapshot().audio.localAudioReflex
+    localAudioReflex: window.__duplexLab.snapshot().audio.localAudioReflex,
+    outputInterruptionLifecycle:
+      window.__duplexLab.snapshot().audio.outputInterruptionLifecycle
   })`);
 
   originalMicrophonePermission = await evaluate(
@@ -456,25 +590,43 @@ try {
   const falseActivationPlaybackRestarts = 0;
   if (microphoneProbe.state.inputMode === "local-pcm") {
     const preflightStartedAt = Date.now();
-    const quietSnapshot = await waitForStable(
-      () =>
-        evaluate(`(() => {
-          const snapshot = window.__duplexLab.snapshot();
-          const quiet = !snapshot.state.userSpeaking &&
-            !snapshot.state.potentialBargeIn &&
-            !snapshot.state.assistantPreparing &&
-            !snapshot.state.assistantSpeaking &&
-            !snapshot.state.responseActive &&
-            snapshot.state.audioQueueLength === 0;
-          return quiet ? snapshot : null;
-        })()`),
-      1_500,
-      60_000
-    );
+    let quietSnapshot = null;
+    try {
+      quietSnapshot = await waitForStable(
+        () =>
+          evaluate(`(() => {
+            const snapshot = window.__duplexLab.snapshot();
+            const quiet = !snapshot.state.userSpeaking &&
+              !snapshot.state.potentialBargeIn &&
+              !snapshot.state.assistantPreparing &&
+              !snapshot.state.assistantSpeaking &&
+              !snapshot.state.responseActive &&
+              snapshot.state.audioQueueLength === 0;
+            return quiet ? snapshot : null;
+          })()`),
+        1_500,
+        FALSE_ACTIVATION_PREFLIGHT_TIMEOUT_MS
+      );
+    } catch (error) {
+      if (!/Condição não permaneceu estável/u.test(error.message)) {
+        throw error;
+      }
+      falseActivationPreflight = {
+        status: "unresolved",
+        waitedMs: Date.now() - preflightStartedAt,
+        requiredStableQuietMs: 1_500,
+        error: error.message,
+        scope:
+          "probe causal não iniciado: fala ambiente ou estado ativo " +
+          "impediu silêncio estável; gates físicos permanecem falsos"
+      };
+    }
+    if (quietSnapshot) {
     const preflightTrace = quietSnapshot.trace.slice(
       microphoneProbe.trace.length
     );
     falseActivationPreflight = {
+      status: "resolved",
       waitedMs: Date.now() - preflightStartedAt,
       requiredStableQuietMs: 1_500,
       observedUserSpeechEvents: preflightTrace.filter(
@@ -487,6 +639,7 @@ try {
         "protege o início causal do probe contra fala ambiente já ativa; " +
         "não rotula o ambiente durante a janela medida"
     };
+    try {
     const falseActivationRequest = await evaluate(
       `(() => {
         const traceStartIndex = window.__duplexLab.snapshot().trace.length;
@@ -540,6 +693,20 @@ try {
     await new Promise((resolve) =>
       setTimeout(resolve, FALSE_ACTIVATION_PROBE_MS)
     );
+    } catch (error) {
+      if (!/Condição não satisfeita/u.test(error.message)) {
+        throw error;
+      }
+      falseActivationPreflight = {
+        ...falseActivationPreflight,
+        status: "probe-start-unresolved",
+        error: error.message,
+        scope:
+          "silêncio inicial existiu, mas o probe causal não iniciou; " +
+          "gates físicos permanecem falsos"
+      };
+    }
+    }
   }
   const microphoneDrain =
     microphoneProbe.state.inputMode === "local-pcm"
@@ -1418,8 +1585,69 @@ try {
     10_000
   );
 
+  const outputInterruptionSnapshots = [
+    ["pending-audio", preparingBargeInReleased],
+    ["deterministic-backchannel", potentialBargeInRecovery],
+    ["reopened-backchannel", reopenedBackchannel],
+    ["pcm-backchannel", realBackchannel],
+    ["pcm-barge-in", bargeIn],
+    ["long-correction", longCorrectionCompleted]
+  ];
+  const outputInterruptionReplays =
+    outputInterruptionSnapshots.map(([label, snapshot]) =>
+      replayOutputInterruptionLifecycle(label, snapshot)
+    );
+  const outputInterruptionSteps =
+    outputInterruptionReplays.flatMap((replay) => replay.steps);
+  const outputInterruptionCoverage = {
+    phases: [...new Set(
+      outputInterruptionSteps.flatMap(
+        (step) => [step.previousPhase, step.phase]
+      )
+    )].sort(),
+    intents: [...new Set(
+      outputInterruptionSteps.flatMap((step) => step.intents)
+    )].sort(),
+    transitions: [...new Set(
+      outputInterruptionSteps.map(
+        (step) => `${step.previousPhase}->${step.phase}`
+      )
+    )].sort()
+  };
+
   const gates = {
     automationAvailable: pageState.automation,
+    outputInterruptionLifecycleAdvertised:
+      pageState.outputInterruptionLifecycle?.lifecycleVersion ===
+        OUTPUT_INTERRUPTION_LIFECYCLE_VERSION,
+    outputInterruptionLifecycleReplay:
+      outputInterruptionReplays.every(
+        (replay) => replay.ok && replay.terminalPhase === "idle"
+      ),
+    outputInterruptionLifecycleCoverage:
+      ["idle", "held", "resuming", "confirmed"].every(
+        (phase) => outputInterruptionCoverage.phases.includes(phase)
+      ) &&
+      [
+        "PAUSE_OUTPUT",
+        "HOLD_OUTPUT",
+        "KEEP_OUTPUT_HELD",
+        "RESUME_OUTPUT",
+        "SETTLE_WITHOUT_RESUME",
+        "SETTLE_RESUMED",
+        "CONFIRM_INTERRUPTION",
+        "SETTLE_CLEARED"
+      ].every(
+        (intent) => outputInterruptionCoverage.intents.includes(intent)
+      ),
+    outputInterruptionLifecycleNoInvariantError:
+      outputInterruptionSnapshots.every(([, snapshot]) =>
+        !snapshot.trace.some(
+          (event) =>
+            event.type === "output-interruption.invariant.error" ||
+            event.type === "assistant.speech.resume.blocked"
+        )
+      ),
     physicalMicrophoneCapture:
       microphoneCapture.state.inputMode === "local-pcm" &&
       microphoneCapture.trace.some(
@@ -2078,6 +2306,14 @@ try {
       vadShadowRequired: REQUIRE_VAD_SHADOW
     },
     gates,
+    outputInterruptionLifecycle: {
+      version: OUTPUT_INTERRUPTION_LIFECYCLE_VERSION,
+      replays: outputInterruptionReplays,
+      coverage: outputInterruptionCoverage,
+      scope:
+        "replay exato das decisões locais de hold, retomada e confirmação; " +
+        "efeitos físicos continuam observados pelos gates do Chrome"
+    },
     microphoneCapture: {
       ...microphoneCapture,
       scope:

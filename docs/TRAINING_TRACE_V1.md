@@ -1,6 +1,12 @@
 # Contrato `training-trace-v1`
 
-Status: **decisão de desenho consolidada; ainda não implementado**
+Status: **decisão de desenho consolidada; implementação da primeira vertical é
+o próximo fechamento**
+
+O EXP-0012 criou o precursor operacional: eventos, versões, fases e intenções
+de hold/retomada/confirmação já permitem replay exato no Chrome. Eles ainda não
+formam este bundle: faltam identidades `eventId/decisionId/effectId`, clocks,
+contextos causais, estágios de efeito e projeção validada para o trace v0.
 
 ## Objetivo
 

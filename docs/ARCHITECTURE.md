@@ -8,8 +8,10 @@ dois `performance.now()` de processos diferentes nunca são tratados como o
 mesmo relógio sem uma transformação registrada.
 
 ```text
-microfone ─► AEC/NS/VAD ─► LocalAudioReflex ─────► player PAUSE/STOP
-                 │                 │
+microfone ─► AEC/NS/VAD ─► LocalAudioReflex ─► OutputInterruptionLifecycle
+                 │                 │                         │
+                 │                 │                         ▼
+                 │                 │                 player PAUSE/STOP
                  └──── eventos normalizados ───────┐
                                                     ▼
                                      ┌─────────────────────────┐
@@ -32,18 +34,20 @@ microfone ─► AEC/NS/VAD ─► LocalAudioReflex ─────► player PA
                 (substituível)        (cancelável)         (TTS ou tokens)
 ```
 
-O reflexo local pode armar, pausar ou preservar áudio antes da classificação
-final. Na v0.1 promovida, duas janelas Silero ou uma parcial útil confirmam a
-pausa; uma hipótese não confirmada continua a saída e bloqueia somente a final
-tardia daquele turno. A reconciliação completa deve migrar para o lifecycle do
-kernel/runtime sem mover o comando físico rápido para o backend.
+O reflexo local arma ou confirma evidência antes da classificação final. Na
+v0.1 promovida, duas janelas Silero ou uma parcial útil autorizam a pausa; uma
+hipótese não confirmada continua a saída e bloqueia somente a final tardia
+daquele turno. A partir daí, `OutputInterruptionLifecycle` v0.1 governa
+`idle/held/resuming/confirmed`, enquanto o executor mantém o comando físico
+rápido junto ao Web Audio.
 
 A separação está parcialmente materializada. Correção e confirmação monetária
 passam pelo `InteractionKernel` v0.1 e por uma autoridade stateful no backend;
-o navegador somente projeta a transição versionada. O `LocalAudioReflex` v0.1
-já é um reducer isolado no caminho físico, mas WAIT/STOP/retomada ainda não são
-um único lifecycle compartilhado. Política temporal do evaluator e controle
-acústico migram incrementalmente, sem reescrita big-bang.
+o navegador somente projeta a transição versionada. `LocalAudioReflex` v0.1 e
+`OutputInterruptionLifecycle` v0.1 já são reducers isolados no caminho físico;
+o segundo tem replay exato no evaluator para hold/retomada/confirmação. A
+política temporal ampla, clocks, filas e efeitos externos ainda migram
+incrementalmente, sem reescrita big-bang.
 
 ## Portas estáveis
 
@@ -84,6 +88,8 @@ A separação obrigatória é:
   autoridade, despacha efeitos e observa o que ocorreu;
 - `LocalAudioReflex`: interlock mínimo junto ao Web Audio para pausa/STOP
   imediato; não confirma sozinho intenção, commit ou efeito externo.
+- `OutputInterruptionLifecycle`: autoridade local pura para segurar, retomar,
+  confirmar ou liberar a saída; recursos DOM e promessas ficam no executor.
 
 Cada sessão real possui **uma única instância autoritativa do kernel**.
 Evaluator e adaptadores reutilizam o mesmo código/contrato, mas navegador e
@@ -222,6 +228,8 @@ Implementado:
   navegador para a fatia de correções/confirmação;
 - `LocalAudioReflex` v0.1 puro no navegador, com modo evidence-gated padrão,
   controle imediato comparável, trace de evidência e tombstone de final tardia;
+- `OutputInterruptionLifecycle` v0.1 puro, com epochs/tentativas de retomada,
+  execução no Chrome e replay exato das quatro fases no smoke;
 - identidade SHA-256 e ranges de amostras do PCM final/prefinal; a política
   acústica eager permanece disponível somente como flag experimental rejeitada;
 - TTS provisório do Windows entregue como WAV por worker aquecido;
@@ -250,7 +258,8 @@ Ainda não implementado:
 
 - kernel comum para política temporal, evaluator, backend e áudio — somente a
   fatia semântica crítica está migrada;
-- reconciliação de `LocalAudioReflex`/WAIT/STOP/retomada sob o lifecycle comum;
+- reconciliação da decisão temporal ampla e de efeitos observados com os
+  reducers já comuns de reflexo e interrupção local;
 - clocks, filas, epochs, tarefas e efeitos sob o `InteractionRuntime` comum;
 - `training-trace-v1` materializado pelo caminho real;
 - ledger verificável de efeitos externos e holdout independente novo;

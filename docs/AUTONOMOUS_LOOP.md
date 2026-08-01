@@ -80,10 +80,12 @@ A [ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada)
 registra que o EXP-0011 já atacou esse efeito: no A/B causal, o controle
 imediato pausou/criou turno e o `LocalAudioReflex` evidence-gated preservou a
 fala e descartou a final tardia; o STOP legítimo ficou em 157,39 ms e 30,147 s
-físicos passaram sem ativação. O próximo loop reconcilia
-`WAIT_FOR_EVIDENCE`/STOP/retomada com o runtime comum e melhora a validade causal
-do probe físico. O roadmap, e não este documento de método, define os
-fechamentos posteriores.
+físicos passaram sem ativação. O EXP-0012 reconciliou hold/STOP/retomada local:
+seis fluxos do Chrome tiveram replay exato, STOP em 48 ms no renderer e seis
+corridas assíncronas falharam fechadas. Seu probe causal físico não iniciou e
+permaneceu em `hold`, sem apagar a rodada histórica. O próximo loop materializa
+`training-trace-v1` e um ledger estreito sobre esses caminhos; o roadmap, e não
+este documento de método, define os fechamentos posteriores.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O

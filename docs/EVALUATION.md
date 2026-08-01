@@ -182,8 +182,11 @@ usuário, vazamento do sistema ou combinação; ela não deve ser reportada como
 autoeco. O harness aguarda 1,5 s estável antes da janela causal e classifica o
 resultado em `quiet-no-activation`, `unlabelled-activation-suppressed`,
 `unlabelled-activation-resolved`, `unlabelled-concurrent-speech` ou
-`unresolved`. Só a primeira sustenta especificidade naquela janela; nenhuma
-delas, sozinha, prova causalidade de eco.
+`unresolved`. O pré-ensaio e o início do probe também podem ficar explicitamente
+`unresolved`/`probe-start-unresolved`; nesse caso os cenários não físicos
+continuam, mas os gates físicos permanecem falsos. Só `quiet-no-activation`
+sustenta especificidade naquela janela; nenhuma classificação, sozinha, prova
+causalidade de eco.
 
 ## Estatística de promoção
 
@@ -234,6 +237,9 @@ Há placares deliberadamente separados:
 - **gate de equivalência de política:** o mesmo estado/evento produz a mesma
   intenção no evaluator, backend e navegador; efeitos físicos permanecem
   observáveis no runtime;
+- **gate de lifecycle local:** cada transição de hold/retomada/confirmação do
+  Chrome precisa ser reproduzida exatamente pelo reducer, cobrir as fases
+  esperadas e não conter decisão vazia ou resultado tardio autoritativo;
 - **gate de shadow:** proposta do candidato nunca vira autoridade por acidente
   e pode ser comparada/reproduzida sob o mesmo trace;
 - **gate humano:** naturalidade, conforto, confiança e preferência — ainda
@@ -290,6 +296,7 @@ canônico é `eval/reports/eval-factory-campaign-v0.2.json`.
 | EXP-0009 | transcript errado injetado 5× no Chrome; 5/5 abstentions, p95 122 ms, estado nulo | `promote-safety-guard` |
 | EXP-0010 | 5/5 ciclos stateful no Chrome; p95 94,9/399,9 ms; zero commit antes da repetição e um depois | `promote-stateful-kernel-slice`; runtime global em `hold-acoustic-stability` |
 | EXP-0011 | A/B causal de fonte idêntica; pico marginal preservado, final tardia bloqueada; barge-in 157,39 ms; probe físico 30,147 s limpo | `promote-local-audio-reflex-slice`; M2.5 e causalidade de eco não promovidos |
+| EXP-0012 | seis fluxos Chrome com replay exato; quatro fases/oito intenções; STOP 48 ms; onset PCM→renderer 183,66 ms; seis corridas protegidas | `promote-output-interruption-lifecycle-slice`; probe físico não iniciado e M2.5 amplo em `hold` |
 
 A configuração resultante está congelada em
 [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
@@ -299,8 +306,10 @@ A fábrica acústica ainda usa uma única voz sintética e ruído branco. O EXP-
 também exercitou microfone/AEC/VAD físicos em sessões longas suplementares: só
 1/4 passou sem atividade Silero, mas aquelas janelas não tinham rótulo causal e
 uma usava marcador antigo. O EXP-0011 corrigiu o marcador, isolou o efeito em
-A/B determinístico e passou a preservar interferência prévia fora do probe. O
-eixo ainda não mede loopback calibrado, eco/reverberação controlados,
+A/B determinístico e passou a preservar interferência prévia fora do probe. No
+EXP-0012, a janela causal nem iniciou e seus gates ficaram falsos, sem apagar a
+evidência anterior ou impedir o replay não físico. O eixo ainda não mede
+loopback calibrado, eco/reverberação controlados,
 double-talk sistemático, cauda física da sala ou preferência humana.
 
 O ciclo completo e seus limites estão em

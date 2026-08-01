@@ -30,6 +30,9 @@ A primeira vertical local já é funcional de ponta a ponta:
 - `LocalAudioReflex` evidence-gated aguarda duas janelas Silero durante saída
   já audível, evita pausa por pico isolado e bloqueia a final tardia daquele
   turno quando a acústica e as parciais não o confirmam;
+- `OutputInterruptionLifecycle` v0.1 governa hold, retomada e confirmação da
+  saída como reducer puro; o Chrome registra e reproduz exatamente cada
+  transição, inclusive resultados tardios de `play()`;
 - fala do usuário mantém a captura contínua, mas cancela resposta, tarefa,
   síntese/player e áudio já enfileirado até o último quantum do renderer;
 - campanhas reproduzíveis cobrem fala sintética, CORAA, silêncio, correção,
@@ -77,8 +80,9 @@ ainda parcialmente rotulada, diversidade acústica limitada a uma voz e ausênci
 de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
 
-Após o EXP-0011, a suíte corrente possui **283/283 testes** e também cobre o
-reducer do reflexo, finais tardias, o comparador A/B e seus casos adversariais.
+Após o EXP-0012, a suíte corrente possui **299/299 testes** e também cobre os
+reducers do reflexo e do lifecycle, finais tardias, corridas de retomada,
+comparadores e casos adversariais.
 Os 223/223 acima pertencem à execução congelada da campanha v0.2 e não são
 reescritos retrospectivamente.
 
@@ -101,6 +105,20 @@ turno surgiu. A interrupção PCM legítima permaneceu em **157,39 ms** até o
 último quantum, abaixo do teto de 350 ms, e o candidato passou 30,147 s físicos
 sem ativação. A decisão é `promote-local-audio-reflex-slice`; causalidade de eco,
 cauda da sala e M2.5 completo continuam fora da alegação.
+
+O EXP-0012 removeu a autoridade implícita restante de pausa/retomada do
+navegador. Seis fluxos do Chrome foram reproduzidos exatamente pelo mesmo
+reducer, cobrindo `idle/held/resuming/confirmed`; o barge-in terminou no
+renderer em **183,66 ms**, a retomada PCM ocorreu **312,6 ms** após o fim da
+fala e seis corridas assíncronas falharam fechadas. A decisão é
+`promote-output-interruption-lifecycle-slice`. O probe físico causal não chegou
+a iniciar nesta rodada, portanto seus dois gates permanecem falsos e a
+especificidade física global continua em `hold`.
+
+Com o servidor local e o Chrome de depuração abertos, a evidência é reproduzida
+por `npm run eval:exp:0012:browser` e consolidada por
+`npm run eval:exp:0012:report`. O primeiro comando continua após um probe
+físico não resolvido, mas mantém esses gates falsos no relatório.
 
 ## Rodar
 
@@ -219,9 +237,10 @@ e efeitos externos só poderão promover quando houver ledger verificável.
 
 O fechamento M2.5 está em migração incremental. Correção e confirmação crítica
 já usam decisão pura (`InteractionKernel`) e autoridade stateful no backend;
-o STOP físico imediato já usa o `LocalAudioReflex` promovido. Lifecycle/clocks,
-reconciliação completa com o kernel, evaluator comum e efeitos ainda precisam
-entrar no mesmo contrato.
+o STOP físico imediato usa o `LocalAudioReflex`, e hold/retomada/confirmação da
+saída já passam pelo `OutputInterruptionLifecycle` com replay exato. Clocks,
+filas, efeitos externos e a reconciliação ampla com o kernel/evaluator ainda
+precisam entrar no mesmo contrato.
 
 ## Documentos de decisão
 
@@ -249,6 +268,7 @@ entrar no mesmo contrato.
 - [EXP-0009 — interlock de confirmação monetária](docs/experiments/EXP-0009-critical-amount-confirmation-interlock.md)
 - [EXP-0010 — primeira fatia stateful do InteractionKernel](docs/experiments/EXP-0010-stateful-interaction-kernel.md)
 - [EXP-0011 — reflexo local com evidência acústica](docs/experiments/EXP-0011-local-audio-reflex.md)
+- [EXP-0012 — lifecycle local de interrupção da saída](docs/experiments/EXP-0012-output-interruption-lifecycle.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -259,9 +279,10 @@ prefinal acústica, o EXP-0008 encontrou um verificador semanticamente útil mas
 lento, e o EXP-0009 bloqueou a confirmação monetária insegura sem LLM. A ordem
 executável existe somente no
 [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada): a baseline
-v0.3 está congelada, as fatias stateful e de reflexo local do M2.5 foram
-promovidas, e o próximo fechamento reconcilia WAIT/STOP/retomada e clocks no
-runtime comum sem mover o comando físico rápido para o backend.
+v0.3 está congelada, as fatias stateful, de reflexo e de lifecycle local foram
+promovidas, e o próximo fechamento materializa `training-trace-v1` e um ledger
+estreito de efeitos observados. Clocks e filas migram conforme essa vertical
+exigir, sem mover o comando físico rápido para o backend.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

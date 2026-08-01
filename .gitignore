@@ -16,5 +16,6 @@ eval/reports/*
 !eval/reports/exp-0009-critical-amount-guard-v1.json
 !eval/reports/exp-0010-stateful-kernel-v1.json
 !eval/reports/exp-0011-local-audio-reflex-v1.json
+!eval/reports/exp-0012-output-interruption-lifecycle-v1.json
 coverage/
 tmp/
