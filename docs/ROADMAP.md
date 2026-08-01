@@ -278,7 +278,14 @@ guardrails e em casos não vistos. A primeira capacidade é estreita; a ontologi
 `WAIT/BACKCHANNEL/SPEAK/STOP/DELEGATE/CANCEL/ROLLBACK` continua sendo o
 contrato de longo prazo, não a saída obrigatória do primeiro checkpoint.
 
+O EXP-0015 promoveu o instrumento que alimenta o item 3, mas não rótulos para
+fit. O agregado humano poderá congelar a direção do novo experimento; o dataset
+M4b deverá ser outro artefato, com famílias ainda não observadas e fontes
+explicitamente `fit-eligible`.
+
 ## Fase 5 — calibração humana
+
+Status: **instrumento piloto promovido no EXP-0015; coleta humana pendente**.
 
 Há duas atividades diferentes:
 
@@ -296,6 +303,11 @@ novas famílias que voltam para a automação.
 
 Gate: preferência e guardrails humanos com desenho estatístico versionado;
 nenhum turno da mesma pessoa contado como participante independente.
+
+O piloto de timing usa 12 cenas, comparação cega A/B/C, dúvida explícita e
+participante como unidade. O instrumento passou 13 gates técnicos no Chrome do
+Windows, mas o agregado corrente tem 0/3 participantes. Isso promove capacidade
+de coleta, não o gate humano nem uma avaliação de produto.
 
 ## Fase 6 — adaptação nativa de áudio
 
@@ -346,8 +358,9 @@ card de dados e splits por família, gerador e pessoa.
 | 9 | EXP-0013: trace causal + ledger local — **`promote-training-trace-interruption-slice`** | seis bundles; 28 decisões reproduzidas; 22 efeitos encerrados; projeção v0 perceptiva | fatia sem áudio persistido, clocks entre processos ou generalização |
 | 10 | EXP-0014: vínculo acústico mínimo — **concluído** | 60 streams PCM hasheados, posições de amostra, features causais e split por família | WAV/PCM pesado local; clocks entre processos não promovidos |
 | 11 | EXP-0014: M4a shadow acústico — **`promote-m4a-acoustic-shadow-infrastructure`** | treino reproduzível, checkpoint, 11 decisões Chrome, replay exato, três classes e zero efeitos | imita a regra; sem ganho, generalização ou autoridade |
-| 12 | Calibração humana pequena — **próximo** | corrigir timing/rótulos e congelar um conjunto novo antes de M4b | não é alegação de preferência de produto |
-| 13 | M4b e próximo PDCA | ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
+| 12a | EXP-0015: instrumento cego — **`promote-timing-calibration-instrument`** | 12 cenas, 36 WAVs, 13 gates técnicos, Chrome real e zero opinião artificial | CORAA `evaluation-only`; sintético `development-synthetic`; zero fit direto |
+| 12b | Calibração humana piloto — **próximo, `await-human-calibration`** | ≥3 participantes únicos, atenção ≥80%, consenso e cobertura suficientes | piloto de rótulos/timing; não é preferência de produto |
+| 13 | M4b e próximo PDCA | novo conjunto `fit-eligible`, ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
 
 Depois da baseline congelada e da fatia causal do trace, um desafio nativo pode
 rodar em paralelo para validar

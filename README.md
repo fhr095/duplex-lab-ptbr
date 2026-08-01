@@ -83,12 +83,11 @@ ainda parcialmente rotulada, diversidade acústica limitada a uma voz e ausênci
 de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
 
-Após o EXP-0014, a suíte corrente possui **324/324 testes** e também cobre os
-reducers do reflexo e do lifecycle, finais tardias, corridas de retomada,
-schema causal, ledger, replay, projeção v0, dataset por famílias, treino
-reproduzível, checkpoint e inferência acústica em shadow.
-Os 223/223 acima pertencem à execução congelada da campanha v0.2 e não são
-reescritos retrospectivamente.
+O EXP-0014 foi promovido com 324/324 testes. Após o instrumento EXP-0015, a
+suíte corrente possui **336/336 testes** e também cobre sessão cega,
+contrafactuais estéreo, integridade das anotações, fronteira de fit e separação
+entre promoção técnica e calibração humana. Os 223/223 acima pertencem à
+execução congelada da campanha v0.2 e não são reescritos retrospectivamente.
 
 ## Fatias promovidas do runtime comum
 
@@ -139,6 +138,17 @@ no dispositivo corrente sem falsa ativação. A decisão é
 `promote-m4a-acoustic-shadow-infrastructure`: 100% no holdout significa
 imitação consistente da regra, não ganho humano ou generalização.
 
+O EXP-0015 fechou o instrumento que antecede M4b, não a calibração humana.
+Doze cenas geraram **36 contrafactuais estéreo**; sete usam trechos públicos
+CORAA apenas como âncoras de avaliação, três usam fala sintética local e duas
+são controles. A ordem de cenas e alternativas é cega por participante, todas
+as três opções precisam terminar antes da escolha e dúvida pode ser registrada.
+No Chrome real do Windows, 3/3 WAVs da cena de smoke foram reproduzidos e os
+gates da interface passaram sem console error ou anotação artificial. A decisão
+é `promote-timing-calibration-instrument`; a campanha humana permanece
+`await-human-calibration` em **0/3 participantes**, e o pack atual contém zero
+rótulos autorizados para fit direto.
+
 Com o servidor local e o Chrome de depuração abertos, a evidência é reproduzida
 por `npm run eval:exp:0013:browser` e consolidada por
 `npm run eval:exp:0013:report`. O primeiro comando preserva separadamente os
@@ -150,6 +160,20 @@ O ciclo M4a é reproduzido por `npm run eval:exp:0014:data`,
 `npm run eval:exp:0014:report`. Os WAV/PCM pesados e relatórios intermediários
 ficam fora do Git; receitas, features, hashes, checkpoint e relatório canônico
 são versionados.
+
+O instrumento de calibração é reconstruído e verificado por:
+
+```bash
+npm run eval:exp:0015:build
+npm run eval:exp:0015:check
+npm run eval:exp:0015:serve
+```
+
+Ele abre em `http://localhost:4174` e imprime também o IP direto do WSL para o
+Chrome do Windows. Com o Chrome de depuração disponível, rode
+`npm run eval:exp:0015:browser`; consolide o estado, inclusive quando ainda não
+há participantes, com `npm run eval:exp:0015:report`. O smoke técnico nunca
+envia uma opinião, para não contaminar a unidade humana de análise.
 
 ## Rodar
 
@@ -303,6 +327,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0012 — lifecycle local de interrupção da saída](docs/experiments/EXP-0012-output-interruption-lifecycle.md)
 - [EXP-0013 — trace causal e ledger da interrupção](docs/experiments/EXP-0013-training-trace-interruption.md)
 - [EXP-0014 — reflexo acústico treinável em shadow](docs/experiments/EXP-0014-acoustic-reflex-m4a.md)
+- [EXP-0015 — instrumento cego de calibração de timing](docs/experiments/EXP-0015-timing-calibration-instrument.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -314,9 +339,12 @@ lento, e o EXP-0009 bloqueou a confirmação monetária insegura sem LLM. A orde
 executável existe somente no
 [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada): a baseline
 v0.3 está congelada e as fatias stateful, de reflexo, lifecycle, trace causal e
-M4a acústico em shadow foram promovidas. O próximo fechamento é calibrar uma
-amostra humana pequena de timing/rótulos e construir o comparador M4b que terá
-de superar a regra em famílias realmente não vistas. Até lá, o checkpoint não
+M4a acústico em shadow foram promovidas. O instrumento EXP-0015 também está
+promovido e pronto; o próximo gate externo é obter ao menos três participantes
+únicos com atenção e consenso suficientes. Essa calibração orientará a criação
+de um conjunto novo e legalmente elegível para M4b — os áudios CORAA e
+sintéticos atuais não entram diretamente em fit. O comparador M4b terá de
+superar a regra em famílias realmente não vistas. Até lá, o checkpoint não
 recebe autoridade e o comando físico rápido permanece determinístico no
 navegador.
 

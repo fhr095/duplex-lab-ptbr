@@ -139,6 +139,21 @@ que o encanamento e o split não vazam entre famílias. O próximo valor de
 informação está numa calibração humana pequena de timing/rótulos e num holdout
 novo para M4b; a política determinística continua autoritativa.
 
+## Atualização após o EXP-0015
+
+O instrumento da calibração foi concluído sem confundir automação com opinião
+humana. O pack contém 12 cenas e 36 trajetórias estéreo cegas; o Chrome do
+Windows confirmou que as três alternativas precisam terminar antes da escolha.
+IDs semânticos e ações não chegam à interface, o token local é hasheado antes
+da persistência e o smoke não envia anotação.
+
+Treze gates técnicos sustentam `promote-timing-calibration-instrument`. O
+agregado corrente registra `await-human-calibration`, com 0/3 participantes,
+zero cena rotulada e zero item `fit-eligible`. CORAA permanece apenas avaliação
+e o sintético apenas desenvolvimento. Mesmo após o piloto, M4b exigirá um novo
+artefato treinável e holdout ainda não observado; a política determinística
+continua autoritativa.
+
 ## Pontos incorporados
 
 - congelar a cascata como referência, não como código intocável;
@@ -207,8 +222,8 @@ Não são bloqueadores do fechamento M2.5:
   precisa preservar uma única autoridade por sessão;
 - primeira família comparável de M4b e desenho do holdout pós-calibração;
 - candidato nativo e provedor de GPU, somente após pergunta/orçamento;
-- tamanho e protocolo da calibração humana, a congelar a partir dos primeiros
-  traces M4a;
+- expansão da amostra após o piloto EXP-0015; o protocolo mínimo de 3
+  participantes, atenção, consenso e cobertura já está congelado;
 - licença do código, escolhida pelo proprietário em trilha de governança.
 
 ## Gatilhos para rever esta decisão

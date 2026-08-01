@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Comparação cega local de ritmos de interação por voz."
+    />
+    <title>Calibração de ritmo · Duplex Lab PT-BR</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">EXP-0015 · COMPARAÇÃO CEGA</p>
+          <h1>Qual conversa <span>soa melhor?</span></h1>
+          <p class="lede">
+            Ouça três versões da mesma situação e escolha a que parece mais
+            natural. Não existem respostas certas nas cenas comuns.
+          </p>
+        </div>
+        <div class="privacy-card">
+          <span aria-hidden="true">◌</span>
+          <div>
+            <small>COLETA LOCAL</small>
+            <strong>sem nome, voz ou texto pessoal</strong>
+          </div>
+        </div>
+      </header>
+
+      <section class="intro-card" id="introPanel">
+        <div>
+          <p class="eyebrow">ANTES DE COMEÇAR</p>
+          <h2>Use fones e reserve cerca de 10 minutos.</h2>
+          <p>
+            Cada áudio separa as vozes em estéreo: assistente à esquerda e
+            pessoa à direita. Você precisará ouvir A, B e C por inteiro antes
+            de escolher. Se não houver diferença clara, marque dúvida.
+          </p>
+        </div>
+        <ul class="protocol-list">
+          <li>12 situações em ordem aleatória</li>
+          <li>alternativas embaralhadas para cada pessoa</li>
+          <li>nenhuma alternativa identifica a decisão do sistema</li>
+        </ul>
+        <button class="primary" id="startButton" type="button">
+          Começar comparação
+        </button>
+      </section>
+
+      <section class="campaign" id="campaignPanel" hidden>
+        <div class="progress-heading">
+          <div>
+            <p class="eyebrow" id="progressLabel">SITUAÇÃO 1 DE 12</p>
+            <h2>Ouça as três alternativas.</h2>
+          </div>
+          <span class="progress-count" id="completionLabel">0 concluídas</span>
+        </div>
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-label="Progresso da campanha"
+          aria-valuemin="0"
+          aria-valuemax="12"
+          aria-valuenow="0"
+          id="progressTrack"
+        >
+          <span id="progressFill"></span>
+        </div>
+
+        <article class="scene-card" id="sceneCard">
+          <div class="option-grid" id="optionGrid"></div>
+
+          <fieldset class="choice-panel" id="choicePanel" disabled>
+            <legend>Qual versão teve o ritmo mais natural?</legend>
+            <div class="choice-grid" id="choiceGrid"></div>
+            <label class="uncertain-choice">
+              <input type="radio" name="preference" value="uncertain" />
+              <span>Não consigo distinguir / depende do contexto</span>
+            </label>
+          </fieldset>
+
+          <fieldset class="confidence-panel" id="confidencePanel" disabled>
+            <legend>Quão confiante você está?</legend>
+            <div class="confidence-scale" id="confidenceScale">
+              <span>pouco</span>
+              <label><input type="radio" name="confidence" value="1" />1</label>
+              <label><input type="radio" name="confidence" value="2" />2</label>
+              <label><input type="radio" name="confidence" value="3" />3</label>
+              <label><input type="radio" name="confidence" value="4" />4</label>
+              <label><input type="radio" name="confidence" value="5" />5</label>
+              <span>muito</span>
+            </div>
+          </fieldset>
+
+          <fieldset class="reason-panel" id="reasonPanel" disabled>
+            <legend>O que mais pesou? <small>(opcional)</small></legend>
+            <div class="reason-grid" id="reasonGrid"></div>
+          </fieldset>
+
+          <div class="scene-footer">
+            <p class="hint" id="sceneHint" aria-live="polite">
+              Ouça A, B e C por inteiro para liberar a escolha.
+            </p>
+            <button class="primary" id="nextButton" type="button" disabled>
+              Próxima situação
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <section class="result-card" id="resultPanel" hidden>
+        <p class="eyebrow">CONCLUÍDO</p>
+        <h2>Obrigado. Sua avaliação foi registrada.</h2>
+        <p>
+          O resultado será agregado por participante. Uma opinião isolada não
+          altera o comportamento do sistema nem vira dado de treino.
+        </p>
+        <dl id="resultDetails"></dl>
+      </section>
+
+      <section class="error-card" id="errorPanel" hidden role="alert">
+        <p class="eyebrow">NÃO FOI POSSÍVEL CONTINUAR</p>
+        <h2>O ensaio permaneceu intacto.</h2>
+        <p id="errorMessage"></p>
+        <button class="secondary" id="retryButton" type="button">
+          Tentar novamente
+        </button>
+      </section>
+    </main>
+
+    <script type="module" src="/app.mjs"></script>
+  </body>
+</html>

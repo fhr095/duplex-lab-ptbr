@@ -19,5 +19,6 @@ eval/reports/*
 !eval/reports/exp-0012-output-interruption-lifecycle-v1.json
 !eval/reports/exp-0013-training-trace-interruption-v1.json
 !eval/reports/exp-0014-acoustic-reflex-m4a-v1.json
+!eval/reports/exp-0015-timing-calibration-instrument-v1.json
 coverage/
 tmp/

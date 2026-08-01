@@ -1,0 +1,263 @@
+{
+  "schemaVersion": "exp-0015-timing-calibration-instrument-report-v1",
+  "experimentId": "exp-0015-timing-calibration-v0.1",
+  "question": "O instrumento local cego está íntegro e pronto para coletar uma calibração humana pequena sem conceder autoridade ou contaminar treino?",
+  "instrumentPass": true,
+  "humanCalibrationPass": false,
+  "campaignComplete": false,
+  "gates": {
+    "packIntegrity": true,
+    "audioInventory": true,
+    "sourceBoundary": true,
+    "retentionBoundary": true,
+    "browserPackBinding": true,
+    "blindInterface": true,
+    "playbackGate": true,
+    "realBrowserClean": true,
+    "noSyntheticHumanRecord": true,
+    "aggregateBinding": true,
+    "annotationIntegrity": true,
+    "noModelAuthority": true,
+    "zeroPaidApi": true
+  },
+  "decisions": {
+    "instrument": "promote-timing-calibration-instrument",
+    "humanCalibration": "await-human-calibration",
+    "directModelFit": "forbidden-from-current-pack",
+    "modelAuthority": "hold-deterministic-control"
+  },
+  "metrics": {
+    "scenes": 12,
+    "audioArtifacts": 36,
+    "humanEvaluationAnchors": 7,
+    "syntheticSpeechScenes": 3,
+    "controls": 2,
+    "attentionControls": 3,
+    "decisionEvidenceAlignedScenes": 10,
+    "decisionEvidenceRequiredScenes": 10,
+    "participants": 0,
+    "validHumanRecords": 0,
+    "labelledScenes": 0,
+    "labelCoverage": 0,
+    "fitEligibleLabels": 0,
+    "paidApiCalls": 0
+  },
+  "aggregate": {
+    "schemaVersion": "timing-calibration-aggregate-v1",
+    "packId": "exp-0015-timing-calibration-v0.1",
+    "packSha256": "sha256:6597535dffe70ee7524a41416f416d20b5d3adbe6d7631c30b59933de0aac872",
+    "calibrationReady": false,
+    "readyToFreezeM4bExperiment": false,
+    "readyForDirectModelFit": false,
+    "authority": "none-shadow-only",
+    "gates": {
+      "packValid": true,
+      "recordsValid": true,
+      "minimumParticipants": false,
+      "uniqueParticipants": true,
+      "attention": false,
+      "labelCoverage": false
+    },
+    "metrics": {
+      "records": 0,
+      "validRecords": 0,
+      "invalidRecords": 0,
+      "participants": 0,
+      "duplicateParticipants": [],
+      "attentionPassRate": 0,
+      "labelledScenes": 0,
+      "eligibleScenes": 9,
+      "labelCoverage": 0,
+      "fitEligibleLabels": 0
+    },
+    "invalidRecords": [],
+    "labels": [],
+    "scenes": [
+      {
+        "sceneId": "negation-short-early",
+        "family": "negation-short",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "validVotes": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "hesitation-early",
+        "family": "hesitation",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "validVotes": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "filled-pause-mid",
+        "family": "filled-pause",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "validVotes": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "noisy-speech-mid",
+        "family": "noisy-speech",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "validVotes": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "second-voice-mid",
+        "family": "second-voice",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "validVotes": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "spontaneous-clean-late",
+        "family": "spontaneous-clean",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "validVotes": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "short-backchannel-sim",
+        "family": "synthetic-backchannel",
+        "fitEligibility": "development-synthetic",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "validVotes": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "short-backchannel-aham",
+        "family": "synthetic-backchannel",
+        "fitEligibility": "development-synthetic",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "validVotes": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "prepared-speech-late",
+        "family": "prepared-speech",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "validVotes": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      }
+    ]
+  },
+  "evidence": {
+    "browser": {
+      "product": "Chrome/150.0.7871.187",
+      "realWindowsChrome": true,
+      "completedAudioOptions": 3,
+      "annotationSubmitted": false
+    },
+    "fingerprints": {
+      "source": {
+        "algorithm": "sha256-source-tree-v1",
+        "sha256": "fd1c8a857fae0d3918605df5f269c9ce5b9bfd5ddad562516d04bed655ef74fd",
+        "fileCount": 246,
+        "roots": [
+          "src",
+          "web",
+          "scripts",
+          "tests",
+          "eval/factory",
+          "eval/gates",
+          "eval/scenarios",
+          "package.json",
+          "package-lock.json",
+          "requirements-asr.txt"
+        ]
+      },
+      "pack": {
+        "path": "eval/calibration/exp-0015-timing-pack-v0.1.json",
+        "sha256": "sha256:5e34c0b0194928dd6ac5612d32af8ebc5bd02e22d9adb5016a03e700f5b3f900"
+      },
+      "browser": {
+        "path": "eval/reports/exp-0015-calibration-browser-current.json",
+        "sha256": "sha256:3dc0d22ab493cb7355c0bf52ef197931d3ac8d9bed554993298f21b2bd45dfd1"
+      },
+      "annotations": {
+        "root": "eval/generated/exp-0015/annotations",
+        "count": 0,
+        "records": []
+      }
+    }
+  },
+  "claims": {
+    "promoted": [
+      "pack local reproduzível",
+      "interface cega executável no Chrome do Windows",
+      "coleta pseudônima com validação fail-closed"
+    ],
+    "held": [
+      "preferência ou naturalidade humana",
+      "generalização para conversas reais",
+      "uso direto dos áudios/rótulos atuais em ajuste de pesos",
+      "autoridade do candidato sobre o runtime"
+    ]
+  },
+  "limitations": [
+    "instrumento de calibração pequena, não avaliação humana de produto",
+    "cenas CORAA são âncoras evaluation-only por licença CC BY-NC-ND 4.0",
+    "TTS sintético atual usa uma única voz PT-BR",
+    "preferência humana futura não concede autoridade ao modelo"
+  ]
+}

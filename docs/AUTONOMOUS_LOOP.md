@@ -96,10 +96,25 @@ não este documento de método, define os fechamentos posteriores.
 
 Esse loop foi concluído no EXP-0014: 330 exemplos de 60 streams, treino local
 reproduzível, checkpoint em shadow e 11 decisões online com replay exato. O
-próximo loop autônomo pode ampliar famílias adversariais e preparar o protocolo
-M4b, mas não deve fabricar o oráculo social: uma calibração humana pequena de
-timing/rótulos é o próximo ponto deliberado de contato humano. Ela não equivale
-a uma avaliação ampla de produto.
+EXP-0015 executou o máximo autônomo imediatamente seguinte: construiu 12 cenas,
+36 trajetórias estéreo, sessão cega, persistência pseudônima, agregação
+fail-closed e smoke no Chrome real. O instrumento foi promovido sem gravar uma
+opinião sintética. A calibração humana pequena de timing/rótulos é agora o ponto
+deliberado de contato humano; ela não equivale a uma avaliação ampla de
+produto.
+
+O ciclo é reproduzido por:
+
+```bash
+npm run eval:exp:0015:check
+npm run eval:exp:0015:browser
+npm run eval:exp:0015:report
+```
+
+O relatório distingue `promote-timing-calibration-instrument` de
+`await-human-calibration`. O smoke termina antes do envio, pois gerar registros
+“humanos” automaticamente destruiria o oráculo que o experimento pretende
+medir.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O
@@ -190,8 +205,9 @@ mede a cauda acústica que sai fisicamente pelo alto-falante.
 
 Gravações do dono do projeto não são uma exigência. Depois de M4a, uma amostra
 humana pequena passa a ser a próxima evidência externa para calibrar timing e
-rótulos antes de M4b; protocolo, cenários e tooling ainda podem ser preparados
-autonomamente. Essa amostra não promove qualidade de produto. Pessoas entram
+rótulos antes de M4b; protocolo, cenas e tooling já estão preparados no
+EXP-0015. O piloto exige ao menos três participantes únicos e preserva dúvida,
+atenção e consenso. Essa amostra não promove qualidade de produto. Pessoas entram
 como caminho crítico para preferência quando sessões e tarefas forem robustas
 sob grande diversidade, novas campanhas encontrarem principalmente caudas conhecidas e
 existirem finalistas maduros que só possam ser separados por percepção. Uma

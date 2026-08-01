@@ -1,7 +1,7 @@
 # Referência macro do projeto
 
 Status: **referência canônica — consolidada em 31/07/2026 após auditoria,
-contranálise e promoção do primeiro M4a acústico**
+contranálise, M4a acústico e promoção do instrumento EXP-0015**
 
 ## Tese
 
@@ -277,6 +277,16 @@ inferência p95 de 0,2 ms e zero autoridade/efeito. Barge-in permaneceu em
 `promote-m4a-acoustic-shadow-infrastructure`. Como os rótulos imitam a regra,
 100% nos splits não prova ganho percebido nem generalização.
 
+O EXP-0015 fechou o próximo artefato autônomo: um instrumento cego de
+calibração temporal com 12 cenas e 36 contrafactuais estéreo. Sete cenas usam
+CORAA somente como `evaluation-only`, três usam TTS local como
+`development-synthetic` e duas são controles; nenhuma é `fit-eligible`. O
+Chrome do Windows confirmou o gate de escuta e decisão sem expor ação ou cena,
+sem erro e sem submeter opinião artificial. A decisão técnica é
+`promote-timing-calibration-instrument`; a conclusão humana permanece
+`await-human-calibration` em 0/3 participantes e a política não ganhou
+autoridade.
+
 ### M3 — qualidade modular local
 
 Melhorar correções, semântica, TTS aberto, sobreposição e execução offline sem
@@ -299,6 +309,11 @@ e comparar contra a baseline determinística. Autoridade só entra para a
 capacidade que vencer seus gates; efeitos externos continuam protegidos por
 regras determinísticas.
 
+O agregado do EXP-0015 poderá dizer que há calibração suficiente para congelar
+esse experimento, mas não será dataset de fit. M4b exige novas famílias e fontes
+explicitamente elegíveis, com a linhagem de como a calibração influenciou sua
+construção.
+
 ### M5 — calibração e avaliação humana
 
 Uma calibração pequena de timing e rótulos entra entre M4a e M4b para impedir
@@ -306,6 +321,11 @@ que regras e dados sintéticos definam sozinhos o comportamento social desejado.
 Ela não é uma avaliação de produto. Quando os erros estruturais estiverem
 raros, conversas cegas maiores medem naturalidade, conforto, sotaque, confiança
 e cauda acústica. Falhas reais voltam para a fábrica como novas famílias.
+
+**Instrumento do piloto promovido; coleta pendente.** O gate mínimo congelado
+é três participantes únicos, atenção agregada de 80%, três votos por cena,
+consenso de dois terços e cobertura de 60%. Trata-se de um detector barato de
+direção e ambiguidade, não de uma estimativa final de preferência.
 
 ### M6 — adaptação nativa de áudio, se necessária
 
@@ -325,9 +345,10 @@ Esta referência preserva apenas a lógica macro:
 3. usar a baseline v0.3 congelada como comparador de desenvolvimento;
 4. preservar as fatias promovidas do kernel, reflexo, lifecycle, trace causal
    e M4a acústico local;
-5. calibrar uma amostra humana pequena de timing/rótulos sem tratá-la como
-   avaliação de produto;
-6. congelar famílias novas e comparar um M4b contra a regra no mesmo runtime;
+5. preservar o instrumento EXP-0015 e coletar sua amostra humana pequena sem
+   tratá-la como avaliação de produto;
+6. a partir do agregado, congelar famílias novas `fit-eligible` e comparar um
+   M4b contra a regra no mesmo runtime;
 7. conceder autoridade somente se houver ganho percebido sem regressão dos
    guardrails;
 8. desafiar contrato/evaluator com referência nativa apenas quando houver uma

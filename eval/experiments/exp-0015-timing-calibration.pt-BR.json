@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "id": "exp-0015-timing-calibration-v0.1",
+  "locale": "pt-BR",
+  "question": "Uma campanha local cega consegue coletar uma âncora pequena de preferência para WAIT/PAUSE/CONTINUE sem gravar áudio novo, expor a ação ou transformar CORAA em dado de treino?",
+  "assistantPrompts": [
+    {
+      "id": "explanation",
+      "rate": 1,
+      "text": "Claro. Vou organizar a explicação em três partes para ficar fácil de acompanhar. Primeiro apresento o contexto, depois mostro o ponto principal com um exemplo, e no final resumo o que realmente importa para você decidir com tranquilidade."
+    },
+    {
+      "id": "steps",
+      "rate": 1,
+      "text": "Vamos fazer isso passo a passo. Eu começo verificando as informações disponíveis, em seguida comparo as alternativas mais seguras, e só depois proponho uma ação. Se alguma condição mudar durante o caminho, a gente corrige antes de concluir."
+    },
+    {
+      "id": "summary",
+      "rate": 0,
+      "text": "O resumo é o seguinte. Existem algumas opções possíveis, cada uma com uma vantagem e uma limitação. Eu vou explicar as diferenças com calma, indicar onde existe incerteza e deixar a escolha final clara, sem executar nada antes da sua confirmação."
+    }
+  ],
+  "audio": {
+    "sampleRate": 16000,
+    "fadeMs": 40,
+    "assistantGainDb": -8,
+    "userGainDb": -7,
+    "crossfeedGainDb": -24,
+    "decisionEvidenceFrameMs": 20,
+    "decisionEvidenceLookbackMs": 200,
+    "decisionEvidenceLookaheadMs": 40,
+    "decisionEvidenceMinimumRmsDb": -40
+  },
+  "protocol": {
+    "version": "blind-three-way-timing-preference-v1",
+    "minimumCompletedPlaybacksPerOption": 1,
+    "allowedReasonTags": [
+      "cortou-cedo",
+      "demorou-para-parar",
+      "ignorou-fala",
+      "sobreposicao-desconfortavel",
+      "ritmo-natural",
+      "dificil"
+    ],
+    "minimumParticipants": 3,
+    "minimumVotesPerScene": 3,
+    "minimumConsensusShare": 0.6666666666666666,
+    "minimumLabelCoverage": 0.6,
+    "minimumAttentionPassRate": 0.8,
+    "unitOfAnalysis": "participant",
+    "identityPolicy": "pseudonymous-local-token-hashed-before-persistence"
+  },
+  "scenes": [
+    {
+      "id": "negation-short-early",
+      "family": "negation-short",
+      "assistantPromptId": "explanation",
+      "userSource": {
+        "kind": "coraa",
+        "caseId": "test/sp/71194_sp_"
+      },
+      "fitEligibility": "evaluation-only",
+      "durationMs": 5200,
+      "userStartMs": 1700,
+      "maximumUserMs": 700,
+      "decisionOffsetMs": 160,
+      "waitDelayMs": 220,
+      "waitTrajectory": "pause"
+    },
+    {
+      "id": "hesitation-early",
+      "family": "hesitation",
+      "assistantPromptId": "steps",
+      "userSource": {
+        "kind": "coraa",
+        "caseId": "test/CORAL/15752_CO_bfammn12"
+      },
+      "fitEligibility": "evaluation-only",
+      "durationMs": 5400,
+      "userStartMs": 1800,
+      "maximumUserMs": 1200,
+      "decisionOffsetMs": 160,
+      "waitDelayMs": 240,
+      "waitTrajectory": "pause"
+    },
+    {
+      "id": "filled-pause-mid",
+      "family": "filled-pause",
+      "assistantPromptId": "summary",
+      "userSource": {
+        "kind": "coraa",
+        "caseId": "test/NURC_RE/NURC_RE_EF/NURC_RE_EF_332/143276_nurc_"
+      },
+      "fitEligibility": "evaluation-only",
+      "durationMs": 5800,
+      "userStartMs": 1800,
+      "maximumUserMs": 2000,
+      "decisionOffsetMs": 640,
+      "waitDelayMs": 240,
+      "waitTrajectory": "pause"
+    },
+    {
+      "id": "noisy-speech-mid",
+      "family": "noisy-speech",
+      "assistantPromptId": "explanation",
+      "userSource": {
+        "kind": "coraa",
+        "caseId": "test/sp/48796_sp_"
+      },
+      "fitEligibility": "evaluation-only",
+      "durationMs": 6000,
+      "userStartMs": 1900,
+      "maximumUserMs": 2300,
+      "decisionOffsetMs": 320,
+      "waitDelayMs": 260,
+      "waitTrajectory": "pause"
+    },
+    {
+      "id": "second-voice-mid",
+      "family": "second-voice",
+      "assistantPromptId": "steps",
+      "userSource": {
+        "kind": "coraa",
+        "caseId": "test/sp/47827_sp_"
+      },
+      "fitEligibility": "evaluation-only",
+      "durationMs": 5600,
+      "userStartMs": 1700,
+      "maximumUserMs": 1400,
+      "decisionOffsetMs": 520,
+      "waitDelayMs": 260,
+      "waitTrajectory": "pause"
+    },
+    {
+      "id": "spontaneous-clean-late",
+      "family": "spontaneous-clean",
+      "assistantPromptId": "summary",
+      "userSource": {
+        "kind": "coraa",
+        "caseId": "test/alip/80375_alip_"
+      },
+      "fitEligibility": "evaluation-only",
+      "durationMs": 6000,
+      "userStartMs": 1800,
+      "maximumUserMs": 2200,
+      "decisionOffsetMs": 640,
+      "waitDelayMs": 240,
+      "waitTrajectory": "pause"
+    },
+    {
+      "id": "short-backchannel-sim",
+      "family": "synthetic-backchannel",
+      "assistantPromptId": "explanation",
+      "userSource": {
+        "kind": "tts",
+        "text": "sim",
+        "rate": 3
+      },
+      "fitEligibility": "development-synthetic",
+      "durationMs": 5000,
+      "userStartMs": 1700,
+      "maximumUserMs": 900,
+      "decisionOffsetMs": 320,
+      "waitDelayMs": 220,
+      "waitTrajectory": "continue"
+    },
+    {
+      "id": "explicit-correction",
+      "family": "synthetic-correction",
+      "assistantPromptId": "steps",
+      "userSource": {
+        "kind": "tts",
+        "text": "não, espera, eu quis dizer terça-feira",
+        "rate": 1
+      },
+      "fitEligibility": "development-synthetic",
+      "durationMs": 6000,
+      "userStartMs": 1800,
+      "maximumUserMs": 2600,
+      "decisionOffsetMs": 320,
+      "waitDelayMs": 220,
+      "waitTrajectory": "pause",
+      "attentionControl": {
+        "expectedActions": [
+          "WAIT_FOR_EVIDENCE",
+          "PAUSE_OUTPUT"
+        ]
+      }
+    },
+    {
+      "id": "short-backchannel-aham",
+      "family": "synthetic-backchannel",
+      "assistantPromptId": "summary",
+      "userSource": {
+        "kind": "tts",
+        "text": "aham",
+        "rate": 3
+      },
+      "fitEligibility": "development-synthetic",
+      "durationMs": 5000,
+      "userStartMs": 1900,
+      "maximumUserMs": 900,
+      "decisionOffsetMs": 160,
+      "waitDelayMs": 220,
+      "waitTrajectory": "continue"
+    },
+    {
+      "id": "transient-noise-control",
+      "family": "noise-control",
+      "assistantPromptId": "explanation",
+      "userSource": {
+        "kind": "noise",
+        "durationMs": 180,
+        "seed": 15015,
+        "targetRms": 0.035
+      },
+      "fitEligibility": "control-only",
+      "durationMs": 5000,
+      "userStartMs": 1700,
+      "maximumUserMs": 300,
+      "decisionOffsetMs": 96,
+      "waitDelayMs": 220,
+      "waitTrajectory": "continue",
+      "attentionControl": {
+        "expectedActions": [
+          "WAIT_FOR_EVIDENCE",
+          "CONTINUE_OUTPUT"
+        ]
+      }
+    },
+    {
+      "id": "silence-control",
+      "family": "silence-control",
+      "assistantPromptId": "steps",
+      "userSource": {
+        "kind": "silence",
+        "durationMs": 300
+      },
+      "fitEligibility": "control-only",
+      "durationMs": 5000,
+      "userStartMs": 1700,
+      "maximumUserMs": 400,
+      "decisionOffsetMs": 160,
+      "waitDelayMs": 220,
+      "waitTrajectory": "continue",
+      "attentionControl": {
+        "expectedActions": [
+          "WAIT_FOR_EVIDENCE",
+          "CONTINUE_OUTPUT"
+        ]
+      }
+    },
+    {
+      "id": "prepared-speech-late",
+      "family": "prepared-speech",
+      "assistantPromptId": "summary",
+      "userSource": {
+        "kind": "coraa",
+        "caseId": "test/Ted_part1/aETOz3IGfG0-0121"
+      },
+      "fitEligibility": "evaluation-only",
+      "durationMs": 6200,
+      "userStartMs": 1900,
+      "maximumUserMs": 2500,
+      "decisionOffsetMs": 960,
+      "waitDelayMs": 240,
+      "waitTrajectory": "pause"
+    }
+  ],
+  "gates": {
+    "expectedScenes": 12,
+    "minimumHumanAnchorScenes": 7,
+    "minimumAttentionControls": 3
+  },
+  "claims": {
+    "promotable": "instrumento local cego e pack de calibração",
+    "excluded": [
+      "preferência humana antes de anotações reais",
+      "uso do CORAA para ajuste de pesos",
+      "prontidão M4b",
+      "autoridade do modelo"
+    ]
+  }
+}
