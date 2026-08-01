@@ -1,0 +1,4821 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "EXP-0013",
+  "evidenceLevel": "causal-browser-effects-plus-replay-and-v0-projection",
+  "generatedAt": "2026-08-01T01:49:04.560Z",
+  "decision": "promote-training-trace-interruption-slice",
+  "pass": true,
+  "scope": "training-trace-v1-output-interruption-slice",
+  "globalRuntimeStatus": "resolved-pass",
+  "gates": {
+    "schemaAndReferencesValid": true,
+    "exactDecisionReplay": true,
+    "effectLedgerClosed": true,
+    "userPerceivedProjection": true,
+    "sessionAndRuntimeBound": true,
+    "promotedPathCoverage": true,
+    "shadowHasNoAuthority": true,
+    "partialScopeExplicit": true,
+    "browserInteractionRegression": true,
+    "physicalBoundaryHonest": true,
+    "sourceAndRuntimeComparable": true,
+    "localZeroPaidExecution": true
+  },
+  "contextGates": {
+    "fullTrainingTraceV1Materialized": false,
+    "audioStreamsPersistedAndHashed": false,
+    "crossProcessClockMappingMaterialized": false,
+    "m4aGeneralizationClaimed": false,
+    "fullSmokePass": true
+  },
+  "metrics": {
+    "selectedCases": 6,
+    "replayedDecisions": 28,
+    "observedEffects": 22,
+    "responseStartMs": 185,
+    "stopCommandMs": 0,
+    "browserRenderStopMs": 38,
+    "pcmOnsetToBrowserRenderStopMs": 169.82,
+    "realBackchannelSpeechEndToResumeMs": 315.5
+  },
+  "observations": {
+    "traces": {
+      "cases": [
+        {
+          "label": "pending-audio",
+          "path": "preparingBargeIn.released",
+          "present": true,
+          "validation": {
+            "valid": true,
+            "errors": [],
+            "counts": {
+              "events": 3,
+              "contexts": 3,
+              "decisions": 3,
+              "effects": 2,
+              "labels": 3
+            }
+          },
+          "replay": {
+            "exact": true,
+            "steps": [
+              {
+                "decisionId": "decision-000001",
+                "eventId": "event-000001",
+                "eventType": "CLEAR",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000002",
+                "eventId": "event-000002",
+                "eventType": "PAUSE_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000003",
+                "eventId": "event-000003",
+                "eventType": "DISMISS_REQUESTED",
+                "exact": true,
+                "errors": []
+              }
+            ],
+            "errors": []
+          },
+          "effects": [
+            {
+              "effectId": "effect-000001",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000002",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            }
+          ],
+          "projection": {
+            "schemaVersion": "trace-v0-projection-v1",
+            "sessionId": "631c7d85-de8c-4d21-bb68-8be913cad0e5",
+            "mapping": {
+              "pause": "PAUSE_OUTPUT.renderer-silent -> assistant.speech.stopped",
+              "resume": "RESUME_OUTPUT.audible -> assistant.speech.started"
+            },
+            "events": []
+          },
+          "projectionMonotonic": true,
+          "projectionContractValid": true,
+          "sessionBound": true,
+          "traceErrors": [],
+          "trainingTrace": {
+            "schemaVersion": "training-trace-v1",
+            "sliceVersion": "output-interruption-training-trace-v0.1",
+            "session": {
+              "sessionId": "631c7d85-de8c-4d21-bb68-8be913cad0e5",
+              "startedAtEpochMs": 1785548536337,
+              "locale": "pt-BR",
+              "candidate": "duplex-lab-output-interruption-v0.1",
+              "configHash": "sha256:5b1817181bf90d9807ea2ab2201d12216a4bbca30888321ef7898b3b4be96cc7"
+            },
+            "clocks": [
+              {
+                "clockId": "browser-performance",
+                "kind": "monotonic",
+                "processId": "browser-main",
+                "resolutionMs": 0.1,
+                "mappingMethod": "identity-within-process",
+                "mappingPoints": []
+              }
+            ],
+            "streams": [],
+            "events": [
+              {
+                "eventId": "event-000001",
+                "sessionId": "631c7d85-de8c-4d21-bb68-8be913cad0e5",
+                "turnId": null,
+                "epoch": 10,
+                "type": "output-interruption.clear",
+                "source": "browser-output-runtime",
+                "clockId": "browser-performance",
+                "atMs": 54298.20000001788,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CLEAR",
+                    "reason": "cleared"
+                  }
+                }
+              },
+              {
+                "eventId": "event-000002",
+                "sessionId": "631c7d85-de8c-4d21-bb68-8be913cad0e5",
+                "turnId": null,
+                "epoch": 11,
+                "type": "output-interruption.pause_requested",
+                "source": "local-audio-reflex",
+                "clockId": "browser-performance",
+                "atMs": 54299.09999999404,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "PAUSE_REQUESTED",
+                    "turnId": null,
+                    "outputEpoch": 11,
+                    "hasAudibleOutput": false,
+                    "hasAcousticOutput": true,
+                    "hasActiveResponse": false
+                  }
+                }
+              },
+              {
+                "eventId": "event-000003",
+                "sessionId": "631c7d85-de8c-4d21-bb68-8be913cad0e5",
+                "turnId": null,
+                "epoch": 11,
+                "type": "output-interruption.dismiss_requested",
+                "source": "browser-turn-taking",
+                "clockId": "browser-performance",
+                "atMs": 54748.80000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "DISMISS_REQUESTED",
+                    "currentOutputEpoch": 11,
+                    "hasResumableAudio": false
+                  }
+                }
+              }
+            ],
+            "contexts": [
+              {
+                "contextId": "context-000001",
+                "turnId": null,
+                "epoch": 10,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 54298.20000001788
+                },
+                "eventIds": [
+                  "event-000001"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": false,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 2,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000002",
+                "turnId": null,
+                "epoch": 11,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 54299.09999999404
+                },
+                "eventIds": [
+                  "event-000002"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": true,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": false,
+                  "userSpeaking": true,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 2,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000003",
+                "turnId": null,
+                "epoch": 11,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 54748.80000001192
+                },
+                "eventIds": [
+                  "event-000003"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": true,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": false,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 3,
+                    "phase": "held",
+                    "turnId": null,
+                    "outputEpoch": 11,
+                    "pauseKind": "acoustic-pending",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              }
+            ],
+            "decisions": [
+              {
+                "decisionId": "decision-000001",
+                "turnId": null,
+                "epoch": 10,
+                "clockId": "browser-performance",
+                "atMs": 54298.20000001788,
+                "triggeredBy": [
+                  "event-000001"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [],
+                "proposal": null,
+                "authorityDecision": "REJECT",
+                "decisionContextRef": "context-000001",
+                "transition": {
+                  "previousStateVersion": 2,
+                  "stateVersion": 2,
+                  "previousPhase": "idle",
+                  "phase": "idle",
+                  "reason": "already-idle"
+                }
+              },
+              {
+                "decisionId": "decision-000002",
+                "turnId": null,
+                "epoch": 11,
+                "clockId": "browser-performance",
+                "atMs": 54299.09999999404,
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "HOLD_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "pauseKind": "acoustic-pending"
+                    }
+                  }
+                ],
+                "proposal": "HOLD_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000002",
+                "transition": {
+                  "previousStateVersion": 2,
+                  "stateVersion": 3,
+                  "previousPhase": "idle",
+                  "phase": "held",
+                  "reason": "output-held"
+                }
+              },
+              {
+                "decisionId": "decision-000003",
+                "turnId": null,
+                "epoch": 11,
+                "clockId": "browser-performance",
+                "atMs": 54748.80000001192,
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "SETTLE_WITHOUT_RESUME",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {}
+                  }
+                ],
+                "proposal": "SETTLE_WITHOUT_RESUME",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000003",
+                "transition": {
+                  "previousStateVersion": 3,
+                  "stateVersion": 4,
+                  "previousPhase": "held",
+                  "phase": "idle",
+                  "reason": "output-no-longer-resumable"
+                }
+              }
+            ],
+            "effects": [
+              {
+                "effectId": "effect-000001",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "decisionId": "decision-000002",
+                "reconciledByDecisionId": null,
+                "effectType": "HOLD_OUTPUT",
+                "epoch": 11,
+                "status": "completed",
+                "payload": {
+                  "pauseKind": "acoustic-pending"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 54299.09999999404,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 54299.20000001788,
+                    "evidence": {
+                      "holdResourceInstalled": true
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 54299.30000001192,
+                    "evidence": {
+                      "outputBlockedBeforePlayback": true
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000002",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "decisionId": "decision-000003",
+                "reconciledByDecisionId": null,
+                "effectType": "SETTLE_WITHOUT_RESUME",
+                "epoch": 11,
+                "status": "completed",
+                "payload": {},
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 54748.80000001192,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 54748.90000000596,
+                    "evidence": {
+                      "reason": "backchannel: Mm."
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 54749,
+                    "evidence": {
+                      "resourceSettled": true
+                    }
+                  }
+                ]
+              }
+            ],
+            "labels": [
+              {
+                "labelId": "label-000001",
+                "targetId": "decision-000001",
+                "task": "output-interruption-intent",
+                "value": [],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000002",
+                "targetId": "decision-000002",
+                "task": "output-interruption-intent",
+                "value": [
+                  "HOLD_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000003",
+                "targetId": "decision-000003",
+                "task": "output-interruption-intent",
+                "value": [
+                  "SETTLE_WITHOUT_RESUME"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              }
+            ],
+            "derivedFeatureManifests": [],
+            "limitations": [
+              "fatia sem áudio persistido; posições acústicas e streams hasheados permanecem fora deste bundle"
+            ]
+          }
+        },
+        {
+          "label": "deterministic-backchannel",
+          "path": "potentialBargeInRecovery",
+          "present": true,
+          "validation": {
+            "valid": true,
+            "errors": [],
+            "counts": {
+              "events": 4,
+              "contexts": 4,
+              "decisions": 4,
+              "effects": 3,
+              "labels": 4
+            }
+          },
+          "replay": {
+            "exact": true,
+            "steps": [
+              {
+                "decisionId": "decision-000001",
+                "eventId": "event-000001",
+                "eventType": "CLEAR",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000002",
+                "eventId": "event-000002",
+                "eventType": "PAUSE_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000003",
+                "eventId": "event-000003",
+                "eventType": "DISMISS_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000004",
+                "eventId": "event-000004",
+                "eventType": "RESUME_SUCCEEDED",
+                "exact": true,
+                "errors": []
+              }
+            ],
+            "errors": []
+          },
+          "effects": [
+            {
+              "effectId": "effect-000001",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "cancelled"
+              ],
+              "terminal": "cancelled",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000002",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "audible",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000003",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            }
+          ],
+          "projection": {
+            "schemaVersion": "trace-v0-projection-v1",
+            "sessionId": "ad6520d2-b9fa-4e45-9762-97edae1f8ad4",
+            "mapping": {
+              "pause": "PAUSE_OUTPUT.renderer-silent -> assistant.speech.stopped",
+              "resume": "RESUME_OUTPUT.audible -> assistant.speech.started"
+            },
+            "events": [
+              {
+                "clockId": "browser-performance",
+                "type": "assistant.speech.started",
+                "payload": {
+                  "effectId": "effect-000002",
+                  "intent": "RESUME_OUTPUT",
+                  "kind": "resumed"
+                },
+                "source": "runtime",
+                "atMs": 0
+              }
+            ]
+          },
+          "projectionMonotonic": true,
+          "projectionContractValid": true,
+          "sessionBound": true,
+          "traceErrors": [],
+          "trainingTrace": {
+            "schemaVersion": "training-trace-v1",
+            "sliceVersion": "output-interruption-training-trace-v0.1",
+            "session": {
+              "sessionId": "ad6520d2-b9fa-4e45-9762-97edae1f8ad4",
+              "startedAtEpochMs": 1785548536902,
+              "locale": "pt-BR",
+              "candidate": "duplex-lab-output-interruption-v0.1",
+              "configHash": "sha256:5b1817181bf90d9807ea2ab2201d12216a4bbca30888321ef7898b3b4be96cc7"
+            },
+            "clocks": [
+              {
+                "clockId": "browser-performance",
+                "kind": "monotonic",
+                "processId": "browser-main",
+                "resolutionMs": 0.1,
+                "mappingMethod": "identity-within-process",
+                "mappingPoints": []
+              }
+            ],
+            "streams": [],
+            "events": [
+              {
+                "eventId": "event-000001",
+                "sessionId": "ad6520d2-b9fa-4e45-9762-97edae1f8ad4",
+                "turnId": null,
+                "epoch": 12,
+                "type": "output-interruption.clear",
+                "source": "browser-output-runtime",
+                "clockId": "browser-performance",
+                "atMs": 54864.30000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CLEAR",
+                    "reason": "cleared"
+                  }
+                }
+              },
+              {
+                "eventId": "event-000002",
+                "sessionId": "ad6520d2-b9fa-4e45-9762-97edae1f8ad4",
+                "turnId": null,
+                "epoch": 13,
+                "type": "output-interruption.pause_requested",
+                "source": "local-audio-reflex",
+                "clockId": "browser-performance",
+                "atMs": 55119.70000001788,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "PAUSE_REQUESTED",
+                    "turnId": null,
+                    "outputEpoch": 13,
+                    "hasAudibleOutput": true,
+                    "hasAcousticOutput": true,
+                    "hasActiveResponse": false
+                  }
+                }
+              },
+              {
+                "eventId": "event-000003",
+                "sessionId": "ad6520d2-b9fa-4e45-9762-97edae1f8ad4",
+                "turnId": null,
+                "epoch": 13,
+                "type": "output-interruption.dismiss_requested",
+                "source": "browser-turn-taking",
+                "clockId": "browser-performance",
+                "atMs": 55124,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "DISMISS_REQUESTED",
+                    "currentOutputEpoch": 13,
+                    "hasResumableAudio": true
+                  }
+                }
+              },
+              {
+                "eventId": "event-000004",
+                "sessionId": "ad6520d2-b9fa-4e45-9762-97edae1f8ad4",
+                "turnId": null,
+                "epoch": 13,
+                "type": "output-interruption.resume_succeeded",
+                "source": "browser-player",
+                "clockId": "browser-performance",
+                "atMs": 55125.30000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "RESUME_SUCCEEDED",
+                    "resumeAttempt": 1
+                  }
+                }
+              }
+            ],
+            "contexts": [
+              {
+                "contextId": "context-000001",
+                "turnId": null,
+                "epoch": 12,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 54864.30000001192
+                },
+                "eventIds": [
+                  "event-000001"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": false,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 4,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000002",
+                "turnId": null,
+                "epoch": 13,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55119.70000001788
+                },
+                "eventIds": [
+                  "event-000002"
+                ],
+                "state": {
+                  "assistantSpeaking": true,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": true,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 4,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000003",
+                "turnId": null,
+                "epoch": 13,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55124
+                },
+                "eventIds": [
+                  "event-000003"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 5,
+                    "phase": "held",
+                    "turnId": null,
+                    "outputEpoch": 13,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000004",
+                "turnId": null,
+                "epoch": 13,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55125.30000001192
+                },
+                "eventIds": [
+                  "event-000004"
+                ],
+                "state": {
+                  "assistantSpeaking": true,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 6,
+                    "phase": "resuming",
+                    "turnId": null,
+                    "outputEpoch": 13,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 1
+                  }
+                },
+                "derivedFeatureRefs": []
+              }
+            ],
+            "decisions": [
+              {
+                "decisionId": "decision-000001",
+                "turnId": null,
+                "epoch": 12,
+                "clockId": "browser-performance",
+                "atMs": 54864.30000001192,
+                "triggeredBy": [
+                  "event-000001"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [],
+                "proposal": null,
+                "authorityDecision": "REJECT",
+                "decisionContextRef": "context-000001",
+                "transition": {
+                  "previousStateVersion": 4,
+                  "stateVersion": 4,
+                  "previousPhase": "idle",
+                  "phase": "idle",
+                  "reason": "already-idle"
+                }
+              },
+              {
+                "decisionId": "decision-000002",
+                "turnId": null,
+                "epoch": 13,
+                "clockId": "browser-performance",
+                "atMs": 55119.70000001788,
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "PAUSE_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "pauseKind": "audible"
+                    }
+                  }
+                ],
+                "proposal": "PAUSE_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000002",
+                "transition": {
+                  "previousStateVersion": 4,
+                  "stateVersion": 5,
+                  "previousPhase": "idle",
+                  "phase": "held",
+                  "reason": "output-held"
+                }
+              },
+              {
+                "decisionId": "decision-000003",
+                "turnId": null,
+                "epoch": 13,
+                "clockId": "browser-performance",
+                "atMs": 55124,
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "RESUME_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "resumeAttempt": 1
+                    }
+                  }
+                ],
+                "proposal": "RESUME_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000003",
+                "transition": {
+                  "previousStateVersion": 5,
+                  "stateVersion": 6,
+                  "previousPhase": "held",
+                  "phase": "resuming",
+                  "reason": "resume-requested"
+                }
+              },
+              {
+                "decisionId": "decision-000004",
+                "turnId": null,
+                "epoch": 13,
+                "clockId": "browser-performance",
+                "atMs": 55125.30000001192,
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "SETTLE_RESUMED",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "resumeAttempt": 1
+                    }
+                  }
+                ],
+                "proposal": "SETTLE_RESUMED",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000004",
+                "transition": {
+                  "previousStateVersion": 6,
+                  "stateVersion": 7,
+                  "previousPhase": "resuming",
+                  "phase": "idle",
+                  "reason": "resume-observed"
+                }
+              }
+            ],
+            "effects": [
+              {
+                "effectId": "effect-000001",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "decisionId": "decision-000002",
+                "reconciledByDecisionId": "decision-000003",
+                "effectType": "PAUSE_OUTPUT",
+                "epoch": 13,
+                "status": "cancelled",
+                "payload": {
+                  "pauseKind": "audible"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 55119.70000001788,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 55119.80000001192,
+                    "evidence": {
+                      "command": "HTMLMediaElement.pause"
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 55119.90000000596,
+                    "evidence": {
+                      "audioPresent": true,
+                      "paused": true
+                    }
+                  },
+                  {
+                    "stage": "cancelled",
+                    "clockId": "browser-performance",
+                    "atMs": 55124.09999999404,
+                    "evidence": {
+                      "reason": "resume-before-render-silent",
+                      "resumeAttempt": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000002",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "decisionId": "decision-000003",
+                "reconciledByDecisionId": "decision-000004",
+                "effectType": "RESUME_OUTPUT",
+                "epoch": 13,
+                "status": "completed",
+                "payload": {
+                  "resumeAttempt": 1
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 55124,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 55124.09999999404,
+                    "evidence": {
+                      "command": "HTMLMediaElement.play",
+                      "resumeAttempt": 1
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 55124.20000001788,
+                    "evidence": {
+                      "paused": false,
+                      "resumeAttempt": 1
+                    }
+                  },
+                  {
+                    "stage": "audible",
+                    "clockId": "browser-performance",
+                    "atMs": 55125.09999999404,
+                    "evidence": {
+                      "event": "HTMLMediaElement.onplaying"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 55125.30000001192,
+                    "evidence": {
+                      "observation": "play-resolved-after-onplaying",
+                      "resumeAttempt": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000003",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "decisionId": "decision-000004",
+                "reconciledByDecisionId": null,
+                "effectType": "SETTLE_RESUMED",
+                "epoch": 13,
+                "status": "completed",
+                "payload": {
+                  "resumeAttempt": 1
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 55125.30000001192,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 55125.40000000596,
+                    "evidence": {
+                      "resumeAttempt": 1
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 55125.40000000596,
+                    "evidence": {
+                      "resourceSettled": true,
+                      "resumeAttempt": 1
+                    }
+                  }
+                ]
+              }
+            ],
+            "labels": [
+              {
+                "labelId": "label-000001",
+                "targetId": "decision-000001",
+                "task": "output-interruption-intent",
+                "value": [],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000002",
+                "targetId": "decision-000002",
+                "task": "output-interruption-intent",
+                "value": [
+                  "PAUSE_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000003",
+                "targetId": "decision-000003",
+                "task": "output-interruption-intent",
+                "value": [
+                  "RESUME_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000004",
+                "targetId": "decision-000004",
+                "task": "output-interruption-intent",
+                "value": [
+                  "SETTLE_RESUMED"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              }
+            ],
+            "derivedFeatureManifests": [],
+            "limitations": [
+              "fatia sem áudio persistido; posições acústicas e streams hasheados permanecem fora deste bundle"
+            ]
+          }
+        },
+        {
+          "label": "reopened-backchannel",
+          "path": "reopenedBackchannel",
+          "present": true,
+          "validation": {
+            "valid": true,
+            "errors": [],
+            "counts": {
+              "events": 7,
+              "contexts": 7,
+              "decisions": 7,
+              "effects": 6,
+              "labels": 7
+            }
+          },
+          "replay": {
+            "exact": true,
+            "steps": [
+              {
+                "decisionId": "decision-000001",
+                "eventId": "event-000001",
+                "eventType": "CLEAR",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000002",
+                "eventId": "event-000002",
+                "eventType": "PAUSE_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000003",
+                "eventId": "event-000003",
+                "eventType": "DISMISS_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000004",
+                "eventId": "event-000004",
+                "eventType": "RESUME_SUCCEEDED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000005",
+                "eventId": "event-000005",
+                "eventType": "PAUSE_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000006",
+                "eventId": "event-000006",
+                "eventType": "CONFIRM_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000007",
+                "eventId": "event-000007",
+                "eventType": "CLEAR",
+                "exact": true,
+                "errors": []
+              }
+            ],
+            "errors": []
+          },
+          "effects": [
+            {
+              "effectId": "effect-000001",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "cancelled"
+              ],
+              "terminal": "cancelled",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000002",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "audible",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000003",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000004",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "renderer-silent",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000005",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000006",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            }
+          ],
+          "projection": {
+            "schemaVersion": "trace-v0-projection-v1",
+            "sessionId": "ad0460f8-0f37-4247-a97c-c374cb472ec6",
+            "mapping": {
+              "pause": "PAUSE_OUTPUT.renderer-silent -> assistant.speech.stopped",
+              "resume": "RESUME_OUTPUT.audible -> assistant.speech.started"
+            },
+            "events": [
+              {
+                "clockId": "browser-performance",
+                "type": "assistant.speech.started",
+                "payload": {
+                  "effectId": "effect-000002",
+                  "intent": "RESUME_OUTPUT",
+                  "kind": "resumed"
+                },
+                "source": "runtime",
+                "atMs": 0
+              },
+              {
+                "clockId": "browser-performance",
+                "type": "assistant.speech.stopped",
+                "payload": {
+                  "effectId": "effect-000004",
+                  "intent": "PAUSE_OUTPUT",
+                  "measurement": "browser-renderer"
+                },
+                "source": "runtime",
+                "atMs": 12.5
+              }
+            ]
+          },
+          "projectionMonotonic": true,
+          "projectionContractValid": true,
+          "sessionBound": true,
+          "traceErrors": [],
+          "trainingTrace": {
+            "schemaVersion": "training-trace-v1",
+            "sliceVersion": "output-interruption-training-trace-v0.1",
+            "session": {
+              "sessionId": "ad0460f8-0f37-4247-a97c-c374cb472ec6",
+              "startedAtEpochMs": 1785548537334,
+              "locale": "pt-BR",
+              "candidate": "duplex-lab-output-interruption-v0.1",
+              "configHash": "sha256:5b1817181bf90d9807ea2ab2201d12216a4bbca30888321ef7898b3b4be96cc7"
+            },
+            "clocks": [
+              {
+                "clockId": "browser-performance",
+                "kind": "monotonic",
+                "processId": "browser-main",
+                "resolutionMs": 0.1,
+                "mappingMethod": "identity-within-process",
+                "mappingPoints": []
+              }
+            ],
+            "streams": [],
+            "events": [
+              {
+                "eventId": "event-000001",
+                "sessionId": "ad0460f8-0f37-4247-a97c-c374cb472ec6",
+                "turnId": null,
+                "epoch": 16,
+                "type": "output-interruption.clear",
+                "source": "browser-output-runtime",
+                "clockId": "browser-performance",
+                "atMs": 55294.5,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CLEAR",
+                    "reason": "cleared"
+                  }
+                }
+              },
+              {
+                "eventId": "event-000002",
+                "sessionId": "ad0460f8-0f37-4247-a97c-c374cb472ec6",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "type": "output-interruption.pause_requested",
+                "source": "local-audio-reflex",
+                "clockId": "browser-performance",
+                "atMs": 55546.30000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "PAUSE_REQUESTED",
+                    "turnId": "automation-reopen",
+                    "outputEpoch": 17,
+                    "hasAudibleOutput": true,
+                    "hasAcousticOutput": true,
+                    "hasActiveResponse": false
+                  }
+                }
+              },
+              {
+                "eventId": "event-000003",
+                "sessionId": "ad0460f8-0f37-4247-a97c-c374cb472ec6",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "type": "output-interruption.dismiss_requested",
+                "source": "browser-turn-taking",
+                "clockId": "browser-performance",
+                "atMs": 55547,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "DISMISS_REQUESTED",
+                    "currentOutputEpoch": 17,
+                    "hasResumableAudio": true
+                  }
+                }
+              },
+              {
+                "eventId": "event-000004",
+                "sessionId": "ad0460f8-0f37-4247-a97c-c374cb472ec6",
+                "turnId": null,
+                "epoch": 17,
+                "type": "output-interruption.resume_succeeded",
+                "source": "browser-player",
+                "clockId": "browser-performance",
+                "atMs": 55547.70000001788,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "RESUME_SUCCEEDED",
+                    "resumeAttempt": 1
+                  }
+                }
+              },
+              {
+                "eventId": "event-000005",
+                "sessionId": "ad0460f8-0f37-4247-a97c-c374cb472ec6",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "type": "output-interruption.pause_requested",
+                "source": "local-audio-reflex",
+                "clockId": "browser-performance",
+                "atMs": 55549.80000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "PAUSE_REQUESTED",
+                    "turnId": "automation-reopen",
+                    "outputEpoch": 17,
+                    "hasAudibleOutput": true,
+                    "hasAcousticOutput": true,
+                    "hasActiveResponse": false
+                  }
+                }
+              },
+              {
+                "eventId": "event-000006",
+                "sessionId": "ad0460f8-0f37-4247-a97c-c374cb472ec6",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "type": "output-interruption.confirm_requested",
+                "source": "browser-turn-taking",
+                "clockId": "browser-performance",
+                "atMs": 55550,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CONFIRM_REQUESTED",
+                    "reason": "parcial corrigido pelo final: Ah, espera."
+                  }
+                }
+              },
+              {
+                "eventId": "event-000007",
+                "sessionId": "ad0460f8-0f37-4247-a97c-c374cb472ec6",
+                "turnId": null,
+                "epoch": 17,
+                "type": "output-interruption.clear",
+                "source": "browser-output-runtime",
+                "clockId": "browser-performance",
+                "atMs": 55550.30000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CLEAR",
+                    "reason": "cleared"
+                  }
+                }
+              }
+            ],
+            "contexts": [
+              {
+                "contextId": "context-000001",
+                "turnId": null,
+                "epoch": 16,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55294.5
+                },
+                "eventIds": [
+                  "event-000001"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": false,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 7,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000002",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55546.30000001192
+                },
+                "eventIds": [
+                  "event-000002"
+                ],
+                "state": {
+                  "assistantSpeaking": true,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": true,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 7,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000003",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55547
+                },
+                "eventIds": [
+                  "event-000003"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 8,
+                    "phase": "held",
+                    "turnId": "automation-reopen",
+                    "outputEpoch": 17,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000004",
+                "turnId": null,
+                "epoch": 17,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55547.70000001788
+                },
+                "eventIds": [
+                  "event-000004"
+                ],
+                "state": {
+                  "assistantSpeaking": true,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 9,
+                    "phase": "resuming",
+                    "turnId": "automation-reopen",
+                    "outputEpoch": 17,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 1
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000005",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55549.80000001192
+                },
+                "eventIds": [
+                  "event-000005"
+                ],
+                "state": {
+                  "assistantSpeaking": true,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 10,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000006",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55550
+                },
+                "eventIds": [
+                  "event-000006"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 11,
+                    "phase": "held",
+                    "turnId": "automation-reopen",
+                    "outputEpoch": 17,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000007",
+                "turnId": null,
+                "epoch": 17,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55550.30000001192
+                },
+                "eventIds": [
+                  "event-000007"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 12,
+                    "phase": "confirmed",
+                    "turnId": "automation-reopen",
+                    "outputEpoch": 17,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              }
+            ],
+            "decisions": [
+              {
+                "decisionId": "decision-000001",
+                "turnId": null,
+                "epoch": 16,
+                "clockId": "browser-performance",
+                "atMs": 55294.5,
+                "triggeredBy": [
+                  "event-000001"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [],
+                "proposal": null,
+                "authorityDecision": "REJECT",
+                "decisionContextRef": "context-000001",
+                "transition": {
+                  "previousStateVersion": 7,
+                  "stateVersion": 7,
+                  "previousPhase": "idle",
+                  "phase": "idle",
+                  "reason": "already-idle"
+                }
+              },
+              {
+                "decisionId": "decision-000002",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "clockId": "browser-performance",
+                "atMs": 55546.30000001192,
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "PAUSE_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "pauseKind": "audible"
+                    }
+                  }
+                ],
+                "proposal": "PAUSE_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000002",
+                "transition": {
+                  "previousStateVersion": 7,
+                  "stateVersion": 8,
+                  "previousPhase": "idle",
+                  "phase": "held",
+                  "reason": "output-held"
+                }
+              },
+              {
+                "decisionId": "decision-000003",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "clockId": "browser-performance",
+                "atMs": 55547,
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "RESUME_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "resumeAttempt": 1
+                    }
+                  }
+                ],
+                "proposal": "RESUME_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000003",
+                "transition": {
+                  "previousStateVersion": 8,
+                  "stateVersion": 9,
+                  "previousPhase": "held",
+                  "phase": "resuming",
+                  "reason": "resume-requested"
+                }
+              },
+              {
+                "decisionId": "decision-000004",
+                "turnId": null,
+                "epoch": 17,
+                "clockId": "browser-performance",
+                "atMs": 55547.70000001788,
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "SETTLE_RESUMED",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "resumeAttempt": 1
+                    }
+                  }
+                ],
+                "proposal": "SETTLE_RESUMED",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000004",
+                "transition": {
+                  "previousStateVersion": 9,
+                  "stateVersion": 10,
+                  "previousPhase": "resuming",
+                  "phase": "idle",
+                  "reason": "resume-observed"
+                }
+              },
+              {
+                "decisionId": "decision-000005",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "clockId": "browser-performance",
+                "atMs": 55549.80000001192,
+                "triggeredBy": [
+                  "event-000005"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "PAUSE_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "pauseKind": "audible"
+                    }
+                  }
+                ],
+                "proposal": "PAUSE_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000005",
+                "transition": {
+                  "previousStateVersion": 10,
+                  "stateVersion": 11,
+                  "previousPhase": "idle",
+                  "phase": "held",
+                  "reason": "output-held"
+                }
+              },
+              {
+                "decisionId": "decision-000006",
+                "turnId": "automation-reopen",
+                "epoch": 17,
+                "clockId": "browser-performance",
+                "atMs": 55550,
+                "triggeredBy": [
+                  "event-000006"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "CONFIRM_INTERRUPTION",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "reason": "parcial corrigido pelo final: Ah, espera."
+                    }
+                  }
+                ],
+                "proposal": "CONFIRM_INTERRUPTION",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000006",
+                "transition": {
+                  "previousStateVersion": 11,
+                  "stateVersion": 12,
+                  "previousPhase": "held",
+                  "phase": "confirmed",
+                  "reason": "interruption-confirmed"
+                }
+              },
+              {
+                "decisionId": "decision-000007",
+                "turnId": null,
+                "epoch": 17,
+                "clockId": "browser-performance",
+                "atMs": 55550.30000001192,
+                "triggeredBy": [
+                  "event-000007"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "SETTLE_CLEARED",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "reason": "cleared"
+                    }
+                  }
+                ],
+                "proposal": "SETTLE_CLEARED",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000007",
+                "transition": {
+                  "previousStateVersion": 12,
+                  "stateVersion": 13,
+                  "previousPhase": "confirmed",
+                  "phase": "idle",
+                  "reason": "cleared"
+                }
+              }
+            ],
+            "effects": [
+              {
+                "effectId": "effect-000001",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "decisionId": "decision-000002",
+                "reconciledByDecisionId": "decision-000003",
+                "effectType": "PAUSE_OUTPUT",
+                "epoch": 17,
+                "status": "cancelled",
+                "payload": {
+                  "pauseKind": "audible"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 55546.30000001192,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 55546.40000000596,
+                    "evidence": {
+                      "command": "HTMLMediaElement.pause"
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 55546.5,
+                    "evidence": {
+                      "audioPresent": true,
+                      "paused": true
+                    }
+                  },
+                  {
+                    "stage": "cancelled",
+                    "clockId": "browser-performance",
+                    "atMs": 55547.09999999404,
+                    "evidence": {
+                      "reason": "resume-before-render-silent",
+                      "resumeAttempt": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000002",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "decisionId": "decision-000003",
+                "reconciledByDecisionId": "decision-000004",
+                "effectType": "RESUME_OUTPUT",
+                "epoch": 17,
+                "status": "completed",
+                "payload": {
+                  "resumeAttempt": 1
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 55547,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 55547.09999999404,
+                    "evidence": {
+                      "command": "HTMLMediaElement.play",
+                      "resumeAttempt": 1
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 55547.30000001192,
+                    "evidence": {
+                      "paused": false,
+                      "resumeAttempt": 1
+                    }
+                  },
+                  {
+                    "stage": "audible",
+                    "clockId": "browser-performance",
+                    "atMs": 55547.59999999404,
+                    "evidence": {
+                      "event": "HTMLMediaElement.onplaying"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 55547.70000001788,
+                    "evidence": {
+                      "observation": "play-resolved-after-onplaying",
+                      "resumeAttempt": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000003",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "decisionId": "decision-000004",
+                "reconciledByDecisionId": null,
+                "effectType": "SETTLE_RESUMED",
+                "epoch": 17,
+                "status": "completed",
+                "payload": {
+                  "resumeAttempt": 1
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 55547.70000001788,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 55547.80000001192,
+                    "evidence": {
+                      "resumeAttempt": 1
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 55547.80000001192,
+                    "evidence": {
+                      "resourceSettled": true,
+                      "resumeAttempt": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000004",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000005"
+                ],
+                "decisionId": "decision-000005",
+                "reconciledByDecisionId": null,
+                "effectType": "PAUSE_OUTPUT",
+                "epoch": 17,
+                "status": "completed",
+                "payload": {
+                  "pauseKind": "audible"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 55549.80000001192,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 55549.90000000596,
+                    "evidence": {
+                      "command": "HTMLMediaElement.pause"
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 55550,
+                    "evidence": {
+                      "audioPresent": true,
+                      "paused": true
+                    }
+                  },
+                  {
+                    "stage": "renderer-silent",
+                    "clockId": "browser-performance",
+                    "atMs": 55560.09999999404,
+                    "evidence": {
+                      "kind": "browser-render-stop",
+                      "latencyMs": 42.06481631460338,
+                      "mapping": "audio-context-output-timestamp"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 55560.20000001788,
+                    "evidence": {
+                      "observation": "browser-render-stop"
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000005",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000006"
+                ],
+                "decisionId": "decision-000006",
+                "reconciledByDecisionId": null,
+                "effectType": "CONFIRM_INTERRUPTION",
+                "epoch": 17,
+                "status": "completed",
+                "payload": {
+                  "reason": "parcial corrigido pelo final: Ah, espera."
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 55550,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 55550.09999999404,
+                    "evidence": {
+                      "command": "HTMLMediaElement.pause",
+                      "reason": "parcial corrigido pelo final: Ah, espera."
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 55550.09999999404,
+                    "evidence": {
+                      "paused": true
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 55550.20000001788,
+                    "evidence": {
+                      "resourceSettled": true,
+                      "reason": "parcial corrigido pelo final: Ah, espera."
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000006",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000007"
+                ],
+                "decisionId": "decision-000007",
+                "reconciledByDecisionId": null,
+                "effectType": "SETTLE_CLEARED",
+                "epoch": 17,
+                "status": "completed",
+                "payload": {
+                  "reason": "cleared"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 55550.30000001192,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 55550.30000001192,
+                    "evidence": {
+                      "reason": "cleared"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 55550.30000001192,
+                    "evidence": {
+                      "resourceSettled": true
+                    }
+                  }
+                ]
+              }
+            ],
+            "labels": [
+              {
+                "labelId": "label-000001",
+                "targetId": "decision-000001",
+                "task": "output-interruption-intent",
+                "value": [],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000002",
+                "targetId": "decision-000002",
+                "task": "output-interruption-intent",
+                "value": [
+                  "PAUSE_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000003",
+                "targetId": "decision-000003",
+                "task": "output-interruption-intent",
+                "value": [
+                  "RESUME_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000004",
+                "targetId": "decision-000004",
+                "task": "output-interruption-intent",
+                "value": [
+                  "SETTLE_RESUMED"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000005",
+                "targetId": "decision-000005",
+                "task": "output-interruption-intent",
+                "value": [
+                  "PAUSE_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000006",
+                "targetId": "decision-000006",
+                "task": "output-interruption-intent",
+                "value": [
+                  "CONFIRM_INTERRUPTION"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000007",
+                "targetId": "decision-000007",
+                "task": "output-interruption-intent",
+                "value": [
+                  "SETTLE_CLEARED"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              }
+            ],
+            "derivedFeatureManifests": [],
+            "limitations": [
+              "fatia sem áudio persistido; posições acústicas e streams hasheados permanecem fora deste bundle"
+            ]
+          }
+        },
+        {
+          "label": "pcm-backchannel",
+          "path": "realBackchannel",
+          "present": true,
+          "validation": {
+            "valid": true,
+            "errors": [],
+            "counts": {
+              "events": 4,
+              "contexts": 4,
+              "decisions": 4,
+              "effects": 3,
+              "labels": 4
+            }
+          },
+          "replay": {
+            "exact": true,
+            "steps": [
+              {
+                "decisionId": "decision-000001",
+                "eventId": "event-000001",
+                "eventType": "CLEAR",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000002",
+                "eventId": "event-000002",
+                "eventType": "PAUSE_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000003",
+                "eventId": "event-000003",
+                "eventType": "DISMISS_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000004",
+                "eventId": "event-000004",
+                "eventType": "RESUME_SUCCEEDED",
+                "exact": true,
+                "errors": []
+              }
+            ],
+            "errors": []
+          },
+          "effects": [
+            {
+              "effectId": "effect-000001",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "renderer-silent",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000002",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "audible",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000003",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            }
+          ],
+          "projection": {
+            "schemaVersion": "trace-v0-projection-v1",
+            "sessionId": "50a59be8-adcb-4fc8-83a1-6b08fda4ab9e",
+            "mapping": {
+              "pause": "PAUSE_OUTPUT.renderer-silent -> assistant.speech.stopped",
+              "resume": "RESUME_OUTPUT.audible -> assistant.speech.started"
+            },
+            "events": [
+              {
+                "clockId": "browser-performance",
+                "type": "assistant.speech.stopped",
+                "payload": {
+                  "effectId": "effect-000001",
+                  "intent": "PAUSE_OUTPUT",
+                  "measurement": "browser-renderer"
+                },
+                "source": "runtime",
+                "atMs": 0
+              },
+              {
+                "clockId": "browser-performance",
+                "type": "assistant.speech.started",
+                "payload": {
+                  "effectId": "effect-000002",
+                  "intent": "RESUME_OUTPUT",
+                  "kind": "resumed"
+                },
+                "source": "runtime",
+                "atMs": 848.5
+              }
+            ]
+          },
+          "projectionMonotonic": true,
+          "projectionContractValid": true,
+          "sessionBound": true,
+          "traceErrors": [],
+          "trainingTrace": {
+            "schemaVersion": "training-trace-v1",
+            "sliceVersion": "output-interruption-training-trace-v0.1",
+            "session": {
+              "sessionId": "50a59be8-adcb-4fc8-83a1-6b08fda4ab9e",
+              "startedAtEpochMs": 1785548537751,
+              "locale": "pt-BR",
+              "candidate": "duplex-lab-output-interruption-v0.1",
+              "configHash": "sha256:5b1817181bf90d9807ea2ab2201d12216a4bbca30888321ef7898b3b4be96cc7"
+            },
+            "clocks": [
+              {
+                "clockId": "browser-performance",
+                "kind": "monotonic",
+                "processId": "browser-main",
+                "resolutionMs": 0.1,
+                "mappingMethod": "identity-within-process",
+                "mappingPoints": []
+              }
+            ],
+            "streams": [],
+            "events": [
+              {
+                "eventId": "event-000001",
+                "sessionId": "50a59be8-adcb-4fc8-83a1-6b08fda4ab9e",
+                "turnId": null,
+                "epoch": 19,
+                "type": "output-interruption.clear",
+                "source": "browser-output-runtime",
+                "clockId": "browser-performance",
+                "atMs": 55713.5,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CLEAR",
+                    "reason": "cleared"
+                  }
+                }
+              },
+              {
+                "eventId": "event-000002",
+                "sessionId": "50a59be8-adcb-4fc8-83a1-6b08fda4ab9e",
+                "turnId": "turn-1",
+                "epoch": 20,
+                "type": "output-interruption.pause_requested",
+                "source": "local-audio-reflex",
+                "clockId": "browser-performance",
+                "atMs": 56897.40000000596,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "PAUSE_REQUESTED",
+                    "turnId": "turn-1",
+                    "outputEpoch": 20,
+                    "hasAudibleOutput": true,
+                    "hasAcousticOutput": true,
+                    "hasActiveResponse": false
+                  }
+                }
+              },
+              {
+                "eventId": "event-000003",
+                "sessionId": "50a59be8-adcb-4fc8-83a1-6b08fda4ab9e",
+                "turnId": "turn-1",
+                "epoch": 20,
+                "type": "output-interruption.dismiss_requested",
+                "source": "browser-turn-taking",
+                "clockId": "browser-performance",
+                "atMs": 57746.20000001788,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "DISMISS_REQUESTED",
+                    "currentOutputEpoch": 20,
+                    "hasResumableAudio": true
+                  }
+                }
+              },
+              {
+                "eventId": "event-000004",
+                "sessionId": "50a59be8-adcb-4fc8-83a1-6b08fda4ab9e",
+                "turnId": null,
+                "epoch": 20,
+                "type": "output-interruption.resume_succeeded",
+                "source": "browser-player",
+                "clockId": "browser-performance",
+                "atMs": 57748.40000000596,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "RESUME_SUCCEEDED",
+                    "resumeAttempt": 1
+                  }
+                }
+              }
+            ],
+            "contexts": [
+              {
+                "contextId": "context-000001",
+                "turnId": null,
+                "epoch": 19,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 55713.5
+                },
+                "eventIds": [
+                  "event-000001"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": false,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 13,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000002",
+                "turnId": "turn-1",
+                "epoch": 20,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 56897.40000000596
+                },
+                "eventIds": [
+                  "event-000002"
+                ],
+                "state": {
+                  "assistantSpeaking": true,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": true,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 13,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000003",
+                "turnId": "turn-1",
+                "epoch": 20,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 57746.20000001788
+                },
+                "eventIds": [
+                  "event-000003"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 14,
+                    "phase": "held",
+                    "turnId": "turn-1",
+                    "outputEpoch": 20,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000004",
+                "turnId": null,
+                "epoch": 20,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 57748.40000000596
+                },
+                "eventIds": [
+                  "event-000004"
+                ],
+                "state": {
+                  "assistantSpeaking": true,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 15,
+                    "phase": "resuming",
+                    "turnId": "turn-1",
+                    "outputEpoch": 20,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 1
+                  }
+                },
+                "derivedFeatureRefs": []
+              }
+            ],
+            "decisions": [
+              {
+                "decisionId": "decision-000001",
+                "turnId": null,
+                "epoch": 19,
+                "clockId": "browser-performance",
+                "atMs": 55713.5,
+                "triggeredBy": [
+                  "event-000001"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [],
+                "proposal": null,
+                "authorityDecision": "REJECT",
+                "decisionContextRef": "context-000001",
+                "transition": {
+                  "previousStateVersion": 13,
+                  "stateVersion": 13,
+                  "previousPhase": "idle",
+                  "phase": "idle",
+                  "reason": "already-idle"
+                }
+              },
+              {
+                "decisionId": "decision-000002",
+                "turnId": "turn-1",
+                "epoch": 20,
+                "clockId": "browser-performance",
+                "atMs": 56897.40000000596,
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "PAUSE_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "pauseKind": "audible"
+                    }
+                  }
+                ],
+                "proposal": "PAUSE_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000002",
+                "transition": {
+                  "previousStateVersion": 13,
+                  "stateVersion": 14,
+                  "previousPhase": "idle",
+                  "phase": "held",
+                  "reason": "output-held"
+                }
+              },
+              {
+                "decisionId": "decision-000003",
+                "turnId": "turn-1",
+                "epoch": 20,
+                "clockId": "browser-performance",
+                "atMs": 57746.20000001788,
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "RESUME_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "resumeAttempt": 1
+                    }
+                  }
+                ],
+                "proposal": "RESUME_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000003",
+                "transition": {
+                  "previousStateVersion": 14,
+                  "stateVersion": 15,
+                  "previousPhase": "held",
+                  "phase": "resuming",
+                  "reason": "resume-requested"
+                }
+              },
+              {
+                "decisionId": "decision-000004",
+                "turnId": null,
+                "epoch": 20,
+                "clockId": "browser-performance",
+                "atMs": 57748.40000000596,
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "SETTLE_RESUMED",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "resumeAttempt": 1
+                    }
+                  }
+                ],
+                "proposal": "SETTLE_RESUMED",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000004",
+                "transition": {
+                  "previousStateVersion": 15,
+                  "stateVersion": 16,
+                  "previousPhase": "resuming",
+                  "phase": "idle",
+                  "reason": "resume-observed"
+                }
+              }
+            ],
+            "effects": [
+              {
+                "effectId": "effect-000001",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "decisionId": "decision-000002",
+                "reconciledByDecisionId": null,
+                "effectType": "PAUSE_OUTPUT",
+                "epoch": 20,
+                "status": "completed",
+                "payload": {
+                  "pauseKind": "audible"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 56897.40000000596,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 56897.59999999404,
+                    "evidence": {
+                      "command": "HTMLMediaElement.pause"
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 56897.70000001788,
+                    "evidence": {
+                      "audioPresent": true,
+                      "paused": true
+                    }
+                  },
+                  {
+                    "stage": "renderer-silent",
+                    "clockId": "browser-performance",
+                    "atMs": 56899.70000001788,
+                    "evidence": {
+                      "kind": "browser-render-stop",
+                      "latencyMs": 37.66669161593745,
+                      "mapping": "audio-context-output-timestamp"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 56899.70000001788,
+                    "evidence": {
+                      "observation": "browser-render-stop"
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000002",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "decisionId": "decision-000003",
+                "reconciledByDecisionId": "decision-000004",
+                "effectType": "RESUME_OUTPUT",
+                "epoch": 20,
+                "status": "completed",
+                "payload": {
+                  "resumeAttempt": 1
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 57746.20000001788,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 57746.30000001192,
+                    "evidence": {
+                      "command": "HTMLMediaElement.play",
+                      "resumeAttempt": 1
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 57746.59999999404,
+                    "evidence": {
+                      "paused": false,
+                      "resumeAttempt": 1
+                    }
+                  },
+                  {
+                    "stage": "audible",
+                    "clockId": "browser-performance",
+                    "atMs": 57748.20000001788,
+                    "evidence": {
+                      "event": "HTMLMediaElement.onplaying"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 57748.40000000596,
+                    "evidence": {
+                      "observation": "play-resolved-after-onplaying",
+                      "resumeAttempt": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000003",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "decisionId": "decision-000004",
+                "reconciledByDecisionId": null,
+                "effectType": "SETTLE_RESUMED",
+                "epoch": 20,
+                "status": "completed",
+                "payload": {
+                  "resumeAttempt": 1
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 57748.40000000596,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 57748.40000000596,
+                    "evidence": {
+                      "resumeAttempt": 1
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 57748.5,
+                    "evidence": {
+                      "resourceSettled": true,
+                      "resumeAttempt": 1
+                    }
+                  }
+                ]
+              }
+            ],
+            "labels": [
+              {
+                "labelId": "label-000001",
+                "targetId": "decision-000001",
+                "task": "output-interruption-intent",
+                "value": [],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000002",
+                "targetId": "decision-000002",
+                "task": "output-interruption-intent",
+                "value": [
+                  "PAUSE_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000003",
+                "targetId": "decision-000003",
+                "task": "output-interruption-intent",
+                "value": [
+                  "RESUME_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000004",
+                "targetId": "decision-000004",
+                "task": "output-interruption-intent",
+                "value": [
+                  "SETTLE_RESUMED"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              }
+            ],
+            "derivedFeatureManifests": [],
+            "limitations": [
+              "fatia sem áudio persistido; posições acústicas e streams hasheados permanecem fora deste bundle"
+            ]
+          }
+        },
+        {
+          "label": "pcm-barge-in",
+          "path": "bargeIn",
+          "present": true,
+          "validation": {
+            "valid": true,
+            "errors": [],
+            "counts": {
+              "events": 4,
+              "contexts": 4,
+              "decisions": 4,
+              "effects": 3,
+              "labels": 4
+            }
+          },
+          "replay": {
+            "exact": true,
+            "steps": [
+              {
+                "decisionId": "decision-000001",
+                "eventId": "event-000001",
+                "eventType": "CLEAR",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000002",
+                "eventId": "event-000002",
+                "eventType": "PAUSE_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000003",
+                "eventId": "event-000003",
+                "eventType": "CONFIRM_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000004",
+                "eventId": "event-000004",
+                "eventType": "CLEAR",
+                "exact": true,
+                "errors": []
+              }
+            ],
+            "errors": []
+          },
+          "effects": [
+            {
+              "effectId": "effect-000001",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "renderer-silent",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000002",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000003",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            }
+          ],
+          "projection": {
+            "schemaVersion": "trace-v0-projection-v1",
+            "sessionId": "82fdbb02-3458-4bb2-8183-05a08d49e143",
+            "mapping": {
+              "pause": "PAUSE_OUTPUT.renderer-silent -> assistant.speech.stopped",
+              "resume": "RESUME_OUTPUT.audible -> assistant.speech.started"
+            },
+            "events": [
+              {
+                "clockId": "browser-performance",
+                "type": "assistant.speech.stopped",
+                "payload": {
+                  "effectId": "effect-000001",
+                  "intent": "PAUSE_OUTPUT",
+                  "measurement": "browser-renderer"
+                },
+                "source": "runtime",
+                "atMs": 0
+              }
+            ]
+          },
+          "projectionMonotonic": true,
+          "projectionContractValid": true,
+          "sessionBound": true,
+          "traceErrors": [],
+          "trainingTrace": {
+            "schemaVersion": "training-trace-v1",
+            "sliceVersion": "output-interruption-training-trace-v0.1",
+            "session": {
+              "sessionId": "82fdbb02-3458-4bb2-8183-05a08d49e143",
+              "startedAtEpochMs": 1785548540267,
+              "locale": "pt-BR",
+              "candidate": "duplex-lab-output-interruption-v0.1",
+              "configHash": "sha256:5b1817181bf90d9807ea2ab2201d12216a4bbca30888321ef7898b3b4be96cc7"
+            },
+            "clocks": [
+              {
+                "clockId": "browser-performance",
+                "kind": "monotonic",
+                "processId": "browser-main",
+                "resolutionMs": 0.1,
+                "mappingMethod": "identity-within-process",
+                "mappingPoints": []
+              }
+            ],
+            "streams": [],
+            "events": [
+              {
+                "eventId": "event-000001",
+                "sessionId": "82fdbb02-3458-4bb2-8183-05a08d49e143",
+                "turnId": null,
+                "epoch": 21,
+                "type": "output-interruption.clear",
+                "source": "browser-output-runtime",
+                "clockId": "browser-performance",
+                "atMs": 58228.80000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CLEAR",
+                    "reason": "cleared"
+                  }
+                }
+              },
+              {
+                "eventId": "event-000002",
+                "sessionId": "82fdbb02-3458-4bb2-8183-05a08d49e143",
+                "turnId": "turn-1",
+                "epoch": 22,
+                "type": "output-interruption.pause_requested",
+                "source": "local-audio-reflex",
+                "clockId": "browser-performance",
+                "atMs": 59116.70000001788,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "PAUSE_REQUESTED",
+                    "turnId": "turn-1",
+                    "outputEpoch": 22,
+                    "hasAudibleOutput": true,
+                    "hasAcousticOutput": true,
+                    "hasActiveResponse": false
+                  }
+                }
+              },
+              {
+                "eventId": "event-000003",
+                "sessionId": "82fdbb02-3458-4bb2-8183-05a08d49e143",
+                "turnId": "turn-1",
+                "epoch": 22,
+                "type": "output-interruption.confirm_requested",
+                "source": "browser-turn-taking",
+                "clockId": "browser-performance",
+                "atMs": 62375.80000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CONFIRM_REQUESTED",
+                    "reason": "fala útil: Espera, eu quis dizer outra coisa."
+                  }
+                }
+              },
+              {
+                "eventId": "event-000004",
+                "sessionId": "82fdbb02-3458-4bb2-8183-05a08d49e143",
+                "turnId": null,
+                "epoch": 22,
+                "type": "output-interruption.clear",
+                "source": "browser-output-runtime",
+                "clockId": "browser-performance",
+                "atMs": 62376.5,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CLEAR",
+                    "reason": "cleared"
+                  }
+                }
+              }
+            ],
+            "contexts": [
+              {
+                "contextId": "context-000001",
+                "turnId": null,
+                "epoch": 21,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 58228.80000001192
+                },
+                "eventIds": [
+                  "event-000001"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": false,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 16,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000002",
+                "turnId": "turn-1",
+                "epoch": 22,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 59116.70000001788
+                },
+                "eventIds": [
+                  "event-000002"
+                ],
+                "state": {
+                  "assistantSpeaking": true,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": true,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 16,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000003",
+                "turnId": "turn-1",
+                "epoch": 22,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 62375.80000001192
+                },
+                "eventIds": [
+                  "event-000003"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 17,
+                    "phase": "held",
+                    "turnId": "turn-1",
+                    "outputEpoch": 22,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000004",
+                "turnId": null,
+                "epoch": 22,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 62376.5
+                },
+                "eventIds": [
+                  "event-000004"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 18,
+                    "phase": "confirmed",
+                    "turnId": "turn-1",
+                    "outputEpoch": 22,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              }
+            ],
+            "decisions": [
+              {
+                "decisionId": "decision-000001",
+                "turnId": null,
+                "epoch": 21,
+                "clockId": "browser-performance",
+                "atMs": 58228.80000001192,
+                "triggeredBy": [
+                  "event-000001"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [],
+                "proposal": null,
+                "authorityDecision": "REJECT",
+                "decisionContextRef": "context-000001",
+                "transition": {
+                  "previousStateVersion": 16,
+                  "stateVersion": 16,
+                  "previousPhase": "idle",
+                  "phase": "idle",
+                  "reason": "already-idle"
+                }
+              },
+              {
+                "decisionId": "decision-000002",
+                "turnId": "turn-1",
+                "epoch": 22,
+                "clockId": "browser-performance",
+                "atMs": 59116.70000001788,
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "PAUSE_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "pauseKind": "audible"
+                    }
+                  }
+                ],
+                "proposal": "PAUSE_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000002",
+                "transition": {
+                  "previousStateVersion": 16,
+                  "stateVersion": 17,
+                  "previousPhase": "idle",
+                  "phase": "held",
+                  "reason": "output-held"
+                }
+              },
+              {
+                "decisionId": "decision-000003",
+                "turnId": "turn-1",
+                "epoch": 22,
+                "clockId": "browser-performance",
+                "atMs": 62375.80000001192,
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "CONFIRM_INTERRUPTION",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "reason": "fala útil: Espera, eu quis dizer outra coisa."
+                    }
+                  }
+                ],
+                "proposal": "CONFIRM_INTERRUPTION",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000003",
+                "transition": {
+                  "previousStateVersion": 17,
+                  "stateVersion": 18,
+                  "previousPhase": "held",
+                  "phase": "confirmed",
+                  "reason": "interruption-confirmed"
+                }
+              },
+              {
+                "decisionId": "decision-000004",
+                "turnId": null,
+                "epoch": 22,
+                "clockId": "browser-performance",
+                "atMs": 62376.5,
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "SETTLE_CLEARED",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "reason": "cleared"
+                    }
+                  }
+                ],
+                "proposal": "SETTLE_CLEARED",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000004",
+                "transition": {
+                  "previousStateVersion": 18,
+                  "stateVersion": 19,
+                  "previousPhase": "confirmed",
+                  "phase": "idle",
+                  "reason": "cleared"
+                }
+              }
+            ],
+            "effects": [
+              {
+                "effectId": "effect-000001",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "decisionId": "decision-000002",
+                "reconciledByDecisionId": null,
+                "effectType": "PAUSE_OUTPUT",
+                "epoch": 22,
+                "status": "completed",
+                "payload": {
+                  "pauseKind": "audible"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 59116.70000001788,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 59116.90000000596,
+                    "evidence": {
+                      "command": "HTMLMediaElement.pause"
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 59117,
+                    "evidence": {
+                      "audioPresent": true,
+                      "paused": true
+                    }
+                  },
+                  {
+                    "stage": "renderer-silent",
+                    "clockId": "browser-performance",
+                    "atMs": 59119,
+                    "evidence": {
+                      "kind": "browser-render-stop",
+                      "latencyMs": 38.12385487528809,
+                      "mapping": "audio-context-output-timestamp"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 59119,
+                    "evidence": {
+                      "observation": "browser-render-stop"
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000002",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "decisionId": "decision-000003",
+                "reconciledByDecisionId": null,
+                "effectType": "CONFIRM_INTERRUPTION",
+                "epoch": 22,
+                "status": "completed",
+                "payload": {
+                  "reason": "fala útil: Espera, eu quis dizer outra coisa."
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 62375.80000001192,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 62376.20000001788,
+                    "evidence": {
+                      "command": "HTMLMediaElement.pause",
+                      "reason": "fala útil: Espera, eu quis dizer outra coisa."
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 62376.30000001192,
+                    "evidence": {
+                      "paused": true
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 62376.40000000596,
+                    "evidence": {
+                      "resourceSettled": true,
+                      "reason": "fala útil: Espera, eu quis dizer outra coisa."
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000003",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "decisionId": "decision-000004",
+                "reconciledByDecisionId": null,
+                "effectType": "SETTLE_CLEARED",
+                "epoch": 22,
+                "status": "completed",
+                "payload": {
+                  "reason": "cleared"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 62376.5,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 62376.70000001788,
+                    "evidence": {
+                      "reason": "cleared"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 62376.70000001788,
+                    "evidence": {
+                      "resourceSettled": true
+                    }
+                  }
+                ]
+              }
+            ],
+            "labels": [
+              {
+                "labelId": "label-000001",
+                "targetId": "decision-000001",
+                "task": "output-interruption-intent",
+                "value": [],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000002",
+                "targetId": "decision-000002",
+                "task": "output-interruption-intent",
+                "value": [
+                  "PAUSE_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000003",
+                "targetId": "decision-000003",
+                "task": "output-interruption-intent",
+                "value": [
+                  "CONFIRM_INTERRUPTION"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000004",
+                "targetId": "decision-000004",
+                "task": "output-interruption-intent",
+                "value": [
+                  "SETTLE_CLEARED"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              }
+            ],
+            "derivedFeatureManifests": [],
+            "limitations": [
+              "fatia sem áudio persistido; posições acústicas e streams hasheados permanecem fora deste bundle"
+            ]
+          }
+        },
+        {
+          "label": "long-correction",
+          "path": "longCorrection.completed",
+          "present": true,
+          "validation": {
+            "valid": true,
+            "errors": [],
+            "counts": {
+              "events": 6,
+              "contexts": 6,
+              "decisions": 6,
+              "effects": 5,
+              "labels": 6
+            }
+          },
+          "replay": {
+            "exact": true,
+            "steps": [
+              {
+                "decisionId": "decision-000001",
+                "eventId": "event-000001",
+                "eventType": "CLEAR",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000002",
+                "eventId": "event-000002",
+                "eventType": "PAUSE_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000003",
+                "eventId": "event-000003",
+                "eventType": "PAUSE_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000004",
+                "eventId": "event-000004",
+                "eventType": "PAUSE_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000005",
+                "eventId": "event-000005",
+                "eventType": "CONFIRM_REQUESTED",
+                "exact": true,
+                "errors": []
+              },
+              {
+                "decisionId": "decision-000006",
+                "eventId": "event-000006",
+                "eventType": "CLEAR",
+                "exact": true,
+                "errors": []
+              }
+            ],
+            "errors": []
+          },
+          "effects": [
+            {
+              "effectId": "effect-000001",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "renderer-silent",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000002",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000003",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000004",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "player-received",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            },
+            {
+              "effectId": "effect-000005",
+              "stages": [
+                "accepted",
+                "dispatched",
+                "completed"
+              ],
+              "terminal": "completed",
+              "errors": []
+            }
+          ],
+          "projection": {
+            "schemaVersion": "trace-v0-projection-v1",
+            "sessionId": "a194a08b-8fc3-4ef5-bbe2-850b103100a6",
+            "mapping": {
+              "pause": "PAUSE_OUTPUT.renderer-silent -> assistant.speech.stopped",
+              "resume": "RESUME_OUTPUT.audible -> assistant.speech.started"
+            },
+            "events": [
+              {
+                "clockId": "browser-performance",
+                "type": "assistant.speech.stopped",
+                "payload": {
+                  "effectId": "effect-000001",
+                  "intent": "PAUSE_OUTPUT",
+                  "measurement": "browser-renderer"
+                },
+                "source": "runtime",
+                "atMs": 0
+              }
+            ]
+          },
+          "projectionMonotonic": true,
+          "projectionContractValid": true,
+          "sessionBound": true,
+          "traceErrors": [],
+          "trainingTrace": {
+            "schemaVersion": "training-trace-v1",
+            "sliceVersion": "output-interruption-training-trace-v0.1",
+            "session": {
+              "sessionId": "a194a08b-8fc3-4ef5-bbe2-850b103100a6",
+              "startedAtEpochMs": 1785548544600,
+              "locale": "pt-BR",
+              "candidate": "duplex-lab-output-interruption-v0.1",
+              "configHash": "sha256:5b1817181bf90d9807ea2ab2201d12216a4bbca30888321ef7898b3b4be96cc7"
+            },
+            "clocks": [
+              {
+                "clockId": "browser-performance",
+                "kind": "monotonic",
+                "processId": "browser-main",
+                "resolutionMs": 0.1,
+                "mappingMethod": "identity-within-process",
+                "mappingPoints": []
+              }
+            ],
+            "streams": [],
+            "events": [
+              {
+                "eventId": "event-000001",
+                "sessionId": "a194a08b-8fc3-4ef5-bbe2-850b103100a6",
+                "turnId": null,
+                "epoch": 24,
+                "type": "output-interruption.clear",
+                "source": "browser-output-runtime",
+                "clockId": "browser-performance",
+                "atMs": 62562.20000001788,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CLEAR",
+                    "reason": "cleared"
+                  }
+                }
+              },
+              {
+                "eventId": "event-000002",
+                "sessionId": "a194a08b-8fc3-4ef5-bbe2-850b103100a6",
+                "turnId": "turn-1",
+                "epoch": 25,
+                "type": "output-interruption.pause_requested",
+                "source": "local-audio-reflex",
+                "clockId": "browser-performance",
+                "atMs": 63898,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "PAUSE_REQUESTED",
+                    "turnId": "turn-1",
+                    "outputEpoch": 25,
+                    "hasAudibleOutput": true,
+                    "hasAcousticOutput": true,
+                    "hasActiveResponse": false
+                  }
+                }
+              },
+              {
+                "eventId": "event-000003",
+                "sessionId": "a194a08b-8fc3-4ef5-bbe2-850b103100a6",
+                "turnId": "turn-2",
+                "epoch": 25,
+                "type": "output-interruption.pause_requested",
+                "source": "local-audio-reflex",
+                "clockId": "browser-performance",
+                "atMs": 66045.30000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "PAUSE_REQUESTED",
+                    "turnId": "turn-2",
+                    "outputEpoch": 25,
+                    "hasAudibleOutput": false,
+                    "hasAcousticOutput": true,
+                    "hasActiveResponse": false
+                  }
+                }
+              },
+              {
+                "eventId": "event-000004",
+                "sessionId": "a194a08b-8fc3-4ef5-bbe2-850b103100a6",
+                "turnId": "turn-2",
+                "epoch": 25,
+                "type": "output-interruption.pause_requested",
+                "source": "local-audio-reflex",
+                "clockId": "browser-performance",
+                "atMs": 67739.30000001192,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "PAUSE_REQUESTED",
+                    "turnId": "turn-2",
+                    "outputEpoch": 25,
+                    "hasAudibleOutput": false,
+                    "hasAcousticOutput": true,
+                    "hasActiveResponse": false
+                  }
+                }
+              },
+              {
+                "eventId": "event-000005",
+                "sessionId": "a194a08b-8fc3-4ef5-bbe2-850b103100a6",
+                "turnId": "turn-1",
+                "epoch": 25,
+                "type": "output-interruption.confirm_requested",
+                "source": "browser-turn-taking",
+                "clockId": "browser-performance",
+                "atMs": 70581.70000001788,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CONFIRM_REQUESTED",
+                    "reason": "fala útil: Marque para cesta. Não, na verdade, para domingo."
+                  }
+                }
+              },
+              {
+                "eventId": "event-000006",
+                "sessionId": "a194a08b-8fc3-4ef5-bbe2-850b103100a6",
+                "turnId": null,
+                "epoch": 25,
+                "type": "output-interruption.clear",
+                "source": "browser-output-runtime",
+                "clockId": "browser-performance",
+                "atMs": 70582,
+                "payload": {
+                  "lifecycleEvent": {
+                    "type": "CLEAR",
+                    "reason": "cleared"
+                  }
+                }
+              }
+            ],
+            "contexts": [
+              {
+                "contextId": "context-000001",
+                "turnId": null,
+                "epoch": 24,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 62562.20000001788
+                },
+                "eventIds": [
+                  "event-000001"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": false,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 19,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000002",
+                "turnId": "turn-1",
+                "epoch": 25,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 63898
+                },
+                "eventIds": [
+                  "event-000002"
+                ],
+                "state": {
+                  "assistantSpeaking": true,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": true,
+                  "hasPotentialBargeIn": false,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 19,
+                    "phase": "idle",
+                    "turnId": null,
+                    "outputEpoch": null,
+                    "pauseKind": null,
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000003",
+                "turnId": "turn-2",
+                "epoch": 25,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 66045.30000001192
+                },
+                "eventIds": [
+                  "event-000003"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": true,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 20,
+                    "phase": "held",
+                    "turnId": "turn-1",
+                    "outputEpoch": 25,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000004",
+                "turnId": "turn-2",
+                "epoch": 25,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 67739.30000001192
+                },
+                "eventIds": [
+                  "event-000004"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": true,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 21,
+                    "phase": "held",
+                    "turnId": "turn-1",
+                    "outputEpoch": 25,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000005",
+                "turnId": "turn-1",
+                "epoch": 25,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 70581.70000001788
+                },
+                "eventIds": [
+                  "event-000005"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 22,
+                    "phase": "held",
+                    "turnId": "turn-1",
+                    "outputEpoch": 25,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              },
+              {
+                "contextId": "context-000006",
+                "turnId": null,
+                "epoch": 25,
+                "availableAt": {
+                  "clockId": "browser-performance",
+                  "atMs": 70582
+                },
+                "eventIds": [
+                  "event-000006"
+                ],
+                "state": {
+                  "assistantSpeaking": false,
+                  "assistantPreparing": false,
+                  "responseActive": false,
+                  "audioQueueLength": 0,
+                  "hasAssistantAudio": true,
+                  "userSpeaking": false,
+                  "hasPotentialBargeIn": true,
+                  "lifecycle": {
+                    "schemaVersion": 1,
+                    "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                    "version": 23,
+                    "phase": "confirmed",
+                    "turnId": "turn-1",
+                    "outputEpoch": 25,
+                    "pauseKind": "audible",
+                    "resumeAttempt": 0
+                  }
+                },
+                "derivedFeatureRefs": []
+              }
+            ],
+            "decisions": [
+              {
+                "decisionId": "decision-000001",
+                "turnId": null,
+                "epoch": 24,
+                "clockId": "browser-performance",
+                "atMs": 62562.20000001788,
+                "triggeredBy": [
+                  "event-000001"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [],
+                "proposal": null,
+                "authorityDecision": "REJECT",
+                "decisionContextRef": "context-000001",
+                "transition": {
+                  "previousStateVersion": 19,
+                  "stateVersion": 19,
+                  "previousPhase": "idle",
+                  "phase": "idle",
+                  "reason": "already-idle"
+                }
+              },
+              {
+                "decisionId": "decision-000002",
+                "turnId": "turn-1",
+                "epoch": 25,
+                "clockId": "browser-performance",
+                "atMs": 63898,
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "PAUSE_OUTPUT",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "pauseKind": "audible"
+                    }
+                  }
+                ],
+                "proposal": "PAUSE_OUTPUT",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000002",
+                "transition": {
+                  "previousStateVersion": 19,
+                  "stateVersion": 20,
+                  "previousPhase": "idle",
+                  "phase": "held",
+                  "reason": "output-held"
+                }
+              },
+              {
+                "decisionId": "decision-000003",
+                "turnId": "turn-2",
+                "epoch": 25,
+                "clockId": "browser-performance",
+                "atMs": 66045.30000001192,
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "KEEP_OUTPUT_HELD",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {}
+                  }
+                ],
+                "proposal": "KEEP_OUTPUT_HELD",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000003",
+                "transition": {
+                  "previousStateVersion": 20,
+                  "stateVersion": 21,
+                  "previousPhase": "held",
+                  "phase": "held",
+                  "reason": "already-held"
+                }
+              },
+              {
+                "decisionId": "decision-000004",
+                "turnId": "turn-2",
+                "epoch": 25,
+                "clockId": "browser-performance",
+                "atMs": 67739.30000001192,
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "KEEP_OUTPUT_HELD",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {}
+                  }
+                ],
+                "proposal": "KEEP_OUTPUT_HELD",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000004",
+                "transition": {
+                  "previousStateVersion": 21,
+                  "stateVersion": 22,
+                  "previousPhase": "held",
+                  "phase": "held",
+                  "reason": "already-held"
+                }
+              },
+              {
+                "decisionId": "decision-000005",
+                "turnId": "turn-1",
+                "epoch": 25,
+                "clockId": "browser-performance",
+                "atMs": 70581.70000001788,
+                "triggeredBy": [
+                  "event-000005"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "CONFIRM_INTERRUPTION",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "reason": "fala útil: Marque para cesta. Não, na verdade, para domingo."
+                    }
+                  }
+                ],
+                "proposal": "CONFIRM_INTERRUPTION",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000005",
+                "transition": {
+                  "previousStateVersion": 22,
+                  "stateVersion": 23,
+                  "previousPhase": "held",
+                  "phase": "confirmed",
+                  "reason": "interruption-confirmed"
+                }
+              },
+              {
+                "decisionId": "decision-000006",
+                "turnId": null,
+                "epoch": 25,
+                "clockId": "browser-performance",
+                "atMs": 70582,
+                "triggeredBy": [
+                  "event-000006"
+                ],
+                "supersedes": [],
+                "policy": {
+                  "id": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1",
+                  "mode": "authority"
+                },
+                "outputs": [
+                  {
+                    "intent": "SETTLE_CLEARED",
+                    "origin": "output-interruption-lifecycle",
+                    "payload": {
+                      "reason": "cleared"
+                    }
+                  }
+                ],
+                "proposal": "SETTLE_CLEARED",
+                "authorityDecision": "ACCEPT",
+                "decisionContextRef": "context-000006",
+                "transition": {
+                  "previousStateVersion": 23,
+                  "stateVersion": 24,
+                  "previousPhase": "confirmed",
+                  "phase": "idle",
+                  "reason": "cleared"
+                }
+              }
+            ],
+            "effects": [
+              {
+                "effectId": "effect-000001",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000002"
+                ],
+                "decisionId": "decision-000002",
+                "reconciledByDecisionId": null,
+                "effectType": "PAUSE_OUTPUT",
+                "epoch": 25,
+                "status": "completed",
+                "payload": {
+                  "pauseKind": "audible"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 63898,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 63898.20000001788,
+                    "evidence": {
+                      "command": "HTMLMediaElement.pause"
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 63898.30000001192,
+                    "evidence": {
+                      "audioPresent": true,
+                      "paused": true
+                    }
+                  },
+                  {
+                    "stage": "renderer-silent",
+                    "clockId": "browser-performance",
+                    "atMs": 63900.40000000596,
+                    "evidence": {
+                      "kind": "browser-render-stop",
+                      "latencyMs": 38.77001815847325,
+                      "mapping": "audio-context-output-timestamp"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 63900.40000000596,
+                    "evidence": {
+                      "observation": "browser-render-stop"
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000002",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000003"
+                ],
+                "decisionId": "decision-000003",
+                "reconciledByDecisionId": null,
+                "effectType": "KEEP_OUTPUT_HELD",
+                "epoch": 25,
+                "status": "completed",
+                "payload": {},
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 66045.30000001192,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 66045.5,
+                    "evidence": {
+                      "holdResourcePresent": true
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 66045.5,
+                    "evidence": {
+                      "outputRemainedHeld": true
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000003",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000004"
+                ],
+                "decisionId": "decision-000004",
+                "reconciledByDecisionId": null,
+                "effectType": "KEEP_OUTPUT_HELD",
+                "epoch": 25,
+                "status": "completed",
+                "payload": {},
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 67739.30000001192,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 67739.40000000596,
+                    "evidence": {
+                      "holdResourcePresent": true
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 67739.40000000596,
+                    "evidence": {
+                      "outputRemainedHeld": true
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000004",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000005"
+                ],
+                "decisionId": "decision-000005",
+                "reconciledByDecisionId": null,
+                "effectType": "CONFIRM_INTERRUPTION",
+                "epoch": 25,
+                "status": "completed",
+                "payload": {
+                  "reason": "fala útil: Marque para cesta. Não, na verdade, para domingo."
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 70581.70000001788,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 70581.80000001192,
+                    "evidence": {
+                      "command": "HTMLMediaElement.pause",
+                      "reason": "fala útil: Marque para cesta. Não, na verdade, para domingo."
+                    }
+                  },
+                  {
+                    "stage": "player-received",
+                    "clockId": "browser-performance",
+                    "atMs": 70581.90000000596,
+                    "evidence": {
+                      "paused": true
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 70582,
+                    "evidence": {
+                      "resourceSettled": true,
+                      "reason": "fala útil: Marque para cesta. Não, na verdade, para domingo."
+                    }
+                  }
+                ]
+              },
+              {
+                "effectId": "effect-000005",
+                "origin": "output-interruption-lifecycle",
+                "triggeredBy": [
+                  "event-000006"
+                ],
+                "decisionId": "decision-000006",
+                "reconciledByDecisionId": null,
+                "effectType": "SETTLE_CLEARED",
+                "epoch": 25,
+                "status": "completed",
+                "payload": {
+                  "reason": "cleared"
+                },
+                "stages": [
+                  {
+                    "stage": "accepted",
+                    "clockId": "browser-performance",
+                    "atMs": 70582,
+                    "evidence": {}
+                  },
+                  {
+                    "stage": "dispatched",
+                    "clockId": "browser-performance",
+                    "atMs": 70582,
+                    "evidence": {
+                      "reason": "cleared"
+                    }
+                  },
+                  {
+                    "stage": "completed",
+                    "clockId": "browser-performance",
+                    "atMs": 70582,
+                    "evidence": {
+                      "resourceSettled": true
+                    }
+                  }
+                ]
+              }
+            ],
+            "labels": [
+              {
+                "labelId": "label-000001",
+                "targetId": "decision-000001",
+                "task": "output-interruption-intent",
+                "value": [],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000002",
+                "targetId": "decision-000002",
+                "task": "output-interruption-intent",
+                "value": [
+                  "PAUSE_OUTPUT"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000003",
+                "targetId": "decision-000003",
+                "task": "output-interruption-intent",
+                "value": [
+                  "KEEP_OUTPUT_HELD"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000004",
+                "targetId": "decision-000004",
+                "task": "output-interruption-intent",
+                "value": [
+                  "KEEP_OUTPUT_HELD"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000005",
+                "targetId": "decision-000005",
+                "task": "output-interruption-intent",
+                "value": [
+                  "CONFIRM_INTERRUPTION"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              },
+              {
+                "labelId": "label-000006",
+                "targetId": "decision-000006",
+                "task": "output-interruption-intent",
+                "value": [
+                  "SETTLE_CLEARED"
+                ],
+                "source": {
+                  "kind": "deterministic-invariant",
+                  "ref": "output-interruption-lifecycle",
+                  "version": "output-interruption-lifecycle-v0.1"
+                },
+                "confidence": 1
+              }
+            ],
+            "derivedFeatureManifests": [],
+            "limitations": [
+              "fatia sem áudio persistido; posições acústicas e streams hasheados permanecem fora deste bundle"
+            ]
+          }
+        }
+      ],
+      "validationPass": true,
+      "replayPass": true,
+      "effectsPass": true,
+      "projectionPass": true,
+      "bindingPass": true,
+      "noInstrumentationErrors": true,
+      "scopeBoundaryExplicit": true,
+      "coverage": {
+        "effectTypes": [
+          "CONFIRM_INTERRUPTION",
+          "HOLD_OUTPUT",
+          "KEEP_OUTPUT_HELD",
+          "PAUSE_OUTPUT",
+          "RESUME_OUTPUT",
+          "SETTLE_CLEARED",
+          "SETTLE_RESUMED",
+          "SETTLE_WITHOUT_RESUME"
+        ],
+        "effectStages": [
+          "accepted",
+          "audible",
+          "cancelled",
+          "completed",
+          "dispatched",
+          "player-received",
+          "renderer-silent"
+        ],
+        "requiredEffectsCovered": true,
+        "requiredStagesCovered": true
+      }
+    },
+    "contractAudit": {
+      "schemaVersion": "training-trace-v1",
+      "sliceVersion": "output-interruption-training-trace-v0.1",
+      "pass": true,
+      "checks": {
+        "shadowCreatesNoEffect": true,
+        "shadowAuthorityRejected": true,
+        "schemaAcceptsValidShadow": true,
+        "schemaRejectsCorruptAuthority": true
+      }
+    },
+    "physical": {
+      "classification": "resolved-pass",
+      "honest": true,
+      "failedGates": [],
+      "unexpected": []
+    }
+  },
+  "interpretation": {
+    "promoted": "A fatia de interrupção produz no Chrome um bundle causal com IDs, contexto, decisão, rótulo e ledger de efeitos; o reducer reproduz cada decisão e a projeção v0 usa apenas STOP renderizado e retomada audível.",
+    "notPromoted": "O contrato training-trace-v1 completo, streams acústicos hasheados, clocks entre processos, M4a, política treinada, generalização e especificidade física ampla.",
+    "next": "Persistir áudio e posições de amostra apenas no recorte necessário ao primeiro candidato M4a em shadow, mantendo efeitos críticos sob autoridade determinística."
+  },
+  "provenance": {
+    "candidateInput": {
+      "path": "eval/reports/exp-0013-browser-current.json",
+      "sha256": "bd29bb2d0785f41a0f3e267dadf4103d2f28cf97a329bea14d83e2f92ebecd96",
+      "runNonce": "exp-0013-trace-current"
+    },
+    "campaignFingerprint": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "1c85153ecc756e98b12ee9c571ebc6cab08c90a4bb02230552df53d7d209f6cd",
+      "fileCount": 219,
+      "roots": [
+        "src",
+        "web",
+        "scripts",
+        "tests",
+        "eval/factory",
+        "eval/gates",
+        "eval/scenarios",
+        "package.json",
+        "package-lock.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "runtimeFingerprint": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "5b1817181bf90d9807ea2ab2201d12216a4bbca30888321ef7898b3b4be96cc7",
+      "fileCount": 80,
+      "roots": [
+        "src",
+        "web",
+        "package.json",
+        "package-lock.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "runtimeRunId": "21a2f98c-1651-4236-b91c-814a416464e8",
+    "runtimeProvider": "local",
+    "paidApiRequests": 0
+  }
+}

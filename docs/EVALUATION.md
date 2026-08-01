@@ -297,6 +297,7 @@ canônico é `eval/reports/eval-factory-campaign-v0.2.json`.
 | EXP-0010 | 5/5 ciclos stateful no Chrome; p95 94,9/399,9 ms; zero commit antes da repetição e um depois | `promote-stateful-kernel-slice`; runtime global em `hold-acoustic-stability` |
 | EXP-0011 | A/B causal de fonte idêntica; pico marginal preservado, final tardia bloqueada; barge-in 157,39 ms; probe físico 30,147 s limpo | `promote-local-audio-reflex-slice`; M2.5 e causalidade de eco não promovidos |
 | EXP-0012 | seis fluxos Chrome com replay exato; quatro fases/oito intenções; STOP 48 ms; onset PCM→renderer 183,66 ms; seis corridas protegidas | `promote-output-interruption-lifecycle-slice`; probe físico não iniciado e M2.5 amplo em `hold` |
+| EXP-0013 | seis bundles causais; 28 decisões reproduzidas; 22 efeitos encerrados; STOP 38 ms; onset PCM→renderer 169,82 ms; 12/12 gates formais | `promote-training-trace-interruption-slice`; áudio hasheado, clocks entre processos, M4a e generalização não promovidos |
 
 A configuração resultante está congelada em
 [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
@@ -311,6 +312,12 @@ EXP-0012, a janela causal nem iniciou e seus gates ficaram falsos, sem apagar a
 evidência anterior ou impedir o replay não físico. O eixo ainda não mede
 loopback calibrado, eco/reverberação controlados,
 double-talk sistemático, cauda física da sala ou preferência humana.
+
+No EXP-0013, a campanha corrente completou 30,074 s sem ativação e todos os
+gates físicos ficaram verdes. Essa observação pertence ao fingerprint,
+dispositivo e ambiente correntes; melhora a evidência local, mas não transforma
+o teste de microfone em loopback calibrado nem em generalização por
+hardware/sala.
 
 O ciclo completo e seus limites estão em
 [AUTONOMOUS_LOOP.md](AUTONOMOUS_LOOP.md).

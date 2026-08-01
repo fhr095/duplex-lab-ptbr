@@ -35,7 +35,8 @@ e o EXP-0009 promoveu abstention determinística para o risco monetário. Agora:
   `LocalAudioReflex`;
 - fazer evaluator, backend e navegador compartilharem a mesma semântica, sem
   criar mais de uma autoridade de kernel por sessão real;
-- materializar `training-trace-v1`, ledger de efeitos e holdout novo;
+- materializar incrementalmente `training-trace-v1`, ledger de efeitos e
+  holdout novo — primeira fatia concluída no EXP-0013;
 - provar M4a com uma capacidade estreita em shadow e sem autoridade;
 - calibrar timing/rótulos com uma amostra humana pequena antes de M4b;
 - conceder autoridade apenas à capacidade que vencer seus gates.
@@ -76,10 +77,11 @@ interrupção legítima terminou no renderer em 157,39 ms, abaixo do teto de
 350 ms, e a sessão física corrente passou 30,147 s sem ativação. Isso sustenta
 `promote-local-audio-reflex-slice`, não M2.5 completo nem causalidade de eco.
 
-O próximo fechamento é reconciliar `WAIT_FOR_EVIDENCE`, STOP, retomada e efeito
-observado com o lifecycle/clocks do `InteractionRuntime`, mantendo o comando
-físico rápido no navegador. Loopback ou rótulo causal permanece necessário
-antes de usar o probe físico como prova de autoeco.
+O fechamento seguinte, concluído no EXP-0012 abaixo, foi reconciliar
+`WAIT_FOR_EVIDENCE`, STOP, retomada e efeito observado com o lifecycle do
+`InteractionRuntime`, mantendo o comando físico rápido no navegador. Loopback
+ou rótulo causal permanece necessário antes de usar o probe físico como prova
+de autoeco.
 
 ## Atualização após o EXP-0012
 
@@ -93,10 +95,31 @@ paga. Isso sustenta `promote-output-interruption-lifecycle-slice`.
 
 O probe causal físico não iniciou neste fingerprint; seus gates permaneceram
 falsos e o status global continua em `hold`. M2.5 também continua aberto para
-clocks/filas amplos e efeitos externos. O maior retorno seguinte não é extrair
-mais heurísticas: é materializar `training-trace-v1` e um ledger estreito sobre
-os caminhos já promovidos, migrando infraestrutura adicional apenas quando
-essa primeira vertical de aprendizado exigir.
+clocks/filas amplos e efeitos externos. O maior retorno seguinte àquela rodada,
+concluído no EXP-0013 abaixo, não foi extrair mais heurísticas: foi materializar
+uma fatia de `training-trace-v1` e um ledger estreito sobre os caminhos já
+promovidos.
+
+## Atualização após o EXP-0013
+
+O caminho real do Chrome agora materializa a primeira fatia de
+`training-trace-v1`: evento, contexto disponível, decisão, rótulo e lifecycle
+do efeito compartilham IDs e fingerprint de sessão. Seis conversas produziram
+28 decisões reproduzidas e 22 efeitos encerrados. Uma pausa retomada antes de
+silêncio mensurável fica `cancelled`, não é reescrita como STOP; a projeção v0
+só usa `renderer-silent` e `audible`. Shadow é estruturalmente observacional.
+
+Os 12 gates formais passaram, assim como todos os gates do Chrome corrente;
+STOP ficou em 38 ms e onset PCM→renderer em 169,82 ms, com zero API paga. Isso
+sustenta `promote-training-trace-interruption-slice`. Não sustenta o contrato
+completo: faltam streams acústicos hasheados, posições de amostra e mapeamentos
+entre clocks; tampouco existe checkpoint ou alegação de generalização.
+
+O maior retorno seguinte é estender somente essa fronteira: ligar as fixtures
+PCM já existentes ao trace incremental do `LocalAudioReflex`, criar split por
+família e provar M4a acústico em shadow para
+`WAIT_FOR_EVIDENCE / PAUSE_OUTPUT / CONTINUE_OUTPUT`. A política determinística
+continua autoritativa e nenhum efeito crítico migra para o modelo.
 
 ## Pontos incorporados
 

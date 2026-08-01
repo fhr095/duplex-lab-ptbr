@@ -1273,9 +1273,18 @@ try {
       evaluate(`(() => {
         const snapshot = window.__duplexLab.snapshot();
         const types = snapshot.trace.map((event) => event.type);
+        const effects = snapshot.trainingTrace?.effects ?? [];
+        const effectsTerminal = effects.length > 0 && effects.every(
+          (effect) => [
+            "rejected",
+            "cancelled",
+            "completed"
+          ].includes(effect.status)
+        );
         return types.includes("barge-in.reopened") &&
           types.includes("barge-in.confirmed") &&
-          types.includes("turn.committed")
+          types.includes("turn.committed") &&
+          effectsTerminal
           ? snapshot
           : null;
       })()`),

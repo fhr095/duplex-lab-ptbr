@@ -35,7 +35,7 @@ npm run eval:auto
 10. relatório consolidado em `eval/reports/autonomous-latest.json`.
 
 Esse comando preserva a baseline ampla histórica. Ele ainda não orquestra a
-fábrica v0.2 nem os EXP-0007–0010; portanto, “rodar `eval:auto`” não equivale a
+fábrica v0.2 nem os EXP-0007–0013; portanto, “rodar `eval:auto`” não equivale a
 avançar automaticamente o roadmap atual.
 
 O runner abre uma porta livre, força `BRAIN_PROVIDER=local`, verifica no
@@ -83,9 +83,16 @@ fala e descartou a final tardia; o STOP legítimo ficou em 157,39 ms e 30,147 s
 físicos passaram sem ativação. O EXP-0012 reconciliou hold/STOP/retomada local:
 seis fluxos do Chrome tiveram replay exato, STOP em 48 ms no renderer e seis
 corridas assíncronas falharam fechadas. Seu probe causal físico não iniciou e
-permaneceu em `hold`, sem apagar a rodada histórica. O próximo loop materializa
-`training-trace-v1` e um ledger estreito sobre esses caminhos; o roadmap, e não
-este documento de método, define os fechamentos posteriores.
+permaneceu em `hold`, sem apagar a rodada histórica. O EXP-0013 materializou
+essa primeira fatia causal: seis bundles, 28 decisões reproduzidas e 22 efeitos
+encerrados, com projeção baseada em STOP renderizado/retomada audível e zero
+autoridade shadow. A campanha corrente também passou o probe físico de
+30,074 s; isso não generaliza para outros dispositivos.
+
+O próximo loop liga as fixtures PCM existentes a hashes e posições de amostra,
+registra as decisões incrementais do `LocalAudioReflex` e prepara um split novo
+por família para M4a acústico em shadow. O roadmap, e não este documento de
+método, define os fechamentos posteriores.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O

@@ -80,9 +80,9 @@ ainda parcialmente rotulada, diversidade acústica limitada a uma voz e ausênci
 de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
 
-Após o EXP-0012, a suíte corrente possui **299/299 testes** e também cobre os
+Após o EXP-0013, a suíte corrente possui **314/314 testes** e também cobre os
 reducers do reflexo e do lifecycle, finais tardias, corridas de retomada,
-comparadores e casos adversariais.
+schema causal, ledger, replay, projeção v0, comparadores e casos adversariais.
 Os 223/223 acima pertencem à execução congelada da campanha v0.2 e não são
 reescritos retrospectivamente.
 
@@ -115,10 +115,21 @@ fala e seis corridas assíncronas falharam fechadas. A decisão é
 a iniciar nesta rodada, portanto seus dois gates permanecem falsos e a
 especificidade física global continua em `hold`.
 
+O EXP-0013 materializou a primeira fatia causal de `training-trace-v1` no
+caminho real. Seis conversas produziram **28 decisões reproduzidas** e
+**22 efeitos encerrados**, com IDs, contexto temporal, rótulo versionado,
+reconciliação e projeção v0 baseada somente em silêncio do renderer ou retomada
+audível. Os 12 gates formais passaram; o Chrome respondeu em 185 ms, parou o
+renderer em 38 ms e fechou onset PCM→silêncio em 169,82 ms. A decisão é
+`promote-training-trace-interruption-slice`. Áudio hasheado, posições de
+amostra, clocks entre processos, checkpoint e generalização ainda não foram
+promovidos.
+
 Com o servidor local e o Chrome de depuração abertos, a evidência é reproduzida
-por `npm run eval:exp:0012:browser` e consolidada por
-`npm run eval:exp:0012:report`. O primeiro comando continua após um probe
-físico não resolvido, mas mantém esses gates falsos no relatório.
+por `npm run eval:exp:0013:browser` e consolidada por
+`npm run eval:exp:0013:report`. O primeiro comando preserva separadamente os
+gates físicos; uma falha ambiental não vira sucesso nem apaga a prova causal
+dos caminhos determinísticos.
 
 ## Rodar
 
@@ -269,6 +280,7 @@ precisam entrar no mesmo contrato.
 - [EXP-0010 — primeira fatia stateful do InteractionKernel](docs/experiments/EXP-0010-stateful-interaction-kernel.md)
 - [EXP-0011 — reflexo local com evidência acústica](docs/experiments/EXP-0011-local-audio-reflex.md)
 - [EXP-0012 — lifecycle local de interrupção da saída](docs/experiments/EXP-0012-output-interruption-lifecycle.md)
+- [EXP-0013 — trace causal e ledger da interrupção](docs/experiments/EXP-0013-training-trace-interruption.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -279,10 +291,11 @@ prefinal acústica, o EXP-0008 encontrou um verificador semanticamente útil mas
 lento, e o EXP-0009 bloqueou a confirmação monetária insegura sem LLM. A ordem
 executável existe somente no
 [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada): a baseline
-v0.3 está congelada, as fatias stateful, de reflexo e de lifecycle local foram
-promovidas, e o próximo fechamento materializa `training-trace-v1` e um ledger
-estreito de efeitos observados. Clocks e filas migram conforme essa vertical
-exigir, sem mover o comando físico rápido para o backend.
+v0.3 está congelada e as fatias stateful, de reflexo, lifecycle e trace causal
+local foram promovidas. O próximo fechamento liga as fixtures PCM existentes a
+hashes/posições de amostra e registra as decisões incrementais do reflexo para
+o primeiro M4a acústico em shadow. Clocks migram somente pelo necessário e o
+comando físico rápido permanece no navegador.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

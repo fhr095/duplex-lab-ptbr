@@ -232,7 +232,8 @@ navegador. O alvo é separar:
 Evaluator e experiência real devem usar o mesmo kernel. Um
 `training-trace-v1` separado registra contexto incremental, relógios,
 decisões propostas/aceitas/observadas e proveniência de rótulos.
-**Em andamento.** O EXP-0010 promoveu a primeira fatia: confirmação monetária
+**Em andamento; primeira fatia causal materializada.** O EXP-0010 promoveu a
+primeira fatia: confirmação monetária
 stateful, runtime autoritativo no backend e navegador sem política semântica
 paralela. Em 5/5 ciclos de dois turnos houve zero commit prematuro e exatamente
 um commit após a repetição inequívoca, com p95 de 94,9 ms para a pergunta neutra
@@ -256,6 +257,15 @@ reducer. STOP no renderer ficou em 48 ms e onset PCM→último quantum em
 183,66 ms. A decisão é `promote-output-interruption-lifecycle-slice`. O probe
 físico causal não iniciou neste fingerprint e seus gates permaneceram falsos;
 clocks/filas globais, efeitos externos e M2.5 completo continuam em `hold`.
+
+O EXP-0013 fechou a primeira fatia causal do trace treinável. Seis conversas
+reais do Chrome produziram 28 decisões reproduzidas e 22 efeitos encerrados,
+com vínculo de sessão/fingerprint, proveniência, reconciliação e projeção v0
+baseada somente em STOP renderizado e retomada audível. STOP ficou em 38 ms,
+onset PCM→renderer em 169,82 ms e os 12 gates formais passaram, sem API paga.
+A decisão é `promote-training-trace-interruption-slice`. O contrato completo,
+streams acústicos hasheados, clocks entre processos, efeitos externos e M4a
+continuam em `hold`; o probe físico corrente verde não implica universalidade.
 
 ### M3 — qualidade modular local
 
@@ -302,11 +312,13 @@ Esta referência preserva apenas a lógica macro:
 2. manter o interlock monetário EXP-0009 como guardrail, sem alegar que ele
    recupera o valor;
 3. usar a baseline v0.3 congelada como comparador de desenvolvimento;
-4. preservar as fatias promovidas do kernel, reflexo e lifecycle local;
-5. materializar `training-trace-v1`, ledger estreito e holdout novo sobre os
-   caminhos já promovidos, migrando clocks/filas somente quando necessários;
-6. completar a validade M2.5 ampla exigida pela primeira vertical de treino;
-7. provar M4a com uma capacidade estreita e sem autoridade;
+4. preservar as fatias promovidas do kernel, reflexo, lifecycle e trace causal
+   local;
+5. vincular as fixtures PCM por hash/posição de amostra e registrar decisões
+   incrementais do reflexo, sem ampliar o runtime global;
+6. criar split por família e completar somente a validade M2.5 exigida pelo
+   primeiro candidato acústico;
+7. provar M4a para `WAIT/PAUSE/CONTINUE` em shadow e sem autoridade;
 8. desafiar contrato/evaluator com referência nativa apenas quando houver uma
    pergunta experimental concreta;
 9. calibrar rótulos com humanos antes de M4b e promover somente ganhos

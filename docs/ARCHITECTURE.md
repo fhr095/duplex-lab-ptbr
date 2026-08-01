@@ -163,6 +163,12 @@ usam índice de amostra como referência primária dentro do stream. Navegador,
 servidor, player e evaluator preservam seus domínios monotônicos e registram
 pontos de mapeamento; tempo de parede serve apenas para correlacionar sessões.
 
+O EXP-0013 implementou a primeira fatia no navegador: decisões de interrupção,
+contextos, rótulos e efeitos compartilham IDs e podem ser reproduzidos e
+projetados para o trace v0. Ela usa somente `browser-performance` e declara
+`streams: []`; portanto não antecipa a futura ligação acústica nem equipara
+clocks diferentes.
+
 ## Duas implementações sob o mesmo contrato
 
 ### Caminho modular
@@ -256,13 +262,15 @@ Implementado:
 
 Ainda não implementado:
 
-- kernel comum para política temporal, evaluator, backend e áudio — somente a
-  fatia semântica crítica está migrada;
-- reconciliação da decisão temporal ampla e de efeitos observados com os
-  reducers já comuns de reflexo e interrupção local;
+- kernel comum para toda a política temporal, evaluator, backend e áudio — as
+  fatias semântica crítica, reflexo e interrupção local estão migradas;
+- reconciliação temporal ampla além dos reducers já comuns de reflexo e
+  interrupção local;
 - clocks, filas, epochs, tarefas e efeitos sob o `InteractionRuntime` comum;
-- `training-trace-v1` materializado pelo caminho real;
-- ledger verificável de efeitos externos e holdout independente novo;
+- `training-trace-v1` completo — a fatia causal de interrupção está
+  materializada, mas áudio/posições de amostra e clocks entre processos não;
+- ledger verificável de efeitos externos — o ledger local da interrupção está
+  promovido — e holdout independente novo;
 - primeiro checkpoint em shadow mode;
 - geração/crítica autônoma ampla e ambientalização multivoz da fábrica;
 - loopback físico separado para medir a cauda do alto-falante e da sala;

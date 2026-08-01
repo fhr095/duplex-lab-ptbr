@@ -1,12 +1,13 @@
 # Contrato `training-trace-v1`
 
-Status: **decisão de desenho consolidada; implementação da primeira vertical é
-o próximo fechamento**
+Status: **decisão de desenho consolidada; primeira fatia de interrupção
+promovida; contrato completo ainda aberto**
 
-O EXP-0012 criou o precursor operacional: eventos, versões, fases e intenções
-de hold/retomada/confirmação já permitem replay exato no Chrome. Eles ainda não
-formam este bundle: faltam identidades `eventId/decisionId/effectId`, clocks,
-contextos causais, estágios de efeito e projeção validada para o trace v0.
+O EXP-0012 criou o precursor operacional. O EXP-0013 materializou sobre ele uma
+fatia real deste bundle: identidades `eventId/decisionId/effectId`, clock do
+navegador, contextos causais, rótulos, lifecycle de efeitos e projeção validada
+para o trace v0. Ainda faltam streams acústicos hasheados, posições de amostra
+e mapeamentos entre processos para considerar o contrato completo.
 
 ## Objetivo
 
@@ -330,6 +331,23 @@ O contrato só é considerado materializado quando:
 9. nenhum evento usa informação posterior ao instante da decisão;
 10. artefatos sensíveis possuem política de retenção e não entram no Git por
     padrão.
+
+## Estado da implementação após o EXP-0013
+
+A fatia `output-interruption-training-trace-v0.1` atende os itens 1 e 4–10 no
+escopo local do navegador. Seis bundles canônicos contêm 28 decisões
+reproduzidas e 22 efeitos encerrados. `PAUSE_OUTPUT` só projeta STOP depois de
+`renderer-silent`; `RESUME_OUTPUT` só projeta fala depois de `audible`; uma
+pausa superada antes dessas observações fica `cancelled` e referencia a decisão
+que a reconciliou. Shadow não cria efeito.
+
+Os itens 2 e 3 permanecem abertos: `streams` está deliberadamente vazio e o
+bundle declara “sem áudio persistido”; só existe o clock monotônico
+`browser-performance`, sem fingir equivalência com servidor, sample clock ou
+AudioContext. Por isso a decisão é
+`promote-training-trace-interruption-slice`, não “contrato materializado”. A
+evidência está em
+[`exp-0013-training-trace-interruption-v1.json`](../eval/reports/exp-0013-training-trace-interruption-v1.json).
 
 ## Uso em M4a e M4b
 

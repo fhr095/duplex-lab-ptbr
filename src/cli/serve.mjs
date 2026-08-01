@@ -287,6 +287,7 @@ const STATIC_ROUTES = new Map([
   ["/pcm-dsp.mjs", "pcm-dsp.mjs"],
   ["/pcm-wire.mjs", "pcm-wire.mjs"],
   ["/stream-utils.mjs", "stream-utils.mjs"],
+  ["/training-trace-recorder.mjs", "training-trace-recorder.mjs"],
   ["/turn-taking.mjs", "turn-taking.mjs"],
   ["/styles.css", "styles.css"]
 ]);

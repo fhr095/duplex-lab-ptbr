@@ -93,10 +93,14 @@ Não promovido:
 - `training-trace-v1`, ledger de efeitos, política treinada ou preferência
   humana.
 
-## Próximo experimento
+## Próximo experimento — concluído pelo EXP-0013
 
 Materializar uma primeira vertical de `training-trace-v1` e ledger de efeitos
 observados sobre os caminhos já promovidos. O objetivo é provar que
 contexto→decisão→intenção→efeito pode alimentar replay e M4a sem duplicar a
 autoridade nem expandir a cascata. Clocks/filas adicionais migram quando forem
 necessários para essa vertical; o loopback físico segue como trilha paralela.
+
+Resultado posterior: a fatia foi promovida em
+[EXP-0013 — trace causal e ledger da interrupção](EXP-0013-training-trace-interruption.md),
+sem promover áudio hasheado, clocks entre processos ou M4a.

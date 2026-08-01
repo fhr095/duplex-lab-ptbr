@@ -18,6 +18,9 @@ import {
   OutputInterruptionLifecycle
 } from "/output-interruption-lifecycle.mjs";
 import {
+  TrainingTraceRecorder
+} from "/training-trace-recorder.mjs";
+import {
   classifyPotentialBargeIn,
   isExplicitTaskCancellation
 } from "/turn-taking.mjs";
@@ -175,6 +178,25 @@ const session = {
   vadShadow: createVadShadowTelemetry()
 };
 
+let runtimeTrainingConfigHash = `sha256:${"0".repeat(64)}`;
+const trainingTraceRecorder = new TrainingTraceRecorder({
+  sessionId: session.interactionSessionId,
+  startedAtEpochMs: Date.now(),
+  locale: "pt-BR",
+  candidate: "duplex-lab-output-interruption-v0.1",
+  configHash: runtimeTrainingConfigHash
+});
+
+function resetTrainingTraceRecorder() {
+  return trainingTraceRecorder.reset({
+    sessionId: session.interactionSessionId,
+    startedAtEpochMs: Date.now(),
+    locale: "pt-BR",
+    candidate: "duplex-lab-output-interruption-v0.1",
+    configHash: runtimeTrainingConfigHash
+  });
+}
+
 const MAX_SOCKET_BUFFER_BYTES = 256 * 1024;
 
 function nowLabel(elapsed = performance.now()) {
@@ -199,9 +221,95 @@ function log(type, detail = "") {
   elements.eventLog.prepend(item);
 }
 
-function dispatchOutputInterruption(event) {
+function interruptionTrainingContext(previous) {
+  return {
+    assistantSpeaking: session.assistantSpeaking,
+    assistantPreparing: session.assistantPreparing,
+    responseActive: session.responseActive,
+    audioQueueLength: session.audioQueue.length,
+    hasAssistantAudio: Boolean(session.assistantAudio),
+    userSpeaking: session.userSpeaking,
+    hasPotentialBargeIn: Boolean(session.potentialBargeIn),
+    lifecycle: { ...previous }
+  };
+}
+
+function trainingEffectId(transition, effectType) {
+  return transition.trainingTrace?.effects.find(
+    (effect) => effect.effectType === effectType
+  )?.effectId ?? null;
+}
+
+function markTrainingEffectId(
+  effectId,
+  stage,
+  evidence = {},
+  options = {}
+) {
+  if (!effectId) {
+    return null;
+  }
+  try {
+    return trainingTraceRecorder.recordEffectStage(effectId, {
+      stage,
+      atMs: options.atMs ?? performance.now(),
+      evidence,
+      reconciledByDecisionId:
+        options.reconciledByDecisionId ?? null
+    });
+  } catch (error) {
+    log("training-trace.effect.error", error.message);
+    return null;
+  }
+}
+
+function markTrainingEffect(transition, effectType, stage, evidence = {}) {
+  return markTrainingEffectId(
+    trainingEffectId(transition, effectType),
+    stage,
+    evidence
+  );
+}
+
+function dispatchOutputInterruption(event, options = {}) {
   const previous = outputInterruptionLifecycle.snapshot;
+  const atMs = performance.now();
   const transition = outputInterruptionLifecycle.dispatch(event);
+  let trainingTrace = null;
+  try {
+    trainingTrace = trainingTraceRecorder.recordDecision({
+      atMs,
+      turnId: event.turnId ?? transition.state.turnId ?? null,
+      epoch:
+        event.outputEpoch ??
+        event.currentOutputEpoch ??
+        previous.outputEpoch ??
+        session.audioEpoch,
+      event: {
+        type: `output-interruption.${event.type.toLowerCase()}`,
+        source: options.source ?? "browser-output-runtime",
+        payload: { lifecycleEvent: { ...event } }
+      },
+      context: {
+        state: interruptionTrainingContext(previous)
+      },
+      policy: {
+        id: "output-interruption-lifecycle",
+        version: transition.lifecycleVersion,
+        mode: "authority"
+      },
+      transition: {
+        previousStateVersion: transition.previousStateVersion,
+        stateVersion: transition.state.version,
+        previousPhase: previous.phase,
+        phase: transition.state.phase,
+        reason: transition.reason
+      },
+      intents: transition.intents
+    });
+  } catch (error) {
+    log("training-trace.decision.error", error.message);
+  }
   if (
     transition.state.version !== previous.version ||
     transition.intents.length > 0 ||
@@ -226,7 +334,10 @@ function dispatchOutputInterruption(event) {
       })
     );
   }
-  return transition;
+  return {
+    ...transition,
+    trainingTrace
+  };
 }
 
 const assistantRenderProbe = new BrowserAudioRenderProbe({
@@ -308,7 +419,27 @@ function clearPotentialBargeIn(reason = "cleared") {
   if (potential?.timer) {
     clearTimeout(potential.timer);
   }
-  dispatchOutputInterruption({ type: "CLEAR", reason });
+  const cleared = dispatchOutputInterruption(
+    { type: "CLEAR", reason },
+    { source: "browser-output-runtime" }
+  );
+  if (potential?.resumeEffectId) {
+    markTrainingEffectId(
+      potential.resumeEffectId,
+      "cancelled",
+      { reason },
+      {
+        reconciledByDecisionId: cleared.trainingTrace?.decisionId
+      }
+    );
+    potential.resumeEffectId = null;
+  }
+  markTrainingEffect(cleared, "SETTLE_CLEARED", "dispatched", {
+    reason
+  });
+  markTrainingEffect(cleared, "SETTLE_CLEARED", "completed", {
+    resourceSettled: Boolean(potential)
+  });
   session.potentialBargeIn = null;
   session.assistantResumeReason = null;
   potential?.settle?.({ kind: reason });
@@ -430,6 +561,19 @@ async function playPreparedSpeech(item) {
         return;
       }
       const startedAt = performance.now();
+      const resumedPotential = session.potentialBargeIn;
+      if (
+        resumedPotential?.audio === audio &&
+        resumedPotential.resumeEffectId &&
+        !resumedPotential.resumeAudibleObserved
+      ) {
+        markTrainingEffectId(
+          resumedPotential.resumeEffectId,
+          "audible",
+          { event: "HTMLMediaElement.onplaying" }
+        );
+        resumedPotential.resumeAudibleObserved = true;
+      }
       session.assistantSpeaking = true;
       setStatus("falando e ouvindo", "speaking");
       if (session.assistantResumeReason) {
@@ -868,14 +1012,17 @@ function pauseAssistantForPotentialBargeIn(event = {}) {
     Boolean(session.assistantAudio) ||
     session.audioQueue.length > 0;
   const hadActiveResponse = session.responseActive;
-  const transition = dispatchOutputInterruption({
-    type: "PAUSE_REQUESTED",
-    turnId: event.turnId ?? null,
-    outputEpoch: session.audioEpoch,
-    hasAudibleOutput: hadAudibleOutput,
-    hasAcousticOutput: hadAcousticOutput,
-    hasActiveResponse: hadActiveResponse
-  });
+  const transition = dispatchOutputInterruption(
+    {
+      type: "PAUSE_REQUESTED",
+      turnId: event.turnId ?? null,
+      outputEpoch: session.audioEpoch,
+      hasAudibleOutput: hadAudibleOutput,
+      hasAcousticOutput: hadAcousticOutput,
+      hasActiveResponse: hadActiveResponse
+    },
+    { source: "local-audio-reflex" }
+  );
   const intentTypes = new Set(
     transition.intents.map((intent) => intent.type)
   );
@@ -886,6 +1033,11 @@ function pauseAssistantForPotentialBargeIn(event = {}) {
     intentTypes.has("CANCEL_RESUME_AND_PAUSE")
   ) {
     if (!current) {
+      for (const effect of transition.trainingTrace?.effects ?? []) {
+        markTrainingEffectId(effect.effectId, "cancelled", {
+          reason: "missing-hold-resource"
+        });
+      }
       log(
         "output-interruption.invariant.error",
         "lifecycle ativo sem recurso de hold"
@@ -900,10 +1052,50 @@ function pauseAssistantForPotentialBargeIn(event = {}) {
     clearTimeout(current.timer);
     current.timer = null;
     if (intentTypes.has("CANCEL_RESUME_AND_PAUSE")) {
+      if (current.resumeEffectId) {
+        markTrainingEffectId(current.resumeEffectId, "cancelled", {
+          reason: "speech-during-resume"
+        }, {
+          reconciledByDecisionId: transition.trainingTrace?.decisionId
+        });
+        current.resumeEffectId = null;
+        current.resumeAudibleObserved = false;
+      }
+      markTrainingEffect(
+        transition,
+        "CANCEL_RESUME_AND_PAUSE",
+        "dispatched",
+        { command: "HTMLMediaElement.pause" }
+      );
       current.audio?.pause();
+      markTrainingEffect(
+        transition,
+        "CANCEL_RESUME_AND_PAUSE",
+        "player-received",
+        { paused: current.audio?.paused ?? true }
+      );
+      markTrainingEffect(
+        transition,
+        "CANCEL_RESUME_AND_PAUSE",
+        "completed",
+        { resumeInvalidated: true }
+      );
       session.assistantResumeReason = null;
       session.assistantSpeaking = false;
       log("barge-in.resume.cancelled", "nova fala detectada");
+    } else {
+      markTrainingEffect(
+        transition,
+        "KEEP_OUTPUT_HELD",
+        "dispatched",
+        { holdResourcePresent: true }
+      );
+      markTrainingEffect(
+        transition,
+        "KEEP_OUTPUT_HELD",
+        "completed",
+        { outputRemainedHeld: true }
+      );
     }
     schedulePotentialBargeInTimeout(
       "timeout de segurança durante fala",
@@ -935,32 +1127,62 @@ function pauseAssistantForPotentialBargeIn(event = {}) {
   session.lastRenderStopEvidence = null;
   const epoch = session.audioEpoch;
   const audio = session.assistantAudio;
+  const pauseEffectId = trainingEffectId(
+    transition,
+    hadAudibleOutput ? "PAUSE_OUTPUT" : "HOLD_OUTPUT"
+  );
   const renderStopPromise =
     session.assistantSpeaking && session.assistantAudioSource
       ? assistantRenderProbe.measureStop(requestedAt)
       : null;
+  if (hadAudibleOutput) {
+    markTrainingEffectId(pauseEffectId, "dispatched", {
+      command: "HTMLMediaElement.pause"
+    });
+  }
   if (audio && !audio.paused) {
     audio.pause();
+  }
+  if (hadAudibleOutput) {
+    markTrainingEffectId(pauseEffectId, "player-received", {
+      audioPresent: Boolean(audio),
+      paused: audio?.paused ?? null
+    });
   }
   session.assistantSpeaking = false;
   let settle;
   const settledPromise = new Promise((resolve) => {
     settle = resolve;
   });
-  session.potentialBargeIn = {
+  const potentialResource = {
     audio,
     epoch,
     requestedAt,
     turnId: event.turnId ?? null,
     userPausedAt: null,
     timer: null,
+    pauseEffectId,
+    pauseEffectTerminal: !pauseEffectId,
+    resumeEffectId: null,
+    resumeAudibleObserved: false,
     settle,
     settledPromise
   };
+  session.potentialBargeIn = potentialResource;
   schedulePotentialBargeInTimeout(
     "timeout de segurança durante fala",
     30_000
   );
+
+  if (!hadAudibleOutput) {
+    markTrainingEffectId(pauseEffectId, "dispatched", {
+      holdResourceInstalled: true
+    });
+    markTrainingEffectId(pauseEffectId, "completed", {
+      outputBlockedBeforePlayback: true
+    });
+    potentialResource.pauseEffectTerminal = true;
+  }
 
   if (hadAudibleOutput) {
     session.tentativePauseCount += 1;
@@ -982,10 +1204,22 @@ function pauseAssistantForPotentialBargeIn(event = {}) {
   if (renderStopPromise) {
     void renderStopPromise.then(
       (evidence) => {
-        if (session.renderStopGeneration !== renderStopGeneration) {
+        if (
+          session.renderStopGeneration !== renderStopGeneration ||
+          potentialResource.pauseEffectTerminal
+        ) {
           return;
         }
         session.lastRenderStopEvidence = evidence;
+        markTrainingEffectId(pauseEffectId, "renderer-silent", {
+          kind: evidence.kind,
+          latencyMs: evidence.latencyMs,
+          mapping: evidence.mapping
+        });
+        markTrainingEffectId(pauseEffectId, "completed", {
+          observation: "browser-render-stop"
+        });
+        potentialResource.pauseEffectTerminal = true;
         log(
           "assistant.render.stopped",
           `último quantum em ${formatMs(evidence.latencyMs)} · ` +
@@ -1030,11 +1264,14 @@ async function dismissPotentialBargeIn(reason) {
     potential.audio &&
     session.assistantAudio === potential.audio
   );
-  const transition = dispatchOutputInterruption({
-    type: "DISMISS_REQUESTED",
-    currentOutputEpoch: session.audioEpoch,
-    hasResumableAudio
-  });
+  const transition = dispatchOutputInterruption(
+    {
+      type: "DISMISS_REQUESTED",
+      currentOutputEpoch: session.audioEpoch,
+      hasResumableAudio
+    },
+    { source: "browser-turn-taking" }
+  );
   const resumeIntent = transition.intents.find(
     (intent) => intent.type === "RESUME_OUTPUT"
   );
@@ -1057,28 +1294,84 @@ async function dismissPotentialBargeIn(reason) {
   session.dismissedPotentialCount += 1;
 
   if (settleWithoutResume) {
+    markTrainingEffect(
+      transition,
+      "SETTLE_WITHOUT_RESUME",
+      "dispatched",
+      { reason }
+    );
     if (session.potentialBargeIn === potential) {
       session.potentialBargeIn = null;
     }
     potential.settle({ kind: "dismissed-without-audio" });
     localAudioReflex.reset("dismissed-without-audio");
+    markTrainingEffect(
+      transition,
+      "SETTLE_WITHOUT_RESUME",
+      "completed",
+      { resourceSettled: true }
+    );
     setListeningStatus();
     return true;
   }
 
   const resumeAttempt = resumeIntent.resumeAttempt;
+  const resumeEffectId = trainingEffectId(
+    transition,
+    "RESUME_OUTPUT"
+  );
+  if (!potential.pauseEffectTerminal) {
+    markTrainingEffectId(potential.pauseEffectId, "cancelled", {
+      reason: "resume-before-render-silent",
+      resumeAttempt
+    }, {
+      reconciledByDecisionId: transition.trainingTrace?.decisionId
+    });
+    potential.pauseEffectTerminal = true;
+  }
+  potential.resumeEffectId = resumeEffectId;
+  potential.resumeAudibleObserved = false;
 
   session.assistantResumeReason = reason;
   try {
-    await potential.audio.play();
-  } catch (error) {
-    const failed = dispatchOutputInterruption({
-      type: "RESUME_FAILED",
+    markTrainingEffectId(resumeEffectId, "dispatched", {
+      command: "HTMLMediaElement.play",
       resumeAttempt
     });
+    const playPromise = potential.audio.play();
+    markTrainingEffectId(resumeEffectId, "player-received", {
+      paused: potential.audio.paused,
+      resumeAttempt
+    });
+    await playPromise;
+  } catch (error) {
+    const failedAtMs = performance.now();
+    const failed = dispatchOutputInterruption(
+      {
+        type: "RESUME_FAILED",
+        resumeAttempt
+      },
+      { source: "browser-player" }
+    );
+    if (potential.resumeEffectId === resumeEffectId) {
+      markTrainingEffectId(resumeEffectId, "cancelled", {
+        reason: "play-rejected",
+        message: error.message,
+        resumeAttempt
+      }, {
+        atMs: failedAtMs,
+        reconciledByDecisionId: failed.trainingTrace?.decisionId
+      });
+      potential.resumeEffectId = null;
+      potential.resumeAudibleObserved = false;
+    }
     if (
       failed.intents.some((intent) => intent.type === "RELEASE_OUTPUT")
     ) {
+      markTrainingEffect(failed, "RELEASE_OUTPUT", "dispatched", {
+        reason: "play-rejected",
+        resumeAttempt
+      });
       session.assistantResumeReason = null;
       log("assistant.speech.resume.error", error.message);
       if (session.potentialBargeIn === potential) {
@@ -1087,32 +1380,101 @@ async function dismissPotentialBargeIn(reason) {
         localAudioReflex.reset("resume-error");
         releaseAssistantAudio();
       }
+      markTrainingEffect(failed, "RELEASE_OUTPUT", "completed", {
+        resourceReleased: true,
+        resumeAttempt
+      });
     }
     setListeningStatus();
     return false;
   }
-  const resumed = dispatchOutputInterruption({
-    type: "RESUME_SUCCEEDED",
-    resumeAttempt
-  });
+  const resumeObservedAtMs = performance.now();
+  const resumed = dispatchOutputInterruption(
+    {
+      type: "RESUME_SUCCEEDED",
+      resumeAttempt
+    },
+    { source: "browser-player" }
+  );
   if (
     resumed.intents.some(
       (intent) => intent.type === "PAUSE_STALE_RESUME"
     )
   ) {
+    markTrainingEffect(
+      resumed,
+      "PAUSE_STALE_RESUME",
+      "dispatched",
+      { command: "HTMLMediaElement.pause", resumeAttempt }
+    );
     potential.audio.pause();
+    markTrainingEffect(
+      resumed,
+      "PAUSE_STALE_RESUME",
+      "player-received",
+      { paused: potential.audio.paused, resumeAttempt }
+    );
     session.assistantSpeaking = false;
+    markTrainingEffect(
+      resumed,
+      "PAUSE_STALE_RESUME",
+      "completed",
+      { staleResumeContained: true, resumeAttempt }
+    );
+    setListeningStatus();
+    return false;
+  }
+  if (
+    resumed.intents.some(
+      (intent) => intent.type === "IGNORE_STALE_RESUME"
+    )
+  ) {
+    markTrainingEffect(
+      resumed,
+      "IGNORE_STALE_RESUME",
+      "dispatched",
+      { resumeAttempt }
+    );
+    markTrainingEffect(
+      resumed,
+      "IGNORE_STALE_RESUME",
+      "completed",
+      { newerResumePreserved: true, resumeAttempt }
+    );
     setListeningStatus();
     return false;
   }
   if (
     resumed.intents.some((intent) => intent.type === "SETTLE_RESUMED")
   ) {
+    if (
+      potential.resumeEffectId === resumeEffectId &&
+      potential.resumeAudibleObserved
+    ) {
+      markTrainingEffectId(resumeEffectId, "completed", {
+        observation: "play-resolved-after-onplaying",
+        resumeAttempt
+      }, {
+        atMs: resumeObservedAtMs,
+        reconciledByDecisionId: resumed.trainingTrace?.decisionId
+      });
+    }
+    if (potential.resumeEffectId === resumeEffectId) {
+      potential.resumeEffectId = null;
+      potential.resumeAudibleObserved = false;
+    }
+    markTrainingEffect(resumed, "SETTLE_RESUMED", "dispatched", {
+      resumeAttempt
+    });
     if (session.potentialBargeIn === potential) {
       session.potentialBargeIn = null;
     }
     potential.settle({ kind: "dismissed-and-resumed" });
     localAudioReflex.reset("dismissed-and-resumed");
+    markTrainingEffect(resumed, "SETTLE_RESUMED", "completed", {
+      resourceSettled: true,
+      resumeAttempt
+    });
     setListeningStatus();
     return true;
   }
@@ -1122,10 +1484,13 @@ async function dismissPotentialBargeIn(reason) {
 
 function confirmPotentialBargeIn(reason) {
   const potential = session.potentialBargeIn;
-  const transition = dispatchOutputInterruption({
-    type: "CONFIRM_REQUESTED",
-    reason
-  });
+  const transition = dispatchOutputInterruption(
+    {
+      type: "CONFIRM_REQUESTED",
+      reason
+    },
+    { source: "browser-turn-taking" }
+  );
   if (
     !potential ||
     !transition.intents.some(
@@ -1134,10 +1499,47 @@ function confirmPotentialBargeIn(reason) {
   ) {
     return false;
   }
+  if (potential.resumeEffectId) {
+    markTrainingEffectId(potential.resumeEffectId, "cancelled", {
+      reason: "interruption-confirmed"
+    }, {
+      reconciledByDecisionId: transition.trainingTrace?.decisionId
+    });
+    potential.resumeEffectId = null;
+    potential.resumeAudibleObserved = false;
+  }
+  markTrainingEffect(
+    transition,
+    "CONFIRM_INTERRUPTION",
+    "dispatched",
+    {
+      command: potential.audio
+        ? "HTMLMediaElement.pause"
+        : "settle-held-resource",
+      reason
+    }
+  );
+  if (potential.audio) {
+    potential.audio.pause();
+    markTrainingEffect(
+      transition,
+      "CONFIRM_INTERRUPTION",
+      "player-received",
+      { paused: potential.audio.paused }
+    );
+  }
+  session.assistantSpeaking = false;
+  session.assistantResumeReason = null;
   clearTimeout(potential.timer);
   potential.timer = null;
   potential.settle({ kind: "confirmed" });
   localAudioReflex.reset("confirmed");
+  markTrainingEffect(
+    transition,
+    "CONFIRM_INTERRUPTION",
+    "completed",
+    { resourceSettled: true, reason }
+  );
   session.interruptCount += 1;
   elements.interruptMetric.textContent = String(session.interruptCount);
   log("barge-in.confirmed", reason);
@@ -2444,6 +2846,7 @@ function automationSnapshot() {
   const outputInterruption = outputInterruptionLifecycle.snapshot;
   return {
     observedAtMs: Math.round(performance.now() * 100) / 100,
+    trainingTrace: trainingTraceRecorder.snapshot,
     state: {
       active: session.active,
       assistantPreparing: session.assistantPreparing,
@@ -2570,6 +2973,7 @@ function resetAutomation() {
   session.responseAudioStarted = false;
   session.responseText = "";
   session.interactionSessionId = createInteractionSessionId();
+  resetTrainingTraceRecorder();
   session.interactionStateVersion = 0;
   session.interactionTurnSequence = 0;
   session.pendingConfirmation = null;
@@ -2734,6 +3138,17 @@ async function loadHealth() {
   try {
     const response = await fetch("/api/health");
     const health = await response.json();
+    const runtimeFingerprint =
+      health.process?.runtimeFingerprint?.sha256;
+    if (/^[a-f0-9]{64}$/iu.test(runtimeFingerprint ?? "")) {
+      runtimeTrainingConfigHash = `sha256:${runtimeFingerprint.toLowerCase()}`;
+      resetTrainingTraceRecorder();
+    } else {
+      log(
+        "training-trace.config.error",
+        "runtime fingerprint ausente ou inválido"
+      );
+    }
     const brain =
       health.brain === "openai"
         ? `OpenAI: ${health.models.interaction} + ${health.models.task}`

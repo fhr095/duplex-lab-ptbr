@@ -77,7 +77,9 @@ removeu o efeito percebido de um pico marginal em A/B causal e passou um probe
 físico corrente de 30,147 s, mas loopback causal e escala por dispositivo ainda
 permanecem em `hold`. No fingerprint do EXP-0012, o probe causal não conseguiu
 iniciar após o silêncio inicial; a ausência de nova medição ficou explícita e
-não substitui a evidência histórica.
+não substitui a evidência histórica. A campanha canônica do EXP-0013 passou
+30,074 s no probe corrente e fechou todos os gates físicos, mas isso continua
+sendo evidência daquele dispositivo/ambiente, não especificidade universal.
 
 ## Fase 2 — fábrica autônoma de avaliações
 
@@ -93,7 +95,8 @@ Entregas:
 
 1. ontologia e schema versionados para correções — **implementados**;
 2. blueprints confiáveis, oráculos semânticos/temporais e provenance —
-   **implementados; ledger de efeitos pendente**;
+   **implementados; ledger local da interrupção promovido e ledger externo
+   pendente**;
 3. superfícies linguísticas geradas e mutação adversarial determinística —
    **implementadas; geradores/críticos autônomos pendentes**;
 4. fala sintética e ambientalização reproduzível — **uma voz, ganho e ruído
@@ -115,9 +118,9 @@ instrumento, não como prova de prontidão do runtime.
 
 ## Fase 2.5 — validade experimental do runtime
 
-Status: **em andamento; fatias stateful, de reflexo e de lifecycle local
-promovidas pelos EXP-0010/0011/0012; clocks, efeitos e validade física ampla
-ainda em `hold`**.
+Status: **em andamento; fatias stateful, de reflexo, lifecycle e trace causal
+local promovidas pelos EXP-0010–0013; áudio hasheado, clocks entre processos,
+efeitos externos e validade física ampla ainda em `hold`**.
 
 Objetivo: eliminar a diferença entre “política avaliada” e “política realmente
 executada”. Hoje a decisão está distribuída entre a política do evaluator, o
@@ -142,8 +145,10 @@ Entregas:
    de dois turnos implementado para a fatia crítica e replay exato de seis
    fluxos de interrupção local; equivalência ampla pendente**;
 6. `training-trace-v1` com clocks, causalidade operacional, proveniência e
-   proposta/aceite/efeito observado;
-7. ledger/test-double de efeitos e holdout ainda não observado.
+   proposta/aceite/efeito observado — **primeira fatia browser promovida;
+   streams acústicos e clocks entre processos pendentes**;
+7. ledger/test-double de efeitos e holdout ainda não observado — **ledger
+   local da interrupção promovido; efeitos externos e holdout M4a pendentes**.
 
 Gate: o mesmo evento e estado produzem a mesma intenção nos três ambientes;
 uma sessão real nunca possui duas autoridades de política; qualquer diferença
@@ -171,6 +176,16 @@ exatamente. STOP no renderer ficou em 48 ms, onset PCM→último quantum em
 assíncronas falharam fechadas e não houve erro/API paga. O probe físico causal
 não iniciou; seus gates permaneceram falsos. A decisão é
 `promote-output-interruption-lifecycle-slice`, não fechamento de M2.5.
+
+Evidência EXP-0013: 314/314 testes; seis conversas do Chrome materializaram
+28 decisões e 22 efeitos em bundles causais. Todas as decisões foram
+reproduzidas a partir do contexto gravado; todos os efeitos terminaram; shadow
+permaneceu sem autoridade; a projeção v0 emitiu STOP apenas após silêncio do
+renderer e retomada apenas após `onplaying`. STOP ficou em 38 ms,
+onset PCM→renderer em 169,82 ms e retomada em 315,5 ms após o fim acústico.
+Os 12 gates formais e todos os gates da campanha corrente passaram, sem API
+paga. A decisão é `promote-training-trace-interruption-slice`, não o contrato
+completo nem M4a.
 
 ## Fase 3 — qualidade modular e local
 
@@ -208,14 +223,14 @@ modelo pequeno, em shadow mode e sem autoridade.
 Entrada:
 
 ```text
-texto parcial + duração da pausa + sinais acústicos
-+ usuário/assistente falando + tarefa ativa + estado corrigível
+probabilidade VAD incremental + duração/evidência acústica
++ usuário/assistente falando + estado do reflexo + época da saída
 ```
 
 Primeira saída:
 
 ```text
-probabilidade de CONTINUE_LISTENING | TAKE_FLOOR
+probabilidade de WAIT_FOR_EVIDENCE | PAUSE_OUTPUT | CONTINUE_OUTPUT
 ```
 
 O runtime pode escolher `WAIT_FOR_EVIDENCE` quando confiança, risco ou prazo
@@ -312,14 +327,14 @@ card de dados e splits por família, gerador e pessoa.
 | 6 | EXP-0010: kernel stateful crítico — **`promote-stateful-kernel-slice`** | confirmação em dois turnos, autoridade backend e projeção browser | 5/5 causal; não promove M2.5 inteiro |
 | 7 | EXP-0011: `LocalAudioReflex` evidence-gated — **`promote-local-audio-reflex-slice`** | pico marginal não pausa/não cria turno; barge-in legítimo preservado | 157,39 ms < 350 ms; causalidade de eco não alegada |
 | 8 | EXP-0012: lifecycle local da saída — **`promote-output-interruption-lifecycle-slice`** | hold/retomada/confirmação com replay exato no Chrome | 183,66 ms < 350 ms; físico causal permanece hold |
-| 9 | Trace treinável + efeitos + generalização — **próximo** | `training-trace-v1`, ledger e holdout novo sobre caminhos promovidos | clocks/filas migram pelo necessário; derivados acústicos fora do formato canônico |
-| 10 | Completar validade M2.5 ampla | evaluator/runtime/efeitos equivalentes no escopo exigido por M4a | não expandir cascata sem falha ou consumidor medido |
-| 11 | M4a: shadow estreito | ciclo de aprendizado completo sem autoridade | uma capacidade e um candidato por vez |
+| 9 | EXP-0013: trace causal + ledger local — **`promote-training-trace-interruption-slice`** | seis bundles; 28 decisões reproduzidas; 22 efeitos encerrados; projeção v0 perceptiva | fatia sem áudio persistido, clocks entre processos ou generalização |
+| 10 | Vínculo acústico mínimo para o reflexo — **próximo** | fixtures PCM hasheadas, posições de amostra, decisões incrementais e split novo por família | somente infraestrutura necessária ao primeiro M4a; sem ampliar o runtime global |
+| 11 | M4a: shadow acústico estreito | ciclo treino→checkpoint→inferência→trace→replay sem autoridade | `WAIT/PAUSE/CONTINUE`; uma capacidade e um candidato por vez |
 | 12 | Calibração humana pequena | corrigir timing/rótulos antes de M4b | não é alegação de preferência de produto |
 | 13 | M4b e próximo PDCA | ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
 
-Depois da baseline congelada e do item de trace/generalização, um desafio
-nativo pode rodar em paralelo para validar
+Depois da baseline congelada e da fatia causal do trace, um desafio nativo pode
+rodar em paralelo para validar
 ontologia/adaptador, desde que exista pergunta decisória. Ele não bloqueia M4a
 ou calibração humana; GPU paga exige autorização.
 
