@@ -27,7 +27,7 @@ autorização e recebe um teto de cinco chamadas por processo.
 
 Preparar um adaptador nativo é trabalho local. Alugar GPU ou executar serviço
 pago nunca é inferido da existência de uma chave de LLM e precisa de orçamento
-e autorização próprios. O experimento não bloqueia M4a.
+e autorização próprios. O experimento não bloqueia a sequência até M4b.
 
 ## Ordem dos candidatos
 

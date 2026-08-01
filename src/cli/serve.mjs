@@ -274,6 +274,8 @@ await ttsWarmup;
 
 const STATIC_ROUTES = new Map([
   ["/", "index.html"],
+  ["/acoustic-reflex-checkpoint.json", "acoustic-reflex-checkpoint.json"],
+  ["/acoustic-reflex-shadow.mjs", "acoustic-reflex-shadow.mjs"],
   ["/app.mjs", "app.mjs"],
   ["/critical-conflict.mjs", "critical-conflict.mjs"],
   ["/interaction-browser-adapter.mjs", "interaction-browser-adapter.mjs"],
@@ -296,6 +298,7 @@ const CONTENT_TYPES = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
   ".mjs": "text/javascript; charset=utf-8"
 };
 

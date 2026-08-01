@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  ACOUSTIC_REFLEX_TRACE_SLICE_VERSION,
   INTERRUPTION_TRACE_SLICE_VERSION,
   TRAINING_TRACE_VERSION,
   TrainingTraceRecorder,
@@ -421,5 +422,121 @@ test("configuração e payload inválidos falham fechados", () => {
       intents: []
     }),
     /undefined/iu
+  );
+});
+
+test("fatia acústica liga posição causal a stream e features hasheados", () => {
+  const recorder = new TrainingTraceRecorder(options({
+    sliceVersion: ACOUSTIC_REFLEX_TRACE_SLICE_VERSION,
+    candidate: "acoustic-reflex-shadow",
+    limitations: ["PCM local gerado por receita e ignorado no Git"],
+    label: { task: "acoustic-reflex-intent" }
+  }));
+  recorder.registerStream({
+    streamId: "stream-1",
+    role: "user-input-fixture",
+    mediaRef: "eval/generated/exp-0014/stream-1.pcm",
+    sha256: `sha256:${"b".repeat(64)}`,
+    sampleRate: 16_000,
+    channels: 1,
+    encoding: "pcm_s16le",
+    sampleCount: 4_096
+  });
+  recorder.registerDerivedFeatureManifest({
+    manifestId: "features-1",
+    sourceStreamId: "stream-1",
+    extractor: {
+      name: "silero-vad",
+      version: "6.2",
+      artifactHash: `sha256:${"c".repeat(64)}`
+    },
+    artifactRef: "inline:trace-events",
+    sha256: `sha256:${"d".repeat(64)}`
+  });
+  recorder.recordDecision({
+    atMs: 32,
+    turnId: "turn-1",
+    epoch: 0,
+    event: {
+      type: "local-audio-reflex.user_speech_started",
+      source: "silero-vad-v6.2",
+      audioPosition: {
+        streamId: "stream-1",
+        sampleStart: 512,
+        sampleEnd: 1_024
+      },
+      payload: { probability: 0.91 }
+    },
+    context: { state: { assistantAudible: true } },
+    policy: {
+      id: "acoustic-reflex-shadow",
+      version: `checkpoint-sha256:${"e".repeat(64)}`,
+      mode: "shadow"
+    },
+    proposal: "WAIT_FOR_EVIDENCE",
+    intents: [{
+      type: "WAIT_FOR_EVIDENCE",
+      origin: "acoustic-reflex-shadow",
+      probability: 0.8
+    }],
+    transition: { teacherLabel: "WAIT_FOR_EVIDENCE" },
+    label: {
+      value: "WAIT_FOR_EVIDENCE",
+      source: {
+        kind: "deterministic-invariant",
+        ref: "local-audio-reflex",
+        version: "local-audio-reflex-v0.1"
+      }
+    }
+  });
+
+  const bundle = recorder.snapshot;
+  assert.equal(bundle.sliceVersion, ACOUSTIC_REFLEX_TRACE_SLICE_VERSION);
+  assert.deepEqual(bundle.events[0].audioPosition, {
+    streamId: "stream-1",
+    sampleStart: 512,
+    sampleEnd: 1_024
+  });
+  assert.equal(bundle.labels[0].task, "acoustic-reflex-intent");
+  assert.equal(bundle.labels[0].value, "WAIT_FOR_EVIDENCE");
+  assert.equal(bundle.effects.length, 0);
+  assert.equal(validateTrainingTraceBundle(bundle).valid, true);
+});
+
+test("fatia acústica rejeita stream duplicado e posição fora da mídia", () => {
+  const recorder = new TrainingTraceRecorder(options({
+    sliceVersion: ACOUSTIC_REFLEX_TRACE_SLICE_VERSION
+  }));
+  const stream = {
+    streamId: "stream-1",
+    role: "user-input-fixture",
+    mediaRef: "fixture.pcm",
+    sha256: `sha256:${"f".repeat(64)}`,
+    sampleRate: 16_000,
+    channels: 1,
+    encoding: "pcm_s16le",
+    sampleCount: 512
+  };
+  recorder.registerStream(stream);
+  assert.throws(() => recorder.registerStream(stream), /duplicado/iu);
+  assert.throws(
+    () => recorder.recordDecision({
+      atMs: 1,
+      epoch: 0,
+      event: {
+        type: "event",
+        source: "test",
+        audioPosition: {
+          streamId: "stream-1",
+          sampleStart: 0,
+          sampleEnd: 1_024
+        }
+      },
+      context: { state: {} },
+      policy: { id: "p", version: "v", mode: "shadow" },
+      transition: {},
+      intents: []
+    }),
+    /excede/iu
   );
 });

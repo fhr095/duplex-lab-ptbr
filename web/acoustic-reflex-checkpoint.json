@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "acoustic-reflex-checkpoint-v1",
+  "checkpointId": "acoustic-reflex-m4a-c7bb582e896f1300",
+  "featureVersion": "acoustic-reflex-shadow-v0.1",
+  "featureNames": [
+    "bias",
+    "eventStarted",
+    "eventWindow",
+    "eventPaused",
+    "probability",
+    "previousObservedWindows",
+    "previousSupportingWindows",
+    "currentSupports",
+    "previousArmed"
+  ],
+  "classes": [
+    "WAIT_FOR_EVIDENCE",
+    "PAUSE_OUTPUT",
+    "CONTINUE_OUTPUT"
+  ],
+  "modelSha256": "sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+  "model": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "weights": [
+      [
+        2.184475067712,
+        1.541443490384,
+        2.312152980549,
+        -2.147001116384,
+        -0.193821746568,
+        -1.619371667827,
+        -4.467759714302,
+        -1.682043492799,
+        0.165151864165
+      ],
+      [
+        -1.86421831641,
+        -0.979520384599,
+        0.2527495527,
+        -0.732778515815,
+        1.255160605263,
+        0.397117134032,
+        4.705762916963,
+        2.221533608924,
+        -0.480028963115
+      ],
+      [
+        -0.320256751302,
+        -0.561923105785,
+        -2.564902533249,
+        2.879779632199,
+        -1.061338858696,
+        1.222254533795,
+        -0.23800320266,
+        -0.539490116125,
+        0.31487709895
+      ]
+    ]
+  },
+  "training": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "datasetPath": "eval/datasets/exp-0014-acoustic-reflex-v0.1.json",
+    "datasetSha256": "sha256:0ab92df3d4ff493af9a3d11025932024e390c5f358deef41275706901a3862a1",
+    "experimentConfigPath": "eval/experiments/exp-0014-acoustic-reflex.pt-BR.json",
+    "experimentConfigSha256": "sha256:9a97a885cf35133f8ebd145fec7503a62c39b3f4e1bdc00aadc41c1c6a7997b1",
+    "selectedSplit": "train",
+    "excludedFromFit": [
+      "development",
+      "holdout"
+    ],
+    "examples": 198,
+    "hyperparameters": {
+      "epochs": 1800,
+      "learningRate": 0.35,
+      "l2": 0.0005,
+      "initialization": "all-zero",
+      "ordering": "input-order/full-batch"
+    },
+    "finalLoss": 0.021400266873,
+    "classCounts": {
+      "WAIT_FOR_EVIDENCE": 162,
+      "PAUSE_OUTPUT": 18,
+      "CONTINUE_OUTPUT": 18
+    },
+    "classWeights": {
+      "WAIT_FOR_EVIDENCE": 0.4074074074074074,
+      "PAUSE_OUTPUT": 3.6666666666666665,
+      "CONTINUE_OUTPUT": 3.6666666666666665
+    }
+  },
+  "authority": {
+    "mode": "shadow",
+    "canProduceEffects": false
+  },
+  "claims": {
+    "scope": "infraestrutura M4a acústica em shadow",
+    "excluded": [
+      "ganho de qualidade sobre a política determinística",
+      "generalização humana ou acústica",
+      "autoridade do checkpoint",
+      "naturalidade de voz"
+    ]
+  }
+}

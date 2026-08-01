@@ -1,0 +1,2317 @@
+{
+  "schemaVersion": "exp-0014-acoustic-reflex-m4a-report-v1",
+  "experimentId": "exp-0014-acoustic-reflex-m4a-v0.1",
+  "pass": true,
+  "decision": "promote-m4a-acoustic-shadow-infrastructure",
+  "gates": {
+    "offlinePipeline": true,
+    "datasetCheckpointBound": true,
+    "familySplitDisjoint": true,
+    "holdoutExcludedFromFit": true,
+    "checkpointReproducible": true,
+    "offlineAllClasses": true,
+    "browserRegression": true,
+    "onlineTraceValid": true,
+    "onlineReplayExact": true,
+    "onlineClassesCovered": true,
+    "audioPositionsBound": true,
+    "exactMarginalMediaBound": true,
+    "shadowCannotAct": true,
+    "checkpointOnlineBound": true,
+    "onlineAgreement": true,
+    "inferenceBudget": true,
+    "sourceFingerprintBound": true,
+    "noPaidApi": true
+  },
+  "metrics": {
+    "datasetExamples": 330,
+    "datasetStreams": 60,
+    "trainAccuracy": 1,
+    "developmentAccuracy": 1,
+    "holdoutAccuracy": 1,
+    "onlineDecisions": 11,
+    "onlineLabels": [
+      "CONTINUE_OUTPUT",
+      "PAUSE_OUTPUT",
+      "WAIT_FOR_EVIDENCE"
+    ],
+    "onlineInferenceP95Ms": 0.20000001788139343,
+    "browserRenderStopMs": 40,
+    "pcmOnsetToBrowserRenderStopMs": 151.75
+  },
+  "evidence": {
+    "dataset": {
+      "id": "exp-0014-acoustic-reflex-m4a-v0.1",
+      "sha256": "sha256:0ab92df3d4ff493af9a3d11025932024e390c5f358deef41275706901a3862a1",
+      "splits": {
+        "train": {
+          "families": [
+            "saudacao",
+            "hesitacao",
+            "interrupcao",
+            "correcao",
+            "delegacao",
+            "cancelamento"
+          ],
+          "streams": 36,
+          "examples": 198,
+          "labels": {
+            "WAIT_FOR_EVIDENCE": 162,
+            "PAUSE_OUTPUT": 18,
+            "CONTINUE_OUTPUT": 18
+          }
+        },
+        "development": {
+          "families": [
+            "numeros",
+            "nao-curto"
+          ],
+          "streams": 12,
+          "examples": 66,
+          "labels": {
+            "WAIT_FOR_EVIDENCE": 54,
+            "PAUSE_OUTPUT": 6,
+            "CONTINUE_OUTPUT": 6
+          }
+        },
+        "holdout": {
+          "families": [
+            "espera-curto",
+            "muda-terca"
+          ],
+          "streams": 12,
+          "examples": 66,
+          "labels": {
+            "WAIT_FOR_EVIDENCE": 54,
+            "PAUSE_OUTPUT": 6,
+            "CONTINUE_OUTPUT": 6
+          }
+        }
+      },
+      "retention": {
+        "policy": "WAV e PCM derivados permanecem ignorados no Git; features, receitas e hashes são versionados",
+        "rawAudioInGit": false,
+        "exactCheckpointReproducibleFromCommittedFeatures": true
+      }
+    },
+    "checkpoint": {
+      "id": "acoustic-reflex-m4a-c7bb582e896f1300",
+      "modelSha256": "sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+      "training": {
+        "algorithm": "full-batch-multinomial-logistic-regression-v1",
+        "datasetPath": "eval/datasets/exp-0014-acoustic-reflex-v0.1.json",
+        "datasetSha256": "sha256:0ab92df3d4ff493af9a3d11025932024e390c5f358deef41275706901a3862a1",
+        "experimentConfigPath": "eval/experiments/exp-0014-acoustic-reflex.pt-BR.json",
+        "experimentConfigSha256": "sha256:9a97a885cf35133f8ebd145fec7503a62c39b3f4e1bdc00aadc41c1c6a7997b1",
+        "selectedSplit": "train",
+        "excludedFromFit": [
+          "development",
+          "holdout"
+        ],
+        "examples": 198,
+        "hyperparameters": {
+          "epochs": 1800,
+          "learningRate": 0.35,
+          "l2": 0.0005,
+          "initialization": "all-zero",
+          "ordering": "input-order/full-batch"
+        },
+        "finalLoss": 0.021400266873,
+        "classCounts": {
+          "WAIT_FOR_EVIDENCE": 162,
+          "PAUSE_OUTPUT": 18,
+          "CONTINUE_OUTPUT": 18
+        },
+        "classWeights": {
+          "WAIT_FOR_EVIDENCE": 0.4074074074074074,
+          "PAUSE_OUTPUT": 3.6666666666666665,
+          "CONTINUE_OUTPUT": 3.6666666666666665
+        }
+      },
+      "authority": {
+        "mode": "shadow",
+        "canProduceEffects": false
+      }
+    },
+    "offline": {
+      "schemaVersion": "exp-0014-offline-training-report-v1",
+      "experimentId": "exp-0014-acoustic-reflex-m4a-v0.1",
+      "dataset": {
+        "path": "eval/datasets/exp-0014-acoustic-reflex-v0.1.json",
+        "sha256": "sha256:0ab92df3d4ff493af9a3d11025932024e390c5f358deef41275706901a3862a1",
+        "fileSha256": "sha256:ad60a67d55eecb092fb72928281d98c95b4310819f12209d604f82a4bc0bafdd",
+        "examples": 330,
+        "streams": 60,
+        "validation": {
+          "valid": true,
+          "errors": [],
+          "observedHash": "sha256:0ab92df3d4ff493af9a3d11025932024e390c5f358deef41275706901a3862a1",
+          "familyOwners": {
+            "saudacao": "train",
+            "hesitacao": "train",
+            "interrupcao": "train",
+            "correcao": "train",
+            "delegacao": "train",
+            "cancelamento": "train",
+            "numeros": "development",
+            "nao-curto": "development",
+            "espera-curto": "holdout",
+            "muda-terca": "holdout"
+          }
+        }
+      },
+      "checkpoint": {
+        "path": "web/acoustic-reflex-checkpoint.json",
+        "id": "acoustic-reflex-m4a-c7bb582e896f1300",
+        "modelSha256": "sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+        "validation": {
+          "valid": true,
+          "errors": []
+        }
+      },
+      "reproducibility": {
+        "repeatedTrainingEqual": true,
+        "initialization": "all-zero",
+        "ordering": "input-order/full-batch"
+      },
+      "metrics": {
+        "train": {
+          "observations": 198,
+          "correct": 198,
+          "accuracy": 1,
+          "classRecall": {
+            "WAIT_FOR_EVIDENCE": 1,
+            "PAUSE_OUTPUT": 1,
+            "CONTINUE_OUTPUT": 1
+          },
+          "confusion": {
+            "WAIT_FOR_EVIDENCE": {
+              "WAIT_FOR_EVIDENCE": 162,
+              "PAUSE_OUTPUT": 0,
+              "CONTINUE_OUTPUT": 0
+            },
+            "PAUSE_OUTPUT": {
+              "WAIT_FOR_EVIDENCE": 0,
+              "PAUSE_OUTPUT": 18,
+              "CONTINUE_OUTPUT": 0
+            },
+            "CONTINUE_OUTPUT": {
+              "WAIT_FOR_EVIDENCE": 0,
+              "PAUSE_OUTPUT": 0,
+              "CONTINUE_OUTPUT": 18
+            }
+          },
+          "errors": []
+        },
+        "development": {
+          "observations": 66,
+          "correct": 66,
+          "accuracy": 1,
+          "classRecall": {
+            "WAIT_FOR_EVIDENCE": 1,
+            "PAUSE_OUTPUT": 1,
+            "CONTINUE_OUTPUT": 1
+          },
+          "confusion": {
+            "WAIT_FOR_EVIDENCE": {
+              "WAIT_FOR_EVIDENCE": 54,
+              "PAUSE_OUTPUT": 0,
+              "CONTINUE_OUTPUT": 0
+            },
+            "PAUSE_OUTPUT": {
+              "WAIT_FOR_EVIDENCE": 0,
+              "PAUSE_OUTPUT": 6,
+              "CONTINUE_OUTPUT": 0
+            },
+            "CONTINUE_OUTPUT": {
+              "WAIT_FOR_EVIDENCE": 0,
+              "PAUSE_OUTPUT": 0,
+              "CONTINUE_OUTPUT": 6
+            }
+          },
+          "errors": []
+        },
+        "holdout": {
+          "observations": 66,
+          "correct": 66,
+          "accuracy": 1,
+          "classRecall": {
+            "WAIT_FOR_EVIDENCE": 1,
+            "PAUSE_OUTPUT": 1,
+            "CONTINUE_OUTPUT": 1
+          },
+          "confusion": {
+            "WAIT_FOR_EVIDENCE": {
+              "WAIT_FOR_EVIDENCE": 54,
+              "PAUSE_OUTPUT": 0,
+              "CONTINUE_OUTPUT": 0
+            },
+            "PAUSE_OUTPUT": {
+              "WAIT_FOR_EVIDENCE": 0,
+              "PAUSE_OUTPUT": 6,
+              "CONTINUE_OUTPUT": 0
+            },
+            "CONTINUE_OUTPUT": {
+              "WAIT_FOR_EVIDENCE": 0,
+              "PAUSE_OUTPUT": 0,
+              "CONTINUE_OUTPUT": 6
+            }
+          },
+          "errors": []
+        }
+      },
+      "gates": {
+        "datasetValid": true,
+        "familySplitDisjoint": true,
+        "allClassesInEverySplit": true,
+        "repeatedTrainingEqual": true,
+        "checkpointValid": true,
+        "splitMetricsPass": true,
+        "holdoutExcludedFromFit": true
+      },
+      "limitations": [
+        "M4a prova infraestrutura e imitação de regra; não prova ganho de qualidade",
+        "WAV/PCM bruto permanece fora do Git; features e hashes permitem reproduzir exatamente o checkpoint",
+        "nenhum rótulo humano participa desta rodada"
+      ],
+      "paidApiCalls": 0,
+      "pass": true
+    },
+    "onlineCases": [
+      {
+        "label": "marginal-continue",
+        "present": true,
+        "validation": {
+          "valid": true,
+          "errors": [],
+          "counts": {
+            "events": 8,
+            "contexts": 8,
+            "decisions": 8,
+            "effects": 0,
+            "labels": 8
+          }
+        },
+        "replay": {
+          "exact": true,
+          "validation": {
+            "valid": true,
+            "errors": [],
+            "counts": {
+              "events": 8,
+              "contexts": 8,
+              "decisions": 8,
+              "effects": 0,
+              "labels": 8
+            }
+          },
+          "steps": [
+            {
+              "decisionId": "decision-000001",
+              "eventId": "event-000001",
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "teacher": "WAIT_FOR_EVIDENCE",
+              "exact": true,
+              "errors": []
+            },
+            {
+              "decisionId": "decision-000002",
+              "eventId": "event-000002",
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "teacher": "WAIT_FOR_EVIDENCE",
+              "exact": true,
+              "errors": []
+            },
+            {
+              "decisionId": "decision-000003",
+              "eventId": "event-000003",
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "teacher": "WAIT_FOR_EVIDENCE",
+              "exact": true,
+              "errors": []
+            },
+            {
+              "decisionId": "decision-000004",
+              "eventId": "event-000004",
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "teacher": "WAIT_FOR_EVIDENCE",
+              "exact": true,
+              "errors": []
+            },
+            {
+              "decisionId": "decision-000005",
+              "eventId": "event-000005",
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "teacher": "WAIT_FOR_EVIDENCE",
+              "exact": true,
+              "errors": []
+            },
+            {
+              "decisionId": "decision-000006",
+              "eventId": "event-000006",
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "teacher": "WAIT_FOR_EVIDENCE",
+              "exact": true,
+              "errors": []
+            },
+            {
+              "decisionId": "decision-000007",
+              "eventId": "event-000007",
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "teacher": "WAIT_FOR_EVIDENCE",
+              "exact": true,
+              "errors": []
+            },
+            {
+              "decisionId": "decision-000008",
+              "eventId": "event-000008",
+              "proposal": "CONTINUE_OUTPUT",
+              "teacher": "CONTINUE_OUTPUT",
+              "exact": true,
+              "errors": []
+            }
+          ],
+          "errors": []
+        },
+        "positionsBound": true,
+        "decisions": 8,
+        "proposals": [
+          "WAIT_FOR_EVIDENCE",
+          "CONTINUE_OUTPUT"
+        ],
+        "labels": [
+          "WAIT_FOR_EVIDENCE",
+          "CONTINUE_OUTPUT"
+        ],
+        "shadowOnly": true,
+        "effects": 0,
+        "modelBound": true,
+        "inferenceP95Ms": 0.20000001788139343,
+        "agreementRate": 1,
+        "trainingTrace": {
+          "schemaVersion": "training-trace-v1",
+          "sliceVersion": "local-audio-reflex-training-trace-v0.1",
+          "session": {
+            "sessionId": "43982ba8-e8ed-482b-ac4a-096da7144113",
+            "startedAtEpochMs": 1785551150117,
+            "locale": "pt-BR",
+            "candidate": "acoustic-reflex-shadow-m4a-v0.1",
+            "configHash": "sha256:8ec53cb04885aeb39d37bd4f87accf2af4bcfff8914547d1d0b046d562943e03"
+          },
+          "clocks": [
+            {
+              "clockId": "browser-performance",
+              "kind": "monotonic",
+              "processId": "browser-main",
+              "resolutionMs": 0.1,
+              "mappingMethod": "identity-within-process",
+              "mappingPoints": []
+            }
+          ],
+          "streams": [
+            {
+              "streamId": "browser-interrupcao-rate-1-marginal",
+              "role": "user-input-fixture",
+              "mediaRef": "eval/generated/exp-0014/audio/interrupcao-rate-1-marginal.pcm",
+              "sha256": "sha256:84bb728883b5dee138d80091b3270931423fe08eac30aa95d0ea32b4d82b26ce",
+              "sampleRate": 16000,
+              "channels": 1,
+              "encoding": "pcm_s16le",
+              "sampleCount": 10752
+            }
+          ],
+          "events": [
+            {
+              "eventId": "event-000001",
+              "sessionId": "43982ba8-e8ed-482b-ac4a-096da7144113",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "type": "local-audio-reflex.user_speech_started",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 56329,
+              "payload": {
+                "reflexEvent": {
+                  "type": "USER_SPEECH_STARTED",
+                  "turnId": "turn-1",
+                  "detector": "silero-vad-v6.2",
+                  "probability": 0.9318342208862305,
+                  "triggerSampleStart": 2048,
+                  "assistantAudible": true,
+                  "assistantPending": true
+                },
+                "sourceEventType": "user.speech.started",
+                "sourceEventAtMs": 498941.24
+              },
+              "audioPosition": {
+                "streamId": "browser-interrupcao-rate-1-marginal",
+                "sampleStart": 2048,
+                "sampleEnd": 2560
+              }
+            },
+            {
+              "eventId": "event-000002",
+              "sessionId": "43982ba8-e8ed-482b-ac4a-096da7144113",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "type": "local-audio-reflex.vad_control_window",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 56391.89999997616,
+              "payload": {
+                "reflexEvent": {
+                  "type": "VAD_CONTROL_WINDOW",
+                  "turnId": "turn-1",
+                  "probability": 0.01904246211051941,
+                  "sampleStart": 2560
+                },
+                "sourceEventType": "vad.control.window",
+                "sourceEventAtMs": 498973.24
+              },
+              "audioPosition": {
+                "streamId": "browser-interrupcao-rate-1-marginal",
+                "sampleStart": 2560,
+                "sampleEnd": 3072
+              }
+            },
+            {
+              "eventId": "event-000003",
+              "sessionId": "43982ba8-e8ed-482b-ac4a-096da7144113",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "type": "local-audio-reflex.vad_control_window",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 56435.19999998808,
+              "payload": {
+                "reflexEvent": {
+                  "type": "VAD_CONTROL_WINDOW",
+                  "turnId": "turn-1",
+                  "probability": 0.034656256437301636,
+                  "sampleStart": 3072
+                },
+                "sourceEventType": "vad.control.window",
+                "sourceEventAtMs": 499005.24
+              },
+              "audioPosition": {
+                "streamId": "browser-interrupcao-rate-1-marginal",
+                "sampleStart": 3072,
+                "sampleEnd": 3584
+              }
+            },
+            {
+              "eventId": "event-000004",
+              "sessionId": "43982ba8-e8ed-482b-ac4a-096da7144113",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "type": "local-audio-reflex.vad_control_window",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 56435.69999998808,
+              "payload": {
+                "reflexEvent": {
+                  "type": "VAD_CONTROL_WINDOW",
+                  "turnId": "turn-1",
+                  "probability": 0.02668890357017517,
+                  "sampleStart": 3584
+                },
+                "sourceEventType": "vad.control.window",
+                "sourceEventAtMs": 499037.24
+              },
+              "audioPosition": {
+                "streamId": "browser-interrupcao-rate-1-marginal",
+                "sampleStart": 3584,
+                "sampleEnd": 4096
+              }
+            },
+            {
+              "eventId": "event-000005",
+              "sessionId": "43982ba8-e8ed-482b-ac4a-096da7144113",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "type": "local-audio-reflex.vad_control_window",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 56500.79999998212,
+              "payload": {
+                "reflexEvent": {
+                  "type": "VAD_CONTROL_WINDOW",
+                  "turnId": "turn-1",
+                  "probability": 0.011026173830032349,
+                  "sampleStart": 4096
+                },
+                "sourceEventType": "vad.control.window",
+                "sourceEventAtMs": 499069.24
+              },
+              "audioPosition": {
+                "streamId": "browser-interrupcao-rate-1-marginal",
+                "sampleStart": 4096,
+                "sampleEnd": 4608
+              }
+            },
+            {
+              "eventId": "event-000006",
+              "sessionId": "43982ba8-e8ed-482b-ac4a-096da7144113",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "type": "local-audio-reflex.vad_control_window",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 56503.89999997616,
+              "payload": {
+                "reflexEvent": {
+                  "type": "VAD_CONTROL_WINDOW",
+                  "turnId": "turn-1",
+                  "probability": 0.009392470121383667,
+                  "sampleStart": 4608
+                },
+                "sourceEventType": "vad.control.window",
+                "sourceEventAtMs": 499101.24
+              },
+              "audioPosition": {
+                "streamId": "browser-interrupcao-rate-1-marginal",
+                "sampleStart": 4608,
+                "sampleEnd": 5120
+              }
+            },
+            {
+              "eventId": "event-000007",
+              "sessionId": "43982ba8-e8ed-482b-ac4a-096da7144113",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "type": "local-audio-reflex.vad_control_window",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 56549,
+              "payload": {
+                "reflexEvent": {
+                  "type": "VAD_CONTROL_WINDOW",
+                  "turnId": "turn-1",
+                  "probability": 0.00947067141532898,
+                  "sampleStart": 5120
+                },
+                "sourceEventType": "vad.control.window",
+                "sourceEventAtMs": 499133.24
+              },
+              "audioPosition": {
+                "streamId": "browser-interrupcao-rate-1-marginal",
+                "sampleStart": 5120,
+                "sampleEnd": 5632
+              }
+            },
+            {
+              "eventId": "event-000008",
+              "sessionId": "43982ba8-e8ed-482b-ac4a-096da7144113",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "type": "local-audio-reflex.user_speech_paused",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 56593.79999998212,
+              "payload": {
+                "reflexEvent": {
+                  "type": "USER_SPEECH_PAUSED",
+                  "turnId": "turn-1",
+                  "probability": 0.008786618709564209,
+                  "triggerSampleStart": 5632
+                },
+                "sourceEventType": "user.speech.paused",
+                "sourceEventAtMs": 498973.24
+              },
+              "audioPosition": {
+                "streamId": "browser-interrupcao-rate-1-marginal",
+                "sampleStart": 5632,
+                "sampleEnd": 6144
+              }
+            }
+          ],
+          "contexts": [
+            {
+              "contextId": "context-000001",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 56329
+              },
+              "eventIds": [
+                "event-000001"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 9,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "idle",
+                  "turnId": null,
+                  "triggerSampleStart": null,
+                  "lastSampleStart": null,
+                  "observedWindows": 0,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    1,
+                    0,
+                    0,
+                    0.9318342208862305,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            },
+            {
+              "contextId": "context-000002",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 56391.89999997616
+              },
+              "eventIds": [
+                "event-000002"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 10,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "armed",
+                  "turnId": "turn-1",
+                  "triggerSampleStart": 2048,
+                  "lastSampleStart": 2048,
+                  "observedWindows": 0,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    0,
+                    1,
+                    0,
+                    0.01904246211051941,
+                    0,
+                    0,
+                    0,
+                    1
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            },
+            {
+              "contextId": "context-000003",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 56435.19999998808
+              },
+              "eventIds": [
+                "event-000003"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 11,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "armed",
+                  "turnId": "turn-1",
+                  "triggerSampleStart": 2048,
+                  "lastSampleStart": 2560,
+                  "observedWindows": 1,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    0,
+                    1,
+                    0,
+                    0.034656256437301636,
+                    0.25,
+                    0,
+                    0,
+                    1
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            },
+            {
+              "contextId": "context-000004",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 56435.69999998808
+              },
+              "eventIds": [
+                "event-000004"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 12,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "armed",
+                  "turnId": "turn-1",
+                  "triggerSampleStart": 2048,
+                  "lastSampleStart": 3072,
+                  "observedWindows": 2,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    0,
+                    1,
+                    0,
+                    0.02668890357017517,
+                    0.5,
+                    0,
+                    0,
+                    1
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            },
+            {
+              "contextId": "context-000005",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 56500.79999998212
+              },
+              "eventIds": [
+                "event-000005"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 13,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "armed",
+                  "turnId": "turn-1",
+                  "triggerSampleStart": 2048,
+                  "lastSampleStart": 3584,
+                  "observedWindows": 3,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    0,
+                    1,
+                    0,
+                    0.011026173830032349,
+                    0.75,
+                    0,
+                    0,
+                    1
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            },
+            {
+              "contextId": "context-000006",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 56503.89999997616
+              },
+              "eventIds": [
+                "event-000006"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 14,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "armed",
+                  "turnId": "turn-1",
+                  "triggerSampleStart": 2048,
+                  "lastSampleStart": 4096,
+                  "observedWindows": 4,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    0,
+                    1,
+                    0,
+                    0.009392470121383667,
+                    1,
+                    0,
+                    0,
+                    1
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            },
+            {
+              "contextId": "context-000007",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 56549
+              },
+              "eventIds": [
+                "event-000007"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 15,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "armed",
+                  "turnId": "turn-1",
+                  "triggerSampleStart": 2048,
+                  "lastSampleStart": 4608,
+                  "observedWindows": 5,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    0,
+                    1,
+                    0,
+                    0.00947067141532898,
+                    1,
+                    0,
+                    0,
+                    1
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            },
+            {
+              "contextId": "context-000008",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 56593.79999998212
+              },
+              "eventIds": [
+                "event-000008"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 16,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "armed",
+                  "turnId": "turn-1",
+                  "triggerSampleStart": 2048,
+                  "lastSampleStart": 5120,
+                  "observedWindows": 6,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0.008786618709564209,
+                    1,
+                    0,
+                    0,
+                    1
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "decision-000001",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "clockId": "browser-performance",
+              "atMs": 56329,
+              "triggeredBy": [
+                "event-000001"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.990243054685055
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.005357537803749884
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.004399407511195174
+                  }
+                }
+              ],
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000001",
+              "transition": {
+                "teacherLabel": "WAIT_FOR_EVIDENCE",
+                "teacherReason": "armed",
+                "teacherPreviousStateVersion": 9,
+                "teacherStateVersion": 10,
+                "inferenceMs": 0
+              }
+            },
+            {
+              "decisionId": "decision-000002",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "clockId": "browser-performance",
+              "atMs": 56391.89999997616,
+              "triggeredBy": [
+                "event-000002"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.9980927642305216
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.0011974098605051773
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.0007098259089731272
+                  }
+                }
+              ],
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000002",
+              "transition": {
+                "teacherLabel": "WAIT_FOR_EVIDENCE",
+                "teacherReason": "collecting-evidence",
+                "teacherPreviousStateVersion": 10,
+                "teacherStateVersion": 11,
+                "inferenceMs": 0.09999999403953552
+              }
+            },
+            {
+              "decisionId": "decision-000003",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "clockId": "browser-performance",
+              "atMs": 56435.19999998808,
+              "triggeredBy": [
+                "event-000003"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.9965526830914369
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.002024581214582342
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.0014227356939806662
+                  }
+                }
+              ],
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000003",
+              "transition": {
+                "teacherLabel": "WAIT_FOR_EVIDENCE",
+                "teacherReason": "collecting-evidence",
+                "teacherPreviousStateVersion": 11,
+                "teacherStateVersion": 12,
+                "inferenceMs": 0
+              }
+            },
+            {
+              "decisionId": "decision-000004",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "clockId": "browser-performance",
+              "atMs": 56435.69999998808,
+              "triggeredBy": [
+                "event-000004"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.9937888994178181
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.00330409735562258
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.002907003226559226
+                  }
+                }
+              ],
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000004",
+              "transition": {
+                "teacherLabel": "WAIT_FOR_EVIDENCE",
+                "teacherReason": "collecting-evidence",
+                "teacherPreviousStateVersion": 12,
+                "teacherStateVersion": 13,
+                "inferenceMs": 0.09999999403953552
+              }
+            },
+            {
+              "decisionId": "decision-000005",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "clockId": "browser-performance",
+              "atMs": 56500.79999998212,
+              "triggeredBy": [
+                "event-000005"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.9887144816011199
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.005965529113418685
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.005319989285461398
+                  }
+                }
+              ],
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000005",
+              "transition": {
+                "teacherLabel": "WAIT_FOR_EVIDENCE",
+                "teacherReason": "collecting-evidence",
+                "teacherPreviousStateVersion": 13,
+                "teacherStateVersion": 14,
+                "inferenceMs": 0.19999998807907104
+              }
+            },
+            {
+              "decisionId": "decision-000006",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "clockId": "browser-performance",
+              "atMs": 56503.89999997616,
+              "triggeredBy": [
+                "event-000006"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.979257738586471
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.01203971598261883
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.008702545430910067
+                  }
+                }
+              ],
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000006",
+              "transition": {
+                "teacherLabel": "WAIT_FOR_EVIDENCE",
+                "teacherReason": "collecting-evidence",
+                "teacherPreviousStateVersion": 14,
+                "teacherStateVersion": 15,
+                "inferenceMs": 0.09999999403953552
+              }
+            },
+            {
+              "decisionId": "decision-000007",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "clockId": "browser-performance",
+              "atMs": 56549,
+              "triggeredBy": [
+                "event-000007"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.9792575726972308
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.012038897184999153
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.008703530117769908
+                  }
+                }
+              ],
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000007",
+              "transition": {
+                "teacherLabel": "WAIT_FOR_EVIDENCE",
+                "teacherReason": "collecting-evidence",
+                "teacherPreviousStateVersion": 15,
+                "teacherStateVersion": 16,
+                "inferenceMs": 0.20000001788139343
+              }
+            },
+            {
+              "decisionId": "decision-000008",
+              "turnId": "turn-1",
+              "epoch": 17,
+              "clockId": "browser-performance",
+              "atMs": 56593.79999998212,
+              "triggeredBy": [
+                "event-000008"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.9948003189449659
+                  }
+                },
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.004042099392677076
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.0011575816623569924
+                  }
+                }
+              ],
+              "proposal": "CONTINUE_OUTPUT",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000008",
+              "transition": {
+                "teacherLabel": "CONTINUE_OUTPUT",
+                "teacherReason": "insufficient-acoustic-evidence",
+                "teacherPreviousStateVersion": 16,
+                "teacherStateVersion": 17,
+                "inferenceMs": 0
+              }
+            }
+          ],
+          "effects": [],
+          "labels": [
+            {
+              "labelId": "label-000001",
+              "targetId": "decision-000001",
+              "task": "acoustic-reflex-intent",
+              "value": "WAIT_FOR_EVIDENCE",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            },
+            {
+              "labelId": "label-000002",
+              "targetId": "decision-000002",
+              "task": "acoustic-reflex-intent",
+              "value": "WAIT_FOR_EVIDENCE",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            },
+            {
+              "labelId": "label-000003",
+              "targetId": "decision-000003",
+              "task": "acoustic-reflex-intent",
+              "value": "WAIT_FOR_EVIDENCE",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            },
+            {
+              "labelId": "label-000004",
+              "targetId": "decision-000004",
+              "task": "acoustic-reflex-intent",
+              "value": "WAIT_FOR_EVIDENCE",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            },
+            {
+              "labelId": "label-000005",
+              "targetId": "decision-000005",
+              "task": "acoustic-reflex-intent",
+              "value": "WAIT_FOR_EVIDENCE",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            },
+            {
+              "labelId": "label-000006",
+              "targetId": "decision-000006",
+              "task": "acoustic-reflex-intent",
+              "value": "WAIT_FOR_EVIDENCE",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            },
+            {
+              "labelId": "label-000007",
+              "targetId": "decision-000007",
+              "task": "acoustic-reflex-intent",
+              "value": "WAIT_FOR_EVIDENCE",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            },
+            {
+              "labelId": "label-000008",
+              "targetId": "decision-000008",
+              "task": "acoustic-reflex-intent",
+              "value": "CONTINUE_OUTPUT",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            }
+          ],
+          "derivedFeatureManifests": [],
+          "limitations": [
+            "somente replays PCM de automação possuem stream persistível e posição acústica",
+            "candidato em shadow não possui autoridade nem produz efeitos"
+          ]
+        }
+      },
+      {
+        "label": "sustained-pause",
+        "present": true,
+        "validation": {
+          "valid": true,
+          "errors": [],
+          "counts": {
+            "events": 3,
+            "contexts": 3,
+            "decisions": 3,
+            "effects": 0,
+            "labels": 3
+          }
+        },
+        "replay": {
+          "exact": true,
+          "validation": {
+            "valid": true,
+            "errors": [],
+            "counts": {
+              "events": 3,
+              "contexts": 3,
+              "decisions": 3,
+              "effects": 0,
+              "labels": 3
+            }
+          },
+          "steps": [
+            {
+              "decisionId": "decision-000001",
+              "eventId": "event-000001",
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "teacher": "WAIT_FOR_EVIDENCE",
+              "exact": true,
+              "errors": []
+            },
+            {
+              "decisionId": "decision-000002",
+              "eventId": "event-000002",
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "teacher": "WAIT_FOR_EVIDENCE",
+              "exact": true,
+              "errors": []
+            },
+            {
+              "decisionId": "decision-000003",
+              "eventId": "event-000003",
+              "proposal": "PAUSE_OUTPUT",
+              "teacher": "PAUSE_OUTPUT",
+              "exact": true,
+              "errors": []
+            }
+          ],
+          "errors": []
+        },
+        "positionsBound": true,
+        "decisions": 3,
+        "proposals": [
+          "WAIT_FOR_EVIDENCE",
+          "PAUSE_OUTPUT"
+        ],
+        "labels": [
+          "WAIT_FOR_EVIDENCE",
+          "PAUSE_OUTPUT"
+        ],
+        "shadowOnly": true,
+        "effects": 0,
+        "modelBound": true,
+        "inferenceP95Ms": 0.09999999403953552,
+        "agreementRate": 1,
+        "trainingTrace": {
+          "schemaVersion": "training-trace-v1",
+          "sliceVersion": "local-audio-reflex-training-trace-v0.1",
+          "session": {
+            "sessionId": "d56993d3-6e48-4415-9ffb-42c82e494fe1",
+            "startedAtEpochMs": 1785551154642,
+            "locale": "pt-BR",
+            "candidate": "acoustic-reflex-shadow-m4a-v0.1",
+            "configHash": "sha256:8ec53cb04885aeb39d37bd4f87accf2af4bcfff8914547d1d0b046d562943e03"
+          },
+          "clocks": [
+            {
+              "clockId": "browser-performance",
+              "kind": "monotonic",
+              "processId": "browser-main",
+              "resolutionMs": 0.1,
+              "mappingMethod": "identity-within-process",
+              "mappingPoints": []
+            }
+          ],
+          "streams": [
+            {
+              "streamId": "automation-pcm-4-fad9d03dc036",
+              "role": "user-input-fixture",
+              "mediaRef": "inline:pcm-sha256:fad9d03dc03653c6c6035ab9b8e9440dde2b9a13466c52a8297bb37f2dda5bc1",
+              "sha256": "sha256:fad9d03dc03653c6c6035ab9b8e9440dde2b9a13466c52a8297bb37f2dda5bc1",
+              "sampleRate": 16000,
+              "channels": 1,
+              "encoding": "pcm_s16le",
+              "sampleCount": 83983
+            }
+          ],
+          "events": [
+            {
+              "eventId": "event-000001",
+              "sessionId": "d56993d3-6e48-4415-9ffb-42c82e494fe1",
+              "turnId": "turn-1",
+              "epoch": 24,
+              "type": "local-audio-reflex.user_speech_started",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 60872.39999997616,
+              "payload": {
+                "reflexEvent": {
+                  "type": "USER_SPEECH_STARTED",
+                  "turnId": "turn-1",
+                  "detector": "silero-vad-v6.2",
+                  "probability": 0.9318342208862305,
+                  "triggerSampleStart": 2048,
+                  "assistantAudible": true,
+                  "assistantPending": true
+                },
+                "sourceEventType": "user.speech.started",
+                "sourceEventAtMs": 503483.58
+              },
+              "audioPosition": {
+                "streamId": "automation-pcm-4-fad9d03dc036",
+                "sampleStart": 2048,
+                "sampleEnd": 2560
+              }
+            },
+            {
+              "eventId": "event-000002",
+              "sessionId": "d56993d3-6e48-4415-9ffb-42c82e494fe1",
+              "turnId": "turn-1",
+              "epoch": 24,
+              "type": "local-audio-reflex.vad_control_window",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 60940.29999998212,
+              "payload": {
+                "reflexEvent": {
+                  "type": "VAD_CONTROL_WINDOW",
+                  "turnId": "turn-1",
+                  "probability": 0.9980729222297668,
+                  "sampleStart": 2560
+                },
+                "sourceEventType": "vad.control.window",
+                "sourceEventAtMs": 503515.58
+              },
+              "audioPosition": {
+                "streamId": "automation-pcm-4-fad9d03dc036",
+                "sampleStart": 2560,
+                "sampleEnd": 3072
+              }
+            },
+            {
+              "eventId": "event-000003",
+              "sessionId": "d56993d3-6e48-4415-9ffb-42c82e494fe1",
+              "turnId": "turn-1",
+              "epoch": 24,
+              "type": "local-audio-reflex.vad_control_window",
+              "source": "silero-vad-v6.2",
+              "clockId": "browser-performance",
+              "atMs": 60956.89999997616,
+              "payload": {
+                "reflexEvent": {
+                  "type": "VAD_CONTROL_WINDOW",
+                  "turnId": "turn-1",
+                  "probability": 0.9994363784790039,
+                  "sampleStart": 3072
+                },
+                "sourceEventType": "vad.control.window",
+                "sourceEventAtMs": 503547.58
+              },
+              "audioPosition": {
+                "streamId": "automation-pcm-4-fad9d03dc036",
+                "sampleStart": 3072,
+                "sampleEnd": 3584
+              }
+            }
+          ],
+          "contexts": [
+            {
+              "contextId": "context-000001",
+              "turnId": "turn-1",
+              "epoch": 24,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 60872.39999997616
+              },
+              "eventIds": [
+                "event-000001"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 25,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "idle",
+                  "turnId": null,
+                  "triggerSampleStart": null,
+                  "lastSampleStart": null,
+                  "observedWindows": 0,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    1,
+                    0,
+                    0,
+                    0.9318342208862305,
+                    0,
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            },
+            {
+              "contextId": "context-000002",
+              "turnId": "turn-1",
+              "epoch": 24,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 60940.29999998212
+              },
+              "eventIds": [
+                "event-000002"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 26,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "armed",
+                  "turnId": "turn-1",
+                  "triggerSampleStart": 2048,
+                  "lastSampleStart": 2048,
+                  "observedWindows": 0,
+                  "supportingWindows": 0
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    0,
+                    1,
+                    0,
+                    0.9980729222297668,
+                    0,
+                    0,
+                    1,
+                    1
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            },
+            {
+              "contextId": "context-000003",
+              "turnId": "turn-1",
+              "epoch": 24,
+              "availableAt": {
+                "clockId": "browser-performance",
+                "atMs": 60956.89999997616
+              },
+              "eventIds": [
+                "event-000003"
+              ],
+              "state": {
+                "assistantAudible": true,
+                "assistantPending": false,
+                "localAudioReflex": {
+                  "schemaVersion": 1,
+                  "reflexVersion": "local-audio-reflex-v0.1",
+                  "version": 27,
+                  "config": {
+                    "mode": "evidence-gated",
+                    "supportProbability": 0.75,
+                    "supportWindows": 2
+                  },
+                  "status": "armed",
+                  "turnId": "turn-1",
+                  "triggerSampleStart": 2048,
+                  "lastSampleStart": 2560,
+                  "observedWindows": 1,
+                  "supportingWindows": 1
+                },
+                "features": {
+                  "version": "acoustic-reflex-shadow-v0.1",
+                  "names": [
+                    "bias",
+                    "eventStarted",
+                    "eventWindow",
+                    "eventPaused",
+                    "probability",
+                    "previousObservedWindows",
+                    "previousSupportingWindows",
+                    "currentSupports",
+                    "previousArmed"
+                  ],
+                  "values": [
+                    1,
+                    0,
+                    1,
+                    0,
+                    0.9994363784790039,
+                    0.25,
+                    0.5,
+                    1,
+                    1
+                  ]
+                }
+              },
+              "derivedFeatureRefs": []
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "decision-000001",
+              "turnId": "turn-1",
+              "epoch": 24,
+              "clockId": "browser-performance",
+              "atMs": 60872.39999997616,
+              "triggeredBy": [
+                "event-000001"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.990243054685055
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.005357537803749884
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.004399407511195174
+                  }
+                }
+              ],
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000001",
+              "transition": {
+                "teacherLabel": "WAIT_FOR_EVIDENCE",
+                "teacherReason": "armed",
+                "teacherPreviousStateVersion": 25,
+                "teacherStateVersion": 26,
+                "inferenceMs": 0.09999999403953552
+              }
+            },
+            {
+              "decisionId": "decision-000002",
+              "turnId": "turn-1",
+              "epoch": 24,
+              "clockId": "browser-performance",
+              "atMs": 60940.29999998212,
+              "triggeredBy": [
+                "event-000002"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.8021263906111662
+                  }
+                },
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.19710876881784495
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.0007648405709888847
+                  }
+                }
+              ],
+              "proposal": "WAIT_FOR_EVIDENCE",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000002",
+              "transition": {
+                "teacherLabel": "WAIT_FOR_EVIDENCE",
+                "teacherReason": "collecting-evidence",
+                "teacherPreviousStateVersion": 26,
+                "teacherStateVersion": 27,
+                "inferenceMs": 0.09999999403953552
+              }
+            },
+            {
+              "decisionId": "decision-000003",
+              "turnId": "turn-1",
+              "epoch": 24,
+              "clockId": "browser-performance",
+              "atMs": 60956.89999997616,
+              "triggeredBy": [
+                "event-000003"
+              ],
+              "supersedes": [],
+              "policy": {
+                "id": "acoustic-reflex-shadow",
+                "version": "checkpoint-sha256:c7bb582e896f13007bc78ec1eb92e90a1e58018472de59f0c33a26ad435375e8",
+                "mode": "shadow"
+              },
+              "outputs": [
+                {
+                  "intent": "PAUSE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.9752390194364873
+                  }
+                },
+                {
+                  "intent": "WAIT_FOR_EVIDENCE",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.02436953864843026
+                  }
+                },
+                {
+                  "intent": "CONTINUE_OUTPUT",
+                  "origin": "acoustic-reflex-shadow",
+                  "payload": {
+                    "probability": 0.00039144191508250036
+                  }
+                }
+              ],
+              "proposal": "PAUSE_OUTPUT",
+              "authorityDecision": "OBSERVE_ONLY",
+              "decisionContextRef": "context-000003",
+              "transition": {
+                "teacherLabel": "PAUSE_OUTPUT",
+                "teacherReason": "sustained-acoustic-evidence",
+                "teacherPreviousStateVersion": 27,
+                "teacherStateVersion": 28,
+                "inferenceMs": 0.09999999403953552
+              }
+            }
+          ],
+          "effects": [],
+          "labels": [
+            {
+              "labelId": "label-000001",
+              "targetId": "decision-000001",
+              "task": "acoustic-reflex-intent",
+              "value": "WAIT_FOR_EVIDENCE",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            },
+            {
+              "labelId": "label-000002",
+              "targetId": "decision-000002",
+              "task": "acoustic-reflex-intent",
+              "value": "WAIT_FOR_EVIDENCE",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            },
+            {
+              "labelId": "label-000003",
+              "targetId": "decision-000003",
+              "task": "acoustic-reflex-intent",
+              "value": "PAUSE_OUTPUT",
+              "source": {
+                "kind": "deterministic-invariant",
+                "ref": "local-audio-reflex",
+                "version": "local-audio-reflex-v0.1"
+              },
+              "confidence": 1
+            }
+          ],
+          "derivedFeatureManifests": [],
+          "limitations": [
+            "somente replays PCM de automação possuem stream persistível e posição acústica",
+            "candidato em shadow não possui autoridade nem produz efeitos"
+          ]
+        }
+      }
+    ],
+    "browser": {
+      "runNonce": "exp-0014-shadow-current",
+      "globalOk": true,
+      "sourceFingerprint": {
+        "algorithm": "sha256-source-tree-v1",
+        "sha256": "e6cf3e42272947eb10366daeceae79a41a7e8f21887a2033ef4bae5f3e92c3e9",
+        "fileCount": 229,
+        "roots": [
+          "src",
+          "web",
+          "scripts",
+          "tests",
+          "eval/factory",
+          "eval/gates",
+          "eval/scenarios",
+          "package.json",
+          "package-lock.json",
+          "requirements-asr.txt"
+        ]
+      },
+      "gates": {
+        "automationAvailable": true,
+        "outputInterruptionLifecycleAdvertised": true,
+        "outputInterruptionLifecycleReplay": true,
+        "outputInterruptionLifecycleCoverage": true,
+        "outputInterruptionLifecycleNoInvariantError": true,
+        "physicalMicrophoneCapture": true,
+        "audioTransportRecovery": true,
+        "requestedVadControlSelected": true,
+        "sileroControlIntegrity": true,
+        "audioDrainedThroughWatermark": true,
+        "serverAudioPipelineIntegrity": true,
+        "noSelfInterruptionUnderDeviceAec": true,
+        "longSessionNoFalseActivation": true,
+        "sileroShadowIntegrity": true,
+        "sileroShadowAssistantOnlySpecificity": true,
+        "sileroShadowFixtureSensitivity": true,
+        "potentialBargeInRecovery": true,
+        "deterministicPotentialBargeInRecovery": true,
+        "localAudioReflexAdvertised": true,
+        "marginalSpikeHandledByReflex": true,
+        "marginalSpikeControlObserved": true,
+        "acousticReflexShadowPcm": true,
+        "earlyBackchannelPartialCanReopen": true,
+        "pendingAudioHeldDuringPotentialBargeIn": true,
+        "realPcmBackchannelRecovered": true,
+        "localAudioVertical": true,
+        "responseStarted": true,
+        "statefulCriticalConfirmation": true,
+        "stoppedOnBargeIn": true,
+        "localAudioReflexPreservesBargeIn": true,
+        "closedLoopPcmBargeIn": true,
+        "browserRenderPathStoppedOnBargeIn": true,
+        "longCorrectionNeverResumedMidSpeech": true,
+        "delegatedTaskCancelled": true,
+        "delegatedTaskSurvivesConversation": true,
+        "noAudioPipelineErrors": true,
+        "noBrowserErrors": true
+      },
+      "thresholds": {
+        "responseStartMs": 2500,
+        "stopCommandMs": 100,
+        "browserRenderStopMs": 250,
+        "pcmOnsetToBrowserRenderStopMs": 350,
+        "falseActivationProbeMs": 30000,
+        "vadControlRequired": "silero-vad",
+        "vadShadowRequired": true
+      },
+      "physicalBoundary": {
+        "classification": "current-device-window-green",
+        "pass": true,
+        "failedGates": [],
+        "unexpectedUserSpeechEvents": 0,
+        "confirmedPotentialBargeIns": 0,
+        "affectsM4aDecision": false,
+        "reason": "eventos do microfone chegam ao VAD antes da inferência shadow; sem rótulo/loopback não atribuem causalidade ao checkpoint"
+      }
+    },
+    "health": {
+      "runId": "b2d978ff-f375-43e6-98e2-69ec6edad9e3",
+      "runtimeFingerprint": {
+        "algorithm": "sha256-source-tree-v1",
+        "sha256": "8ec53cb04885aeb39d37bd4f87accf2af4bcfff8914547d1d0b046d562943e03",
+        "fileCount": 83,
+        "roots": [
+          "src",
+          "web",
+          "package.json",
+          "package-lock.json",
+          "requirements-asr.txt"
+        ]
+      },
+      "brain": "local",
+      "usage": {
+        "requests": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0,
+        "requestLimit": null
+      }
+    },
+    "fingerprints": {
+      "campaign": {
+        "algorithm": "sha256-source-tree-v1",
+        "sha256": "e6cf3e42272947eb10366daeceae79a41a7e8f21887a2033ef4bae5f3e92c3e9",
+        "fileCount": 229,
+        "roots": [
+          "src",
+          "web",
+          "scripts",
+          "tests",
+          "eval/factory",
+          "eval/gates",
+          "eval/scenarios",
+          "package.json",
+          "package-lock.json",
+          "requirements-asr.txt"
+        ]
+      },
+      "runtime": {
+        "algorithm": "sha256-source-tree-v1",
+        "sha256": "8ec53cb04885aeb39d37bd4f87accf2af4bcfff8914547d1d0b046d562943e03",
+        "fileCount": 83,
+        "roots": [
+          "src",
+          "web",
+          "package.json",
+          "package-lock.json",
+          "requirements-asr.txt"
+        ]
+      }
+    }
+  },
+  "interpretation": {
+    "promoted": "pipeline dados→treino→checkpoint→inferência online→trace→replay para WAIT/PAUSE/CONTINUE, em shadow e sem efeitos",
+    "notPromoted": "ganho sobre a regra, preferência humana, generalização acústica, autoridade do checkpoint, especificidade física ou prontidão de produto",
+    "holdoutMeaning": "famílias não usadas no ajuste testam vazamento estrutural; os rótulos ainda imitam a mesma regra determinística"
+  },
+  "limitations": [
+    "O modelo aprende rótulos da política atual; 100% no holdout não significa qualidade humana.",
+    "Os WAV/PCM pesados continuam fora do Git; features, receitas e hashes versionados reproduzem o checkpoint.",
+    "A prova online atravessa PCM, transporte, Silero e Chrome, mas não microfone humano ou sala.",
+    "Atividade física não rotulada permanece visível como hold separado e não é atribuída ao shadow.",
+    "M4a não autoriza o candidato a pausar ou retomar áudio."
+  ],
+  "paidApiCalls": 0,
+  "provenance": {
+    "browser": {
+      "path": "eval/reports/exp-0014-browser-current.json",
+      "sha256": "e38f80d59b86442610759d102b70346f0708033b15002d18cb598ed56492347a",
+      "runNonce": "exp-0014-shadow-current"
+    },
+    "checkpoint": {
+      "path": "web/acoustic-reflex-checkpoint.json",
+      "sha256": "921704260f96fc6756e17b71c0ef302480e9d62625ca346f61618779e3a896f5"
+    },
+    "config": {
+      "path": "eval/experiments/exp-0014-acoustic-reflex.pt-BR.json",
+      "sha256": "9a97a885cf35133f8ebd145fec7503a62c39b3f4e1bdc00aadc41c1c6a7997b1"
+    },
+    "dataset": {
+      "path": "eval/datasets/exp-0014-acoustic-reflex-v0.1.json",
+      "sha256": "ad60a67d55eecb092fb72928281d98c95b4310819f12209d604f82a4bc0bafdd"
+    },
+    "offline": {
+      "path": "eval/generated/exp-0014/offline-training-report.json",
+      "sha256": "22f0c0060ea71bc542a1d9c8f7aeaf662919844dbdfcda2a97edb7ae540d4448"
+    }
+  }
+}

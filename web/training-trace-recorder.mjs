@@ -1,6 +1,13 @@
 export const TRAINING_TRACE_VERSION = "training-trace-v1";
 export const INTERRUPTION_TRACE_SLICE_VERSION =
   "output-interruption-training-trace-v0.1";
+export const ACOUSTIC_REFLEX_TRACE_SLICE_VERSION =
+  "local-audio-reflex-training-trace-v0.1";
+
+const TRACE_SLICE_VERSIONS = new Set([
+  INTERRUPTION_TRACE_SLICE_VERSION,
+  ACOUSTIC_REFLEX_TRACE_SLICE_VERSION
+]);
 
 const EFFECT_STAGES = Object.freeze([
   "accepted",
@@ -141,9 +148,20 @@ function normalizeClock(clock = {}) {
 
 export function createTrainingTraceBundle(options = {}) {
   const clock = normalizeClock(options.clock);
+  const sliceVersion = identifier(
+    options.sliceVersion ?? INTERRUPTION_TRACE_SLICE_VERSION,
+    "sliceVersion"
+  );
+  if (!TRACE_SLICE_VERSIONS.has(sliceVersion)) {
+    throw new TypeError(`sliceVersion não suportada: ${sliceVersion}`);
+  }
+  const limitations = options.limitations ?? [
+    "fatia sem áudio persistido; posições acústicas e streams hasheados " +
+      "permanecem fora deste bundle"
+  ];
   return deepFreeze({
     schemaVersion: TRAINING_TRACE_VERSION,
-    sliceVersion: INTERRUPTION_TRACE_SLICE_VERSION,
+    sliceVersion,
     session: {
       sessionId: identifier(options.sessionId, "sessionId"),
       startedAtEpochMs: nonNegativeInteger(
@@ -162,10 +180,7 @@ export function createTrainingTraceBundle(options = {}) {
     effects: [],
     labels: [],
     derivedFeatureManifests: [],
-    limitations: [
-      "fatia sem áudio persistido; posições acústicas e streams hasheados " +
-        "permanecem fora deste bundle"
-    ]
+    limitations: jsonValue(limitations, "limitations")
   });
 }
 
@@ -200,6 +215,7 @@ function terminalStage(effect) {
 
 export class TrainingTraceRecorder {
   #bundle;
+  #labelDefaults;
   #sequences = {};
   #effects = new Map();
 
@@ -217,9 +233,88 @@ export class TrainingTraceRecorder {
 
   reset(options) {
     this.#bundle = mutableBundle(options);
+    this.#labelDefaults = {
+      task: identifier(
+        options.label?.task ?? "output-interruption-intent",
+        "label.task"
+      ),
+      source: options.label?.source === undefined
+        ? null
+        : jsonValue(options.label.source, "label.source")
+    };
     this.#sequences = {};
     this.#effects = new Map();
     return this.snapshot;
+  }
+
+  registerStream(input = {}) {
+    const streamId = identifier(input.streamId, "streamId");
+    if (this.#bundle.streams.some((stream) => stream.streamId === streamId)) {
+      throw new TypeError(`streamId duplicado: ${streamId}`);
+    }
+    const sampleRate = nonNegativeInteger(input.sampleRate, "sampleRate");
+    const channels = nonNegativeInteger(input.channels, "channels");
+    if (sampleRate === 0 || channels === 0) {
+      throw new TypeError("sampleRate e channels precisam ser positivos");
+    }
+    const sampleCount = input.sampleCount === null ||
+      input.sampleCount === undefined
+      ? null
+      : nonNegativeInteger(input.sampleCount, "sampleCount");
+    const stream = {
+      streamId,
+      role: identifier(input.role, "role"),
+      mediaRef: identifier(input.mediaRef, "mediaRef", { maxLength: 500 }),
+      sha256: sha256Ref(input.sha256, "stream.sha256"),
+      sampleRate,
+      channels,
+      encoding: identifier(input.encoding, "encoding"),
+      sampleCount
+    };
+    this.#bundle.streams.push(stream);
+    return deepFreeze(structuredClone(stream));
+  }
+
+  registerDerivedFeatureManifest(input = {}) {
+    const manifestId = identifier(input.manifestId, "manifestId");
+    if (
+      this.#bundle.derivedFeatureManifests.some(
+        (manifest) => manifest.manifestId === manifestId
+      )
+    ) {
+      throw new TypeError(`manifestId duplicado: ${manifestId}`);
+    }
+    const sourceStreamId = identifier(
+      input.sourceStreamId,
+      "sourceStreamId"
+    );
+    if (
+      !this.#bundle.streams.some(
+        (stream) => stream.streamId === sourceStreamId
+      )
+    ) {
+      throw new TypeError(`sourceStreamId desconhecido: ${sourceStreamId}`);
+    }
+    const manifest = {
+      manifestId,
+      sourceStreamId,
+      extractor: {
+        name: identifier(input.extractor?.name, "extractor.name"),
+        version: identifier(input.extractor?.version, "extractor.version"),
+        artifactHash: sha256Ref(
+          input.extractor?.artifactHash,
+          "extractor.artifactHash"
+        )
+      },
+      artifactRef: identifier(
+        input.artifactRef,
+        "artifactRef",
+        { maxLength: 500 }
+      ),
+      sha256: sha256Ref(input.sha256, "manifest.sha256")
+    };
+    this.#bundle.derivedFeatureManifests.push(manifest);
+    return deepFreeze(structuredClone(manifest));
   }
 
   recordDecision(input = {}) {
@@ -246,10 +341,52 @@ export class TrainingTraceRecorder {
       input.event?.payload ?? {},
       "event.payload"
     );
+    let audioPosition = null;
+    if (input.event?.audioPosition !== undefined) {
+      const streamId = identifier(
+        input.event.audioPosition.streamId,
+        "event.audioPosition.streamId"
+      );
+      const stream = this.#bundle.streams.find(
+        (candidate) => candidate.streamId === streamId
+      );
+      if (!stream) {
+        throw new TypeError(`streamId desconhecido: ${streamId}`);
+      }
+      const sampleStart = nonNegativeInteger(
+        input.event.audioPosition.sampleStart,
+        "event.audioPosition.sampleStart"
+      );
+      const sampleEnd = nonNegativeInteger(
+        input.event.audioPosition.sampleEnd,
+        "event.audioPosition.sampleEnd"
+      );
+      if (sampleEnd <= sampleStart) {
+        throw new RangeError("audioPosition precisa ter intervalo positivo");
+      }
+      if (stream.sampleCount !== null && sampleEnd > stream.sampleCount) {
+        throw new RangeError("audioPosition excede o stream registrado");
+      }
+      audioPosition = { streamId, sampleStart, sampleEnd };
+    }
     const contextState = jsonValue(
       input.context?.state ?? {},
       "context.state"
     );
+    const derivedFeatureRefs = (input.context?.derivedFeatureRefs ?? [])
+      .map((value, index) => identifier(
+        value,
+        `context.derivedFeatureRefs[${index}]`
+      ));
+    for (const manifestId of derivedFeatureRefs) {
+      if (
+        !this.#bundle.derivedFeatureManifests.some(
+          (manifest) => manifest.manifestId === manifestId
+        )
+      ) {
+        throw new TypeError(`manifestId desconhecido: ${manifestId}`);
+      }
+    }
     const policyId = identifier(input.policy?.id, "policy.id");
     const policyVersion = identifier(
       input.policy?.version,
@@ -289,7 +426,7 @@ export class TrainingTraceRecorder {
     const eventId = nextId(this.#sequences, "event");
     const contextId = nextId(this.#sequences, "context");
     const decisionId = nextId(this.#sequences, "decision");
-    this.#bundle.events.push({
+    const recordedEvent = {
       eventId,
       sessionId: this.#bundle.session.sessionId,
       turnId,
@@ -299,7 +436,11 @@ export class TrainingTraceRecorder {
       clockId,
       atMs,
       payload: eventPayload
-    });
+    };
+    if (audioPosition !== null) {
+      recordedEvent.audioPosition = audioPosition;
+    }
+    this.#bundle.events.push(recordedEvent);
     this.#bundle.contexts.push({
       contextId,
       turnId,
@@ -307,7 +448,7 @@ export class TrainingTraceRecorder {
       availableAt: { clockId, atMs },
       eventIds: [eventId],
       state: contextState,
-      derivedFeatureRefs: []
+      derivedFeatureRefs
     });
     const decision = {
       decisionId,
@@ -327,7 +468,11 @@ export class TrainingTraceRecorder {
         origin: intent.origin,
         payload: intent.payload
       })),
-      proposal: intents[0]?.type ?? null,
+      proposal: input.proposal === undefined
+        ? intents[0]?.type ?? null
+        : input.proposal === null
+          ? null
+          : identifier(input.proposal, "proposal"),
       authorityDecision,
       decisionContextRef: contextId,
       transition
@@ -335,17 +480,33 @@ export class TrainingTraceRecorder {
     this.#bundle.decisions.push(decision);
 
     const labelId = nextId(this.#sequences, "label");
-    this.#bundle.labels.push({
-      labelId,
-      targetId: decisionId,
-      task: "output-interruption-intent",
-      value: intents.map((intent) => intent.type),
-      source: {
+    const labelSource = input.label?.source ??
+      this.#labelDefaults.source ?? {
         kind: "deterministic-invariant",
         ref: policyId,
         version: policyVersion
-      },
-      confidence: 1
+      };
+    const labelConfidence = finiteNumber(
+      input.label?.confidence ?? 1,
+      "label.confidence",
+      { nonNegative: true }
+    );
+    if (labelConfidence > 1) {
+      throw new RangeError("label.confidence precisa estar em [0, 1]");
+    }
+    this.#bundle.labels.push({
+      labelId,
+      targetId: decisionId,
+      task: identifier(
+        input.label?.task ?? this.#labelDefaults.task,
+        "label.task"
+      ),
+      value: jsonValue(
+        input.label?.value ?? intents.map((intent) => intent.type),
+        "label.value"
+      ),
+      source: jsonValue(labelSource, "label.source"),
+      confidence: labelConfidence
     });
 
     const effects = [];
@@ -473,7 +634,7 @@ export function validateTrainingTraceBundle(bundle) {
   if (bundle?.schemaVersion !== TRAINING_TRACE_VERSION) {
     errors.push("schemaVersion incompatível");
   }
-  if (bundle?.sliceVersion !== INTERRUPTION_TRACE_SLICE_VERSION) {
+  if (!TRACE_SLICE_VERSIONS.has(bundle?.sliceVersion)) {
     errors.push("sliceVersion incompatível");
   }
   try {
@@ -483,11 +644,13 @@ export function validateTrainingTraceBundle(bundle) {
     errors.push(error.message);
   }
   const collections = [
+    ["streams", "streamId"],
     ["events", "eventId"],
     ["contexts", "contextId"],
     ["decisions", "decisionId"],
     ["effects", "effectId"],
-    ["labels", "labelId"]
+    ["labels", "labelId"],
+    ["derivedFeatureManifests", "manifestId"]
   ];
   for (const [name, field] of collections) {
     if (!Array.isArray(bundle?.[name])) {
@@ -505,6 +668,28 @@ export function validateTrainingTraceBundle(bundle) {
   const clockIds = new Set(
     (bundle.clocks ?? []).map((clock) => clock.clockId)
   );
+  const streamIds = new Set();
+  for (const stream of bundle.streams ?? []) {
+    if (streamIds.has(stream.streamId)) {
+      errors.push("streams contém IDs duplicados");
+    }
+    streamIds.add(stream.streamId);
+    try {
+      identifier(stream.streamId, "streamId");
+      identifier(stream.mediaRef, "mediaRef", { maxLength: 500 });
+      sha256Ref(stream.sha256, "stream.sha256");
+      const sampleRate = nonNegativeInteger(stream.sampleRate, "sampleRate");
+      const channels = nonNegativeInteger(stream.channels, "channels");
+      if (sampleRate === 0 || channels === 0) {
+        throw new TypeError("sampleRate e channels precisam ser positivos");
+      }
+      if (stream.sampleCount !== null) {
+        nonNegativeInteger(stream.sampleCount, "sampleCount");
+      }
+    } catch (error) {
+      errors.push(error.message);
+    }
+  }
   const eventIds = new Set(bundle.events.map((event) => event.eventId));
   const contextIds = new Set(
     bundle.contexts.map((context) => context.contextId)
@@ -519,6 +704,29 @@ export function validateTrainingTraceBundle(bundle) {
     if (event.sessionId !== bundle.session?.sessionId) {
       errors.push(`${event.eventId} usa sessionId divergente`);
     }
+    if (event.audioPosition !== undefined) {
+      const stream = (bundle.streams ?? []).find(
+        (candidate) =>
+          candidate.streamId === event.audioPosition?.streamId
+      );
+      const start = event.audioPosition?.sampleStart;
+      const end = event.audioPosition?.sampleEnd;
+      if (!stream) {
+        errors.push(`${event.eventId} usa stream desconhecido`);
+      } else if (
+        !Number.isSafeInteger(start) ||
+        !Number.isSafeInteger(end) ||
+        start < 0 ||
+        end <= start
+      ) {
+        errors.push(`${event.eventId} possui audioPosition inválida`);
+      } else if (
+        stream.sampleCount !== null &&
+        end > stream.sampleCount
+      ) {
+        errors.push(`${event.eventId} excede o stream`);
+      }
+    }
   }
   for (const context of bundle.contexts) {
     if (!clockIds.has(context.availableAt?.clockId)) {
@@ -526,6 +734,15 @@ export function validateTrainingTraceBundle(bundle) {
     }
     if (!context.eventIds?.every((id) => eventIds.has(id))) {
       errors.push(`${context.contextId} referencia evento ausente`);
+    }
+    if (
+      !context.derivedFeatureRefs?.every((id) =>
+        (bundle.derivedFeatureManifests ?? []).some(
+          (manifest) => manifest.manifestId === id
+        )
+      )
+    ) {
+      errors.push(`${context.contextId} referencia features ausentes`);
     }
     for (const eventId of context.eventIds ?? []) {
       const event = bundle.events.find(
@@ -662,6 +879,34 @@ export function validateTrainingTraceBundle(bundle) {
       !label.source?.version
     ) {
       errors.push(`${label.labelId} não possui proveniência completa`);
+    }
+    if (
+      !Number.isFinite(label.confidence) ||
+      label.confidence < 0 ||
+      label.confidence > 1
+    ) {
+      errors.push(`${label.labelId} possui confiança inválida`);
+    }
+  }
+  const featureManifestIds = new Set();
+  for (const manifest of bundle.derivedFeatureManifests ?? []) {
+    if (featureManifestIds.has(manifest.manifestId)) {
+      errors.push("derivedFeatureManifests contém IDs duplicados");
+    }
+    featureManifestIds.add(manifest.manifestId);
+    if (!streamIds.has(manifest.sourceStreamId)) {
+      errors.push(`${manifest.manifestId} usa stream desconhecido`);
+    }
+    try {
+      identifier(manifest.extractor?.name, "extractor.name");
+      identifier(manifest.extractor?.version, "extractor.version");
+      sha256Ref(
+        manifest.extractor?.artifactHash,
+        "extractor.artifactHash"
+      );
+      sha256Ref(manifest.sha256, "manifest.sha256");
+    } catch (error) {
+      errors.push(error.message);
     }
   }
   for (const decision of bundle.decisions) {

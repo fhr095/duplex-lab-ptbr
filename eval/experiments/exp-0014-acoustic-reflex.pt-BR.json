@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "id": "exp-0014-acoustic-reflex-m4a-v0.1",
+  "locale": "pt-BR",
+  "hypothesis": "Um classificador linear pequeno consegue percorrer dados, treino, checkpoint, inferência online, trace e replay para WAIT/PAUSE/CONTINUE sem receber autoridade.",
+  "source": {
+    "pack": "eval/scenarios/asr-autonomy.pt-BR.json",
+    "audioPattern": "eval/generated/asr/audio/{family}--rate-{rateToken}.wav",
+    "materializationCommand": "npm run eval:asr",
+    "retention": "WAV e PCM derivados permanecem ignorados no Git; features, receitas e hashes são versionados"
+  },
+  "audio": {
+    "sampleRate": 16000,
+    "channels": 1,
+    "encoding": "pcm_s16le",
+    "transportFrameSamples": 320,
+    "vadWindowSamples": 512,
+    "tailSilenceWindows": 16
+  },
+  "vad": {
+    "name": "silero-vad",
+    "version": "6.2",
+    "modelSha256": "1a153a22f4509e292a94e67d6f9b85e8deb25b4988682b7e174c65279d8788e3",
+    "threshold": 0.85,
+    "onsetWindows": 1,
+    "offThreshold": 0.35,
+    "offsetWindows": 7
+  },
+  "reflex": {
+    "mode": "evidence-gated",
+    "supportProbability": 0.75,
+    "supportWindows": 2
+  },
+  "variants": [
+    {
+      "id": "sustained",
+      "recipe": "full-source-plus-tail-silence",
+      "expectedTerminalLabel": "PAUSE_OUTPUT"
+    },
+    {
+      "id": "marginal",
+      "recipe": "source-through-first-trigger-window-plus-tail-silence",
+      "expectedTerminalLabel": "CONTINUE_OUTPUT"
+    }
+  ],
+  "splits": {
+    "train": [
+      "saudacao",
+      "hesitacao",
+      "interrupcao",
+      "correcao",
+      "delegacao",
+      "cancelamento"
+    ],
+    "development": [
+      "numeros",
+      "nao-curto"
+    ],
+    "holdout": [
+      "espera-curto",
+      "muda-terca"
+    ]
+  },
+  "trainer": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "epochs": 1800,
+    "learningRate": 0.35,
+    "l2": 0.0005,
+    "initialization": "all-zero",
+    "ordering": "input-order/full-batch"
+  },
+  "gates": {
+    "minimumSplitAccuracy": 0.95,
+    "minimumClassRecall": 0.9,
+    "maximumBrowserInferenceP95Ms": 5,
+    "requiredOnlineLabels": [
+      "WAIT_FOR_EVIDENCE",
+      "PAUSE_OUTPUT",
+      "CONTINUE_OUTPUT"
+    ]
+  },
+  "claims": {
+    "promotable": "infraestrutura M4a acústica em shadow",
+    "excluded": [
+      "ganho de qualidade sobre a política determinística",
+      "generalização humana ou acústica",
+      "autoridade do checkpoint",
+      "naturalidade de voz"
+    ]
+  }
+}

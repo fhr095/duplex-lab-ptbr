@@ -33,6 +33,9 @@ A primeira vertical local já é funcional de ponta a ponta:
 - `OutputInterruptionLifecycle` v0.1 governa hold, retomada e confirmação da
   saída como reducer puro; o Chrome registra e reproduz exatamente cada
   transição, inclusive resultados tardios de `play()`;
+- `AcousticReflexShadow` carrega um checkpoint local treinado para
+  `WAIT_FOR_EVIDENCE / PAUSE_OUTPUT / CONTINUE_OUTPUT`, registra probabilidades
+  sobre PCM hasheado e permanece estruturalmente sem autoridade;
 - fala do usuário mantém a captura contínua, mas cancela resposta, tarefa,
   síntese/player e áudio já enfileirado até o último quantum do renderer;
 - campanhas reproduzíveis cobrem fala sintética, CORAA, silêncio, correção,
@@ -80,9 +83,10 @@ ainda parcialmente rotulada, diversidade acústica limitada a uma voz e ausênci
 de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
 
-Após o EXP-0013, a suíte corrente possui **314/314 testes** e também cobre os
+Após o EXP-0014, a suíte corrente possui **324/324 testes** e também cobre os
 reducers do reflexo e do lifecycle, finais tardias, corridas de retomada,
-schema causal, ledger, replay, projeção v0, comparadores e casos adversariais.
+schema causal, ledger, replay, projeção v0, dataset por famílias, treino
+reproduzível, checkpoint e inferência acústica em shadow.
 Os 223/223 acima pertencem à execução congelada da campanha v0.2 e não são
 reescritos retrospectivamente.
 
@@ -125,11 +129,27 @@ renderer em 38 ms e fechou onset PCM→silêncio em 169,82 ms. A decisão é
 amostra, clocks entre processos, checkpoint e generalização ainda não foram
 promovidos.
 
+O EXP-0014 fechou M4a para uma capacidade acústica estreita. Sessenta streams
+PCM produziram **330 exemplos** em famílias disjuntas de treino,
+desenvolvimento e holdout; o treino local repetido gerou exatamente o mesmo
+checkpoint. No Chrome, **11 decisões** cobriram as três classes, tiveram replay
+exato, inferência p95 de **0,2 ms**, vínculo de hash/posição de amostra e zero
+efeito. A campanha também preservou o barge-in em 151,75 ms e passou 30,072 s
+no dispositivo corrente sem falsa ativação. A decisão é
+`promote-m4a-acoustic-shadow-infrastructure`: 100% no holdout significa
+imitação consistente da regra, não ganho humano ou generalização.
+
 Com o servidor local e o Chrome de depuração abertos, a evidência é reproduzida
 por `npm run eval:exp:0013:browser` e consolidada por
 `npm run eval:exp:0013:report`. O primeiro comando preserva separadamente os
 gates físicos; uma falha ambiental não vira sucesso nem apaga a prova causal
 dos caminhos determinísticos.
+
+O ciclo M4a é reproduzido por `npm run eval:exp:0014:data`,
+`npm run eval:exp:0014:train`, `npm run eval:exp:0014:browser` e
+`npm run eval:exp:0014:report`. Os WAV/PCM pesados e relatórios intermediários
+ficam fora do Git; receitas, features, hashes, checkpoint e relatório canônico
+são versionados.
 
 ## Rodar
 
@@ -249,9 +269,10 @@ e efeitos externos só poderão promover quando houver ledger verificável.
 O fechamento M2.5 está em migração incremental. Correção e confirmação crítica
 já usam decisão pura (`InteractionKernel`) e autoridade stateful no backend;
 o STOP físico imediato usa o `LocalAudioReflex`, e hold/retomada/confirmação da
-saída já passam pelo `OutputInterruptionLifecycle` com replay exato. Clocks,
-filas, efeitos externos e a reconciliação ampla com o kernel/evaluator ainda
-precisam entrar no mesmo contrato.
+saída já passam pelo `OutputInterruptionLifecycle` com replay exato. O primeiro
+checkpoint acústico roda em shadow sobre traces ligados a PCM. Clocks entre
+processos, filas, efeitos externos e a reconciliação ampla com o
+kernel/evaluator ainda precisam entrar no mesmo contrato.
 
 ## Documentos de decisão
 
@@ -281,6 +302,7 @@ precisam entrar no mesmo contrato.
 - [EXP-0011 — reflexo local com evidência acústica](docs/experiments/EXP-0011-local-audio-reflex.md)
 - [EXP-0012 — lifecycle local de interrupção da saída](docs/experiments/EXP-0012-output-interruption-lifecycle.md)
 - [EXP-0013 — trace causal e ledger da interrupção](docs/experiments/EXP-0013-training-trace-interruption.md)
+- [EXP-0014 — reflexo acústico treinável em shadow](docs/experiments/EXP-0014-acoustic-reflex-m4a.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -291,11 +313,12 @@ prefinal acústica, o EXP-0008 encontrou um verificador semanticamente útil mas
 lento, e o EXP-0009 bloqueou a confirmação monetária insegura sem LLM. A ordem
 executável existe somente no
 [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada): a baseline
-v0.3 está congelada e as fatias stateful, de reflexo, lifecycle e trace causal
-local foram promovidas. O próximo fechamento liga as fixtures PCM existentes a
-hashes/posições de amostra e registra as decisões incrementais do reflexo para
-o primeiro M4a acústico em shadow. Clocks migram somente pelo necessário e o
-comando físico rápido permanece no navegador.
+v0.3 está congelada e as fatias stateful, de reflexo, lifecycle, trace causal e
+M4a acústico em shadow foram promovidas. O próximo fechamento é calibrar uma
+amostra humana pequena de timing/rótulos e construir o comparador M4b que terá
+de superar a regra em famílias realmente não vistas. Até lá, o checkpoint não
+recebe autoridade e o comando físico rápido permanece determinístico no
+navegador.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

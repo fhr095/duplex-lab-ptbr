@@ -15,9 +15,16 @@ import {
   LocalAudioReflex
 } from "/local-audio-reflex.mjs";
 import {
+  ACOUSTIC_REFLEX_CLASSES,
+  AcousticReflexShadow,
+  acousticReflexTeacherLabel,
+  isAcousticReflexDecisionPoint
+} from "/acoustic-reflex-shadow.mjs";
+import {
   OutputInterruptionLifecycle
 } from "/output-interruption-lifecycle.mjs";
 import {
+  ACOUSTIC_REFLEX_TRACE_SLICE_VERSION,
   TrainingTraceRecorder
 } from "/training-trace-recorder.mjs";
 import {
@@ -166,6 +173,15 @@ const session = {
     ring: []
   },
   audioRuntimeEvidence: [],
+  acousticReflexShadow: {
+    agreements: 0,
+    decisions: 0,
+    inferenceMs: [],
+    labels: {}
+  },
+  acousticTraceStreamId: null,
+  acousticTraceStreamSampleCount: null,
+  acousticTraceStreamSequence: 0,
   speechBuffer: "",
   tentativePauseCount: 0,
   taskDeliveryTimer: null,
@@ -186,15 +202,78 @@ const trainingTraceRecorder = new TrainingTraceRecorder({
   candidate: "duplex-lab-output-interruption-v0.1",
   configHash: runtimeTrainingConfigHash
 });
+const reflexTrainingTraceRecorder = new TrainingTraceRecorder({
+  sessionId: session.interactionSessionId,
+  startedAtEpochMs: Date.now(),
+  locale: "pt-BR",
+  candidate: "acoustic-reflex-shadow-m4a-v0.1",
+  configHash: runtimeTrainingConfigHash,
+  sliceVersion: ACOUSTIC_REFLEX_TRACE_SLICE_VERSION,
+  limitations: [
+    "somente replays PCM de automação possuem stream persistível e posição acústica",
+    "candidato em shadow não possui autoridade nem produz efeitos"
+  ],
+  label: { task: "acoustic-reflex-intent" }
+});
+let acousticReflexShadow = null;
+let acousticReflexShadowState = Object.freeze({
+  state: "loading",
+  authority: false
+});
+
+async function loadAcousticReflexShadow() {
+  try {
+    const response = await fetch("/acoustic-reflex-checkpoint.json");
+    if (!response.ok) {
+      throw new Error(`checkpoint retornou HTTP ${response.status}`);
+    }
+    acousticReflexShadow = new AcousticReflexShadow(await response.json());
+    acousticReflexShadowState = acousticReflexShadow.snapshot;
+    log(
+      "acoustic-reflex-shadow.ready",
+      `${acousticReflexShadowState.checkpointId} · sem autoridade`
+    );
+  } catch (error) {
+    acousticReflexShadow = null;
+    acousticReflexShadowState = Object.freeze({
+      state: "error",
+      authority: false,
+      message: error.message
+    });
+    log("acoustic-reflex-shadow.error", error.message);
+  }
+}
 
 function resetTrainingTraceRecorder() {
-  return trainingTraceRecorder.reset({
+  const output = trainingTraceRecorder.reset({
     sessionId: session.interactionSessionId,
     startedAtEpochMs: Date.now(),
     locale: "pt-BR",
     candidate: "duplex-lab-output-interruption-v0.1",
     configHash: runtimeTrainingConfigHash
   });
+  reflexTrainingTraceRecorder.reset({
+    sessionId: session.interactionSessionId,
+    startedAtEpochMs: Date.now(),
+    locale: "pt-BR",
+    candidate: "acoustic-reflex-shadow-m4a-v0.1",
+    configHash: runtimeTrainingConfigHash,
+    sliceVersion: ACOUSTIC_REFLEX_TRACE_SLICE_VERSION,
+    limitations: [
+      "somente replays PCM de automação possuem stream persistível e posição acústica",
+      "candidato em shadow não possui autoridade nem produz efeitos"
+    ],
+    label: { task: "acoustic-reflex-intent" }
+  });
+  session.acousticTraceStreamId = null;
+  session.acousticTraceStreamSampleCount = null;
+  session.acousticReflexShadow = {
+    agreements: 0,
+    decisions: 0,
+    inferenceMs: [],
+    labels: {}
+  };
+  return output;
 }
 
 const MAX_SOCKET_BUFFER_BYTES = 256 * 1024;
@@ -943,6 +1022,143 @@ function interruptAssistant() {
   }
 }
 
+function acousticReflexAudioPosition(event) {
+  if (
+    session.acousticTraceStreamId === null ||
+    !Number.isSafeInteger(session.acousticTraceStreamSampleCount)
+  ) {
+    return null;
+  }
+  const sampleStart = event.type === "USER_SPEECH_STARTED"
+    ? event.triggerSampleStart
+    : event.type === "VAD_CONTROL_WINDOW"
+      ? event.sampleStart
+      : event.triggerSampleStart;
+  if (
+    !Number.isSafeInteger(sampleStart) ||
+    sampleStart < 0 ||
+    sampleStart >= session.acousticTraceStreamSampleCount
+  ) {
+    return null;
+  }
+  return {
+    streamId: session.acousticTraceStreamId,
+    sampleStart,
+    sampleEnd: Math.min(
+      session.acousticTraceStreamSampleCount,
+      sampleStart + 512
+    )
+  };
+}
+
+function observeAcousticReflexShadow(
+  previous,
+  event,
+  transition,
+  sourceEvent
+) {
+  if (
+    acousticReflexShadow === null ||
+    !isAcousticReflexDecisionPoint(previous, event)
+  ) {
+    return null;
+  }
+  const teacherLabel = acousticReflexTeacherLabel(
+    previous,
+    event,
+    transition
+  );
+  if (teacherLabel === null) {
+    return null;
+  }
+  const startedAtMs = performance.now();
+  const prediction = acousticReflexShadow.predict(previous, event);
+  const completedAtMs = performance.now();
+  const inferenceMs = completedAtMs - startedAtMs;
+  const telemetry = session.acousticReflexShadow;
+  telemetry.decisions += 1;
+  telemetry.agreements += prediction.proposal === teacherLabel ? 1 : 0;
+  telemetry.inferenceMs.push(inferenceMs);
+  telemetry.inferenceMs = telemetry.inferenceMs.slice(-5_000);
+  telemetry.labels[prediction.proposal] =
+    (telemetry.labels[prediction.proposal] ?? 0) + 1;
+  log(
+    "acoustic-reflex-shadow.proposed",
+    JSON.stringify({
+      proposal: prediction.proposal,
+      teacherLabel,
+      agreement: prediction.proposal === teacherLabel,
+      inferenceMs: Math.round(inferenceMs * 1_000) / 1_000,
+      authority: false
+    })
+  );
+
+  const audioPosition = acousticReflexAudioPosition(event);
+  if (audioPosition === null) {
+    return prediction;
+  }
+  try {
+    const rankedOutputs = ACOUSTIC_REFLEX_CLASSES.map((type) => ({
+      type,
+      origin: "acoustic-reflex-shadow",
+      probability: prediction.probabilities[type]
+    })).sort((left, right) => right.probability - left.probability);
+    reflexTrainingTraceRecorder.recordDecision({
+      atMs: completedAtMs,
+      turnId: event.turnId ?? null,
+      epoch: session.audioEpoch,
+      event: {
+        type: `local-audio-reflex.${event.type.toLowerCase()}`,
+        source: sourceEvent.detector ?? "browser-audio-runtime",
+        audioPosition,
+        payload: {
+          reflexEvent: { ...event },
+          sourceEventType: sourceEvent.type ?? null,
+          sourceEventAtMs: sourceEvent.atMs ?? null
+        }
+      },
+      context: {
+        state: {
+          assistantAudible: session.assistantSpeaking,
+          assistantPending:
+            session.assistantPreparing || session.responseActive,
+          localAudioReflex: previous,
+          features: {
+            version: prediction.features.featureVersion,
+            names: prediction.features.names,
+            values: prediction.features.values
+          }
+        }
+      },
+      policy: {
+        id: "acoustic-reflex-shadow",
+        version: `checkpoint-${prediction.modelSha256}`,
+        mode: "shadow"
+      },
+      proposal: prediction.proposal,
+      intents: rankedOutputs,
+      transition: {
+        teacherLabel,
+        teacherReason: transition.reason,
+        teacherPreviousStateVersion: transition.previousStateVersion,
+        teacherStateVersion: transition.state.version,
+        inferenceMs
+      },
+      label: {
+        value: teacherLabel,
+        source: {
+          kind: "deterministic-invariant",
+          ref: "local-audio-reflex",
+          version: transition.reflexVersion
+        }
+      }
+    });
+  } catch (error) {
+    log("acoustic-reflex-trace.decision.error", error.message);
+  }
+  return prediction;
+}
+
 function dispatchLocalAudioReflex(reflexEvent, sourceEvent = {}) {
   const event = reflexEvent.type === "USER_SPEECH_STARTED"
     ? {
@@ -956,7 +1172,18 @@ function dispatchLocalAudioReflex(reflexEvent, sourceEvent = {}) {
           session.responseActive
       }
     : reflexEvent;
+  const previous = localAudioReflex.snapshot;
   const transition = localAudioReflex.dispatch(event);
+  try {
+    observeAcousticReflexShadow(
+      previous,
+      event,
+      transition,
+      sourceEvent
+    );
+  } catch (error) {
+    log("acoustic-reflex-shadow.inference.error", error.message);
+  }
   for (const intent of transition.intents) {
     if (intent.type === "WAIT_FOR_EVIDENCE") {
       log(
@@ -2112,7 +2339,10 @@ function handleLocalAudioEvent(event) {
     session.userSpeaking = false;
     dispatchLocalAudioReflex({
       type: "USER_SPEECH_PAUSED",
-      turnId: event.turnId ?? null
+      turnId: event.turnId ?? null,
+      probability: event.probability ?? null,
+      triggerSampleStart:
+        event.triggerSampleStart ?? event.pauseSampleStart ?? null
     }, event);
     if (session.potentialBargeIn) {
       session.potentialBargeIn.userPausedAt = performance.now();
@@ -2847,6 +3077,7 @@ function automationSnapshot() {
   return {
     observedAtMs: Math.round(performance.now() * 100) / 100,
     trainingTrace: trainingTraceRecorder.snapshot,
+    reflexTrainingTrace: reflexTrainingTraceRecorder.snapshot,
     state: {
       active: session.active,
       assistantPreparing: session.assistantPreparing,
@@ -2887,6 +3118,20 @@ function automationSnapshot() {
       localAudioReflex: {
         ...localAudioReflex.snapshot,
         config: { ...localAudioReflex.snapshot.config }
+      },
+      acousticReflexShadow: {
+        ...acousticReflexShadowState,
+        decisions: session.acousticReflexShadow.decisions,
+        agreements: session.acousticReflexShadow.agreements,
+        agreementRate: session.acousticReflexShadow.decisions === 0
+          ? null
+          : session.acousticReflexShadow.agreements /
+            session.acousticReflexShadow.decisions,
+        labels: { ...session.acousticReflexShadow.labels },
+        inferenceMs: numberDistribution(
+          session.acousticReflexShadow.inferenceMs
+        ),
+        activeStreamId: session.acousticTraceStreamId
       },
       outputInterruptionLifecycle: {
         ...outputInterruption
@@ -3014,6 +3259,46 @@ function bytesFromBase64(value) {
   return bytes;
 }
 
+async function sha256Bytes(bytes) {
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)]
+    .map((value) => value.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function registerAutomationAcousticStream(
+  audio,
+  silenceSamples,
+  options
+) {
+  const sampleCount = audio.byteLength / 2 + silenceSamples;
+  const bytes = new Uint8Array(sampleCount * 2);
+  bytes.set(audio);
+  const hash = await sha256Bytes(bytes);
+  if (
+    options.expectedStreamSha256 !== undefined &&
+    options.expectedStreamSha256 !== `sha256:${hash}`
+  ) {
+    throw new Error("hash do stream PCM diverge do esperado");
+  }
+  session.acousticTraceStreamSequence += 1;
+  const streamId = options.streamId ??
+    `automation-pcm-${session.acousticTraceStreamSequence}-${hash.slice(0, 12)}`;
+  reflexTrainingTraceRecorder.registerStream({
+    streamId,
+    role: "user-input-fixture",
+    mediaRef: options.mediaRef ?? `inline:pcm-sha256:${hash}`,
+    sha256: `sha256:${hash}`,
+    sampleRate: 16_000,
+    channels: 1,
+    encoding: "pcm_s16le",
+    sampleCount
+  });
+  session.acousticTraceStreamId = streamId;
+  session.acousticTraceStreamSampleCount = sampleCount;
+  return { streamId, sha256: `sha256:${hash}`, sampleCount };
+}
+
 async function replayAutomationPcm(base64, options = {}) {
   if (options.reset !== false) {
     resetAutomation();
@@ -3027,6 +3312,11 @@ async function replayAutomationPcm(base64, options = {}) {
   if (!Number.isInteger(samplesPerFrame)) {
     throw new RangeError("frameMs não produz amostras inteiras.");
   }
+  const acousticStream = await registerAutomationAcousticStream(
+    audio,
+    silenceSamples,
+    options
+  );
 
   const socket = await connectLocalAudio();
   session.active = true;
@@ -3036,7 +3326,10 @@ async function replayAutomationPcm(base64, options = {}) {
   session.inputMode = mode;
   setStatus("reproduzindo áudio de avaliação", "live");
   log("session.started", "PCM de avaliação · mesmo transporte local");
-  log("automation.pcm.feed.started", mode);
+  log(
+    "automation.pcm.feed.started",
+    `${mode} · ${acousticStream.streamId}`
+  );
 
   const audioSamples = audio.byteLength / 2;
   const totalSamples = audioSamples + silenceSamples;
@@ -3135,6 +3428,7 @@ function injectAutomationSpeech(rawText, options = {}) {
 }
 
 async function loadHealth() {
+  await loadAcousticReflexShadow();
   try {
     const response = await fetch("/api/health");
     const health = await response.json();

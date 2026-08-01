@@ -1,13 +1,14 @@
 # Contrato `training-trace-v1`
 
-Status: **decisão de desenho consolidada; primeira fatia de interrupção
-promovida; contrato completo ainda aberto**
+Status: **decisão de desenho consolidada; fatias de interrupção e reflexo
+acústico promovidas; contrato completo ainda aberto**
 
 O EXP-0012 criou o precursor operacional. O EXP-0013 materializou sobre ele uma
 fatia real deste bundle: identidades `eventId/decisionId/effectId`, clock do
 navegador, contextos causais, rótulos, lifecycle de efeitos e projeção validada
-para o trace v0. Ainda faltam streams acústicos hasheados, posições de amostra
-e mapeamentos entre processos para considerar o contrato completo.
+para o trace v0. O EXP-0014 acrescentou streams acústicos hasheados, posições
+de amostra e inferência M4a em shadow. Ainda faltam mapeamentos entre processos
+e cobertura geral dos streams para considerar o contrato completo.
 
 ## Objetivo
 
@@ -332,7 +333,7 @@ O contrato só é considerado materializado quando:
 10. artefatos sensíveis possuem política de retenção e não entram no Git por
     padrão.
 
-## Estado da implementação após o EXP-0013
+## Estado da implementação após o EXP-0014
 
 A fatia `output-interruption-training-trace-v0.1` atende os itens 1 e 4–10 no
 escopo local do navegador. Seis bundles canônicos contêm 28 decisões
@@ -341,18 +342,27 @@ reproduzidas e 22 efeitos encerrados. `PAUSE_OUTPUT` só projeta STOP depois de
 pausa superada antes dessas observações fica `cancelled` e referencia a decisão
 que a reconciliou. Shadow não cria efeito.
 
-Os itens 2 e 3 permanecem abertos: `streams` está deliberadamente vazio e o
-bundle declara “sem áudio persistido”; só existe o clock monotônico
-`browser-performance`, sem fingir equivalência com servidor, sample clock ou
-AudioContext. Por isso a decisão é
-`promote-training-trace-interruption-slice`, não “contrato materializado”. A
-evidência está em
-[`exp-0013-training-trace-interruption-v1.json`](../eval/reports/exp-0013-training-trace-interruption-v1.json).
+O EXP-0014 estendeu essa fatia para o reflexo acústico: streams PCM derivados e
+replays online têm hash, sample rate, canais, número de amostras e posições
+monotônicas; cada decisão usa somente a janela disponível e registra features,
+probabilidades, rótulo-professor e ausência de autoridade. O treino e o replay
+falham fechado se dataset, áudio, checkpoint ou fingerprint divergir.
+
+Assim, o item 2 está atendido nessa extensão acústica controlada. O item 3
+continua aberto: `browser-performance`, sample clock, servidor e AudioContext
+não são equiparados sem pontos de mapeamento. O contrato global tampouco alega
+persistir todo áudio de microfone: WAV/PCM pesado permanece local por política
+de retenção. As evidências são
+[`exp-0013-training-trace-interruption-v1.json`](../eval/reports/exp-0013-training-trace-interruption-v1.json)
+e
+[`exp-0014-acoustic-reflex-m4a-v1.json`](../eval/reports/exp-0014-acoustic-reflex-m4a-v1.json).
 
 ## Uso em M4a e M4b
 
-M4a pode usar poucos exemplos e até superajustar para provar a infraestrutura.
-Seu relatório precisa dizer explicitamente “sem alegação de generalização”.
+M4a foi executado no EXP-0014 com 330 exemplos e um checkpoint softmax em
+shadow. Seu holdout por família verifica a infraestrutura e ausência de
+vazamento estrutural; como os rótulos imitam a política determinística, a
+acurácia perfeita permanece explicitamente “sem alegação de generalização”.
 
 M4b exige famílias separadas, holdout não observado, calibração humana pequena
 para rótulos sociais/temporais e comparação contra a baseline sob o mesmo

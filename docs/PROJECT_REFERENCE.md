@@ -1,7 +1,7 @@
 # Referência macro do projeto
 
-Status: **referência canônica — consolidada em 31/07/2026 após auditoria
-independente e contranálise**
+Status: **referência canônica — consolidada em 31/07/2026 após auditoria,
+contranálise e promoção do primeiro M4a acústico**
 
 ## Tese
 
@@ -130,7 +130,7 @@ O estado atual ainda não prova:
 - ausência de efeitos obsoletos em ferramentas externas;
 - pausa e cross-turn causalmente fiéis em toda a matriz;
 - TTS aberto promovido;
-- pesos proprietários treinados;
+- peso comportamental que supere a baseline ou demonstre generalização;
 - operação inteligente totalmente offline.
 
 ## Estratégia de dados nesta fase: fábrica de avaliações por IA
@@ -232,8 +232,8 @@ navegador. O alvo é separar:
 Evaluator e experiência real devem usar o mesmo kernel. Um
 `training-trace-v1` separado registra contexto incremental, relógios,
 decisões propostas/aceitas/observadas e proveniência de rótulos.
-**Em andamento; primeira fatia causal materializada.** O EXP-0010 promoveu a
-primeira fatia: confirmação monetária
+**Em andamento; primeira fatia causal e extensão acústica materializadas.** O
+EXP-0010 promoveu a primeira fatia: confirmação monetária
 stateful, runtime autoritativo no backend e navegador sem política semântica
 paralela. Em 5/5 ciclos de dois turnos houve zero commit prematuro e exatamente
 um commit após a repetição inequívoca, com p95 de 94,9 ms para a pergunta neutra
@@ -267,18 +267,29 @@ A decisão é `promote-training-trace-interruption-slice`. O contrato completo,
 streams acústicos hasheados, clocks entre processos, efeitos externos e M4a
 continuam em `hold`; o probe físico corrente verde não implica universalidade.
 
+O EXP-0014 fechou a infraestrutura M4a para o reflexo acústico. Sessenta
+streams PCM geraram 330 exemplos em dez famílias separadas entre treino,
+desenvolvimento e holdout. Um classificador local simples foi treinado duas
+vezes com checkpoint idêntico; no Chrome, 11 decisões cobriram
+`WAIT_FOR_EVIDENCE / PAUSE_OUTPUT / CONTINUE_OUTPUT`, com replay exato,
+inferência p95 de 0,2 ms e zero autoridade/efeito. Barge-in permaneceu em
+151,75 ms e a janela física corrente ficou verde por 30,072 s. A decisão é
+`promote-m4a-acoustic-shadow-infrastructure`. Como os rótulos imitam a regra,
+100% nos splits não prova ganho percebido nem generalização.
+
 ### M3 — qualidade modular local
 
 Melhorar correções, semântica, TTS aberto, sobreposição e execução offline sem
-regredir o full-duplex. É uma trilha contínua, não um bloco que precisa ser
-“concluído” antes de M4a: antes do runtime comum, só falhas causais que afetem
-segurança, trace, comparação ou aprendizado entram no caminho crítico.
+regredir o full-duplex. É uma trilha contínua, não um bloco que precisava ser
+“concluído” antes de M4a; agora, só falhas causais que afetem segurança, trace,
+comparação ou aprendizado entram no caminho crítico.
 
 ### M4a — prova da infraestrutura de aprendizado
 
 Fechar `dados → treino → checkpoint → inferência online → trace → replay`
 com uma capacidade estreita em shadow mode. Pode usar poucos casos e até
 superajustar; não recebe autoridade nem sustenta alegação de generalização.
+**Promovido no EXP-0014 para o reflexo acústico estreito.**
 
 ### M4b — primeiro peso comportamental comparável
 
@@ -312,17 +323,17 @@ Esta referência preserva apenas a lógica macro:
 2. manter o interlock monetário EXP-0009 como guardrail, sem alegar que ele
    recupera o valor;
 3. usar a baseline v0.3 congelada como comparador de desenvolvimento;
-4. preservar as fatias promovidas do kernel, reflexo, lifecycle e trace causal
-   local;
-5. vincular as fixtures PCM por hash/posição de amostra e registrar decisões
-   incrementais do reflexo, sem ampliar o runtime global;
-6. criar split por família e completar somente a validade M2.5 exigida pelo
-   primeiro candidato acústico;
-7. provar M4a para `WAIT/PAUSE/CONTINUE` em shadow e sem autoridade;
+4. preservar as fatias promovidas do kernel, reflexo, lifecycle, trace causal
+   e M4a acústico local;
+5. calibrar uma amostra humana pequena de timing/rótulos sem tratá-la como
+   avaliação de produto;
+6. congelar famílias novas e comparar um M4b contra a regra no mesmo runtime;
+7. conceder autoridade somente se houver ganho percebido sem regressão dos
+   guardrails;
 8. desafiar contrato/evaluator com referência nativa apenas quando houver uma
    pergunta experimental concreta;
-9. calibrar rótulos com humanos antes de M4b e promover somente ganhos
-   percebidos sob os gates.
+9. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+   observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo
 medido, não por uma fase presumida.

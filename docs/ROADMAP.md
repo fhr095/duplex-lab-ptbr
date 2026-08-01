@@ -119,8 +119,9 @@ instrumento, não como prova de prontidão do runtime.
 ## Fase 2.5 — validade experimental do runtime
 
 Status: **em andamento; fatias stateful, de reflexo, lifecycle e trace causal
-local promovidas pelos EXP-0010–0013; áudio hasheado, clocks entre processos,
-efeitos externos e validade física ampla ainda em `hold`**.
+local promovidas pelos EXP-0010–0013, e vínculo acústico mínimo promovido no
+EXP-0014; clocks entre processos, efeitos externos e validade física ampla
+ainda em `hold`**.
 
 Objetivo: eliminar a diferença entre “política avaliada” e “política realmente
 executada”. Hoje a decisão está distribuída entre a política do evaluator, o
@@ -145,10 +146,12 @@ Entregas:
    de dois turnos implementado para a fatia crítica e replay exato de seis
    fluxos de interrupção local; equivalência ampla pendente**;
 6. `training-trace-v1` com clocks, causalidade operacional, proveniência e
-   proposta/aceite/efeito observado — **primeira fatia browser promovida;
-   streams acústicos e clocks entre processos pendentes**;
+   proposta/aceite/efeito observado — **primeira fatia browser e extensão
+   acústica com stream hasheado/posição de amostra promovidas; clocks entre
+   processos pendentes**;
 7. ledger/test-double de efeitos e holdout ainda não observado — **ledger
-   local da interrupção promovido; efeitos externos e holdout M4a pendentes**.
+   local da interrupção e holdout por família de M4a promovidos; efeitos
+   externos pendentes**.
 
 Gate: o mesmo evento e estado produzem a mesma intenção nos três ambientes;
 uma sessão real nunca possui duas autoridades de política; qualquer diferença
@@ -187,6 +190,16 @@ Os 12 gates formais e todos os gates da campanha corrente passaram, sem API
 paga. A decisão é `promote-training-trace-interruption-slice`, não o contrato
 completo nem M4a.
 
+Evidência EXP-0014: 324/324 testes; 330 exemplos de 60 streams PCM em famílias
+disjuntas; treino repetido bit a bit; as três classes presentes em todos os
+splits e em 11 decisões online do Chrome. Trace, áudio, checkpoint e runtime
+foram ligados por hashes/posições; o replay recalculou reducer, features e
+probabilidades exatamente; inferência p95 ficou em 0,2 ms e o candidato
+produziu zero efeitos. Barge-in terminou no renderer em 151,75 ms e a janela
+física corrente de 30,072 s ficou verde. A decisão é
+`promote-m4a-acoustic-shadow-infrastructure`, não ganho sobre a regra,
+generalização, autoridade ou qualidade humana.
+
 ## Fase 3 — qualidade modular e local
 
 Status: **iniciada**. Parser de correções, estado semântico e reparo de conflito
@@ -215,6 +228,9 @@ Gate: ganho ponta a ponta em falhas medidas, dentro de budgets locais de
 latência, memória e CPU, sem regressão de interrupção ou efeitos.
 
 ## Fase 4a — prova da infraestrutura de aprendizado
+
+Status: **promovida no EXP-0014 para o reflexo acústico estreito, em shadow e
+sem autoridade**.
 
 Objetivo: provar o ciclo
 `dados → treino → checkpoint → inferência online → trace → replay` com um
@@ -328,9 +344,9 @@ card de dados e splits por família, gerador e pessoa.
 | 7 | EXP-0011: `LocalAudioReflex` evidence-gated — **`promote-local-audio-reflex-slice`** | pico marginal não pausa/não cria turno; barge-in legítimo preservado | 157,39 ms < 350 ms; causalidade de eco não alegada |
 | 8 | EXP-0012: lifecycle local da saída — **`promote-output-interruption-lifecycle-slice`** | hold/retomada/confirmação com replay exato no Chrome | 183,66 ms < 350 ms; físico causal permanece hold |
 | 9 | EXP-0013: trace causal + ledger local — **`promote-training-trace-interruption-slice`** | seis bundles; 28 decisões reproduzidas; 22 efeitos encerrados; projeção v0 perceptiva | fatia sem áudio persistido, clocks entre processos ou generalização |
-| 10 | Vínculo acústico mínimo para o reflexo — **próximo** | fixtures PCM hasheadas, posições de amostra, decisões incrementais e split novo por família | somente infraestrutura necessária ao primeiro M4a; sem ampliar o runtime global |
-| 11 | M4a: shadow acústico estreito | ciclo treino→checkpoint→inferência→trace→replay sem autoridade | `WAIT/PAUSE/CONTINUE`; uma capacidade e um candidato por vez |
-| 12 | Calibração humana pequena | corrigir timing/rótulos antes de M4b | não é alegação de preferência de produto |
+| 10 | EXP-0014: vínculo acústico mínimo — **concluído** | 60 streams PCM hasheados, posições de amostra, features causais e split por família | WAV/PCM pesado local; clocks entre processos não promovidos |
+| 11 | EXP-0014: M4a shadow acústico — **`promote-m4a-acoustic-shadow-infrastructure`** | treino reproduzível, checkpoint, 11 decisões Chrome, replay exato, três classes e zero efeitos | imita a regra; sem ganho, generalização ou autoridade |
+| 12 | Calibração humana pequena — **próximo** | corrigir timing/rótulos e congelar um conjunto novo antes de M4b | não é alegação de preferência de produto |
 | 13 | M4b e próximo PDCA | ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
 
 Depois da baseline congelada e da fatia causal do trace, um desafio nativo pode

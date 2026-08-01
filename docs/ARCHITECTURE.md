@@ -77,8 +77,9 @@ CANCEL(task, epoch)
 ROLLBACK(previous, current)
 ```
 
-A implementação atual é determinística. O primeiro checkpoint proprietário
-poderá aprender essa mesma interface.
+A autoridade atual continua determinística. O checkpoint M4a já aprende uma
+subinterface estreita, mas apenas observa; candidatos futuros podem ampliar a
+mesma interface somente por gates específicos.
 
 A separação obrigatória é:
 
@@ -96,7 +97,7 @@ Evaluator e adaptadores reutilizam o mesmo código/contrato, mas navegador e
 backend não mantêm duas políticas concorrentes. O reflexo local é a única
 antecipação permitida e precisa ser reconciliado no trace.
 
-O primeiro checkpoint não precisa emitir toda a ontologia. M4a começa com uma
+O primeiro checkpoint não precisa emitir toda a ontologia. M4a começou com uma
 capacidade estreita e probabilidades; o runtime pode escolher
 `WAIT_FOR_EVIDENCE` por confiança, risco e deadline.
 
@@ -168,6 +169,12 @@ contextos, rótulos e efeitos compartilham IDs e podem ser reproduzidos e
 projetados para o trace v0. Ela usa somente `browser-performance` e declara
 `streams: []`; portanto não antecipa a futura ligação acústica nem equipara
 clocks diferentes.
+
+O EXP-0014 adicionou uma fatia acústica controlada: PCM de replay recebe hash e
+posição de amostra, features incrementais são extraídas causalmente e o
+`AcousticReflexShadow` registra as probabilidades do checkpoint ao lado do
+rótulo da regra. O modelo é somente observador; `LocalAudioReflex` e
+`OutputInterruptionLifecycle` continuam sendo as autoridades e executores.
 
 ## Duas implementações sob o mesmo contrato
 
@@ -267,17 +274,18 @@ Ainda não implementado:
 - reconciliação temporal ampla além dos reducers já comuns de reflexo e
   interrupção local;
 - clocks, filas, epochs, tarefas e efeitos sob o `InteractionRuntime` comum;
-- `training-trace-v1` completo — a fatia causal de interrupção está
-  materializada, mas áudio/posições de amostra e clocks entre processos não;
+- `training-trace-v1` completo — as fatias causal de interrupção e acústica
+  controlada estão materializadas, mas clocks entre processos e captura geral
+  de streams não;
 - ledger verificável de efeitos externos — o ledger local da interrupção está
   promovido — e holdout independente novo;
-- primeiro checkpoint em shadow mode;
+- primeiro checkpoint comparável a comportamento humano ou com autoridade — o
+  checkpoint M4a estreito já roda em shadow;
 - geração/crítica autônoma ampla e ambientalização multivoz da fábrica;
 - loopback físico separado para medir a cauda do alto-falante e da sala;
 - AEC controlado por hardware/ambiente além das constraints do navegador;
 - TTS aberto promovido por A/B humano;
 - WebRTC de produção;
-- modelo treinado;
 - cérebro aberto de qualidade promovido para operação sem rede;
 - avaliação humana.
 

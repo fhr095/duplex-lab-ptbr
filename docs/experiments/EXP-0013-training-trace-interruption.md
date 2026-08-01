@@ -97,7 +97,7 @@ Não promovido:
 - M4a, checkpoint, ganho de qualidade ou generalização;
 - especificidade física universal, apesar do probe corrente verde.
 
-## Próximo experimento
+## Próximo experimento — concluído pelo EXP-0014
 
 Estender o trace somente pelo necessário para o primeiro M4a acústico:
 vincular as fixtures PCM existentes por hash e posição de amostra, registrar as
@@ -105,3 +105,6 @@ decisões incrementais do `LocalAudioReflex` e criar split por família não
 observada. Um candidato pequeno prediz em shadow
 `WAIT_FOR_EVIDENCE / PAUSE_OUTPUT / CONTINUE_OUTPUT`; a política determinística
 continua com toda a autoridade e nenhum efeito crítico migra para o modelo.
+
+Resultado posterior:
+[EXP-0014 — reflexo acústico treinável em shadow](EXP-0014-acoustic-reflex-m4a.md).

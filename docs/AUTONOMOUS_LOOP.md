@@ -89,10 +89,17 @@ encerrados, com projeção baseada em STOP renderizado/retomada audível e zero
 autoridade shadow. A campanha corrente também passou o probe físico de
 30,074 s; isso não generaliza para outros dispositivos.
 
-O próximo loop liga as fixtures PCM existentes a hashes e posições de amostra,
-registra as decisões incrementais do `LocalAudioReflex` e prepara um split novo
-por família para M4a acústico em shadow. O roadmap, e não este documento de
-método, define os fechamentos posteriores.
+O loop seguinte ligaria as fixtures PCM existentes a hashes e posições de
+amostra, registraria as decisões incrementais do `LocalAudioReflex` e
+prepararia um split novo por família para M4a acústico em shadow. O roadmap, e
+não este documento de método, define os fechamentos posteriores.
+
+Esse loop foi concluído no EXP-0014: 330 exemplos de 60 streams, treino local
+reproduzível, checkpoint em shadow e 11 decisões online com replay exato. O
+próximo loop autônomo pode ampliar famílias adversariais e preparar o protocolo
+M4b, mas não deve fabricar o oráculo social: uma calibração humana pequena de
+timing/rótulos é o próximo ponto deliberado de contato humano. Ela não equivale
+a uma avaliação ampla de produto.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O
@@ -156,9 +163,9 @@ Cada iteração segue um contrato curto:
 
 Depois do EXP-0007, uma correção na cascata só entra no caminho crítico se
 evitar risco, preservar a fidelidade do trace, remover um confounder de
-comparação ou desbloquear M4a. Cada ramificação declara timebox e regra de
-parada; duas hipóteses são o orçamento comum, com exceção explícita para falha
-grave.
+comparação ou desbloquear o próximo gate M4b. Cada ramificação declara timebox
+e regra de parada; duas hipóteses são o orçamento comum, com exceção explícita
+para falha grave.
 
 O EXP-0007 mostrou que framing/merge explicava o PCM variável, mas sua variante
 não venceu segurança nem latência. O EXP-0008 comprovou que um verificador forte
@@ -172,8 +179,8 @@ verificador mais forte → apenas slot crítico, baixa confiança ou efeito
 ```
 
 TTS aberto, cérebro local e modelos nativos entram depois pelo maior gargalo
-medido. O primeiro modelo de interação entra antes como M4a estreito, em shadow
-e sem alegação de generalização.
+medido. O primeiro modelo de interação já entrou como M4a estreito, em shadow e
+sem alegação de generalização.
 
 ## Onde humanos continuam indispensáveis
 
@@ -181,11 +188,12 @@ Automação não mede de forma confiável conforto, naturalidade, incômodo com
 backchannels, percepção de eco ou vontade de continuar conversando. Também não
 mede a cauda acústica que sai fisicamente pelo alto-falante.
 
-Portanto, gravações do dono do projeto não são necessárias nem são o próximo
-bloqueador. Uma amostra humana pequena calibra timing e rótulos depois de M4a e
-antes de M4b; ela não promove qualidade de produto. Pessoas entram como caminho
-crítico para preferência quando sessões e tarefas já forem robustas sob grande
-diversidade, novas campanhas encontrarem principalmente caudas conhecidas e
+Gravações do dono do projeto não são uma exigência. Depois de M4a, uma amostra
+humana pequena passa a ser a próxima evidência externa para calibrar timing e
+rótulos antes de M4b; protocolo, cenários e tooling ainda podem ser preparados
+autonomamente. Essa amostra não promove qualidade de produto. Pessoas entram
+como caminho crítico para preferência quando sessões e tarefas forem robustas
+sob grande diversidade, novas campanhas encontrarem principalmente caudas conhecidas e
 existirem finalistas maduros que só possam ser separados por percepção. Uma
 bateria humana então calibra sotaque, linguagem natural, TTS e eco; suas
 descobertas voltam à automação como novas famílias congeladas.

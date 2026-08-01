@@ -36,8 +36,9 @@ e o EXP-0009 promoveu abstention determinística para o risco monetário. Agora:
 - fazer evaluator, backend e navegador compartilharem a mesma semântica, sem
   criar mais de uma autoridade de kernel por sessão real;
 - materializar incrementalmente `training-trace-v1`, ledger de efeitos e
-  holdout novo — primeira fatia concluída no EXP-0013;
-- provar M4a com uma capacidade estreita em shadow e sem autoridade;
+  holdout novo — fatia causal concluída no EXP-0013 e extensão acústica no
+  EXP-0014;
+- preservar o M4a acústico promovido em shadow e sem autoridade;
 - calibrar timing/rótulos com uma amostra humana pequena antes de M4b;
 - conceder autoridade apenas à capacidade que vencer seus gates.
 
@@ -121,6 +122,23 @@ família e provar M4a acústico em shadow para
 `WAIT_FOR_EVIDENCE / PAUSE_OUTPUT / CONTINUE_OUTPUT`. A política determinística
 continua autoritativa e nenhum efeito crítico migra para o modelo.
 
+## Atualização após o EXP-0014
+
+Essa extensão foi concluída sem ampliar a autoridade do runtime. Sessenta
+streams PCM foram vinculados a hashes e posições de amostra; 330 exemplos
+causais foram separados por dez famílias entre treino, desenvolvimento e
+holdout. O classificador softmax local treinou duas vezes com resultado
+idêntico. No Chrome, 11 decisões cobriram as três classes, tiveram replay exato
+de reducer, features e probabilidades, inferência p95 de 0,2 ms e nenhum
+efeito. A campanha corrente também preservou o barge-in em 151,75 ms e passou a
+janela física de 30,072 s.
+
+Isso sustenta `promote-m4a-acoustic-shadow-infrastructure`. Não sustenta ganho
+sobre a regra: os rótulos vêm dela, portanto a acurácia perfeita apenas prova
+que o encanamento e o split não vazam entre famílias. O próximo valor de
+informação está numa calibração humana pequena de timing/rótulos e num holdout
+novo para M4b; a política determinística continua autoritativa.
+
 ## Pontos incorporados
 
 - congelar a cascata como referência, não como código intocável;
@@ -187,9 +205,9 @@ Não são bloqueadores do fechamento M2.5:
 
 - eventual mudança da autoridade hoje hospedada no backend; qualquer mudança
   precisa preservar uma única autoridade por sessão;
-- primeira família de modelo M4a — começar pela baseline treinável mais simples;
+- primeira família comparável de M4b e desenho do holdout pós-calibração;
 - candidato nativo e provedor de GPU, somente após pergunta/orçamento;
-- tamanho e protocolo da calibração humana, definidos depois dos primeiros
+- tamanho e protocolo da calibração humana, a congelar a partir dos primeiros
   traces M4a;
 - licença do código, escolhida pelo proprietário em trilha de governança.
 

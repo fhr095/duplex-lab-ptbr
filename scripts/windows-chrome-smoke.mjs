@@ -51,6 +51,8 @@ const FALSE_ACTIVATION_PREFLIGHT_TIMEOUT_MS = Math.max(
 );
 const REQUIRE_VAD_SHADOW =
   process.env.REQUIRE_VAD_SHADOW === "1";
+const RUN_ACOUSTIC_REFLEX_SHADOW_PROBE =
+  process.env.ACOUSTIC_REFLEX_SHADOW_PROBE === "1";
 const ALLOW_FAILED_GATES =
   process.env.ALLOW_FAILED_GATES === "1";
 const CRITICAL_CONFIRMATION_REPETITIONS = Math.max(
@@ -101,6 +103,38 @@ const audioFixtureWave = await readFile(resolve(
 ));
 const audioFixture = decodeWaveToPcm16(audioFixtureWave);
 const audioBase64 = audioFixture.pcm.toString("base64");
+let acousticReflexMarginalFixture = null;
+if (RUN_ACOUSTIC_REFLEX_SHADOW_PROBE) {
+  const dataset = JSON.parse(await readFile(resolve(
+    import.meta.dirname,
+    "../eval/datasets/exp-0014-acoustic-reflex-v0.1.json"
+  )));
+  const stream = dataset.streams.find(
+    (candidate) =>
+      candidate.family === "interrupcao" &&
+      candidate.rate === 1 &&
+      candidate.variant === "marginal"
+  );
+  if (!stream) {
+    throw new Error("fixture marginal EXP-0014 não encontrada");
+  }
+  const decodedPcmSha256 = createHash("sha256")
+    .update(audioFixture.pcm)
+    .digest("hex");
+  if (stream.source.decodedPcmSha256 !== decodedPcmSha256) {
+    throw new Error("PCM marginal EXP-0014 diverge do dataset");
+  }
+  const cutSample = stream.recipe.cutSample;
+  acousticReflexMarginalFixture = {
+    base64: audioFixture.pcm.subarray(0, cutSample * 2).toString("base64"),
+    mediaRef: stream.mediaRef,
+    sampleCount: stream.sampleCount,
+    silenceMs:
+      stream.recipe.tailSilenceSamples / 16_000 * 1_000,
+    streamId: `browser-${stream.streamId}`,
+    streamSha256: `sha256:${stream.sha256}`
+  };
+}
 const longCorrectionFixtureWave = await readFile(resolve(
   import.meta.dirname,
   "../eval/generated/asr/audio/correcao--rate-1.wav"
@@ -1225,6 +1259,66 @@ try {
     settled: marginalReflexSettled
   };
 
+  let acousticReflexShadowPcm = null;
+  if (acousticReflexMarginalFixture) {
+    await evaluate(`window.__duplexLab.reset()`);
+    await evaluate(
+      `window.__duplexLab.speakLoop(
+        "Esta fala deve continuar durante uma evidência acústica marginal real."
+      )`
+    );
+    await waitFor(
+      () =>
+        evaluate(`window.__duplexLab.snapshot().state.assistantSpeaking`),
+      15_000
+    );
+    await evaluate(`(() => {
+      void window.__duplexLab.replayPcmBase64(
+        ${JSON.stringify(acousticReflexMarginalFixture.base64)},
+        {
+          reset: false,
+          silenceMs: ${acousticReflexMarginalFixture.silenceMs},
+          mediaRef: ${JSON.stringify(acousticReflexMarginalFixture.mediaRef)},
+          streamId: ${JSON.stringify(acousticReflexMarginalFixture.streamId)},
+          expectedStreamSha256: ${JSON.stringify(
+            acousticReflexMarginalFixture.streamSha256
+          )}
+        }
+      ).catch(() => {});
+      return true;
+    })()`);
+    acousticReflexShadowPcm = await waitFor(
+      () =>
+        evaluate(`(() => {
+          const snapshot = window.__duplexLab.snapshot();
+          const training = snapshot.reflexTrainingTrace;
+          const labels = training.labels.map((label) => label.value);
+          const valid =
+            labels.includes("CONTINUE_OUTPUT") &&
+            training.decisions.length > 0 &&
+            training.decisions.every(
+              (decision) => decision.authorityDecision === "OBSERVE_ONLY"
+            ) &&
+            training.effects.length === 0 &&
+            training.events.every((event) => event.audioPosition) &&
+            training.streams.some(
+              (stream) =>
+                stream.streamId === ${JSON.stringify(
+                  acousticReflexMarginalFixture.streamId
+                )} &&
+                stream.sha256 === ${JSON.stringify(
+                  acousticReflexMarginalFixture.streamSha256
+                )}
+            ) &&
+            snapshot.audio.acousticReflexShadow.labels.CONTINUE_OUTPUT > 0 &&
+            snapshot.audio.acousticReflexShadow.authority === false &&
+            snapshot.state.assistantSpeaking;
+          return valid ? snapshot : null;
+        })()`),
+      15_000
+    );
+  }
+
   await evaluate(`window.__duplexLab.reset()`);
   await evaluate(
     `window.__duplexLab.speakLoop(
@@ -1995,6 +2089,13 @@ try {
         settledTypes.includes("turn.committed")
       );
     })(),
+    acousticReflexShadowPcm:
+      !RUN_ACOUSTIC_REFLEX_SHADOW_PROBE ||
+      (
+        acousticReflexShadowPcm !== null &&
+        acousticReflexShadowPcm.reflexTrainingTrace.effects.length === 0 &&
+        acousticReflexShadowPcm.audio.acousticReflexShadow.authority === false
+      ),
     earlyBackchannelPartialCanReopen:
       reopenedBackchannel.metrics.interruptions === 1 &&
       reopenedBackchannel.metrics.dismissedBackchannels === 0 &&
@@ -2263,6 +2364,7 @@ try {
       potentialBargeInRecovery,
       marginalReflex.started,
       marginalReflex.settled,
+      acousticReflexShadowPcm,
       reopenedBackchannel,
       realBackchannel,
       localAudio,
@@ -2342,6 +2444,7 @@ try {
     },
     potentialBargeInRecovery,
     marginalReflex,
+    acousticReflexShadowPcm,
     reopenedBackchannel,
     realBackchannel,
     localAudio: {

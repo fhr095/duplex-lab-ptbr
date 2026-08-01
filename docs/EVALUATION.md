@@ -298,6 +298,7 @@ canônico é `eval/reports/eval-factory-campaign-v0.2.json`.
 | EXP-0011 | A/B causal de fonte idêntica; pico marginal preservado, final tardia bloqueada; barge-in 157,39 ms; probe físico 30,147 s limpo | `promote-local-audio-reflex-slice`; M2.5 e causalidade de eco não promovidos |
 | EXP-0012 | seis fluxos Chrome com replay exato; quatro fases/oito intenções; STOP 48 ms; onset PCM→renderer 183,66 ms; seis corridas protegidas | `promote-output-interruption-lifecycle-slice`; probe físico não iniciado e M2.5 amplo em `hold` |
 | EXP-0013 | seis bundles causais; 28 decisões reproduzidas; 22 efeitos encerrados; STOP 38 ms; onset PCM→renderer 169,82 ms; 12/12 gates formais | `promote-training-trace-interruption-slice`; áudio hasheado, clocks entre processos, M4a e generalização não promovidos |
+| EXP-0014 | 330 exemplos/60 streams; split por família; treino idêntico; 11 decisões Chrome cobrindo três classes; replay exato; p95 0,2 ms; zero efeitos | `promote-m4a-acoustic-shadow-infrastructure`; imitação da regra, sem ganho, autoridade ou generalização |
 
 A configuração resultante está congelada em
 [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
@@ -318,6 +319,11 @@ gates físicos ficaram verdes. Essa observação pertence ao fingerprint,
 dispositivo e ambiente correntes; melhora a evidência local, mas não transforma
 o teste de microfone em loopback calibrado nem em generalização por
 hardware/sala.
+
+No EXP-0014, a janela corrente completou 30,072 s sem ativação e o barge-in
+PCM→renderer ficou em 151,75 ms. Esses gates protegem regressão do caminho real;
+eles não transformam a predição shadow em causa, nem substituem loopback ou
+sessões humanas rotuladas.
 
 O ciclo completo e seus limites estão em
 [AUTONOMOUS_LOOP.md](AUTONOMOUS_LOOP.md).
