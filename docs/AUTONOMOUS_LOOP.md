@@ -1,5 +1,11 @@
 # Ciclo autônomo de evolução
 
+Este documento define **o método recorrente**, não a fila. O estado executável
+vigente fica somente na
+[carteira ativa do Roadmap](ROADMAP.md#carteira-ativa-em-02082026); relatos de
+loops concluídos abaixo são evidência histórica. A sequência detalhada continua
+na [ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada).
+
 ## Objetivo
 
 O laboratório deve conseguir encontrar regressões, comparar candidatos e
@@ -32,11 +38,11 @@ npm run eval:auto
 7. probe e campanha conversacional PCM/WebSocket em tempo real;
 8. aplicação real no Chrome do Windows por 30 s;
 9. resposta falada, último quantum de barge-in e cancelamento delegado;
-10. relatório consolidado em `eval/reports/autonomous-latest.json`.
+10. relatório transitório local em `eval/reports/autonomous-latest.json`.
 
 Esse comando preserva a baseline ampla histórica. Ele ainda não orquestra a
-fábrica v0.2 nem os EXP-0007–0013; portanto, “rodar `eval:auto`” não equivale a
-avançar automaticamente o roadmap atual.
+fábrica v0.2 nem os EXP-0007 em diante; portanto, “rodar `eval:auto`” não
+equivale a avançar automaticamente o roadmap atual.
 
 O runner abre uma porta livre, força `BRAIN_PROVIDER=local`, verifica no
 `/api/health` que o provider é local e encerra somente o processo que criou. A
@@ -62,77 +68,31 @@ arquivos do ZIP remoto por HTTP Range, preserva a licença e não redistribui o
 corpus. A seleção cobre hesitação, pausa preenchida, ruído, segunda voz,
 sotaques e subcorpora diferentes.
 
-## Estado da fábrica e próximo loop
+## Estado da fábrica e ciclo corrente
 
 A primeira vertical da fábrica v0.2 já foi implementada para correções: 24
 casos, superfícies geradas, oráculos determinísticos, mutações adversariais,
-áudio/ambientes seeded e replay WebSocket/Chrome. Geradores/críticos autônomos
-amplos, multivoz, eco e agrupamento automático continuam pendentes.
+áudio/ambientes seeded e replay WebSocket/Chrome. Os EXP-0007–0013 fecharam
+fatias de segurança, estado, reflexo, lifecycle e trace causal; o EXP-0014 ligou
+PCM a um checkpoint acústico em shadow. A decisão e os artefatos de cada rodada
+ficam no [índice de experimentos](../eval/EXPERIMENT_INDEX.json), evitando
+reconstruir a sequência a partir de narrativas repetidas.
 
-O próximo loop não é “ampliar tudo”. EXP-0007 classificou a fronteira acústica,
-EXP-0008 reteve o verificador forte por latência e EXP-0009 bloqueou a
-confirmação monetária insegura. O EXP-0010 promoveu a primeira máquina de
-estados compartilhada: 270/270 testes e 5/5 ciclos causais no Chrome, sem commit
-prematuro e sem LLM pago. Seus quatro smokes suplementares encontraram atividade
-acústica não rotulada, sem base para atribuir autoeco.
+O EXP-0015 promoveu um instrumento cego estreito e usou três participantes
+externos apenas para calibrar timing e ambiguidade, sem transformar respostas
+humanas em fit. O EXP-0016 então treinou relevância da fala em uma fonte
+`fit-eligible`: 108 exemplos de 36 clips, 77,8% no holdout bruto contra 50% da
+baseline, ganho conservador nas âncoras humanas e quatro probes causais no
+Chrome. O checkpoint foi promovido em shadow, mas o veto operacional permanece
+em `hold`.
 
-A [ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada)
-registra que o EXP-0011 já atacou esse efeito: no A/B causal, o controle
-imediato pausou/criou turno e o `LocalAudioReflex` evidence-gated preservou a
-fala e descartou a final tardia; o STOP legítimo ficou em 157,39 ms e 30,147 s
-físicos passaram sem ativação. O EXP-0012 reconciliou hold/STOP/retomada local:
-seis fluxos do Chrome tiveram replay exato, STOP em 48 ms no renderer e seis
-corridas assíncronas falharam fechadas. Seu probe causal físico não iniciou e
-permaneceu em `hold`, sem apagar a rodada histórica. O EXP-0013 materializou
-essa primeira fatia causal: seis bundles, 28 decisões reproduzidas e 22 efeitos
-encerrados, com projeção baseada em STOP renderizado/retomada audível e zero
-autoridade shadow. A campanha corrente também passou o probe físico de
-30,074 s; isso não generaliza para outros dispositivos.
-
-O loop seguinte ligaria as fixtures PCM existentes a hashes e posições de
-amostra, registraria as decisões incrementais do `LocalAudioReflex` e
-prepararia um split novo por família para M4a acústico em shadow. O roadmap, e
-não este documento de método, define os fechamentos posteriores.
-
-Esse loop foi concluído no EXP-0014: 330 exemplos de 60 streams, treino local
-reproduzível, checkpoint em shadow e 11 decisões online com replay exato. O
-EXP-0015 executou o máximo autônomo imediatamente seguinte: construiu 12 cenas,
-36 trajetórias estéreo, sessão cega, persistência pseudônima, agregação
-fail-closed e smoke no Chrome real. O instrumento foi promovido sem gravar uma
-opinião sintética. A calibração humana pequena de timing/rótulos foi o ponto
-deliberado de contato humano; ela não equivale a uma avaliação ampla de
-produto.
-
-Duas execuções humanas da v0.1 funcionaram como piloto de usabilidade e
-revelaram um problema que automação estrutural também confirmou: quatro pares
-de opções eram byte a byte idênticos, embora aparecessem como escolhas
-separadas. A v0.2 agrupa equivalências, permite empate, separa atribuição da fala
-de preferência temporal, aceita comentário opcional local e exclui
-participantes internos do mínimo externo. Os registros v0.1 foram preservados,
-mas não migrados nem contados no novo gate.
-
-Com duas respostas externas na v0.2, o controle de silêncio revelou uma
-ambiguidade apenas no gabarito: ausência de som admite tanto “não direcionado”
-quanto “não consigo saber”. A emenda aditiva v0.2.1 aceita ambas, continua
-rejeitando “direcionado” e preserva dados, pack e placar-base. A atenção externa
-ficou observável como 66,7% base e 100% emendada naquele checkpoint, sem
-esconder a decisão.
-
-Após a terceira resposta externa, o agregado mostrou 5/9 rótulos singulares,
-mas também três conjuntos de ações repetidos por todos os participantes. Dois
-backchannels já agrupavam WAVs exatamente idênticos; a fala preparada recebeu
-`WAIT + PAUSE` das três pessoas. A resolução v0.2.2 passou a contar esses
-conjuntos como cenas resolvidas, mantendo os mesmos limiares e proibindo sua
-conversão em rótulo singular ou fit direto. O resultado final é atenção 77,8%
-base → 100% emendada, 8/9 cenas resolvidas e uma ambígua.
-
-O EXP-0016 consumiu essa direção sem consumir as respostas como treino. Uma
-fonte FLEURS PT-BR `fit-eligible` produziu 108 exemplos de relevância acústica
-com clips e receitas separados. O modelo bruto venceu a baseline no holdout
-por 77,8% contra 50%; o veto conservador reencontrou ganho humano por 7/9 contra
-5/9 e preservou 5/5 falas dirigidas. Quatro probes no Chrome confirmaram o
-checkpoint no caminho real com paridade exata e zero autoridade. Isso promove
-M4b em shadow, mas deixa o veto operacional em `hold`.
+O ciclo corrente é o EXP-0017. O Core amplia diversidade e hard negatives,
+calibra somente em treino/desenvolvimento e decide uma única vez em novo
+holdout congelado. Um probe paralelo e timeboxed mede se texto parcial causal
+adiciona informação: começa por transcrição-oráculo e só gasta esforço com ASR
+real se esse teto superior ganhar. Nenhuma variante recebe autoridade, muda o
+STOP físico ou bloqueia o Core. Hipóteses, gates e regras de corte estão no
+[pré-registro](experiments/EXP-0017-safe-veto-and-semantic-probe.md).
 
 O ciclo é reproduzido por:
 
@@ -158,9 +118,9 @@ npm run eval:exp:0016:browser
 npm run eval:exp:0016:report:check
 ```
 
-O próximo loop autônomo amplia diversidade e hard negatives, escolhe a
-calibração somente em treino/desenvolvimento e congela um novo holdout antes de
-reavaliar o veto. A ação aprendida continua desabilitada enquanto ganho
+No EXP-0017 Core, o loop autônomo amplia diversidade e hard negatives, escolhe
+a calibração somente em treino/desenvolvimento e congela um novo holdout antes
+de reavaliar o veto. A ação aprendida continua desabilitada enquanto ganho
 operacional e recall dirigido perfeito não coexistirem.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
@@ -225,9 +185,9 @@ Cada iteração segue um contrato curto:
 
 Depois do EXP-0007, uma correção na cascata só entra no caminho crítico se
 evitar risco, preservar a fidelidade do trace, remover um confounder de
-comparação ou desbloquear o próximo gate M4b. Cada ramificação declara timebox
-e regra de parada; duas hipóteses são o orçamento comum, com exceção explícita
-para falha grave.
+comparação ou desbloquear o gate corrente do EXP-0017. Cada ramificação declara
+timebox e regra de parada; duas hipóteses são o orçamento comum, com exceção
+explícita para falha grave.
 
 O EXP-0007 mostrou que framing/merge explicava o PCM variável, mas sua variante
 não venceu segurança nem latência. O EXP-0008 comprovou que um verificador forte

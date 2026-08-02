@@ -68,5 +68,6 @@ Usar o contrato e o evaluator como fundação da primeira vertical de áudio.
 
 - `eval/scenarios/mvp.pt-BR.json`
 - `eval/gates/mvp.json`
-- `eval/reports/baseline-v0.json`
+- `eval/reports/baseline-v0.json` — relatório histórico transitório local; a
+  baseline canônica vigente é a v0.3 ligada no índice de experimentos;
 - `tests/eval-suite.test.mjs`

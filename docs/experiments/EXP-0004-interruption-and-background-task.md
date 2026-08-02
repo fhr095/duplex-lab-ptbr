@@ -43,7 +43,8 @@ agora contém apenas vocalizações não lexicais.
 
 ## Evidência no Chrome do Windows
 
-Relatório:
+Relatório transitório local, preservado na máquina de execução e não exigido em
+um clone limpo:
 `eval/reports/browser-background-task-probe.json`.
 
 | Comportamento | Resultado |

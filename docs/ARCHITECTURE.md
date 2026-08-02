@@ -271,7 +271,11 @@ Implementado:
 - comparação de candidatos com gate conjunto de WER e tempo real;
 - fábrica v0.2 de correções com 24 casos, superfícies geradas, oráculos
   determinísticos, mutação adversarial, áudio/ambientes seeded, replay
-  WebSocket/Chrome e relatório agregado por hash.
+  WebSocket/Chrome e relatório agregado por hash;
+- M4a acústico reproduzível com dataset ligado a PCM, checkpoint em shadow,
+  inferência no Chrome e replay exato sob o trace causal;
+- M4b estreito de relevância da fala, com ganho offline e reencontro em âncoras
+  humanas, integrado em shadow sem autoridade.
 - baseline de desenvolvimento v0.3 congelada com configuração, fingerprint,
   evidências e limites de alegação em
   [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
@@ -291,13 +295,16 @@ Ainda não implementado:
 - autoridade limitada para um checkpoint comparável — o M4b de relevância já
   vence a baseline bruta e reencontra ganho humano em shadow, mas seu veto
   conservador ainda falha no holdout procedural;
+- controlador de microturnos semânticos — existe somente como probe causal
+  pré-registrado; nenhum modelo, ASR parcial ou efeito foi integrado;
 - geração/crítica autônoma ampla e ambientalização multivoz da fábrica;
 - loopback físico separado para medir a cauda do alto-falante e da sala;
 - AEC controlado por hardware/ambiente além das constraints do navegador;
 - TTS aberto promovido por A/B humano;
 - WebRTC de produção;
 - cérebro aberto de qualidade promovido para operação sem rede;
-- avaliação humana.
+- avaliação humana ampla de produto — a calibração estreita do EXP-0015 foi
+  concluída, mas não mede preferência em conversa real.
 
 ## Regras de concorrência
 

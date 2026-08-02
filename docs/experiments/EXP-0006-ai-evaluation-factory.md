@@ -111,6 +111,8 @@ valor atual e por isso bloqueia prontidão.
 
 - build: `eval/generated/factory/builds/f9be30987613d5f1/`;
 - agregado: `eval/reports/eval-factory-campaign-v0.2.json`;
+- execuções intermediárias abaixo são transitórias locais e não integram o
+  bundle canônico:
 - WebSocket limpo: `eval/reports/eval-factory-live-audio-current.json`;
 - WebSocket acústico: `eval/reports/eval-factory-acoustic-live-latest.json`;
 - Chrome texto: `eval/reports/eval-factory-browser-latest.json`;

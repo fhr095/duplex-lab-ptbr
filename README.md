@@ -347,8 +347,10 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [Contrato de traces](docs/TRACE_CONTRACT.md)
 - [Contrato de trace treinável](docs/TRAINING_TRACE_V1.md)
 - [Panorama de modelos em 30/07/2026](docs/research/MODEL_LANDSCAPE_2026-07-30.md)
+- [Ledger decisório de challengers](docs/research/CHALLENGER_LEDGER.md)
 - [Roadmap por gates](docs/ROADMAP.md)
 - [Decisão consolidada de runtime e aprendizado](docs/DECISION_RUNTIME_LEARNING_SEQUENCE.md)
+- [Índice verificável de experimentos](eval/EXPERIMENT_INDEX.json)
 - [Template de experimento](docs/experiments/TEMPLATE.md)
 - [EXP-0000 — baseline concluída](docs/experiments/EXP-0000-policy-baseline.md)
 - [EXP-0001 — plano acústico inicial absorvido por campanhas posteriores](docs/experiments/EXP-0001-real-audio-trace.md)
@@ -367,6 +369,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0014 — reflexo acústico treinável em shadow](docs/experiments/EXP-0014-acoustic-reflex-m4a.md)
 - [EXP-0015 — instrumento cego de calibração de timing](docs/experiments/EXP-0015-timing-calibration-instrument.md)
 - [EXP-0016 — relevância acústica da fala em M4b](docs/experiments/EXP-0016-speaker-relevance-m4b.md)
+- [EXP-0017 — veto seguro e probe semântico causal](docs/experiments/EXP-0017-safe-veto-and-semantic-probe.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -381,10 +384,12 @@ v0.3 está congelada e as fatias stateful, de reflexo, lifecycle, trace causal,
 M4a e o candidato M4b de relevância em shadow foram promovidas. O instrumento
 EXP-0015 concluiu 3/3 participantes externos e liberou o desenho, não o fit.
 O EXP-0016 já superou a regra em holdout e reencontrou ganho nas âncoras
-humanas; agora o maior retorno é calibrar o veto conservador com diversidade
-acústica nova e um holdout novamente congelado. Até esse gate, o checkpoint
-continua observacional e o comando físico rápido permanece determinístico no
-navegador.
+humanas. O caminho crítico agora é o EXP-0017 Core: calibrar o veto conservador
+com diversidade acústica nova e um holdout novamente congelado. Em paralelo,
+um probe curto testa se transcrição parcial causal acrescenta informação ao
+M4b; começa por oráculo e só usa ASR real se houver ganho. Até esses gates, o
+checkpoint continua observacional e o comando físico rápido permanece
+determinístico no navegador.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

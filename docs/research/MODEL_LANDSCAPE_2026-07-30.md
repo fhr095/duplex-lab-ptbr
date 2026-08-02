@@ -4,7 +4,9 @@ Status: **snapshot técnico de candidatos**. A lista preserva a evidência
 consultada naquela data; sua ordem de investimento foi superada pela
 [decisão consolidada](../DECISION_RUNTIME_LEARNING_SEQUENCE.md). O
 [roadmap](../ROADMAP.md#ordem-operacional-consolidada) é a única ordem
-executável.
+executável. O que merece `test`, `watch`, `defer` ou `cut` hoje fica no
+[ledger de challengers](CHALLENGER_LEDGER.md); este snapshot não autoriza
+execução por si só.
 
 ## Conclusão executiva
 

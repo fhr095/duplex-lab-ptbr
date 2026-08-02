@@ -1,7 +1,8 @@
 # Referência macro do projeto
 
 Status: **referência canônica — consolidada em 02/08/2026 após auditoria,
-contranálise, calibração EXP-0015 e M4b acústico EXP-0016 em shadow**
+contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow e
+pré-registro da carteira EXP-0017**
 
 ## Tese
 
@@ -97,7 +98,7 @@ histórica:
 
 Isso prova a fundação full-duplex modular no escopo medido naquela campanha.
 
-### A fundação M2 existe e encontrou o próximo gargalo
+### A fundação M2 existe e os experimentos estreitaram o gargalo atual
 
 A fábrica v0.2 executou uma vertical completa de autocorreções. O build canônico
 `f9be3098` contém 24 casos, rejeitou 288/288 corrupções de observação pelos
@@ -118,9 +119,12 @@ Resultados ponta a ponta:
 - renderer parou em no máximo 50 ms nos cinco casos aplicáveis;
 - zero chamadas pagas e zero tokens externos.
 
-Decisão: toolchain da fábrica `promote`; runtime de engenharia e experiência do
-usuário `hold`. O primeiro gargalo reproduzível são as falhas de fidelidade de
-nomes, dias, horários e valores ao atravessar o ASR, sobretudo sob ruído.
+Decisão naquele checkpoint: toolchain da fábrica `promote`; runtime de
+engenharia e experiência do usuário `hold`. A campanha v0.2 encontrou primeiro
+falhas reproduzíveis de fidelidade em nomes, dias, horários e valores ao
+atravessar o ASR, sobretudo sob ruído. Os EXP-0007–0016 trataram partes dessa
+fronteira e hoje estreitam a decisão para relevância da fala e calibração segura
+do veto; a fila vigente fica somente no Roadmap.
 
 O estado atual ainda não prova:
 
@@ -130,7 +134,7 @@ O estado atual ainda não prova:
 - ausência de efeitos obsoletos em ferramentas externas;
 - pausa e cross-turn causalmente fiéis em toda a matriz;
 - TTS aberto promovido;
-- peso comportamental que supere a baseline ou demonstre generalização;
+- autoridade comportamental aprendida com segurança e generalização ampla;
 - operação inteligente totalmente offline.
 
 ## Estratégia de dados nesta fase: fábrica de avaliações por IA
@@ -370,12 +374,15 @@ Esta referência preserva apenas a lógica macro:
    ou o piloto em avaliação de produto;
 6. preservar o candidato M4b EXP-0016 em shadow como evidência de capacidade,
    sem confundir seu rótulo bruto com uma decisão segura;
-7. calibrar o veto sobre diversidade nova e um holdout pré-congelado;
-8. conceder autoridade somente se houver ganho percebido sem regressão dos
+7. executar o EXP-0017 Core: calibrar o veto sobre diversidade nova e um
+   holdout pré-congelado;
+8. em paralelo e sem bloquear o Core, testar se transcrição parcial causal
+   acrescenta informação; ASR real só entra se o oráculo semântico ganhar;
+9. conceder autoridade somente se houver ganho percebido sem regressão dos
    guardrails;
-9. desafiar contrato/evaluator com referência nativa apenas quando houver uma
-   pergunta experimental concreta;
-10. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+10. manter backbones nativos no ledger até existir um teto local que justifique
+   custo e integração;
+11. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
    observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo
@@ -415,12 +422,16 @@ Este documento é a referência macro canônica. Os demais detalham partes dela:
 - [Arquitetura](ARCHITECTURE.md): contratos e implementação;
 - [Sistema de avaliação](EVALUATION.md): dados, métricas e gates;
 - [Ciclo autônomo](AUTONOMOUS_LOOP.md): execução dos PDCAs;
-- [Roadmap](ROADMAP.md): ordem de decisões;
+- [Roadmap](ROADMAP.md): única ordem operacional e carteira ativa;
+- [Índice de experimentos](../eval/EXPERIMENT_INDEX.json): decisão, autoridade,
+  reprodução e evidência canônica por rodada;
 - [Decisão runtime/aprendizado](DECISION_RUNTIME_LEARNING_SEQUENCE.md):
   racional consolidado e alternativas;
 - [Trace de treinamento](TRAINING_TRACE_V1.md): contrato causal para shadow e
   aprendizado;
 - [Experimentos](experiments/): evidências e promoções;
+- [Ledger de challengers](research/CHALLENGER_LEDGER.md): pesquisa externa
+  convertida em `test`, `watch`, `defer` ou `cut`;
 - pré-análise original `opiniao_chatgpt_sobre_conversacional.md`, mantida
   fora do repositório: fonte histórica da tese, não estado operacional do
   projeto.

@@ -14,6 +14,7 @@
     "setup:vad": "node scripts/setup-silero-vad.mjs",
     "fetch:real-audio": ".venv/bin/python scripts/fetch_coraa_sample.py",
     "eval": "node src/cli/eval.mjs",
+    "eval:index:check": "node src/eval/experiment-index.mjs",
     "eval:report": "node src/cli/eval.mjs --out eval/reports/baseline-v0.json",
     "eval:asr": "node scripts/eval-asr.mjs",
     "eval:asr:real": "npm run fetch:real-audio && node scripts/eval-asr.mjs --pack eval/generated/coraa/manifest.json --out eval/reports/asr-real-latest.json",

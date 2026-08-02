@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-02T00:00:00.000-03:00",
+  "coverage": {
+    "canonicalDecisionEntriesFrom": "EXP-0007",
+    "legacyRange": "EXP-0000..EXP-0006",
+    "legacyExperimentDocs": [
+      "docs/experiments/EXP-0000-policy-baseline.md",
+      "docs/experiments/EXP-0001-real-audio-trace.md",
+      "docs/experiments/EXP-0002-autonomous-baseline.md",
+      "docs/experiments/EXP-0003-parakeet-full-duplex-vertical.md",
+      "docs/experiments/EXP-0004-interruption-and-background-task.md",
+      "docs/experiments/EXP-0005-silero-control-candidate.md",
+      "docs/experiments/EXP-0006-ai-evaluation-factory.md"
+    ]
+  },
+  "currentBaseline": {
+    "id": "runtime-baseline-ptbr-v0.3",
+    "manifest": "eval/baselines/runtime-baseline-v0.3.json"
+  },
+  "currentCriticalPath": "EXP-0017",
+  "currentParallelProbe": {
+    "id": "EXP-0017-R",
+    "parent": "EXP-0017",
+    "preRegistration": "docs/experiments/EXP-0017-safe-veto-and-semantic-probe.md",
+    "status": "planned",
+    "blocking": false,
+    "authority": "none",
+    "decision": "Medir em desenvolvimento se texto parcial causal agrega valor antes de qualquer confirmação semântica independente."
+  },
+  "entries": [
+    {
+      "id": "EXP-0007",
+      "status": "rejected",
+      "decision": "reject-safety",
+      "canonicalReport": "eval/reports/exp-0007-screening-v1.json",
+      "authority": "none",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0007-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0007:report"
+      ],
+      "supersedes": [],
+      "nextDecision": "Testar um verificador ASR independente e sem autoridade para slots numéricos críticos."
+    },
+    {
+      "id": "EXP-0008",
+      "status": "held",
+      "decision": "hold-latency",
+      "canonicalReport": "eval/reports/exp-0008-shadow-v1.json",
+      "authority": "none",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0008-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0008"
+      ],
+      "supersedes": [],
+      "nextDecision": "Preferir um interlock determinístico barato antes de integrar um segundo decoder bloqueante."
+    },
+    {
+      "id": "EXP-0009",
+      "status": "promoted",
+      "decision": "promote-safety-guard",
+      "canonicalReport": "eval/reports/exp-0009-critical-amount-guard-v1.json",
+      "authority": "runtime-guardrail",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0009-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0009:report"
+      ],
+      "supersedes": [],
+      "nextDecision": "Fechar a confirmação monetária stateful em dois turnos sem efeito externo."
+    },
+    {
+      "id": "EXP-0010",
+      "status": "promoted",
+      "decision": "promote-stateful-kernel-slice",
+      "canonicalReport": "eval/reports/exp-0010-stateful-kernel-v1.json",
+      "authority": "runtime-control",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0010-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0010:report"
+      ],
+      "supersedes": [],
+      "nextDecision": "Isolar o reflexo acústico local e medir sua estabilidade durante a fala do assistente."
+    },
+    {
+      "id": "EXP-0011",
+      "status": "promoted",
+      "decision": "promote-local-audio-reflex-slice",
+      "canonicalReport": "eval/reports/exp-0011-local-audio-reflex-v1.json",
+      "authority": "runtime-control",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0011-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0011:report"
+      ],
+      "supersedes": [],
+      "nextDecision": "Reconciliar WAIT, STOP e retomada em um lifecycle causal único."
+    },
+    {
+      "id": "EXP-0012",
+      "status": "promoted",
+      "decision": "promote-output-interruption-lifecycle-slice",
+      "canonicalReport": "eval/reports/exp-0012-output-interruption-lifecycle-v1.json",
+      "authority": "runtime-control",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0012-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0012:report"
+      ],
+      "supersedes": [],
+      "nextDecision": "Materializar trace causal e ledger observável para replay e treinamento."
+    },
+    {
+      "id": "EXP-0013",
+      "status": "promoted",
+      "decision": "promote-training-trace-interruption-slice",
+      "canonicalReport": "eval/reports/exp-0013-training-trace-interruption-v1.json",
+      "authority": "none",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0013-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0013:report"
+      ],
+      "supersedes": [],
+      "nextDecision": "Provar o pipeline treinável com um primeiro candidato acústico estritamente em shadow."
+    },
+    {
+      "id": "EXP-0014",
+      "status": "promoted",
+      "decision": "promote-m4a-acoustic-shadow-infrastructure",
+      "canonicalReport": "eval/reports/exp-0014-acoustic-reflex-m4a-v1.json",
+      "authority": "shadow-only",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0014-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0014:report"
+      ],
+      "supersedes": [],
+      "nextDecision": "Calibrar timing e atribuição humana antes de buscar ganho aprendido sobre a regra."
+    },
+    {
+      "id": "EXP-0015",
+      "status": "completed",
+      "decision": "calibration-sufficient-to-freeze-m4b-experiment",
+      "canonicalReport": "eval/reports/exp-0015-timing-calibration-instrument-v4.json",
+      "authority": "none",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0015-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0015:check"
+      ],
+      "supersedes": [],
+      "nextDecision": "Treinar um M4b separado, sem usar o pack humano para fit e sem conceder autoridade."
+    },
+    {
+      "id": "EXP-0016",
+      "status": "promoted",
+      "decision": "promote-m4b-speaker-relevance-shadow-candidate",
+      "canonicalReport": "eval/reports/exp-0016-speaker-relevance-m4b-v1.json",
+      "authority": "shadow-only",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0016-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0016:source:check",
+        "npm run eval:exp:0016:data:check",
+        "npm run eval:exp:0016:train:check",
+        "npm run eval:exp:0016:report:check"
+      ],
+      "supersedes": [],
+      "nextDecision": "Calibrar um veto seguro em diversidade acústica maior e medir o teto de contexto semântico causal."
+    },
+    {
+      "id": "EXP-0017",
+      "status": "planned",
+      "decision": "pending-safe-veto-and-semantic-oracle-probes",
+      "canonicalReport": null,
+      "authority": "none",
+      "criticalPath": true,
+      "cleanCloneChecks": [],
+      "localReproductionCommands": [],
+      "supersedes": [],
+      "nextDecision": "Autorizar um experimento confirmatório de autoridade limitada somente se o veto superar a baseline preservando todas as falas dirigidas; cortar texto parcial para este ponto se nem o oráculo agregar valor."
+    }
+  ]
+}

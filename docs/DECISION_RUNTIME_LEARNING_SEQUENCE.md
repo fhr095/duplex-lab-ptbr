@@ -3,6 +3,11 @@
 Status: **aceita em 31/07/2026; atualizada em 02/08/2026 após a calibração
 EXP-0015 e o candidato M4b EXP-0016; execução incremental em andamento**
 
+Natureza: **ADR histórico e racional arquitetural**. A ordem executável vigente
+fica exclusivamente no [Roadmap](ROADMAP.md#ordem-operacional-consolidada);
+menções a “próximo” abaixo descrevem o checkpoint em que foram escritas, não
+uma segunda fila de trabalho.
+
 ## Contexto
 
 Uma auditoria independente e a contranálise subsequente convergiram no alerta

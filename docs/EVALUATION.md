@@ -53,13 +53,13 @@ naturalidade, conforto, inteligência percebida, previsibilidade, confiança e
 vontade de continuar. Ela entra como gate de produto quando as classes de falha
 estruturais já estiverem sob controle, não como depurador diário desta fase.
 
-Antes desse gate amplo, o EXP-0015 materializa uma calibração estreita de
+Antes desse gate amplo, o EXP-0015 materializou uma calibração estreita de
 timing. Cada participante ouve duas ou três trajetórias acusticamente distintas
 da mesma cena, em ordem cega, e só decide depois de concluir todas. Pode marcar
 empate ou dúvida, classifica separadamente se a fala parece dirigida à
 assistente e informa confiança. Participante, não cena, é a unidade de análise.
-Esse piloto calibra rótulos sociais para desenhar M4b, mas não mede a
-experiência completa.
+Esse piloto calibrou rótulos sociais que orientaram o EXP-0016, mas não mede a
+experiência completa nem fornece exemplos diretamente elegíveis para treino.
 
 ## Fábrica iterativa de avaliação
 
@@ -103,6 +103,32 @@ mudar a obrigação de fazer rollback quando a pessoa diz “não, sexta”.
 - fala pública humana funciona como âncora de realidade durante o
   desenvolvimento;
 - somente humanos reais podem promover conforto e preferência.
+
+## Política de evidências e artefatos
+
+Existem duas classes deliberadamente separadas:
+
+- **evidência canônica:** agregado pequeno, imutável e versionado, ligado a um
+  experimento e a uma decisão no
+  [`EXPERIMENT_INDEX.json`](../eval/EXPERIMENT_INDEX.json);
+- **execução transitória local:** probes, arquivos `latest`/`current`, WAVs,
+  logs e tentativas intermediárias, ignorados pelo Git e reproduzíveis quando a
+  receita permitir. Novos runners devem gravá-los sob
+  `eval/generated/runs/EXP-xxxx/<UTC>-<hash>/`.
+
+Uma execução transitória pode diagnosticar, mas não sustenta sozinha uma
+alegação pública. Um relatório só se torna canônico depois de congelar
+configuração, baseline, fingerprint, métricas, limites da alegação e decisão;
+o índice verifica que seus arquivos existem. Documentos que mencionem um probe
+local precisam chamá-lo explicitamente de transitório e não podem tratá-lo como
+pré-requisito para reproduzir a decisão canônica.
+
+`npm run eval:index:check` falha se houver lacuna na sequência, mais de um
+caminho crítico, autoridade sem evidência, decisão divergente do relatório,
+probe bloqueante ou artefato canônico ausente.
+No índice, `cleanCloneChecks` verificam a alegação somente com arquivos
+versionados; `localReproductionCommands` identificam reconstruções que dependem
+de áudio ou execuções transitórias preservadas fora do Git.
 
 ## Pack de correções PT-BR v0.2
 
@@ -254,6 +280,10 @@ Há placares deliberadamente separados:
   esperadas e não conter decisão vazia ou resultado tardio autoritativo;
 - **gate de shadow:** proposta do candidato nunca vira autoridade por acidente
   e pode ser comparada/reproduzida sob o mesmo trace;
+- **gate de probe semântico causal:** controle, transcrição parcial-oráculo e
+  eventual ASR parcial real usam o mesmo áudio, timestamp e estado, sem acesso
+  ao futuro; o oráculo precisa ganhar antes de autorizar a variante com ASR, e
+  nenhuma delas altera o STOP físico ou recebe autoridade;
 - **gate humano:** naturalidade, conforto, confiança e preferência — ainda
   pendente.
 - **gate do instrumento humano:** pack, cegamento, playbacks, integridade,

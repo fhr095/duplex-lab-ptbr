@@ -6,6 +6,36 @@ organizam capacidades e podem se sobrepor; a tabela
 entra agora no caminho crítico. O racional e as alternativas estão registrados
 na [decisão de runtime e aprendizado](DECISION_RUNTIME_LEARNING_SEQUENCE.md).
 
+## Carteira ativa em 02/08/2026
+
+Esta é a leitura operacional curta. Se outra página usar “próximo” em um relato
+histórico, esta carteira prevalece.
+
+- **Agora — EXP-0017 Core:** calibrar um veto conservador sobre diversidade
+  acústica nova, usando somente treino/desenvolvimento para escolher limiares e
+  um novo holdout congelado para a decisão final. A autoridade aprendida
+  continua desligada até recall dirigido de 100% e todos os guardrails.
+- **Paralelo, não bloqueante — EXP-0017-R:** medir no mesmo replay se texto
+  parcial causal contém valor além do M4b acústico. Primeiro entra uma
+  transcrição-oráculo; ASR parcial real só é testado se o oráculo ganhar.
+- **Depois, condicional:** pré-registrar uma confirmação independente do menor
+  controlador semântico somente se oráculo e ASR real qualificarem em
+  desenvolvimento sem futuro, perda de segurança ou regressão material de
+  latência. Sem ganho do oráculo, cortar texto parcial para relevância/veto
+  neste ponto; ganho apenas do oráculo estaciona a execução e registra ASR ou
+  disponibilidade temporal como dependência.
+- **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
+  ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
+  frente só volta quando for o maior gargalo percebido e houver comparação
+  local capaz de mudar uma decisão.
+
+O contrato e as regras de corte estão no
+[pré-registro do EXP-0017](experiments/EXP-0017-safe-veto-and-semantic-probe.md).
+O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
+criar outra prioridade, e o
+[índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
+artefatos canônicos verificáveis.
+
 ## Fase 0 — laboratório de decisão
 
 Status: **implementado**.
@@ -302,7 +332,8 @@ procedurais.
 ## Fase 5 — calibração humana
 
 Status: **instrumento e calibração pequena promovidos no EXP-0015; M4b
-liberado para congelamento**.
+congelado e executado no EXP-0016; nova avaliação humana ampla não é caminho
+crítico**.
 
 Há duas atividades diferentes:
 
@@ -334,9 +365,10 @@ M4b, não uma avaliação de produto ou autoridade no runtime.
 
 ## Fase 6 — adaptação nativa de áudio
 
-Um adaptador de referência pode desafiar o contrato logo após o
-`training-trace-v1`, desde que responda uma pergunta concreta e não bloqueie
-M4a. Execução paga em GPU exige orçamento explícito.
+Um mecanismo extraído de uma referência pode desafiar o contrato quando
+responder uma pergunta concreta sem bloquear o EXP-0017 Core. O primeiro probe
+é semântico e usa o runtime existente; executar um backbone nativo ou GPU paga
+exige um gargalo local medido e orçamento explícito.
 
 Adaptação ou adoção só começa se houver evidência de que a cascata atingiu um
 teto em prosódia, sobreposição ou timing.
@@ -384,12 +416,13 @@ card de dados e splits por família, gerador e pessoa.
 | 12a | EXP-0015 v0.2 + gabaritos v0.2.1/v0.2.2 — **`promote-timing-calibration-instrument`** | 12 cenas, 36 WAVs, equivalências agrupadas, empate + atribuição, 17 gates e Chrome real | emendas vinculadas ao pack; dados brutos intactos; zero fit direto |
 | 12b | Calibração humana piloto — **`calibration-sufficient-to-freeze-m4b-experiment`** | 3/3 externos; atenção 77,8% base → 100%; 5 singulares + 3 conjuntos = 8/9 resolvidas | equivalência não vira rótulo singular; uma cena ambígua; não é preferência de produto |
 | 13 | EXP-0016: relevância acústica M4b — **`promote-m4b-speaker-relevance-shadow-candidate`** | 108 exemplos/36 clips; holdout bruto 77,8% vs 50%; humano conservador 7/9 vs 5/9; 4 probes Chrome com paridade | veto conservador ainda falha no holdout; uma só faixa de gênero; zero autoridade |
-| 14 | EXP-0017: calibração segura do veto — **próximo** | diversidade nova, hard negatives, calibração sem olhar o holdout final e recall dirigido de 100% | EXP-0016 vira evidência histórica; autoridade continua determinística até todos os gates |
+| 14a | EXP-0017 Core: calibração segura do veto — **agora, caminho crítico** | diversidade nova, hard negatives, calibração sem olhar o holdout final e recall dirigido de 100% | EXP-0016 vira evidência histórica; autoridade continua determinística até todos os gates |
+| 14b | EXP-0017-R: probe semântico causal — **paralelo e timeboxed** | A/B/C em desenvolvimento; oráculo antes de ASR real; zero futuro, autoridade, acesso ao holdout Core ou alteração do STOP físico | não bloqueia 14a; sem ganho do oráculo, a hipótese é cortada; confirmação só pode ser proposta após ganho com ASR real |
 
-Depois da baseline congelada e da fatia causal do trace, um desafio nativo pode
-rodar em paralelo para validar
-ontologia/adaptador, desde que exista pergunta decisória. Ele não bloqueia M4a
-ou calibração humana; GPU paga exige autorização.
+O probe 14b é a única frente de challenger ativa. Modelos completos continuam
+no ledger como `watch` ou `defer`; pesquisa externa não autoriza download,
+adaptação ou GPU. O probe não bloqueia 14a e perde prioridade se o veto acústico
+fechar com segurança.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
 pela maior falha percebida no relatório, não por ordem fixa. Diversidade

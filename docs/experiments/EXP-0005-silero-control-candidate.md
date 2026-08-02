@@ -120,6 +120,10 @@ alto-falante, cauda da sala ou conforto humano.
 
 ## Artefatos finais
 
+Os caminhos abaixo são execuções históricas transitórias locais. A decisão e
+os limites permanecem congelados neste documento; esses arquivos não são
+pré-requisito de um clone limpo.
+
 - torneio offline: `eval/reports/vad-candidate-ptbr-latest.json`;
 - baseline longa: `eval/reports/browser-shadow-10min.json`;
 - candidato longo:
