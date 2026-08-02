@@ -1,7 +1,7 @@
 # EXP-0015 — instrumento cego de calibração de timing
 
-Status: **instrumento v0.2 promovido; calibração humana em `await` (0/3
-participantes externos)**.
+Status: **instrumento v0.2 + gabarito v0.2.1 promovidos; calibração humana em
+`await` (2/3 participantes externos)**.
 
 ## Pergunta
 
@@ -82,6 +82,28 @@ de atenção, tanto o conjunto de ações quanto a atribuição precisam estar d
 do esperado. Isso impede que o sistema trate ruído como uma interrupção ou que
 uma dúvida semântica pareça uma preferência de timing.
 
+## Emenda aditiva de gabarito v0.2.1
+
+Após duas respostas externas, o placar-base marcou 4/6 controles de atenção. A
+decomposição mostrou 6/6 acertos na ação e 4/4 acertos de atribuição em correção
+explícita e ruído. As únicas duas falhas vieram do silêncio: ambas as pessoas
+marcaram `UNCERTAIN`, enquanto o gabarito-base aceitava somente
+`BACKGROUND_OR_NOT_DIRECTED`.
+
+Em 02/08/2026 foi congelada uma emenda estritamente aditiva, vinculada ao hash
+do mesmo pack:
+
+- no `silence-control`, `BACKGROUND_OR_NOT_DIRECTED` e `UNCERTAIN` são aceitos;
+- `DIRECTED_TO_ASSISTANT` continua incorreto;
+- nenhuma aceitação anterior foi removida;
+- pack, WAVs, perguntas, opções e registros brutos não foram modificados.
+
+O agregado preserva os dois placares: **66,7% no gabarito-base e 100% no
+gabarito v0.2.1**. A emenda está em
+[`exp-0015-scoring-rubric-v0.2.1.json`](../../eval/calibration/exp-0015-scoring-rubric-v0.2.1.json)
+e falha fechado se for usada com outro pack, aceitar as três classes ou remover
+a resposta originalmente correta.
+
 ## Privacidade e integridade
 
 O navegador cria um token local pseudônimo. O servidor persiste somente seu
@@ -138,16 +160,18 @@ No Chrome 150 do Windows, acessando o IP direto do WSL:
 - zero anotação submetida pelo smoke;
 - zero chamada paga.
 
-O relatório canônico é
-[`exp-0015-timing-calibration-instrument-v2.json`](../../eval/reports/exp-0015-timing-calibration-instrument-v2.json).
-Seus 15 gates técnicos passam. O placar humano permanece separado: zero
-participante externo, zero cena rotulada, zero rótulo elegível a fit e nenhuma
-autoridade.
+O relatório canônico corrente é
+[`exp-0015-timing-calibration-instrument-v3.json`](../../eval/reports/exp-0015-timing-calibration-instrument-v3.json).
+Seus 16 gates técnicos passam. O placar humano permanece separado: 2
+participantes externos e 1 interno, 3 registros válidos, zero cena formalmente
+rotulada, zero rótulo elegível a fit e nenhuma autoridade.
 
-O pack e o relatório
+O pack e os relatórios
 [`v0.1`](../../eval/reports/exp-0015-timing-calibration-instrument-v1.json)
-permanecem versionados como evidência histórica, mas não devem receber novas
-anotações.
+e [`v0.2`](../../eval/reports/exp-0015-timing-calibration-instrument-v2.json)
+permanecem versionados como evidência histórica. O primeiro não deve receber
+novas anotações; o segundo registra o checkpoint anterior à emenda e à coleta
+corrente.
 
 ## Reprodução
 
@@ -177,7 +201,8 @@ A calibração só fica suficiente para congelar o experimento M4b se, no mínim
 - cada cena rotulada tiver 3 votos de ação singular válidos;
 - o vencedor tiver pelo menos 2/3 desses votos;
 - ao menos 60% das 9 cenas não-controle forem rotuladas;
-- a taxa agregada de atenção externa for pelo menos 80%;
+- a taxa agregada de atenção externa sob o gabarito v0.2.1 for pelo menos 80%,
+  preservando também o placar-base no relatório;
 - não houver registro inválido ou participante duplicado.
 
 Esses mínimos formam um piloto para detectar direção e ambiguidade, não uma

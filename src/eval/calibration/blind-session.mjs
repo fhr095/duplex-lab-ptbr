@@ -92,7 +92,11 @@ function normalizeComment(value, maximumCharacters, errors, label) {
   return normalized;
 }
 
-function attentionPassed(attentionControl, response) {
+function attentionPassed(
+  attentionControl,
+  response,
+  acceptedSpeakerRelevance = null
+) {
   if (!attentionControl || response.uncertain) {
     return false;
   }
@@ -102,9 +106,12 @@ function attentionPassed(attentionControl, response) {
   const expectedActions = new Set(attentionControl.expectedActions);
   const actionPass = selectedActions.length > 0 &&
     selectedActions.every((action) => expectedActions.has(action));
-  return actionPass &&
-    response.speakerRelevance ===
-      attentionControl.expectedSpeakerRelevance;
+  const accepted = new Set(
+    acceptedSpeakerRelevance ?? [
+      attentionControl.expectedSpeakerRelevance
+    ]
+  );
+  return actionPass && accepted.has(response.speakerRelevance);
 }
 
 export function finalizeTimingCalibrationPack(core) {
@@ -262,6 +269,87 @@ export function validateTimingCalibrationPack(pack) {
     valid: errors.length === 0,
     errors,
     observedHash
+  });
+}
+
+export function validateTimingCalibrationScoringRubric(pack, rubric) {
+  const errors = [];
+  const packValidation = validateTimingCalibrationPack(pack);
+  errors.push(...packValidation.errors);
+  if (
+    rubric?.schemaVersion !== "timing-calibration-scoring-rubric-v1"
+  ) {
+    errors.push("schemaVersion do gabarito é incompatível");
+  }
+  try {
+    identifier(rubric?.rubricId, "rubricId");
+  } catch (error) {
+    errors.push(error.message);
+  }
+  if (
+    rubric?.packId !== pack?.packId ||
+    rubric?.packSha256 !== pack?.packSha256 ||
+    rubric?.baseProtocolVersion !== pack?.protocol?.version
+  ) {
+    errors.push("gabarito não pertence ao pack/protocolo");
+  }
+  if (rubric?.policy !== "additive-acceptance-only") {
+    errors.push("policy do gabarito precisa ser additive-acceptance-only");
+  }
+  const amendments = Array.isArray(rubric?.amendments)
+    ? rubric.amendments
+    : [];
+  if (!Array.isArray(rubric?.amendments) || amendments.length === 0) {
+    errors.push("gabarito precisa conter amendments");
+  }
+  const amendmentKeys = new Set();
+  const sceneById = new Map(
+    (pack?.scenes ?? []).map((scene) => [scene.sceneId, scene])
+  );
+  for (const amendment of amendments) {
+    const key = `${amendment?.sceneId}/${amendment?.dimension}`;
+    if (amendmentKeys.has(key)) {
+      errors.push(`amendment duplicada: ${key}`);
+    }
+    amendmentKeys.add(key);
+    const scene = sceneById.get(amendment?.sceneId);
+    if (!scene?.attentionControl) {
+      errors.push(`${amendment?.sceneId} não é controle de atenção`);
+      continue;
+    }
+    if (
+      amendment?.dimension !== "speaker-relevance-accepted-values"
+    ) {
+      errors.push(`${amendment.sceneId} possui dimension incompatível`);
+    }
+    const acceptedValues = Array.isArray(amendment?.acceptedValues)
+      ? amendment.acceptedValues
+      : [];
+    if (
+      !Array.isArray(amendment?.acceptedValues) ||
+      acceptedValues.length === 0 ||
+      acceptedValues.length >=
+        TIMING_CALIBRATION_SPEAKER_RELEVANCE.length ||
+      new Set(acceptedValues).size !== acceptedValues.length ||
+      acceptedValues.some((value) =>
+        !TIMING_CALIBRATION_SPEAKER_RELEVANCE.includes(value)
+      ) ||
+      !acceptedValues.includes(
+        scene.attentionControl.expectedSpeakerRelevance
+      )
+    ) {
+      errors.push(`${amendment.sceneId} possui acceptedValues inválidos`);
+    }
+    if (
+      typeof amendment?.rationale !== "string" ||
+      amendment.rationale.trim().length < 20
+    ) {
+      errors.push(`${amendment.sceneId} precisa documentar rationale`);
+    }
+  }
+  return Object.freeze({
+    valid: errors.length === 0,
+    errors
   });
 }
 
@@ -804,6 +892,44 @@ function relevanceCounts(responses) {
   );
 }
 
+function attentionOverridesByScene(rubric) {
+  return new Map((rubric?.amendments ?? []).map((amendment) => [
+    amendment.sceneId,
+    amendment.acceptedValues
+  ]));
+}
+
+function summarizeAttention(pack, records, rubric = null) {
+  const overrides = attentionOverridesByScene(rubric);
+  let total = 0;
+  let passed = 0;
+  for (const record of records) {
+    const responseByScene = new Map(
+      (record.responses ?? []).map((response) => [
+        response.sceneId,
+        response
+      ])
+    );
+    for (const scene of pack.scenes.filter(
+      (candidate) => candidate.attentionControl
+    )) {
+      total += 1;
+      if (attentionPassed(
+        scene.attentionControl,
+        responseByScene.get(scene.sceneId),
+        overrides.get(scene.sceneId)
+      )) {
+        passed += 1;
+      }
+    }
+  }
+  return Object.freeze({
+    total,
+    passed,
+    passRate: total === 0 ? 0 : passed / total
+  });
+}
+
 export function aggregateTimingCalibration(pack, records, options = {}) {
   const minimumExternalParticipants =
     options.minimumExternalParticipants ?? 3;
@@ -812,6 +938,17 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
   const minimumLabelCoverage = options.minimumLabelCoverage ?? 0.6;
   const minimumAttentionPassRate =
     options.minimumAttentionPassRate ?? 0.8;
+  const attentionScoringRubric =
+    options.attentionScoringRubric ?? null;
+  const rubricValidation = attentionScoringRubric === null
+    ? { valid: true, errors: [] }
+    : validateTimingCalibrationScoringRubric(
+        pack,
+        attentionScoringRubric
+      );
+  const activeRubric = rubricValidation.valid
+    ? attentionScoringRubric
+    : null;
   const recordValidations = (records ?? []).map((record, index) => ({
     index,
     annotationId: record?.annotationId ?? null,
@@ -838,16 +975,13 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
   const internalRecords = uniqueRecords.filter(
     (record) => record.participantRole === "internal"
   );
-  const attention = externalRecords.reduce(
-    (summary, record) => ({
-      total: summary.total + (record.attention?.total ?? 0),
-      passed: summary.passed + (record.attention?.passed ?? 0)
-    }),
-    { total: 0, passed: 0 }
+  const baseAttention = summarizeAttention(pack, externalRecords);
+  const activeAttention = summarizeAttention(
+    pack,
+    externalRecords,
+    activeRubric
   );
-  const attentionPassRate = attention.total === 0
-    ? 0
-    : attention.passed / attention.total;
+  const attentionPassRate = activeAttention.passRate;
   const eligibleScenes = pack.scenes.filter(
     (scene) => !scene.attentionControl &&
       scene.fitEligibility !== "control-only"
@@ -947,6 +1081,7 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
     minimumExternalParticipants:
       externalRecords.length >= minimumExternalParticipants,
     uniqueParticipants: duplicateParticipantCount === 0,
+    attentionScoringRubric: rubricValidation.valid,
     attention: attentionPassRate >= minimumAttentionPassRate,
     labelCoverage: labelCoverage >= minimumLabelCoverage
   };
@@ -972,7 +1107,10 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
       externalParticipants: externalRecords.length,
       internalParticipants: internalRecords.length,
       duplicateParticipantCount,
+      baseAttentionPassRate: baseAttention.passRate,
       attentionPassRate,
+      attentionPassedDelta:
+        activeAttention.passed - baseAttention.passed,
       labelledScenes: labels.length,
       eligibleScenes: eligibleScenes.length,
       labelCoverage,
@@ -985,6 +1123,19 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
     })),
     labels,
     scenes: sceneResults,
-    speakerRelevance
+    speakerRelevance,
+    scoring: {
+      attention: {
+        mode: activeRubric === null
+          ? "pack-base-rubric"
+          : "versioned-additive-amendment",
+        rubricId: activeRubric?.rubricId ?? null,
+        rubricValid: rubricValidation.valid,
+        rubricErrors: [...rubricValidation.errors],
+        base: baseAttention,
+        active: activeAttention,
+        amendmentsApplied: activeRubric?.amendments.length ?? 0
+      }
+    }
   });
 }

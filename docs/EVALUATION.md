@@ -314,7 +314,7 @@ canônico é `eval/reports/eval-factory-campaign-v0.2.json`.
 | EXP-0012 | seis fluxos Chrome com replay exato; quatro fases/oito intenções; STOP 48 ms; onset PCM→renderer 183,66 ms; seis corridas protegidas | `promote-output-interruption-lifecycle-slice`; probe físico não iniciado e M2.5 amplo em `hold` |
 | EXP-0013 | seis bundles causais; 28 decisões reproduzidas; 22 efeitos encerrados; STOP 38 ms; onset PCM→renderer 169,82 ms; 12/12 gates formais | `promote-training-trace-interruption-slice`; áudio hasheado, clocks entre processos, M4a e generalização não promovidos |
 | EXP-0014 | 330 exemplos/60 streams; split por família; treino idêntico; 11 decisões Chrome cobrindo três classes; replay exato; p95 0,2 ms; zero efeitos | `promote-m4a-acoustic-shadow-infrastructure`; imitação da regra, sem ganho, autoridade ou generalização |
-| EXP-0015 v0.2 | 12 cenas/36 WAVs; 7 âncoras CORAA; 15 gates; cenas com 2/3 opções; empate e atribuição no Chrome; zero opinião submetida; 0/3 externos | instrumento `promote`; humano `await`; v0.1 preservada como piloto; zero fit direto e zero autoridade |
+| EXP-0015 v0.2 + gabarito v0.2.1 | 12 cenas/36 WAVs; 7 âncoras CORAA; 16 gates; cenas com 2/3 opções; 3 registros válidos, 2/3 externos; atenção 66,7% base → 100% emendada | instrumento `promote`; humano `await`; respostas intactas; zero fit direto e zero autoridade |
 
 A configuração resultante está congelada em
 [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
@@ -348,6 +348,11 @@ selecionável para fit. O relatório canônico mantém separados
 `instrumentPass=true` e `humanCalibrationPass=false`. Comentários opcionais e
 registros individuais ficam no armazenamento local ignorado pelo Git; o
 relatório público recebe apenas o agregado sem texto livre.
+
+O gabarito v0.2.1 é uma emenda aditiva vinculada ao hash do pack. No controle
+de silêncio, aceita `BACKGROUND_OR_NOT_DIRECTED` e `UNCERTAIN`, mas rejeita
+`DIRECTED_TO_ASSISTANT`. O agregado publica lado a lado o placar-base e o
+emendado; nenhum registro bruto, estímulo ou pergunta é reescrito.
 
 O ciclo completo e seus limites estão em
 [AUTONOMOUS_LOOP.md](AUTONOMOUS_LOOP.md).

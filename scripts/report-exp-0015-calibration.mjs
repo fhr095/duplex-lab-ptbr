@@ -16,15 +16,22 @@ const PROJECT_ROOT = resolve(import.meta.dirname, "..");
 const DEFAULTS = Object.freeze({
   annotations: "eval/generated/exp-0015/v0.2/annotations",
   browser: "eval/reports/exp-0015-calibration-browser-current.json",
-  out: "eval/reports/exp-0015-timing-calibration-instrument-v2.json",
-  pack: "eval/calibration/exp-0015-timing-pack-v0.2.json"
+  out: "eval/reports/exp-0015-timing-calibration-instrument-v3.json",
+  pack: "eval/calibration/exp-0015-timing-pack-v0.2.json",
+  rubric: "eval/calibration/exp-0015-scoring-rubric-v0.2.1.json"
 });
 
 function parseArgs(args) {
   const options = { ...DEFAULTS };
   for (let index = 0; index < args.length; index += 1) {
     const argument = args[index];
-    if (!["--annotations", "--browser", "--out", "--pack"].includes(
+    if (![
+      "--annotations",
+      "--browser",
+      "--out",
+      "--pack",
+      "--rubric"
+    ].includes(
       argument
     )) {
       throw new TypeError(`argumento desconhecido: ${argument}`);
@@ -75,9 +82,16 @@ async function readAnnotations(relativeRoot) {
 }
 
 const options = parseArgs(process.argv.slice(2));
-const [packSource, browserSource, annotationSource, sourceFingerprint] =
+const [
+  packSource,
+  rubricSource,
+  browserSource,
+  annotationSource,
+  sourceFingerprint
+] =
   await Promise.all([
     readJson(options.pack),
+    readJson(options.rubric),
     readJson(options.browser),
     readAnnotations(options.annotations),
     createSourceFingerprint(PROJECT_ROOT)
@@ -92,18 +106,24 @@ const aggregate = aggregateTimingCalibration(
     minimumVotesPerScene: protocol.minimumVotesPerScene,
     minimumConsensusShare: protocol.minimumConsensusShare,
     minimumLabelCoverage: protocol.minimumLabelCoverage,
-    minimumAttentionPassRate: protocol.minimumAttentionPassRate
+    minimumAttentionPassRate: protocol.minimumAttentionPassRate,
+    attentionScoringRubric: rubricSource.value
   }
 );
 const report = evaluateExp0015Instrument({
   aggregate,
   browser: browserSource.value,
   pack,
+  rubric: rubricSource.value,
   fingerprints: {
     source: sourceFingerprint,
     pack: {
       path: packSource.path,
       sha256: packSource.sha256
+    },
+    rubric: {
+      path: rubricSource.path,
+      sha256: rubricSource.sha256
     },
     browser: {
       path: browserSource.path,
@@ -128,6 +148,11 @@ console.log(
   `Calibração humana: ${report.humanCalibrationPass ? "READY" : "AWAIT"} · ` +
     `${report.metrics.externalParticipants}/` +
     `${protocol.minimumExternalParticipants} participantes externos`
+);
+console.log(
+  `Atenção externa: ` +
+    `${(report.metrics.baseAttentionPassRate * 100).toFixed(1)}% base → ` +
+    `${(report.metrics.amendedAttentionPassRate * 100).toFixed(1)}% emendada`
 );
 console.log(`Evidência canônica: ${options.out}`);
 if (!report.instrumentPass) {

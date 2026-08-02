@@ -1,0 +1,509 @@
+{
+  "schemaVersion": "exp-0015-timing-calibration-instrument-report-v3",
+  "experimentId": "exp-0015-timing-calibration-v0.2",
+  "question": "O instrumento local cego separa timing, atribuição da fala e equivalência sem conceder autoridade ou contaminar treino?",
+  "instrumentPass": true,
+  "humanCalibrationPass": false,
+  "campaignComplete": false,
+  "gates": {
+    "packIntegrity": true,
+    "audioInventory": true,
+    "sourceBoundary": true,
+    "retentionBoundary": true,
+    "browserPackBinding": true,
+    "blindInterface": true,
+    "playbackGate": true,
+    "equivalenceAndTieProtocol": true,
+    "speakerAttribution": true,
+    "realBrowserClean": true,
+    "noSyntheticHumanRecord": true,
+    "aggregateBinding": true,
+    "scoringRubricBinding": true,
+    "annotationIntegrity": true,
+    "noModelAuthority": true,
+    "zeroPaidApi": true
+  },
+  "decisions": {
+    "instrument": "promote-timing-calibration-instrument",
+    "humanCalibration": "await-human-calibration",
+    "directModelFit": "forbidden-from-current-pack",
+    "modelAuthority": "hold-deterministic-control"
+  },
+  "metrics": {
+    "scenes": 12,
+    "audioArtifacts": 36,
+    "humanEvaluationAnchors": 7,
+    "syntheticSpeechScenes": 3,
+    "controls": 2,
+    "attentionControls": 3,
+    "decisionEvidenceAlignedScenes": 10,
+    "decisionEvidenceRequiredScenes": 10,
+    "totalParticipants": 3,
+    "externalParticipants": 2,
+    "internalParticipants": 1,
+    "validHumanRecords": 3,
+    "baseAttentionPassRate": 0.6666666666666666,
+    "amendedAttentionPassRate": 1,
+    "attentionPassedDelta": 2,
+    "labelledScenes": 0,
+    "labelCoverage": 0,
+    "fitEligibleLabels": 0,
+    "paidApiCalls": 0
+  },
+  "aggregate": {
+    "schemaVersion": "timing-calibration-aggregate-v2",
+    "packId": "exp-0015-timing-calibration-v0.2",
+    "packSha256": "sha256:30e62d9b64c4781939c3a7d46d5a8c8a54be6eaa8bc4396405436512750d2b65",
+    "calibrationReady": false,
+    "readyToFreezeM4bExperiment": false,
+    "readyForDirectModelFit": false,
+    "authority": "none-shadow-only",
+    "gates": {
+      "packValid": true,
+      "recordsValid": true,
+      "minimumExternalParticipants": false,
+      "uniqueParticipants": true,
+      "attentionScoringRubric": true,
+      "attention": true,
+      "labelCoverage": false
+    },
+    "metrics": {
+      "records": 3,
+      "validRecords": 3,
+      "invalidRecords": 0,
+      "totalParticipants": 3,
+      "externalParticipants": 2,
+      "internalParticipants": 1,
+      "duplicateParticipantCount": 0,
+      "baseAttentionPassRate": 0.6666666666666666,
+      "attentionPassRate": 1,
+      "attentionPassedDelta": 2,
+      "labelledScenes": 0,
+      "eligibleScenes": 9,
+      "labelCoverage": 0,
+      "fitEligibleLabels": 0
+    },
+    "invalidRecords": [],
+    "labels": [],
+    "scenes": [
+      {
+        "sceneId": "negation-short-early",
+        "family": "negation-short",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 2
+        },
+        "preferenceSets": {
+          "CONTINUE_OUTPUT": 2
+        },
+        "responses": 2,
+        "validSingleActionVotes": 2,
+        "tiedOrEquivalentPreferences": 0,
+        "uncertainPreferences": 0,
+        "winner": "CONTINUE_OUTPUT",
+        "consensusShare": 1,
+        "labelled": false
+      },
+      {
+        "sceneId": "hesitation-early",
+        "family": "hesitation",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 2
+        },
+        "preferenceSets": {
+          "CONTINUE_OUTPUT": 2
+        },
+        "responses": 2,
+        "validSingleActionVotes": 2,
+        "tiedOrEquivalentPreferences": 0,
+        "uncertainPreferences": 0,
+        "winner": "CONTINUE_OUTPUT",
+        "consensusShare": 1,
+        "labelled": false
+      },
+      {
+        "sceneId": "filled-pause-mid",
+        "family": "filled-pause",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "preferenceSets": {
+          "WAIT_FOR_EVIDENCE+PAUSE_OUTPUT": 1
+        },
+        "responses": 2,
+        "validSingleActionVotes": 0,
+        "tiedOrEquivalentPreferences": 1,
+        "uncertainPreferences": 1,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "noisy-speech-mid",
+        "family": "noisy-speech",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 2,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "preferenceSets": {
+          "WAIT_FOR_EVIDENCE": 2
+        },
+        "responses": 2,
+        "validSingleActionVotes": 2,
+        "tiedOrEquivalentPreferences": 0,
+        "uncertainPreferences": 0,
+        "winner": "WAIT_FOR_EVIDENCE",
+        "consensusShare": 1,
+        "labelled": false
+      },
+      {
+        "sceneId": "second-voice-mid",
+        "family": "second-voice",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 2
+        },
+        "preferenceSets": {
+          "CONTINUE_OUTPUT": 2
+        },
+        "responses": 2,
+        "validSingleActionVotes": 2,
+        "tiedOrEquivalentPreferences": 0,
+        "uncertainPreferences": 0,
+        "winner": "CONTINUE_OUTPUT",
+        "consensusShare": 1,
+        "labelled": false
+      },
+      {
+        "sceneId": "spontaneous-clean-late",
+        "family": "spontaneous-clean",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 2
+        },
+        "preferenceSets": {
+          "CONTINUE_OUTPUT": 2
+        },
+        "responses": 2,
+        "validSingleActionVotes": 2,
+        "tiedOrEquivalentPreferences": 0,
+        "uncertainPreferences": 0,
+        "winner": "CONTINUE_OUTPUT",
+        "consensusShare": 1,
+        "labelled": false
+      },
+      {
+        "sceneId": "short-backchannel-sim",
+        "family": "synthetic-backchannel",
+        "fitEligibility": "development-synthetic",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "preferenceSets": {
+          "WAIT_FOR_EVIDENCE+CONTINUE_OUTPUT": 2
+        },
+        "responses": 2,
+        "validSingleActionVotes": 0,
+        "tiedOrEquivalentPreferences": 2,
+        "uncertainPreferences": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "short-backchannel-aham",
+        "family": "synthetic-backchannel",
+        "fitEligibility": "development-synthetic",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "preferenceSets": {
+          "WAIT_FOR_EVIDENCE+CONTINUE_OUTPUT": 2
+        },
+        "responses": 2,
+        "validSingleActionVotes": 0,
+        "tiedOrEquivalentPreferences": 2,
+        "uncertainPreferences": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      },
+      {
+        "sceneId": "prepared-speech-late",
+        "family": "prepared-speech",
+        "fitEligibility": "evaluation-only",
+        "votes": {
+          "WAIT_FOR_EVIDENCE": 0,
+          "PAUSE_OUTPUT": 0,
+          "CONTINUE_OUTPUT": 0
+        },
+        "preferenceSets": {
+          "WAIT_FOR_EVIDENCE+PAUSE_OUTPUT": 2
+        },
+        "responses": 2,
+        "validSingleActionVotes": 0,
+        "tiedOrEquivalentPreferences": 2,
+        "uncertainPreferences": 0,
+        "winner": null,
+        "consensusShare": 0,
+        "labelled": false
+      }
+    ],
+    "speakerRelevance": [
+      {
+        "sceneId": "negation-short-early",
+        "family": "negation-short",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 0,
+          "BACKGROUND_OR_NOT_DIRECTED": 1,
+          "UNCERTAIN": 1
+        }
+      },
+      {
+        "sceneId": "hesitation-early",
+        "family": "hesitation",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 0,
+          "BACKGROUND_OR_NOT_DIRECTED": 1,
+          "UNCERTAIN": 1
+        }
+      },
+      {
+        "sceneId": "filled-pause-mid",
+        "family": "filled-pause",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 2,
+          "BACKGROUND_OR_NOT_DIRECTED": 0,
+          "UNCERTAIN": 0
+        }
+      },
+      {
+        "sceneId": "noisy-speech-mid",
+        "family": "noisy-speech",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 0,
+          "BACKGROUND_OR_NOT_DIRECTED": 0,
+          "UNCERTAIN": 2
+        }
+      },
+      {
+        "sceneId": "second-voice-mid",
+        "family": "second-voice",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 0,
+          "BACKGROUND_OR_NOT_DIRECTED": 2,
+          "UNCERTAIN": 0
+        }
+      },
+      {
+        "sceneId": "spontaneous-clean-late",
+        "family": "spontaneous-clean",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 0,
+          "BACKGROUND_OR_NOT_DIRECTED": 2,
+          "UNCERTAIN": 0
+        }
+      },
+      {
+        "sceneId": "short-backchannel-sim",
+        "family": "synthetic-backchannel",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 2,
+          "BACKGROUND_OR_NOT_DIRECTED": 0,
+          "UNCERTAIN": 0
+        }
+      },
+      {
+        "sceneId": "explicit-correction",
+        "family": "synthetic-correction",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 2,
+          "BACKGROUND_OR_NOT_DIRECTED": 0,
+          "UNCERTAIN": 0
+        }
+      },
+      {
+        "sceneId": "short-backchannel-aham",
+        "family": "synthetic-backchannel",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 1,
+          "BACKGROUND_OR_NOT_DIRECTED": 0,
+          "UNCERTAIN": 1
+        }
+      },
+      {
+        "sceneId": "transient-noise-control",
+        "family": "noise-control",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 0,
+          "BACKGROUND_OR_NOT_DIRECTED": 2,
+          "UNCERTAIN": 0
+        }
+      },
+      {
+        "sceneId": "silence-control",
+        "family": "silence-control",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 0,
+          "BACKGROUND_OR_NOT_DIRECTED": 0,
+          "UNCERTAIN": 2
+        }
+      },
+      {
+        "sceneId": "prepared-speech-late",
+        "family": "prepared-speech",
+        "responses": 2,
+        "counts": {
+          "DIRECTED_TO_ASSISTANT": 2,
+          "BACKGROUND_OR_NOT_DIRECTED": 0,
+          "UNCERTAIN": 0
+        }
+      }
+    ],
+    "scoring": {
+      "attention": {
+        "mode": "versioned-additive-amendment",
+        "rubricId": "exp-0015-scoring-v0.2.1",
+        "rubricValid": true,
+        "rubricErrors": [],
+        "base": {
+          "total": 6,
+          "passed": 4,
+          "passRate": 0.6666666666666666
+        },
+        "active": {
+          "total": 6,
+          "passed": 6,
+          "passRate": 1
+        },
+        "amendmentsApplied": 1
+      }
+    }
+  },
+  "evidence": {
+    "browser": {
+      "product": "Chrome/150.0.7871.187",
+      "realWindowsChrome": true,
+      "completedAudioOptions": 3,
+      "currentAudioOptions": 3,
+      "sessionOptionCounts": [
+        3,
+        3,
+        3,
+        2,
+        2,
+        3,
+        3,
+        3,
+        2,
+        2,
+        3,
+        3
+      ],
+      "tieSelectionExercised": true,
+      "speakerRelevanceAnswered": true,
+      "annotationSubmitted": false
+    },
+    "fingerprints": {
+      "source": {
+        "algorithm": "sha256-source-tree-v1",
+        "sha256": "700a0f644c8e4a3a33a2c90e48fc38ad497d05fb07030d224fa0bb85dbb7f865",
+        "fileCount": 246,
+        "roots": [
+          "src",
+          "web",
+          "scripts",
+          "tests",
+          "eval/factory",
+          "eval/gates",
+          "eval/scenarios",
+          "package.json",
+          "package-lock.json",
+          "requirements-asr.txt"
+        ]
+      },
+      "pack": {
+        "path": "eval/calibration/exp-0015-timing-pack-v0.2.json",
+        "sha256": "sha256:fec2e07feffe097c0e247108fab9fb5875689eab2f1e4ca0b2219fb5d4c96bd5"
+      },
+      "rubric": {
+        "path": "eval/calibration/exp-0015-scoring-rubric-v0.2.1.json",
+        "sha256": "sha256:d284642bb262ef3c3927b7870fdba6c478c351ad144d09071ec00c878c701dbc"
+      },
+      "browser": {
+        "path": "eval/reports/exp-0015-calibration-browser-current.json",
+        "sha256": "sha256:2db5af0cfaa48855c58a0c2f999896fa22c69e75a3cbc4e37e9cead5219385a3"
+      },
+      "annotations": {
+        "root": "eval/generated/exp-0015/v0.2/annotations",
+        "count": 3,
+        "records": [
+          {
+            "annotationId": "annotation-5d3ce98ff24b5989536da1c2",
+            "sha256": "sha256:be252715bd7d53a6b33e9959401b15815c6375460f9b0b5ec5c6d287d5185976"
+          },
+          {
+            "annotationId": "annotation-6d1ebe0c485aa0eb44ec48eb",
+            "sha256": "sha256:c063519828626a1b86453e549af9d34e251719b954d6bc48bb3c77757418e725"
+          },
+          {
+            "annotationId": "annotation-8c68ca5c01c15ae43a61ec18",
+            "sha256": "sha256:69c93d05fa428df05bdfda5360d52670efb1432f4a07374285cd70d013dda42e"
+          }
+        ]
+      }
+    }
+  },
+  "claims": {
+    "promoted": [
+      "pack local reproduzível",
+      "interface cega executável no Chrome do Windows",
+      "coleta pseudônima com validação fail-closed",
+      "equivalências exatas e empates preservados",
+      "atribuição da fala separada da preferência de timing",
+      "emenda aditiva de gabarito versionada sem mutar respostas"
+    ],
+    "held": [
+      "preferência ou naturalidade humana",
+      "generalização para conversas reais",
+      "uso direto dos áudios/rótulos atuais em ajuste de pesos",
+      "autoridade do candidato sobre o runtime"
+    ]
+  },
+  "limitations": [
+    "instrumento de calibração pequena, não avaliação humana de produto",
+    "cenas CORAA são âncoras evaluation-only por licença CC BY-NC-ND 4.0",
+    "TTS sintético atual usa uma única voz PT-BR",
+    "comentários opcionais ficam somente na coleta local ignorada pelo Git",
+    "preferência humana futura não concede autoridade ao modelo"
+  ]
+}

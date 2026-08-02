@@ -311,8 +311,10 @@ nenhum turno da mesma pessoa contado como participante independente.
 O piloto de timing usa 12 cenas, comparação cega com duas ou três opções,
 empate/dúvida explícitos, atribuição da fala separada e participante como
 unidade. Comentários opcionais permanecem somente locais. O instrumento passou
-15 gates técnicos no Chrome do Windows, mas o agregado corrente tem 0/3
-participantes externos; internos não contam para o mínimo. Isso promove
+16 gates técnicos no Chrome do Windows. O agregado corrente tem 2/3
+participantes externos e 1 interno; internos não contam para o mínimo. A emenda
+aditiva de gabarito v0.2.1 preserva 66,7% no placar-base e aceita 100% sob a
+interpretação congelada do silêncio, sem mutar respostas. Isso promove
 capacidade de coleta, não o gate humano nem uma avaliação de produto.
 
 ## Fase 6 — adaptação nativa de áudio
@@ -364,8 +366,8 @@ card de dados e splits por família, gerador e pessoa.
 | 9 | EXP-0013: trace causal + ledger local — **`promote-training-trace-interruption-slice`** | seis bundles; 28 decisões reproduzidas; 22 efeitos encerrados; projeção v0 perceptiva | fatia sem áudio persistido, clocks entre processos ou generalização |
 | 10 | EXP-0014: vínculo acústico mínimo — **concluído** | 60 streams PCM hasheados, posições de amostra, features causais e split por família | WAV/PCM pesado local; clocks entre processos não promovidos |
 | 11 | EXP-0014: M4a shadow acústico — **`promote-m4a-acoustic-shadow-infrastructure`** | treino reproduzível, checkpoint, 11 decisões Chrome, replay exato, três classes e zero efeitos | imita a regra; sem ganho, generalização ou autoridade |
-| 12a | EXP-0015 v0.2: instrumento cego — **`promote-timing-calibration-instrument`** | 12 cenas, 36 WAVs, equivalências agrupadas, empate + atribuição, 15 gates e Chrome real | v0.1 preservada como piloto; zero opinião artificial e zero fit direto |
-| 12b | Calibração humana piloto — **próximo, `await-human-calibration`** | ≥3 participantes externos únicos, atenção ≥80%, votos singulares, consenso e cobertura suficientes | internos não contam; empate/dúvida não viram rótulo; não é preferência de produto |
+| 12a | EXP-0015 v0.2 + gabarito v0.2.1 — **`promote-timing-calibration-instrument`** | 12 cenas, 36 WAVs, equivalências agrupadas, empate + atribuição, 16 gates e Chrome real | emenda aditiva vinculada ao pack; dados brutos intactos; zero fit direto |
+| 12b | Calibração humana piloto — **`await-human-calibration`, 2/3 externos** | falta 1 para o mínimo; atenção emendada 100%; votos singulares, consenso e cobertura ainda pendentes | internos não contam; empate/dúvida não viram rótulo; não é preferência de produto |
 | 13 | M4b e próximo PDCA | novo conjunto `fit-eligible`, ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
 
 Depois da baseline congelada e da fatia causal do trace, um desafio nativo pode

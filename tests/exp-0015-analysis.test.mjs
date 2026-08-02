@@ -17,6 +17,20 @@ const pack = JSON.parse(await readFile(
   ),
   "utf8"
 ));
+const rubric = JSON.parse(await readFile(
+  new URL(
+    "../eval/calibration/exp-0015-scoring-rubric-v0.2.1.json",
+    import.meta.url
+  ),
+  "utf8"
+));
+
+function fingerprintsFixture() {
+  return {
+    source: { sha256: "fixture" },
+    rubric: { path: "fixture-rubric.json", sha256: "sha256:fixture" }
+  };
+}
 
 function browserFixture(candidatePack = pack) {
   return {
@@ -52,12 +66,16 @@ function browserFixture(candidatePack = pack) {
 }
 
 test("instrumento promove sem fingir calibração humana", () => {
-  const aggregate = aggregateTimingCalibration(pack, [], pack.protocol);
+  const aggregate = aggregateTimingCalibration(pack, [], {
+    ...pack.protocol,
+    attentionScoringRubric: rubric
+  });
   const report = evaluateExp0015Instrument({
     aggregate,
     browser: browserFixture(),
     pack,
-    fingerprints: { source: { sha256: "fixture" } }
+    rubric,
+    fingerprints: fingerprintsFixture()
   });
 
   assert.equal(report.instrumentPass, true);
@@ -84,13 +102,14 @@ test("instrumento falha se áudio público se declarar elegível a fit", () => {
   const aggregate = aggregateTimingCalibration(
     unsafePack,
     [],
-    unsafePack.protocol
+    { ...unsafePack.protocol, attentionScoringRubric: rubric }
   );
   const report = evaluateExp0015Instrument({
     aggregate,
     browser: browserFixture(unsafePack),
     pack: unsafePack,
-    fingerprints: {}
+    rubric,
+    fingerprints: fingerprintsFixture()
   });
 
   assert.equal(report.instrumentPass, false);
@@ -105,15 +124,37 @@ test("instrumento falha se a decisão anteceder evidência acústica", () => {
   const aggregate = aggregateTimingCalibration(
     misalignedPack,
     [],
-    misalignedPack.protocol
+    { ...misalignedPack.protocol, attentionScoringRubric: rubric }
   );
   const report = evaluateExp0015Instrument({
     aggregate,
     browser: browserFixture(misalignedPack),
     pack: misalignedPack,
-    fingerprints: {}
+    rubric,
+    fingerprints: fingerprintsFixture()
   });
 
   assert.equal(report.instrumentPass, false);
   assert.equal(report.gates.audioInventory, false);
+});
+
+test("instrumento falha fechado se emenda aceitar fala direcionada", () => {
+  const unsafeRubric = structuredClone(rubric);
+  unsafeRubric.amendments[0].acceptedValues.push(
+    "DIRECTED_TO_ASSISTANT"
+  );
+  const aggregate = aggregateTimingCalibration(pack, [], {
+    ...pack.protocol,
+    attentionScoringRubric: unsafeRubric
+  });
+  const report = evaluateExp0015Instrument({
+    aggregate,
+    browser: browserFixture(),
+    pack,
+    rubric: unsafeRubric,
+    fingerprints: fingerprintsFixture()
+  });
+
+  assert.equal(report.instrumentPass, false);
+  assert.equal(report.gates.scoringRubricBinding, false);
 });

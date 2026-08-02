@@ -1,7 +1,7 @@
 # Decisão — runtime comum e sequência até o primeiro peso
 
-Status: **aceita em 31/07/2026; atualizada em 01/08/2026 após o piloto e a
-revisão EXP-0015 v0.2; execução incremental em andamento**
+Status: **aceita em 31/07/2026; atualizada em 02/08/2026 após o piloto, a
+revisão EXP-0015 v0.2 e o gabarito v0.2.1; execução incremental em andamento**
 
 ## Contexto
 
@@ -154,11 +154,14 @@ não chegam à interface, o token local é hasheado antes da persistência e o s
 não envia anotação.
 
 Quinze gates técnicos sustentam `promote-timing-calibration-instrument`. O
-agregado v0.2 registra `await-human-calibration`, com 0/3 participantes
-externos, zero cena rotulada e zero item `fit-eligible`; avaliações internas
-não contam para o mínimo. CORAA permanece apenas avaliação e o sintético apenas
-desenvolvimento. Mesmo após o piloto, M4b exigirá um novo artefato treinável e
-holdout ainda não observado; a política determinística continua autoritativa.
+agregado v0.2 registra `await-human-calibration`, com 2/3 participantes
+externos, 1 interno, zero cena rotulada e zero item `fit-eligible`; avaliações
+internas não contam para o mínimo. O gabarito aditivo v0.2.1 aceita no silêncio
+“não direcionado” ou “não consigo saber”, rejeita “direcionado” e mostra 66,7%
+base ao lado de 100% emendado, sem alterar registros. CORAA permanece apenas
+avaliação e o sintético apenas desenvolvimento. Mesmo após o piloto, M4b
+exigirá um novo artefato treinável e holdout ainda não observado; a política
+determinística continua autoritativa.
 
 ## Pontos incorporados
 

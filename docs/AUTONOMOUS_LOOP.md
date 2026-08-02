@@ -111,6 +111,12 @@ de preferência temporal, aceita comentário opcional local e exclui
 participantes internos do mínimo externo. Os registros v0.1 foram preservados,
 mas não migrados nem contados no novo gate.
 
+Com duas respostas externas na v0.2, o controle de silêncio revelou uma
+ambiguidade apenas no gabarito: ausência de som admite tanto “não direcionado”
+quanto “não consigo saber”. A emenda aditiva v0.2.1 aceita ambas, continua
+rejeitando “direcionado” e preserva dados, pack e placar-base. A atenção externa
+fica observável como 66,7% base e 100% emendada, sem esconder a decisão.
+
 O ciclo é reproduzido por:
 
 ```bash

@@ -1,7 +1,7 @@
 # Referência macro do projeto
 
-Status: **referência canônica — consolidada em 01/08/2026 após auditoria,
-contranálise, M4a acústico e revisão v0.2 do instrumento EXP-0015**
+Status: **referência canônica — consolidada em 02/08/2026 após auditoria,
+contranálise, M4a acústico e gabarito EXP-0015 v0.2.1**
 
 ## Tese
 
@@ -288,8 +288,11 @@ empates, separa atribuição, permite comentário local opcional e reserva o gat
 humano a participantes externos. O Chrome do Windows confirmou cenas com 2 e 3
 opções sem expor ação ou cena, sem erro e sem submeter opinião artificial. A
 decisão técnica é `promote-timing-calibration-instrument`; a conclusão humana
-permanece `await-human-calibration` em 0/3 externos e a política não ganhou
-autoridade.
+permanece `await-human-calibration` em 2/3 externos e a política não ganhou
+autoridade. O gabarito aditivo v0.2.1 aceita no silêncio tanto “não direcionado”
+quanto “não consigo saber”, mantendo “direcionado” como erro. Ele reprocessa
+atenção de 66,7% para 100% sem alterar pack, perguntas ou registros e preserva
+os dois placares no relatório.
 
 ### M3 — qualidade modular local
 

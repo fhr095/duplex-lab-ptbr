@@ -84,7 +84,7 @@ de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
 
 O EXP-0014 foi promovido com 324/324 testes. Após o instrumento EXP-0015, a
-suíte corrente possui **336/336 testes** e também cobre sessão cega,
+suíte corrente possui **338/338 testes** e também cobre sessão cega,
 contrafactuais estéreo, integridade das anotações, fronteira de fit e separação
 entre promoção técnica e calibração humana. Os 223/223 acima pertencem à
 execução congelada da campanha v0.2 e não são reescritos retrospectivamente.
@@ -146,11 +146,15 @@ byte a byte idênticas apresentadas separadamente, atribuição da fala misturad
 ao timing e ausência de distinção entre avaliadores internos e externos.
 A v0.2 agrupa os quatro pares equivalentes, aceita empates, pergunta
 separadamente se a fala parece dirigida à assistente e preserva comentário
-curto opcional somente no armazenamento local. No Chrome real do Windows,
-cenas de 2 e 3 opções, empate e atribuição passaram sem erro ou anotação
-artificial. A decisão é `promote-timing-calibration-instrument`; a campanha
-nova permanece `await-human-calibration` em **0/3 participantes externos**, e
-o pack contém zero rótulos autorizados para fit direto.
+curto opcional somente no armazenamento local. Uma emenda aditiva v0.2.1
+passou a aceitar, no controle de silêncio, tanto “não direcionado” quanto “não
+consigo saber”; somente “direcionado” falha. O pack e as respostas não foram
+alterados, e o relatório preserva 66,7% no gabarito-base e 100% no emendado. No
+Chrome real do Windows, cenas de 2 e 3 opções, empate e atribuição passaram sem
+erro ou anotação artificial. A decisão é
+`promote-timing-calibration-instrument`; a campanha permanece
+`await-human-calibration` em **2/3 participantes externos**, e o pack contém
+zero rótulos autorizados para fit direto.
 
 Com o servidor local e o Chrome de depuração abertos, a evidência é reproduzida
 por `npm run eval:exp:0013:browser` e consolidada por
@@ -343,8 +347,9 @@ executável existe somente no
 [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada): a baseline
 v0.3 está congelada e as fatias stateful, de reflexo, lifecycle, trace causal e
 M4a acústico em shadow foram promovidas. O instrumento EXP-0015 também está
-promovido e pronto; o próximo gate externo é obter ao menos três participantes
-externos únicos com atenção e consenso suficientes. Avaliações internas ajudam
+promovido e pronto; falta um participante para alcançar o mínimo de três
+externos únicos, ainda sujeito a atenção, cobertura e consenso suficientes.
+Avaliações internas ajudam
 na usabilidade, mas não contam para esse mínimo. Essa calibração orientará a criação
 de um conjunto novo e legalmente elegível para M4b — os áudios CORAA e
 sintéticos atuais não entram diretamente em fit. O comparador M4b terá de

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "timing-calibration-scoring-rubric-v1",
+  "rubricId": "exp-0015-scoring-v0.2.1",
+  "packId": "exp-0015-timing-calibration-v0.2",
+  "packSha256": "sha256:30e62d9b64c4781939c3a7d46d5a8c8a54be6eaa8bc4396405436512750d2b65",
+  "baseProtocolVersion": "blind-timing-preference-and-attribution-v2",
+  "policy": "additive-acceptance-only",
+  "decisionContext": {
+    "decidedAt": "2026-08-02",
+    "observedExternalParticipants": 2,
+    "appliesToExistingRecords": true,
+    "rawRecordsMutated": false,
+    "stimuliOrQuestionsChanged": false
+  },
+  "amendments": [
+    {
+      "sceneId": "silence-control",
+      "dimension": "speaker-relevance-accepted-values",
+      "acceptedValues": [
+        "BACKGROUND_OR_NOT_DIRECTED",
+        "UNCERTAIN"
+      ],
+      "rationale": "Sem fala ou som à direita, tanto classificá-lo como não direcionado quanto declarar que não há evidência para saber são interpretações compatíveis; somente atribuir direção à assistente contradiz o controle."
+    }
+  ]
+}

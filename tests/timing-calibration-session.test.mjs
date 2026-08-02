@@ -7,6 +7,7 @@ import {
   finalizeTimingCalibrationPack,
   selectFitEligibleTimingLabels,
   validateTimingCalibrationRecord,
+  validateTimingCalibrationScoringRubric,
   validateTimingCalibrationSubmission
 } from "../src/eval/calibration/blind-session.mjs";
 
@@ -130,6 +131,24 @@ function completedRecord(pack, index, input = {}) {
   );
   assert.equal(validation.valid, true, validation.errors.join("; "));
   return validation.record;
+}
+
+function scoringRubricFixture(pack) {
+  return {
+    schemaVersion: "timing-calibration-scoring-rubric-v1",
+    rubricId: "timing-pack-test-scoring-v0.2.1",
+    packId: pack.packId,
+    packSha256: pack.packSha256,
+    baseProtocolVersion: pack.protocol.version,
+    policy: "additive-acceptance-only",
+    amendments: [{
+      sceneId: "scene-silence",
+      dimension: "speaker-relevance-accepted-values",
+      acceptedValues: ["BACKGROUND_OR_NOT_DIRECTED", "UNCERTAIN"],
+      rationale:
+        "Silêncio admite ausência de evidência sem tornar a fala direcionada."
+    }]
+  };
 }
 
 test("sessão cega agrupa WAVs idênticos sem expor ações", () => {
@@ -316,6 +335,69 @@ test("agregado usa apenas externos e só cria rótulo com votos singulares", () 
   );
   assert.equal(internalOnly.gates.minimumExternalParticipants, false);
   assert.equal(internalOnly.metrics.externalParticipants, 0);
+});
+
+test("emenda aditiva reclassifica silêncio sem alterar registro bruto", () => {
+  const pack = packFixture();
+  const uncertainRecord = completedRecord(pack, 25, {
+    relevance: { "scene-silence": "UNCERTAIN" }
+  });
+  const directedRecord = completedRecord(pack, 26, {
+    relevance: { "scene-silence": "DIRECTED_TO_ASSISTANT" }
+  });
+  const rubric = scoringRubricFixture(pack);
+
+  assert.equal(
+    validateTimingCalibrationScoringRubric(pack, rubric).valid,
+    true
+  );
+  assert.equal(uncertainRecord.attention.passed, 0);
+  assert.equal(
+    validateTimingCalibrationRecord(pack, uncertainRecord).valid,
+    true
+  );
+
+  const base = aggregateTimingCalibration(
+    pack,
+    [uncertainRecord],
+    pack.protocol
+  );
+  const amended = aggregateTimingCalibration(
+    pack,
+    [uncertainRecord],
+    { ...pack.protocol, attentionScoringRubric: rubric }
+  );
+  assert.equal(base.metrics.attentionPassRate, 0);
+  assert.equal(amended.metrics.baseAttentionPassRate, 0);
+  assert.equal(amended.metrics.attentionPassRate, 1);
+  assert.equal(amended.metrics.attentionPassedDelta, 1);
+  assert.equal(
+    amended.scoring.attention.rubricId,
+    "timing-pack-test-scoring-v0.2.1"
+  );
+  assert.equal(uncertainRecord.attention.passed, 0);
+
+  const directed = aggregateTimingCalibration(
+    pack,
+    [directedRecord],
+    { ...pack.protocol, attentionScoringRubric: rubric }
+  );
+  assert.equal(directed.metrics.attentionPassRate, 0);
+
+  const unsafeRubric = structuredClone(rubric);
+  unsafeRubric.amendments[0].acceptedValues.push("DIRECTED_TO_ASSISTANT");
+  const unsafeValidation = validateTimingCalibrationScoringRubric(
+    pack,
+    unsafeRubric
+  );
+  assert.equal(unsafeValidation.valid, false);
+  const failedClosed = aggregateTimingCalibration(
+    pack,
+    [uncertainRecord],
+    { ...pack.protocol, attentionScoringRubric: unsafeRubric }
+  );
+  assert.equal(failedClosed.gates.attentionScoringRubric, false);
+  assert.equal(failedClosed.calibrationReady, false);
 });
 
 test("registro persistido é validado e adulteração falha fechado", () => {

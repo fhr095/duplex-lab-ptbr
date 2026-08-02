@@ -3,12 +3,17 @@ import {
 } from "../../src/eval/calibration/timing-stimulus.mjs";
 import {
   selectFitEligibleTimingLabels,
-  validateTimingCalibrationPack
+  validateTimingCalibrationPack,
+  validateTimingCalibrationScoringRubric
 } from "../../src/eval/calibration/blind-session.mjs";
 
 export function evaluateExp0015Instrument(input) {
-  const { aggregate, browser, fingerprints, pack } = input;
+  const { aggregate, browser, fingerprints, pack, rubric } = input;
   const packValidation = validateTimingCalibrationPack(pack);
+  const rubricValidation = validateTimingCalibrationScoringRubric(
+    pack,
+    rubric
+  );
   const artifacts = (pack.scenes ?? []).flatMap((scene) =>
     TIMING_CALIBRATION_ACTIONS.map((action) => scene.artifacts?.[action])
   );
@@ -95,6 +100,14 @@ export function evaluateExp0015Instrument(input) {
       aggregate?.schemaVersion === "timing-calibration-aggregate-v2" &&
       aggregate?.packId === pack.packId &&
       aggregate?.packSha256 === pack.packSha256,
+    scoringRubricBinding:
+      rubricValidation.valid &&
+      aggregate?.gates?.attentionScoringRubric === true &&
+      aggregate?.scoring?.attention?.rubricId === rubric.rubricId &&
+      aggregate?.scoring?.attention?.mode ===
+        "versioned-additive-amendment" &&
+      fingerprints?.rubric?.path !== undefined &&
+      fingerprints?.rubric?.sha256 !== undefined,
     annotationIntegrity:
       aggregate?.gates?.recordsValid === true &&
       aggregate?.metrics?.invalidRecords === 0,
@@ -108,7 +121,7 @@ export function evaluateExp0015Instrument(input) {
   const instrumentPass = Object.values(gates).every(Boolean);
   const humanCalibrationPass = aggregate.calibrationReady === true;
   return {
-    schemaVersion: "exp-0015-timing-calibration-instrument-report-v2",
+    schemaVersion: "exp-0015-timing-calibration-instrument-report-v3",
     experimentId: pack.packId,
     question:
       "O instrumento local cego separa timing, atribuição da fala e " +
@@ -142,6 +155,9 @@ export function evaluateExp0015Instrument(input) {
       externalParticipants: aggregate.metrics.externalParticipants,
       internalParticipants: aggregate.metrics.internalParticipants,
       validHumanRecords: aggregate.metrics.validRecords,
+      baseAttentionPassRate: aggregate.metrics.baseAttentionPassRate,
+      amendedAttentionPassRate: aggregate.metrics.attentionPassRate,
+      attentionPassedDelta: aggregate.metrics.attentionPassedDelta,
       labelledScenes: aggregate.metrics.labelledScenes,
       labelCoverage: aggregate.metrics.labelCoverage,
       fitEligibleLabels: fitLabels.length,
@@ -175,7 +191,8 @@ export function evaluateExp0015Instrument(input) {
             "interface cega executável no Chrome do Windows",
             "coleta pseudônima com validação fail-closed",
             "equivalências exatas e empates preservados",
-            "atribuição da fala separada da preferência de timing"
+            "atribuição da fala separada da preferência de timing",
+            "emenda aditiva de gabarito versionada sem mutar respostas"
           ]
         : [],
       held: [
