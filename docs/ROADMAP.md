@@ -11,12 +11,10 @@ na [decisão de runtime e aprendizado](DECISION_RUNTIME_LEARNING_SEQUENCE.md).
 Esta é a leitura operacional curta. Se outra página usar “próximo” em um relato
 histórico, esta carteira prevalece.
 
-- **Agora — EXP-0017 Core:** calibrar um veto conservador sobre diversidade
-  acústica nova, usando somente treino/desenvolvimento. O MSWC isolado foi
-  invalidado como holdout antes do fit; um novo holdout opaco e com contexto
-  audível só será pré-registrado se `A` qualificar neste screen. A autoridade
-  aprendida continua desligada.
-- **Paralelo, não bloqueante — EXP-0017-R:** medir no mesmo replay se texto
+- **Concluído/cortado — EXP-0017 Core:** `A` preservou 60/60 falas dirigidas,
+  mas acertou só 1/60 fundos e empatou `A0` em 50,8% por exemplo; nenhum
+  holdout foi construído e a autoridade continua desligada.
+- **Agora — EXP-0017-R:** medir no mesmo replay se texto
   parcial causal contém valor além do M4b acústico. Primeiro entra uma
   transcrição-oráculo; ASR parcial real só é testado se o oráculo ganhar.
 - **Depois, condicional:** pré-registrar uma confirmação independente do menor
@@ -417,8 +415,8 @@ card de dados e splits por família, gerador e pessoa.
 | 12a | EXP-0015 v0.2 + gabaritos v0.2.1/v0.2.2 — **`promote-timing-calibration-instrument`** | 12 cenas, 36 WAVs, equivalências agrupadas, empate + atribuição, 17 gates e Chrome real | emendas vinculadas ao pack; dados brutos intactos; zero fit direto |
 | 12b | Calibração humana piloto — **`calibration-sufficient-to-freeze-m4b-experiment`** | 3/3 externos; atenção 77,8% base → 100%; 5 singulares + 3 conjuntos = 8/9 resolvidas | equivalência não vira rótulo singular; uma cena ambígua; não é preferência de produto |
 | 13 | EXP-0016: relevância acústica M4b — **`promote-m4b-speaker-relevance-shadow-candidate`** | 108 exemplos/36 clips; holdout bruto 77,8% vs 50%; humano conservador 7/9 vs 5/9; 4 probes Chrome com paridade | veto conservador ainda falha no holdout; uma só faixa de gênero; zero autoridade |
-| 14a | EXP-0017 Core: calibração segura do veto — **agora, caminho crítico** | 240 exemplos train/dev, diversidade nova, hard negatives e recall dirigido de 100%; MSWC invalidado antes do fit | se `A` qualificar, apenas autoriza novo pré-registro/holdout opaco; autoridade continua determinística |
-| 14b | EXP-0017-R: probe semântico causal — **paralelo e timeboxed** | A/B/C em desenvolvimento; oráculo antes de ASR real; zero futuro, autoridade ou alteração do STOP físico | não bloqueia 14a; sem ganho do oráculo, a hipótese é cortada; confirmação exige dados novos |
+| 14a | EXP-0017 Core: calibração segura do veto — **`retain-a0-and-cut-acoustic-core`** | 240 exemplos train/dev; `A` 50,8%, 60/60 dirigidas e 1/60 fundos; empate pareado por exemplo com `A0` | nenhum holdout; `A0` vira `A-ref`; família acústica compacta cortada nesta rodada |
+| 14b | EXP-0017-R: probe semântico causal — **agora, timeboxed** | A/B/C em desenvolvimento; oráculo antes de ASR real; zero futuro, autoridade ou alteração do STOP físico | sem ganho do oráculo, cortar; confirmação exige dados novos |
 
 O probe 14b é a única frente de challenger ativa. Modelos completos continuam
 no ledger como `watch` ou `defer`; pesquisa externa não autoriza download,

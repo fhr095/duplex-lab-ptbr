@@ -98,6 +98,18 @@ const CANONICAL_REPORT_CONTRACTS = Object.freeze({
       ["authorityEligible", false],
       ["browserGates.zeroAuthority", true]
     ]
+  },
+  "EXP-0017": {
+    status: "active",
+    authority: "none",
+    decisionPath: "core.decision",
+    assertions: [
+      ["confirmatory", false],
+      ["holdoutRead", false],
+      ["core.aQualified", false],
+      ["core.aRef", "A0"],
+      ["authority.canProduceEffects", false]
+    ]
   }
 });
 

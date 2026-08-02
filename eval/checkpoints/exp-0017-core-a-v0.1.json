@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "speaker-relevance-checkpoint-v1",
+  "checkpointId": "speaker-relevance-exp0017-a-1aeec1902917fc8c",
+  "featureVersion": "speaker-relevance-causal-features-v0.1",
+  "featureNames": [
+    "bias",
+    "elapsedMs",
+    "contextRms",
+    "recentRms",
+    "activeFrameShare",
+    "frameLevelVariation",
+    "zeroCrossingRate",
+    "crestFactor",
+    "pitchPeriodicity",
+    "spectralCentroid",
+    "spectralFlatness",
+    "highBandShare"
+  ],
+  "classes": [
+    "BACKGROUND_OR_NOT_DIRECTED",
+    "DIRECTED_TO_ASSISTANT"
+  ],
+  "modelSha256": "sha256:1aeec1902917fc8c0ac93968de0661039ad1c1101a9ccaba1ddeebe9933c290a",
+  "model": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "weights": [
+      [
+        -0.210896616786,
+        -0.086328348191,
+        0.016732138746,
+        -0.876917459573,
+        0.045441241652,
+        -0.083841364481,
+        0.538466330051,
+        0.431296294715,
+        0.538269406521,
+        0.302985276028,
+        -0.181685458122,
+        0.173355163502
+      ],
+      [
+        0.210896616786,
+        0.086328348191,
+        -0.016732138746,
+        0.876917459573,
+        -0.045441241652,
+        0.083841364481,
+        -0.538466330051,
+        -0.431296294715,
+        -0.538269406521,
+        -0.302985276028,
+        0.181685458122,
+        -0.173355163502
+      ]
+    ]
+  },
+  "decision": {
+    "backgroundVetoConfidence": 0.7728149613611813,
+    "backgroundAction": "CONTINUE_OUTPUT",
+    "directedAction": "DEFER_TO_DETERMINISTIC",
+    "lowConfidenceAction": "DEFER_TO_DETERMINISTIC"
+  },
+  "runtime": {
+    "sampleRate": 16000,
+    "decisionMs": 560,
+    "decisionSamples": 8960,
+    "bufferSamples": 48000,
+    "futureSamplesAllowed": 0
+  },
+  "training": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "datasetPath": "eval/datasets/exp-0017-core-development-v0.1.json",
+    "datasetSha256": "sha256:39910856df25e8525f36ac67d5237dfb37b9bac92c370baedb19443c2c601809",
+    "manifestSha256": "sha256:e2506729d3959f9c3c60df7c96bea97b6f0f72db8e9daf4c5ce658b97ef6d177",
+    "experimentConfigPath": "eval/experiments/exp-0017-safe-veto-core-v0.1.json",
+    "experimentConfigSha256": "sha256:375f8e2bc61157d520dd8aab84a30eb1693840a2a6af370164b3cf93c1482e7d",
+    "selectedSplit": "train",
+    "calibrationSplit": "development",
+    "excludedFromFit": [
+      "development"
+    ],
+    "excludedFromCalibration": [
+      "train"
+    ],
+    "holdoutRead": false,
+    "examples": 120,
+    "calibrationExamples": 120,
+    "hyperparameters": {
+      "epochs": 2400,
+      "learningRate": 0.3,
+      "l2": 0.001,
+      "initialization": "all-zero",
+      "ordering": "input-order/full-batch",
+      "repetitions": 2
+    },
+    "finalLoss": 0.669319741295,
+    "classCounts": {
+      "BACKGROUND_OR_NOT_DIRECTED": 60,
+      "DIRECTED_TO_ASSISTANT": 60
+    },
+    "classWeights": {
+      "BACKGROUND_OR_NOT_DIRECTED": 1,
+      "DIRECTED_TO_ASSISTANT": 1
+    }
+  },
+  "authority": {
+    "mode": "shadow",
+    "canProduceEffects": false
+  },
+  "claims": {
+    "scope": "justifica pré-registrar um novo holdout opaco e contextualmente válido; não confirma o Core nem muda o runtime",
+    "excluded": [
+      "autoridade para ignorar fala",
+      "evidência confirmatória ou abertura de holdout nesta execução",
+      "naturalidade humana ou qualidade de produto",
+      "generalização física por sala, distância ou dispositivo",
+      "compreensão semântica ou identificação real de destinatário",
+      "confirmação do probe R"
+    ]
+  }
+}

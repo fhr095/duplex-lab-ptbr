@@ -1,7 +1,7 @@
 # EXP-0017 — veto seguro e probe semântico causal
 
-Status: **emenda pré-fit vigente; artefatos operacionais realinhados;
-development-screen não executado; zero autoridade**
+Status: **Core development-screen executado e cortado; `R` pendente;
+zero autoridade**
 
 Este documento congela a pergunta, a ordem das comparações e as regras de
 corte antes de materializar resultados. O EXP-0017 tem um caminho acústico
@@ -427,10 +427,21 @@ como referências de mecanismos até que um gargalo medido justifique o custo.
 
 ## Resultado
 
-Não executado. A única conclusão registrada é a invalidação pré-fit do desenho
-MSWC como holdout, sem observação de métricas de candidato. Preencher resultados
-somente depois do congelamento dos artefatos em conformidade com esta emenda e
-sem alterar retrospectivamente hipóteses, braços, gates ou regras de parada.
+O estado pré-fit foi congelado no commit `b2a9cc2` antes da execução oficial.
+O Core treinou duas vezes com pesos idênticos, usando 120 exemplos de `train`,
+e escolheu limiar `0,7728149613611813` nos 120 exemplos de `development`.
+
+`A` preservou 60/60 falas dirigidas, mas classificou corretamente apenas 1/60
+fundos. A acurácia foi `61/120 = 50,83%`, contra `60/120 = 50%` da regra que
+trata toda fala como dirigida e `61/120 = 50,83%` de `A0`. Na comparação
+pareada por exemplo contra `A0`, houve 10 ganhos e 10 perdas, ganho líquido
+zero. A agregação por linhagem teve ganho positivo, mas não compensa as falhas
+pré-registradas de acurácia, recall de fundo/classe e ganho sobre a baseline.
+
+Decisão: `retain-a0-and-cut-acoustic-core`. `A0` é `A-ref` para `R`; nenhum
+holdout foi construído, nenhuma evidência confirmatória foi alegada e nenhuma
+autoridade foi concedida. O relatório canônico é
+`eval/reports/exp-0017-core-development-v0.1.json`.
 
 ## Artefatos esperados
 

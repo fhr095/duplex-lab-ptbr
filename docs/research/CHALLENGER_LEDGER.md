@@ -31,6 +31,11 @@ humanas, porém falhou o gate offline. Esses números pertencem ao
 não aos trabalhos externos. A lacuna torna contexto semântico causal o próximo
 probe de maior valor da informação.
 
+O Core do EXP-0017 confirmou esse limite em diversidade sintética nova: `A`
+preservou 60/60 falas dirigidas, mas acertou 1/60 fundos e empatou `A0` por
+exemplo. A hipótese acústica compacta foi cortada sem holdout; `A0` é o
+`A-ref` congelado para o único challenger ativo abaixo.
+
 ## Fila atual
 
 | Challenger / mecanismo | Evidência disponível | Decisão afetada | Menor teste e dependências | Gate | Stop rule | Status |

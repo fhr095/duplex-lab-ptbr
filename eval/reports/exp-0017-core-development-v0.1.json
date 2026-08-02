@@ -1,0 +1,644 @@
+{
+  "schemaVersion": "exp-0017-development-report-v1",
+  "experimentId": "exp-0017-safe-veto-core-v0.1",
+  "evidenceLevel": "development-screen",
+  "confirmatory": false,
+  "holdoutRead": false,
+  "authorityEligible": false,
+  "authority": {
+    "mode": "shadow",
+    "canProduceEffects": false
+  },
+  "evidence": {
+    "experimentConfigFileSha256": "sha256:375f8e2bc61157d520dd8aab84a30eb1693840a2a6af370164b3cf93c1482e7d",
+    "manifestSha256": "sha256:e2506729d3959f9c3c60df7c96bea97b6f0f72db8e9daf4c5ce658b97ef6d177",
+    "developmentDatasetSha256": "sha256:39910856df25e8525f36ac67d5237dfb37b9bac92c370baedb19443c2c601809",
+    "a0FileSha256": "sha256:dcd54b658c86af23c32884cc390fb588f84fff5a900f16f869c6e026c067209f",
+    "a0ModelSha256": "sha256:bc09e1311b5034bca801bb44b7fbdd60db07354abd4035c53c97191ec454fbfc",
+    "aModelSha256": "sha256:1aeec1902917fc8c0ac93968de0661039ad1c1101a9ccaba1ddeebe9933c290a"
+  },
+  "fitBoundary": {
+    "selectedSplit": "train",
+    "calibrationSplit": "development",
+    "excludedFromFit": [
+      "development"
+    ],
+    "excludedFromCalibration": [
+      "train"
+    ],
+    "holdoutConstructed": false,
+    "holdoutPayloadPathRead": false,
+    "inputReadAllowlist": [
+      "eval/experiments/exp-0017-safe-veto-core-v0.1.json",
+      "eval/datasets/exp-0017-core-manifest-v0.1.json",
+      "eval/datasets/exp-0017-core-development-v0.1.json",
+      "web/speaker-relevance-checkpoint.json"
+    ],
+    "trainingExamples": 120,
+    "developmentExamples": 120,
+    "futureSamplesUsed": 0
+  },
+  "core": {
+    "stage": "development",
+    "aQualified": false,
+    "aRef": "A0",
+    "decision": "retain-a0-and-cut-acoustic-core",
+    "calibratedThreshold": 0.7728149613611813,
+    "calibrationSafeSolution": true
+  },
+  "calibration": {
+    "split": "development",
+    "objective": "maximize-background-coverage-subject-to-perfect-directed-recall",
+    "minimumThreshold": 0.5,
+    "candidateThresholds": 64,
+    "safeCandidates": 2,
+    "selected": {
+      "threshold": 0.7728149613611813,
+      "directedRecall": 1,
+      "backgroundCoverage": 0.016666666666666666,
+      "accuracy": 0.5083333333333333,
+      "falseDirectedVetoes": 0,
+      "backgroundVetoes": 1
+    }
+  },
+  "gateCriteria": {
+    "pairedDecisionUnit": "lineage-root-all-descendants-correct",
+    "minimumDirectedRecall": 1,
+    "minimumAccuracy": 0.75,
+    "minimumClassRecall": 0.75,
+    "minimumGainOverAllDirected": 0.2,
+    "minimumPairedNetGainAgainstA0": 1,
+    "futureSamplesUsed": 0,
+    "canProduceEffects": false
+  },
+  "metrics": {
+    "development": {
+      "allDirected": {
+        "observations": 120,
+        "correct": 60,
+        "accuracy": 0.5,
+        "classRecall": {
+          "BACKGROUND_OR_NOT_DIRECTED": 0,
+          "DIRECTED_TO_ASSISTANT": 1
+        },
+        "confusion": {
+          "BACKGROUND_OR_NOT_DIRECTED": {
+            "BACKGROUND_OR_NOT_DIRECTED": 0,
+            "DIRECTED_TO_ASSISTANT": 60
+          },
+          "DIRECTED_TO_ASSISTANT": {
+            "BACKGROUND_OR_NOT_DIRECTED": 0,
+            "DIRECTED_TO_ASSISTANT": 60
+          }
+        },
+        "errorExampleIds": [
+          "example:exp0017:development:development-assistant-leakage-01:clean-near",
+          "example:exp0017:development:development-assistant-leakage-01:competing-speech-proxy",
+          "example:exp0017:development:development-assistant-leakage-01:low-distant-proxy",
+          "example:exp0017:development:development-assistant-leakage-01:room-noise-proxy",
+          "example:exp0017:development:development-assistant-leakage-02:clean-near",
+          "example:exp0017:development:development-assistant-leakage-02:competing-speech-proxy",
+          "example:exp0017:development:development-assistant-leakage-02:low-distant-proxy",
+          "example:exp0017:development:development-assistant-leakage-02:room-noise-proxy",
+          "example:exp0017:development:development-assistant-leakage-03:clean-near",
+          "example:exp0017:development:development-assistant-leakage-03:competing-speech-proxy",
+          "example:exp0017:development:development-assistant-leakage-03:low-distant-proxy",
+          "example:exp0017:development:development-assistant-leakage-03:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-01:clean-near",
+          "example:exp0017:development:development-background-broadcast-01:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-01:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-01:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-02:clean-near",
+          "example:exp0017:development:development-background-broadcast-02:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-02:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-02:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-03:clean-near",
+          "example:exp0017:development:development-background-broadcast-03:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-03:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-03:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-04:clean-near",
+          "example:exp0017:development:development-background-broadcast-04:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-04:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-04:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-01:clean-near",
+          "example:exp0017:development:development-lateral-conversation-01:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-01:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-01:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-02:clean-near",
+          "example:exp0017:development:development-lateral-conversation-02:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-02:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-02:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-03:clean-near",
+          "example:exp0017:development:development-lateral-conversation-03:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-03:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-03:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-04:clean-near",
+          "example:exp0017:development:development-lateral-conversation-04:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-04:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-04:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-01:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-01:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-01:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-01:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-02:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-02:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-02:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-02:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-03:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-04:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-04:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-04:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-04:room-noise-proxy"
+        ]
+      },
+      "A0": {
+        "observations": 120,
+        "correct": 61,
+        "accuracy": 0.5083333333333333,
+        "classRecall": {
+          "BACKGROUND_OR_NOT_DIRECTED": 0.16666666666666666,
+          "DIRECTED_TO_ASSISTANT": 0.85
+        },
+        "confusion": {
+          "BACKGROUND_OR_NOT_DIRECTED": {
+            "BACKGROUND_OR_NOT_DIRECTED": 10,
+            "DIRECTED_TO_ASSISTANT": 50
+          },
+          "DIRECTED_TO_ASSISTANT": {
+            "BACKGROUND_OR_NOT_DIRECTED": 9,
+            "DIRECTED_TO_ASSISTANT": 51
+          }
+        },
+        "errorExampleIds": [
+          "example:exp0017:development:development-assistant-leakage-01:clean-near",
+          "example:exp0017:development:development-assistant-leakage-01:competing-speech-proxy",
+          "example:exp0017:development:development-assistant-leakage-01:room-noise-proxy",
+          "example:exp0017:development:development-assistant-leakage-02:clean-near",
+          "example:exp0017:development:development-assistant-leakage-02:competing-speech-proxy",
+          "example:exp0017:development:development-assistant-leakage-02:room-noise-proxy",
+          "example:exp0017:development:development-assistant-leakage-03:clean-near",
+          "example:exp0017:development:development-assistant-leakage-03:competing-speech-proxy",
+          "example:exp0017:development:development-assistant-leakage-03:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-01:clean-near",
+          "example:exp0017:development:development-background-broadcast-01:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-01:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-01:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-02:clean-near",
+          "example:exp0017:development:development-background-broadcast-02:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-02:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-02:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-03:clean-near",
+          "example:exp0017:development:development-background-broadcast-03:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-03:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-03:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-04:clean-near",
+          "example:exp0017:development:development-background-broadcast-04:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-04:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-04:room-noise-proxy",
+          "example:exp0017:development:development-correction-02:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-01:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-03:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-04:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-05:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-06:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-07:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-01:clean-near",
+          "example:exp0017:development:development-lateral-conversation-01:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-01:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-02:clean-near",
+          "example:exp0017:development:development-lateral-conversation-02:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-02:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-03:clean-near",
+          "example:exp0017:development:development-lateral-conversation-03:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-03:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-04:clean-near",
+          "example:exp0017:development:development-lateral-conversation-04:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-04:room-noise-proxy",
+          "example:exp0017:development:development-short-02:low-distant-proxy",
+          "example:exp0017:development:development-short-04:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-01:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-01:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-01:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-02:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-02:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-02:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-03:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-04:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-04:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-04:room-noise-proxy"
+        ]
+      },
+      "A": {
+        "observations": 120,
+        "correct": 61,
+        "accuracy": 0.5083333333333333,
+        "classRecall": {
+          "BACKGROUND_OR_NOT_DIRECTED": 0.016666666666666666,
+          "DIRECTED_TO_ASSISTANT": 1
+        },
+        "confusion": {
+          "BACKGROUND_OR_NOT_DIRECTED": {
+            "BACKGROUND_OR_NOT_DIRECTED": 1,
+            "DIRECTED_TO_ASSISTANT": 59
+          },
+          "DIRECTED_TO_ASSISTANT": {
+            "BACKGROUND_OR_NOT_DIRECTED": 0,
+            "DIRECTED_TO_ASSISTANT": 60
+          }
+        },
+        "errorExampleIds": [
+          "example:exp0017:development:development-assistant-leakage-01:clean-near",
+          "example:exp0017:development:development-assistant-leakage-01:competing-speech-proxy",
+          "example:exp0017:development:development-assistant-leakage-01:low-distant-proxy",
+          "example:exp0017:development:development-assistant-leakage-01:room-noise-proxy",
+          "example:exp0017:development:development-assistant-leakage-02:clean-near",
+          "example:exp0017:development:development-assistant-leakage-02:competing-speech-proxy",
+          "example:exp0017:development:development-assistant-leakage-02:low-distant-proxy",
+          "example:exp0017:development:development-assistant-leakage-02:room-noise-proxy",
+          "example:exp0017:development:development-assistant-leakage-03:clean-near",
+          "example:exp0017:development:development-assistant-leakage-03:competing-speech-proxy",
+          "example:exp0017:development:development-assistant-leakage-03:low-distant-proxy",
+          "example:exp0017:development:development-assistant-leakage-03:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-01:clean-near",
+          "example:exp0017:development:development-background-broadcast-01:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-01:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-01:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-02:clean-near",
+          "example:exp0017:development:development-background-broadcast-02:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-02:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-02:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-03:clean-near",
+          "example:exp0017:development:development-background-broadcast-03:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-03:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-03:room-noise-proxy",
+          "example:exp0017:development:development-background-broadcast-04:clean-near",
+          "example:exp0017:development:development-background-broadcast-04:competing-speech-proxy",
+          "example:exp0017:development:development-background-broadcast-04:low-distant-proxy",
+          "example:exp0017:development:development-background-broadcast-04:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-01:clean-near",
+          "example:exp0017:development:development-lateral-conversation-01:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-01:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-01:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-02:clean-near",
+          "example:exp0017:development:development-lateral-conversation-02:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-02:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-02:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-03:clean-near",
+          "example:exp0017:development:development-lateral-conversation-03:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-03:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-03:room-noise-proxy",
+          "example:exp0017:development:development-lateral-conversation-04:clean-near",
+          "example:exp0017:development:development-lateral-conversation-04:competing-speech-proxy",
+          "example:exp0017:development:development-lateral-conversation-04:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-04:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-01:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-01:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-01:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-01:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-02:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-02:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-02:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-02:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:room-noise-proxy",
+          "example:exp0017:development:development-third-party-backchannel-04:clean-near",
+          "example:exp0017:development:development-third-party-backchannel-04:competing-speech-proxy",
+          "example:exp0017:development:development-third-party-backchannel-04:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-04:room-noise-proxy"
+        ]
+      },
+      "pairedAAgainstA0ByExample": {
+        "observations": 120,
+        "wins": 10,
+        "losses": 10,
+        "ties": 100,
+        "netGain": 0,
+        "accuracyGain": 0,
+        "winExampleIds": [
+          "example:exp0017:development:development-correction-02:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-01:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-03:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-04:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-05:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-06:low-distant-proxy",
+          "example:exp0017:development:development-direct-generic-07:low-distant-proxy",
+          "example:exp0017:development:development-short-02:low-distant-proxy",
+          "example:exp0017:development:development-short-04:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-03:clean-near"
+        ],
+        "lossExampleIds": [
+          "example:exp0017:development:development-assistant-leakage-01:low-distant-proxy",
+          "example:exp0017:development:development-assistant-leakage-02:low-distant-proxy",
+          "example:exp0017:development:development-assistant-leakage-03:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-01:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-02:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-03:low-distant-proxy",
+          "example:exp0017:development:development-lateral-conversation-04:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-01:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-02:low-distant-proxy",
+          "example:exp0017:development:development-third-party-backchannel-04:low-distant-proxy"
+        ]
+      },
+      "pairedAAgainstA0ByLineage": {
+        "unit": "lineage-root-all-descendants-correct",
+        "observations": 30,
+        "wins": 9,
+        "losses": 0,
+        "ties": 21,
+        "netGain": 9,
+        "accuracyGain": 0.3,
+        "winLineageRootIds": [
+          "supertonic3:development-correction-02",
+          "supertonic3:development-direct-generic-01",
+          "supertonic3:development-direct-generic-03",
+          "supertonic3:development-direct-generic-04",
+          "supertonic3:development-direct-generic-05",
+          "supertonic3:development-direct-generic-06",
+          "supertonic3:development-direct-generic-07",
+          "supertonic3:development-short-02",
+          "supertonic3:development-short-04"
+        ],
+        "lossLineageRootIds": []
+      },
+      "gainOverAllDirected": 0.008333333333333304,
+      "slicesA": {
+        "acousticCondition": {
+          "clean-near": {
+            "observations": 30,
+            "correct": 16,
+            "accuracy": 0.5333333333333333,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0.06666666666666667,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 1,
+                "DIRECTED_TO_ASSISTANT": 14
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 15
+              }
+            },
+            "errorExampleIds": [
+              "example:exp0017:development:development-assistant-leakage-01:clean-near",
+              "example:exp0017:development:development-assistant-leakage-02:clean-near",
+              "example:exp0017:development:development-assistant-leakage-03:clean-near",
+              "example:exp0017:development:development-background-broadcast-01:clean-near",
+              "example:exp0017:development:development-background-broadcast-02:clean-near",
+              "example:exp0017:development:development-background-broadcast-03:clean-near",
+              "example:exp0017:development:development-background-broadcast-04:clean-near",
+              "example:exp0017:development:development-lateral-conversation-01:clean-near",
+              "example:exp0017:development:development-lateral-conversation-02:clean-near",
+              "example:exp0017:development:development-lateral-conversation-03:clean-near",
+              "example:exp0017:development:development-lateral-conversation-04:clean-near",
+              "example:exp0017:development:development-third-party-backchannel-01:clean-near",
+              "example:exp0017:development:development-third-party-backchannel-02:clean-near",
+              "example:exp0017:development:development-third-party-backchannel-04:clean-near"
+            ]
+          },
+          "competing-speech-proxy": {
+            "observations": 30,
+            "correct": 15,
+            "accuracy": 0.5,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 15
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 15
+              }
+            },
+            "errorExampleIds": [
+              "example:exp0017:development:development-assistant-leakage-01:competing-speech-proxy",
+              "example:exp0017:development:development-assistant-leakage-02:competing-speech-proxy",
+              "example:exp0017:development:development-assistant-leakage-03:competing-speech-proxy",
+              "example:exp0017:development:development-background-broadcast-01:competing-speech-proxy",
+              "example:exp0017:development:development-background-broadcast-02:competing-speech-proxy",
+              "example:exp0017:development:development-background-broadcast-03:competing-speech-proxy",
+              "example:exp0017:development:development-background-broadcast-04:competing-speech-proxy",
+              "example:exp0017:development:development-lateral-conversation-01:competing-speech-proxy",
+              "example:exp0017:development:development-lateral-conversation-02:competing-speech-proxy",
+              "example:exp0017:development:development-lateral-conversation-03:competing-speech-proxy",
+              "example:exp0017:development:development-lateral-conversation-04:competing-speech-proxy",
+              "example:exp0017:development:development-third-party-backchannel-01:competing-speech-proxy",
+              "example:exp0017:development:development-third-party-backchannel-02:competing-speech-proxy",
+              "example:exp0017:development:development-third-party-backchannel-03:competing-speech-proxy",
+              "example:exp0017:development:development-third-party-backchannel-04:competing-speech-proxy"
+            ]
+          },
+          "low-distant-proxy": {
+            "observations": 30,
+            "correct": 15,
+            "accuracy": 0.5,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 15
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 15
+              }
+            },
+            "errorExampleIds": [
+              "example:exp0017:development:development-assistant-leakage-01:low-distant-proxy",
+              "example:exp0017:development:development-assistant-leakage-02:low-distant-proxy",
+              "example:exp0017:development:development-assistant-leakage-03:low-distant-proxy",
+              "example:exp0017:development:development-background-broadcast-01:low-distant-proxy",
+              "example:exp0017:development:development-background-broadcast-02:low-distant-proxy",
+              "example:exp0017:development:development-background-broadcast-03:low-distant-proxy",
+              "example:exp0017:development:development-background-broadcast-04:low-distant-proxy",
+              "example:exp0017:development:development-lateral-conversation-01:low-distant-proxy",
+              "example:exp0017:development:development-lateral-conversation-02:low-distant-proxy",
+              "example:exp0017:development:development-lateral-conversation-03:low-distant-proxy",
+              "example:exp0017:development:development-lateral-conversation-04:low-distant-proxy",
+              "example:exp0017:development:development-third-party-backchannel-01:low-distant-proxy",
+              "example:exp0017:development:development-third-party-backchannel-02:low-distant-proxy",
+              "example:exp0017:development:development-third-party-backchannel-03:low-distant-proxy",
+              "example:exp0017:development:development-third-party-backchannel-04:low-distant-proxy"
+            ]
+          },
+          "room-noise-proxy": {
+            "observations": 30,
+            "correct": 15,
+            "accuracy": 0.5,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 15
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 15
+              }
+            },
+            "errorExampleIds": [
+              "example:exp0017:development:development-assistant-leakage-01:room-noise-proxy",
+              "example:exp0017:development:development-assistant-leakage-02:room-noise-proxy",
+              "example:exp0017:development:development-assistant-leakage-03:room-noise-proxy",
+              "example:exp0017:development:development-background-broadcast-01:room-noise-proxy",
+              "example:exp0017:development:development-background-broadcast-02:room-noise-proxy",
+              "example:exp0017:development:development-background-broadcast-03:room-noise-proxy",
+              "example:exp0017:development:development-background-broadcast-04:room-noise-proxy",
+              "example:exp0017:development:development-lateral-conversation-01:room-noise-proxy",
+              "example:exp0017:development:development-lateral-conversation-02:room-noise-proxy",
+              "example:exp0017:development:development-lateral-conversation-03:room-noise-proxy",
+              "example:exp0017:development:development-lateral-conversation-04:room-noise-proxy",
+              "example:exp0017:development:development-third-party-backchannel-01:room-noise-proxy",
+              "example:exp0017:development:development-third-party-backchannel-02:room-noise-proxy",
+              "example:exp0017:development:development-third-party-backchannel-03:room-noise-proxy",
+              "example:exp0017:development:development-third-party-backchannel-04:room-noise-proxy"
+            ]
+          }
+        },
+        "hardDirected": {
+          "correction": {
+            "observations": 16,
+            "correct": 16,
+            "accuracy": 1,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": null,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 0
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 16
+              }
+            },
+            "errorExampleIds": []
+          },
+          "low-distant": {
+            "observations": 15,
+            "correct": 15,
+            "accuracy": 1,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": null,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 0
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 15
+              }
+            },
+            "errorExampleIds": []
+          },
+          "partially-overlapped": {
+            "observations": 15,
+            "correct": 15,
+            "accuracy": 1,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": null,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 0
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 15
+              }
+            },
+            "errorExampleIds": []
+          },
+          "short": {
+            "observations": 16,
+            "correct": 16,
+            "accuracy": 1,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": null,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 0
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 16
+              }
+            },
+            "errorExampleIds": []
+          }
+        }
+      }
+    }
+  },
+  "gates": {
+    "manifestValid": true,
+    "matrixValid": true,
+    "developmentDatasetValid": true,
+    "noHoldoutConstructedOrRead": true,
+    "fitAndCalibrationSplitsFrozen": true,
+    "repeatedTrainingEqual": true,
+    "checkpointValid": true,
+    "modelHashBound": true,
+    "thresholdSelectedOnDevelopment": true,
+    "directedRecallIsPerfect": true,
+    "minimumAccuracy": false,
+    "minimumClassRecall": false,
+    "minimumGainOverAllDirected": false,
+    "minimumPairedNetGainAgainstA0": true,
+    "causalWindow": true,
+    "shadowOnly": true,
+    "allPassed": false
+  },
+  "r": {
+    "status": "not-run",
+    "evaluationRole": "development-screen-only",
+    "confirmatory": false,
+    "holdoutCoreConsumed": false,
+    "promoted": false
+  },
+  "claims": {
+    "authorityGranted": false,
+    "coreConfirmatoryEvidence": false,
+    "rConfirmatoryEvidence": false,
+    "rPromoted": false,
+    "maximumIfDevelopmentPasses": "A pode justificar novo pré-registro com holdout opaco e válido; não há confirmação nem autoridade de runtime",
+    "excluded": [
+      "autoridade para ignorar fala",
+      "evidência confirmatória ou abertura de holdout nesta execução",
+      "naturalidade humana ou qualidade de produto",
+      "generalização física por sala, distância ou dispositivo",
+      "compreensão semântica ou identificação real de destinatário",
+      "confirmação do probe R"
+    ]
+  },
+  "reportSha256": "sha256:31416a440e2b97e7e77f8f5eb9bea535638ed9fdac25281e8f39def496cc8f9f"
+}

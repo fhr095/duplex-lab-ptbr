@@ -191,6 +191,11 @@ em treino/desenvolvimento. Seu desenho MSWC foi invalidado como holdout antes
 do fit por expor rótulos e não conter o contexto alegado no áudio; um novo
 holdout opaco só será pré-registrado se o challenger qualificar no screen.
 
+O screen foi executado após o freeze `b2a9cc2`: `A` manteve recall dirigido de
+100%, mas obteve 50,8% de acurácia, recall de fundo de 1,7% e ganho pareado por
+exemplo zero contra `A0`. A família acústica compacta foi cortada nesta rodada,
+nenhum holdout foi construído e `A0` segue como referência do probe semântico.
+
 ## Pontos incorporados
 
 - congelar a cascata como referência, não como código intocável;

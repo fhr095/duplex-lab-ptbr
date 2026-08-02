@@ -21,7 +21,10 @@ test("índice canônico real referencia evidências existentes", async () => {
   assert.equal(index.currentCriticalPath, "EXP-0017");
   assert.equal(index.currentParallelProbe.id, "EXP-0017-R");
   assert.equal(index.currentParallelProbe.blocking, false);
-  assert.equal(index.entries.at(-1).canonicalReport, null);
+  assert.equal(
+    index.entries.at(-1).canonicalReport,
+    "eval/reports/exp-0017-core-development-v0.1.json"
+  );
   assert.equal(index.entries.at(-1).authority, "none");
 });
 
@@ -110,11 +113,11 @@ test("rejeita probe paralelo que bloqueie ou receba autoridade", async () => {
 });
 
 test("rejeita autoridade sem relatório e drift contra decisão canônica", async () => {
-  const plannedAuthority = await fixture();
-  plannedAuthority.entries.at(-1).authority = "runtime-control";
+  const activeAuthority = await fixture();
+  activeAuthority.entries.at(-1).authority = "runtime-control";
   await assert.rejects(
-    validateExperimentIndex(plannedAuthority, { projectRoot }),
-    /cannot have authority before a canonical report/u
+    validateExperimentIndex(activeAuthority, { projectRoot }),
+    /authority contradicts its canonical report contract/u
   );
 
   const promotedAuthority = await fixture();
