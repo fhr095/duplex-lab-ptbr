@@ -1,0 +1,1096 @@
+{
+  "schemaVersion": "exp-0017-supertonic-scenes-v1",
+  "id": "exp-0017-supertonic-scenes-ptbr-v0.1",
+  "locale": "pt-BR",
+  "status": "pre-fit-plan-no-audio-materialized",
+  "purpose": "Plano sintético local de treino e desenvolvimento para relevância binária da fala no EXP-0017.",
+  "scope": {
+    "allowedSplits": [
+      "train",
+      "development"
+    ],
+    "holdoutObserved": false,
+    "audioMaterialized": false,
+    "totalScenes": 60,
+    "scenesPerSplit": 30,
+    "labelsPerClassPerSplit": 15,
+    "paidApiCalls": 0
+  },
+  "generator": {
+    "model": "Supertone/supertonic-3",
+    "modelName": "Supertonic 3",
+    "languageCode": "pt",
+    "languageBoundary": "O modelo declara português genérico; este plano não alega sotaque ou naturalidade PT-BR.",
+    "sampleRate": 44100,
+    "execution": "local-offline",
+    "modelCacheRoot": "${XDG_CACHE_HOME:-$HOME/.cache}/supertonic3",
+    "revision": "724fb5abbf5502583fb520898d45929e62f02c0b",
+    "cachedHuggingFaceTreeId": "724fb5abbf5502583fb520898d45929e62f02c0b",
+    "treeManifestPath": "<model-cache>/.cache/huggingface/trees/724fb5abbf5502583fb520898d45929e62f02c0b.json",
+    "license": {
+      "model": "OpenRAIL-M",
+      "modelLicensePath": "<model-cache>/LICENSE",
+      "modelLicenseSha256": "sha256:0d944a9110fed9a9602d60e0423a272903e7bd21ab060490774efc77c2275e9f",
+      "sdk": "MIT",
+      "sdkVersion": "1.3.1"
+    },
+    "syntheticDisclosure": "Todo áudio futuramente materializado a partir destas cenas será sintético, identificado como tal e sujeito às restrições de uso do OpenRAIL-M.",
+    "retention": {
+      "modelWeightsInGit": false,
+      "audioInGit": false,
+      "templatesMayBeCommitted": true
+    }
+  },
+  "splitPolicy": {
+    "templateGroupsDisjoint": true,
+    "semanticGroupsDisjoint": true,
+    "trainVoiceStyles": [
+      "F1",
+      "F2",
+      "M1",
+      "M2"
+    ],
+    "developmentVoiceStyles": [
+      "F3",
+      "F4",
+      "M3",
+      "M4"
+    ],
+    "voiceBalance": "Cada split usa duas vozes em 8 cenas e duas em 7 cenas; nenhuma voz atravessa splits.",
+    "familyCountsPerSplit": {
+      "correction": 4,
+      "short": 4,
+      "direct-generic": 7,
+      "third-party-backchannel": 4,
+      "lateral-conversation": 4,
+      "background-broadcast": 4,
+      "assistant-leakage-or-nondirected": 3
+    }
+  },
+  "scenes": {
+    "train": [
+      {
+        "id": "train-correction-01",
+        "text": "Não, espera: eu quis dizer quinta-feira, não terça-feira.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "correction",
+        "templateGroupId": "train-template-correction-date-01",
+        "semanticGroupId": "train-semantic-correction-date",
+        "voiceStyle": "F1",
+        "intendedContext": "A pessoa interrompe o assistente para corrigir diretamente o dia mencionado no turno atual.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-correction-02",
+        "text": "Na verdade, troque o horário para as quatro da tarde.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "correction",
+        "templateGroupId": "train-template-correction-time-02",
+        "semanticGroupId": "train-semantic-correction-time",
+        "voiceStyle": "F2",
+        "intendedContext": "A pessoa fala com o assistente para substituir um horário informado anteriormente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-correction-03",
+        "text": "Corrigindo: o valor é cento e oitenta, não oitocentos.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "correction",
+        "templateGroupId": "train-template-correction-amount-03",
+        "semanticGroupId": "train-semantic-correction-amount",
+        "voiceStyle": "M1",
+        "intendedContext": "A pessoa corrige diretamente um valor que o assistente acabou de repetir.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-correction-04",
+        "text": "Melhor assim: descarte a primeira opção e mantenha a segunda.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "correction",
+        "templateGroupId": "train-template-correction-choice-04",
+        "semanticGroupId": "train-semantic-correction-choice",
+        "voiceStyle": "M2",
+        "intendedContext": "A pessoa muda uma escolha e dá a nova instrução diretamente ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-short-01",
+        "text": "Pare agora.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "short",
+        "templateGroupId": "train-template-short-stop-01",
+        "semanticGroupId": "train-semantic-short-stop",
+        "voiceStyle": "F1",
+        "intendedContext": "A pessoa dirige um comando curto de parada ao assistente enquanto ele fala.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-short-02",
+        "text": "Espere um pouco.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "short",
+        "templateGroupId": "train-template-short-wait-02",
+        "semanticGroupId": "train-semantic-short-wait",
+        "voiceStyle": "F2",
+        "intendedContext": "A pessoa pede diretamente que o assistente aguarde antes de continuar.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-short-03",
+        "text": "Sim, pode seguir.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "short",
+        "templateGroupId": "train-template-short-continue-03",
+        "semanticGroupId": "train-semantic-short-continue",
+        "voiceStyle": "M1",
+        "intendedContext": "A pessoa confirma ao assistente, de forma breve, que ele pode continuar.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-short-04",
+        "text": "Não, volte.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "short",
+        "templateGroupId": "train-template-short-return-04",
+        "semanticGroupId": "train-semantic-short-return",
+        "voiceStyle": "M2",
+        "intendedContext": "A pessoa interrompe o assistente com uma correção curta para retornar ao ponto anterior.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-direct-generic-01",
+        "text": "Pode resumir o ponto principal em duas frases?",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "train-template-direct-summary-01",
+        "semanticGroupId": "train-semantic-direct-summary",
+        "voiceStyle": "F1",
+        "intendedContext": "A pessoa faz uma solicitação direta ao assistente sobre a resposta corrente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-direct-generic-02",
+        "text": "Explique essa diferença com um exemplo simples.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "train-template-direct-example-02",
+        "semanticGroupId": "train-semantic-direct-example",
+        "voiceStyle": "F2",
+        "intendedContext": "A pessoa pede diretamente ao assistente uma explicação complementar.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-direct-generic-03",
+        "text": "Compare as alternativas sem escolher por mim.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "train-template-direct-compare-03",
+        "semanticGroupId": "train-semantic-direct-compare",
+        "voiceStyle": "M1",
+        "intendedContext": "A pessoa orienta diretamente o assistente sobre como conduzir a comparação.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-direct-generic-04",
+        "text": "Leia novamente apenas a última parte.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "train-template-direct-repeat-04",
+        "semanticGroupId": "train-semantic-direct-repeat",
+        "voiceStyle": "M2",
+        "intendedContext": "A pessoa solicita diretamente ao assistente a repetição de um trecho específico.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-direct-generic-05",
+        "text": "Mostre primeiro os riscos e depois os benefícios.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "train-template-direct-order-05",
+        "semanticGroupId": "train-semantic-direct-order",
+        "voiceStyle": "F1",
+        "intendedContext": "A pessoa define diretamente ao assistente a ordem desejada para a resposta.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-direct-generic-06",
+        "text": "Pode continuar de onde parou.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "train-template-direct-resume-06",
+        "semanticGroupId": "train-semantic-direct-resume",
+        "voiceStyle": "F2",
+        "intendedContext": "A pessoa autoriza diretamente o assistente a retomar a resposta interrompida.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-direct-generic-07",
+        "text": "Antes de concluir, diga o que ainda está incerto.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "train-template-direct-uncertainty-07",
+        "semanticGroupId": "train-semantic-direct-uncertainty",
+        "voiceStyle": "M1",
+        "intendedContext": "A pessoa pede diretamente ao assistente que explicite incertezas antes da conclusão.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-third-party-backchannel-01",
+        "text": "Aham.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "third-party-backchannel",
+        "templateGroupId": "train-template-third-party-aham-01",
+        "semanticGroupId": "train-semantic-third-party-acknowledge",
+        "voiceStyle": "F1",
+        "intendedContext": "Uma pessoa próxima diz isso para outro humano durante uma conversa lateral; não responde ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-third-party-backchannel-02",
+        "text": "Sim, entendi.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "third-party-backchannel",
+        "templateGroupId": "train-template-third-party-understood-02",
+        "semanticGroupId": "train-semantic-third-party-understood",
+        "voiceStyle": "F2",
+        "intendedContext": "Uma terceira pessoa confirma algo a seu interlocutor, sem participar da conversa com o assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-third-party-backchannel-03",
+        "text": "Certo.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "third-party-backchannel",
+        "templateGroupId": "train-template-third-party-right-03",
+        "semanticGroupId": "train-semantic-third-party-right",
+        "voiceStyle": "M1",
+        "intendedContext": "O som vem de alguém ao lado concordando com outra pessoa, não com o assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-third-party-backchannel-04",
+        "text": "Tá bom.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "third-party-backchannel",
+        "templateGroupId": "train-template-third-party-okay-04",
+        "semanticGroupId": "train-semantic-third-party-okay",
+        "voiceStyle": "M2",
+        "intendedContext": "Uma pessoa no ambiente responde brevemente a outro humano; o assistente não é o destinatário.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-lateral-conversation-01",
+        "text": "Você trouxe as chaves?",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "lateral-conversation",
+        "templateGroupId": "train-template-lateral-keys-01",
+        "semanticGroupId": "train-semantic-lateral-household",
+        "voiceStyle": "F1",
+        "intendedContext": "A pergunta faz parte de uma conversa entre duas pessoas perto do microfone e não envolve o assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-lateral-conversation-02",
+        "text": "Depois a gente vê isso com calma.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "lateral-conversation",
+        "templateGroupId": "train-template-lateral-later-02",
+        "semanticGroupId": "train-semantic-lateral-postpone",
+        "voiceStyle": "F2",
+        "intendedContext": "Uma pessoa comenta com outra no ambiente, sem intenção de controlar ou responder ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-lateral-conversation-03",
+        "text": "Feche a janela, por favor.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "lateral-conversation",
+        "templateGroupId": "train-template-lateral-window-03",
+        "semanticGroupId": "train-semantic-lateral-room",
+        "voiceStyle": "M1",
+        "intendedContext": "O comando é dirigido a outro humano presente na sala, não ao assistente de voz.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-lateral-conversation-04",
+        "text": "O ônibus já passou?",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "lateral-conversation",
+        "templateGroupId": "train-template-lateral-bus-04",
+        "semanticGroupId": "train-semantic-lateral-transit",
+        "voiceStyle": "M2",
+        "intendedContext": "Duas pessoas conversam entre si ao fundo; a pergunta não é destinada ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-background-broadcast-01",
+        "text": "Agora vamos às principais notícias desta manhã.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "background-broadcast",
+        "templateGroupId": "train-template-broadcast-news-01",
+        "semanticGroupId": "train-semantic-broadcast-news",
+        "voiceStyle": "F1",
+        "intendedContext": "A fala vem de um noticiário reproduzido ao fundo e não participa da conversa com o assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-background-broadcast-02",
+        "text": "Misture os ingredientes até obter uma massa uniforme.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "background-broadcast",
+        "templateGroupId": "train-template-broadcast-cooking-02",
+        "semanticGroupId": "train-semantic-broadcast-cooking",
+        "voiceStyle": "F2",
+        "intendedContext": "A frase pertence a um programa de culinária tocando em outro aparelho, sem se dirigir ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-background-broadcast-03",
+        "text": "A temperatura deve cair no fim da tarde.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "background-broadcast",
+        "templateGroupId": "train-template-broadcast-weather-03",
+        "semanticGroupId": "train-semantic-broadcast-weather",
+        "voiceStyle": "M1",
+        "intendedContext": "A fala é de uma previsão do tempo ao fundo, sem vínculo com o turno do assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-background-broadcast-04",
+        "text": "No segundo tempo, a equipe mudou sua estratégia.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "background-broadcast",
+        "templateGroupId": "train-template-broadcast-sports-04",
+        "semanticGroupId": "train-semantic-broadcast-sports",
+        "voiceStyle": "M2",
+        "intendedContext": "O trecho vem de uma transmissão esportiva distante e não é fala do usuário para o assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-assistant-leakage-01",
+        "text": "Claro, vou verificar isso agora.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "assistant-leakage-or-nondirected",
+        "templateGroupId": "train-template-leakage-check-01",
+        "semanticGroupId": "train-semantic-leakage-assistant-response",
+        "voiceStyle": "F1",
+        "intendedContext": "O microfone capta a resposta de outro assistente ou aparelho; não há nova fala do usuário.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-assistant-leakage-02",
+        "text": "Estas são as opções disponíveis no momento.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "assistant-leakage-or-nondirected",
+        "templateGroupId": "train-template-leakage-options-02",
+        "semanticGroupId": "train-semantic-leakage-list",
+        "voiceStyle": "F2",
+        "intendedContext": "A frase é reprodução eletrônica vazando de outro dispositivo, não uma intervenção dirigida ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      },
+      {
+        "id": "train-assistant-leakage-03",
+        "text": "Posso continuar quando você quiser.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "assistant-leakage-or-nondirected",
+        "templateGroupId": "train-template-leakage-continue-03",
+        "semanticGroupId": "train-semantic-leakage-prompt",
+        "voiceStyle": "M2",
+        "intendedContext": "É áudio de saída vazando para a entrada; nenhum humano está falando com o assistente naquele instante.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "train-only"
+        }
+      }
+    ],
+    "development": [
+      {
+        "id": "development-correction-01",
+        "text": "Espera, corrige: a conversa será de manhã, não à noite.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "correction",
+        "templateGroupId": "development-template-correction-period-01",
+        "semanticGroupId": "development-semantic-correction-period",
+        "voiceStyle": "F3",
+        "intendedContext": "A pessoa interrompe o assistente para corrigir diretamente o período citado na resposta.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-correction-02",
+        "text": "Quer dizer, mantenha somente o último item da lista.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "correction",
+        "templateGroupId": "development-template-correction-list-02",
+        "semanticGroupId": "development-semantic-correction-list",
+        "voiceStyle": "F4",
+        "intendedContext": "A pessoa revisa uma instrução anterior e fala diretamente com o assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-correction-03",
+        "text": "Não foi isso: substitua vinte por doze.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "correction",
+        "templateGroupId": "development-template-correction-number-03",
+        "semanticGroupId": "development-semantic-correction-number",
+        "voiceStyle": "M3",
+        "intendedContext": "A pessoa corrige diretamente um número interpretado pelo assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-correction-04",
+        "text": "Reformulando: compare as opções, mas não escolha nenhuma.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "correction",
+        "templateGroupId": "development-template-correction-scope-04",
+        "semanticGroupId": "development-semantic-correction-scope",
+        "voiceStyle": "M4",
+        "intendedContext": "A pessoa altera diretamente o escopo da tarefa pedida ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-short-01",
+        "text": "Pode parar.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "short",
+        "templateGroupId": "development-template-short-pause-01",
+        "semanticGroupId": "development-semantic-short-pause",
+        "voiceStyle": "F3",
+        "intendedContext": "A pessoa dá ao assistente um comando curto e direto para encerrar a fala.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-short-02",
+        "text": "Um momento.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "short",
+        "templateGroupId": "development-template-short-moment-02",
+        "semanticGroupId": "development-semantic-short-moment",
+        "voiceStyle": "F4",
+        "intendedContext": "A pessoa pede diretamente ao assistente uma pausa breve antes da continuação.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-short-03",
+        "text": "Isso, siga.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "short",
+        "templateGroupId": "development-template-short-proceed-03",
+        "semanticGroupId": "development-semantic-short-proceed",
+        "voiceStyle": "M3",
+        "intendedContext": "A pessoa confirma diretamente ao assistente que ele deve prosseguir.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-short-04",
+        "text": "Não, repita.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "short",
+        "templateGroupId": "development-template-short-repeat-04",
+        "semanticGroupId": "development-semantic-short-repeat",
+        "voiceStyle": "M4",
+        "intendedContext": "A pessoa pede diretamente ao assistente que repita o que acabou de dizer.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-direct-generic-01",
+        "text": "Diga qual critério você está usando nessa comparação.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "development-template-direct-criterion-01",
+        "semanticGroupId": "development-semantic-direct-criterion",
+        "voiceStyle": "F3",
+        "intendedContext": "A pessoa pergunta diretamente ao assistente sobre o critério da resposta corrente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-direct-generic-02",
+        "text": "Transforme essa explicação em uma lista curta.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "development-template-direct-list-02",
+        "semanticGroupId": "development-semantic-direct-list",
+        "voiceStyle": "F4",
+        "intendedContext": "A pessoa solicita diretamente ao assistente uma mudança no formato da resposta.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-direct-generic-03",
+        "text": "Mostre apenas o que mudou desde a última versão.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "development-template-direct-delta-03",
+        "semanticGroupId": "development-semantic-direct-delta",
+        "voiceStyle": "M3",
+        "intendedContext": "A pessoa orienta diretamente o assistente a limitar a resposta às mudanças relevantes.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-direct-generic-04",
+        "text": "Pode detalhar melhor a segunda alternativa?",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "development-template-direct-detail-04",
+        "semanticGroupId": "development-semantic-direct-detail",
+        "voiceStyle": "M4",
+        "intendedContext": "A pessoa faz uma pergunta complementar diretamente ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-direct-generic-05",
+        "text": "Deixe a conclusão para depois dos exemplos.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "development-template-direct-sequence-05",
+        "semanticGroupId": "development-semantic-direct-sequence",
+        "voiceStyle": "F3",
+        "intendedContext": "A pessoa instrui diretamente o assistente a reorganizar a sequência da resposta.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-direct-generic-06",
+        "text": "Continue, mas fale um pouco mais devagar.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "development-template-direct-pace-06",
+        "semanticGroupId": "development-semantic-direct-pace",
+        "voiceStyle": "F4",
+        "intendedContext": "A pessoa dirige ao assistente uma instrução sobre continuidade e ritmo da fala.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-direct-generic-07",
+        "text": "Antes de avançar, confirme o que você entendeu.",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "conversationFamily": "direct-generic",
+        "templateGroupId": "development-template-direct-confirm-07",
+        "semanticGroupId": "development-semantic-direct-confirm",
+        "voiceStyle": "M3",
+        "intendedContext": "A pessoa solicita diretamente ao assistente uma confirmação de entendimento.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-third-party-backchannel-01",
+        "text": "Pois é.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "third-party-backchannel",
+        "templateGroupId": "development-template-third-party-agree-01",
+        "semanticGroupId": "development-semantic-third-party-agree",
+        "voiceStyle": "F3",
+        "intendedContext": "Uma terceira pessoa reage ao comentário de outro humano; o backchannel não é para o assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-third-party-backchannel-02",
+        "text": "Beleza.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "third-party-backchannel",
+        "templateGroupId": "development-template-third-party-fine-02",
+        "semanticGroupId": "development-semantic-third-party-fine",
+        "voiceStyle": "F4",
+        "intendedContext": "A fala breve confirma algo em uma conversa lateral e não se dirige ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-third-party-backchannel-03",
+        "text": "Sei.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "third-party-backchannel",
+        "templateGroupId": "development-template-third-party-know-03",
+        "semanticGroupId": "development-semantic-third-party-know",
+        "voiceStyle": "M3",
+        "intendedContext": "Uma pessoa responde de modo curto a outro participante da sala, não ao sistema.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-third-party-backchannel-04",
+        "text": "Com certeza.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "third-party-backchannel",
+        "templateGroupId": "development-template-third-party-confirm-04",
+        "semanticGroupId": "development-semantic-third-party-confirm",
+        "voiceStyle": "M4",
+        "intendedContext": "A confirmação pertence ao diálogo entre duas pessoas próximas e não ao turno do assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-lateral-conversation-01",
+        "text": "Deixei o copo na cozinha.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "lateral-conversation",
+        "templateGroupId": "development-template-lateral-cup-01",
+        "semanticGroupId": "development-semantic-lateral-kitchen",
+        "voiceStyle": "F3",
+        "intendedContext": "Uma pessoa comenta com outra no ambiente; a frase não solicita ação do assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-lateral-conversation-02",
+        "text": "Você vai sair mais tarde?",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "lateral-conversation",
+        "templateGroupId": "development-template-lateral-leave-02",
+        "semanticGroupId": "development-semantic-lateral-plans",
+        "voiceStyle": "F4",
+        "intendedContext": "A pergunta é dirigida a outro humano presente, sem relação com a conversa do assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-lateral-conversation-03",
+        "text": "A luz ficou acesa no corredor.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "lateral-conversation",
+        "templateGroupId": "development-template-lateral-light-03",
+        "semanticGroupId": "development-semantic-lateral-light",
+        "voiceStyle": "M3",
+        "intendedContext": "A observação faz parte de uma conversa lateral e não é dirigida ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-lateral-conversation-04",
+        "text": "Me avise quando você chegar.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "lateral-conversation",
+        "templateGroupId": "development-template-lateral-arrival-04",
+        "semanticGroupId": "development-semantic-lateral-arrival",
+        "voiceStyle": "M4",
+        "intendedContext": "Uma pessoa fala com seu interlocutor humano, não com o assistente que está ativo no ambiente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-background-broadcast-01",
+        "text": "A frente fria avança pela região durante a madrugada.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "background-broadcast",
+        "templateGroupId": "development-template-broadcast-forecast-01",
+        "semanticGroupId": "development-semantic-broadcast-forecast",
+        "voiceStyle": "F3",
+        "intendedContext": "É uma previsão meteorológica reproduzida ao fundo, sem destinatário no assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-background-broadcast-02",
+        "text": "Acrescente a farinha aos poucos e continue mexendo.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "background-broadcast",
+        "templateGroupId": "development-template-broadcast-recipe-02",
+        "semanticGroupId": "development-semantic-broadcast-recipe",
+        "voiceStyle": "F4",
+        "intendedContext": "O áudio é de um vídeo de receita em outro aparelho e não comanda o assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-background-broadcast-03",
+        "text": "A exposição reúne obras produzidas em diferentes períodos.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "background-broadcast",
+        "templateGroupId": "development-template-broadcast-documentary-03",
+        "semanticGroupId": "development-semantic-broadcast-documentary",
+        "voiceStyle": "M3",
+        "intendedContext": "A narração vem de um documentário ao fundo e não participa do diálogo com o assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-background-broadcast-04",
+        "text": "A partida recomeça depois do intervalo técnico.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "background-broadcast",
+        "templateGroupId": "development-template-broadcast-match-04",
+        "semanticGroupId": "development-semantic-broadcast-match",
+        "voiceStyle": "M4",
+        "intendedContext": "O trecho pertence a uma transmissão esportiva ao fundo, não a uma fala do usuário.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-assistant-leakage-01",
+        "text": "A verificação foi concluída sem alterações.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "assistant-leakage-or-nondirected",
+        "templateGroupId": "development-template-leakage-complete-01",
+        "semanticGroupId": "development-semantic-leakage-status",
+        "voiceStyle": "F3",
+        "intendedContext": "A entrada capta a saída falada de outro sistema; não existe nova intervenção humana.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-assistant-leakage-02",
+        "text": "Vamos começar pelo primeiro tópico.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "assistant-leakage-or-nondirected",
+        "templateGroupId": "development-template-leakage-topic-02",
+        "semanticGroupId": "development-semantic-leakage-structure",
+        "voiceStyle": "F4",
+        "intendedContext": "A frase é eco ou reprodução da saída de um assistente próximo, não fala dirigida ao sistema avaliado.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      },
+      {
+        "id": "development-assistant-leakage-03",
+        "text": "Há três caminhos possíveis para continuar.",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "conversationFamily": "assistant-leakage-or-nondirected",
+        "templateGroupId": "development-template-leakage-paths-03",
+        "semanticGroupId": "development-semantic-leakage-options",
+        "voiceStyle": "M4",
+        "intendedContext": "O microfone recebe áudio eletrônico vazado de outro dispositivo, sem intenção humana dirigida ao assistente.",
+        "provenance": {
+          "textOrigin": "project-authored-static-pre-fit-template",
+          "speechGenerator": "Supertone/supertonic-3",
+          "audioStatus": "not-materialized",
+          "synthetic": true,
+          "fitEligibility": "development-only"
+        }
+      }
+    ]
+  }
+}

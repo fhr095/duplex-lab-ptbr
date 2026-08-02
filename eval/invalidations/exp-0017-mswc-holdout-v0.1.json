@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "exp-0017-invalidation-v1",
+  "experimentId": "exp-0017-safe-veto-core-v0.1",
+  "invalidatedOn": "2026-08-02",
+  "status": "invalidated-before-official-fit-and-gates",
+  "formerRole": "holdout-core",
+  "decision": "remove-from-operational-set",
+  "reasons": [
+    "labels, contexts and source identities were visible in the development environment, so integrity hashes did not provide blinding",
+    "the audio contained isolated human words but not the claimed directed/background conversational context",
+    "vocabulary was not counterbalanced across labels and could act as a shortcut"
+  ],
+  "supersededEvidence": {
+    "planFileSha256": "sha256:f105191a0330857a8e00c8aa82bfeb01247a707402c9e3cd67af8ad6df3f4db9",
+    "sourceManifestFileSha256": "sha256:4f5fee10e9ddfed07bdc453e1b0b34ad2a3a768af832ac0a17ff5522f800bd7d",
+    "sourceManifestCanonicalSha256": "sha256:774a22de670fc2af63f41e4a03d1dbb1c566deb8983a4216fcbf27efccfa2232",
+    "developmentEnvironmentManifestFileSha256": "sha256:f702bc0d2fcf335d160a96702a35f6c3655f8e02697420c5b45d23eadf242ca5",
+    "developmentEnvironmentManifestCanonicalSha256": "sha256:f735ee7bc539931ef9ef112f47ba093a74c3c7eaf075ff93d0958e923068c560",
+    "payloadSha256": "sha256:ab9a775ecf4e837848518b479db3c74bdc3a7cecb29fdafbca82bee63942a61b",
+    "commitmentSha256": "sha256:947c74e22ef2b665bc2b1efd71930a37e31e898ec6f5fe68425dbec470ebe4a3"
+  },
+  "boundaries": {
+    "candidateMetricsMotivatedInvalidation": false,
+    "eligibleForFit": false,
+    "eligibleForCalibration": false,
+    "eligibleForAnyGate": false,
+    "eligibleForConfirmatoryClaim": false,
+    "artifactsTrackedAsOperationalInputs": false,
+    "futureRelabelOrResealAllowed": false
+  },
+  "replacementPolicy": "Only a new preregistration after development qualification may define a new opaque holdout with audible context and counterbalanced content."
+}

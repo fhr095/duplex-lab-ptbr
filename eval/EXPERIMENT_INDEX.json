@@ -194,15 +194,23 @@
     },
     {
       "id": "EXP-0017",
-      "status": "planned",
-      "decision": "pending-safe-veto-and-semantic-oracle-probes",
+      "status": "active",
+      "decision": "development-screen-after-invalidating-mswc-holdout",
       "canonicalReport": null,
       "authority": "none",
       "criticalPath": true,
-      "cleanCloneChecks": [],
-      "localReproductionCommands": [],
+      "cleanCloneChecks": [
+        "npm test",
+        "npm run eval:exp:0017:supertonic:check",
+        "npm run eval:exp:0017:data:check"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0017:supertonic",
+        "npm run eval:exp:0017:data",
+        "npm run eval:exp:0017:core:dev"
+      ],
       "supersedes": [],
-      "nextDecision": "Autorizar um experimento confirmatório de autoridade limitada somente se o veto superar a baseline preservando todas as falas dirigidas; cortar texto parcial para este ponto se nem o oráculo agregar valor."
+      "nextDecision": "Pré-registrar um novo holdout opaco e contextualmente válido somente se A qualificar no screen; cortar texto parcial para este ponto se nem o oráculo agregar valor."
     }
   ]
 }

@@ -385,7 +385,9 @@ M4a e o candidato M4b de relevância em shadow foram promovidas. O instrumento
 EXP-0015 concluiu 3/3 participantes externos e liberou o desenho, não o fit.
 O EXP-0016 já superou a regra em holdout e reencontrou ganho nas âncoras
 humanas. O caminho crítico agora é o EXP-0017 Core: calibrar o veto conservador
-com diversidade acústica nova e um holdout novamente congelado. Em paralelo,
+com diversidade acústica nova em treino/desenvolvimento. O MSWC isolado foi
+invalidado como holdout antes do fit; outro conjunto opaco e com contexto
+audível só será criado se o challenger qualificar. Em paralelo,
 um probe curto testa se transcrição parcial causal acrescenta informação ao
 M4b; começa por oráculo e só usa ASR real se houver ganho. Até esses gates, o
 checkpoint continua observacional e o comando físico rápido permanece

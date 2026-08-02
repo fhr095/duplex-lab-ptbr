@@ -5,6 +5,7 @@ import {
   decodeWaveToPcm16,
   float32ToPcm16
 } from "../src/asr/pcm.mjs";
+import { encodePcm16Wave } from "../src/audio/wav.mjs";
 
 function floatWave(samples, sampleRate = 16_000) {
   const dataBytes = samples.length * 4;
@@ -53,4 +54,17 @@ test("decodifica WAV float usado pelo corpus humano", () => {
   assert.equal(decoded.pcm.length, 8);
   assert.equal(decoded.pcm.readInt16LE(2), 8_192);
   assert.equal(decoded.pcm.readInt16LE(4), -8_192);
+});
+
+test("preserva PCM16 mono bit a bit quando a taxa já é a taxa alvo", () => {
+  const samples = [-32_768, -12_345, -1, 0, 1, 12_345, 32_767];
+  const pcm = Buffer.alloc(samples.length * 2);
+  samples.forEach((sample, index) => pcm.writeInt16LE(sample, index * 2));
+  const decoded = decodeWaveToPcm16(
+    encodePcm16Wave(pcm, { sampleRate: 16_000, channels: 1 }),
+    { targetSampleRate: 16_000 }
+  );
+
+  assert.equal(decoded.sampleRate, 16_000);
+  assert.deepEqual(decoded.pcm, pcm);
 });

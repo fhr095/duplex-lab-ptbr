@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "id": "exp-0017-safe-veto-core-v0.1",
+  "locale": "pt-BR",
+  "status": "frozen-before-fit",
+  "preRegistration": "docs/experiments/EXP-0017-safe-veto-and-semantic-probe.md",
+  "hypothesis": "A mesma família acústica compacta do EXP-0016, treinada sobre condições cruzadas, vozes mais diversas e hard negatives, consegue aumentar a cobertura segura de fundo sem vetar nenhuma fala dirigida.",
+  "budget": {
+    "maximumExamples": 720,
+    "plannedExamples": 240,
+    "modelFamilies": 1,
+    "calibrationRules": 1,
+    "seeds": [
+      0
+    ],
+    "holdoutOpenings": 0,
+    "paidApiCalls": 0,
+    "paidGpuRuns": 0
+  },
+  "sources": {
+    "trainDevelopment": {
+      "manifest": "eval/sources/exp-0017-supertonic-v0.1.json",
+      "manifestSha256": "sha256:b386e85464fc1e6a8503d637eb5046f7bc270cb26ca9fc11799544fb7c7c9751",
+      "fileSha256": "sha256:6cb731013b731ad8723c4795f0273fc8e9fe0a2c39f88e1c8b7deb42e367ce0a",
+      "kind": "synthetic-ai",
+      "license": "OpenRAIL-M",
+      "allowedSplits": [
+        "train",
+        "development"
+      ]
+    }
+  },
+  "referenceA0": {
+    "checkpoint": "web/speaker-relevance-checkpoint.json",
+    "fileSha256": "sha256:dcd54b658c86af23c32884cc390fb588f84fff5a900f16f869c6e026c067209f",
+    "modelSha256": "sha256:bc09e1311b5034bca801bb44b7fbdd60db07354abd4035c53c97191ec454fbfc",
+    "checkpointId": "speaker-relevance-m4b-bc09e1311b5034bc",
+    "backgroundVetoConfidence": 0.8,
+    "role": "frozen-exp-0016-reference"
+  },
+  "task": {
+    "classes": [
+      "BACKGROUND_OR_NOT_DIRECTED",
+      "DIRECTED_TO_ASSISTANT"
+    ],
+    "baseline": "all-vad-positive-speech-is-directed",
+    "candidateMode": "shadow",
+    "backgroundAction": "CONTINUE_OUTPUT",
+    "directedAction": "DEFER_TO_DETERMINISTIC",
+    "lowConfidenceAction": "DEFER_TO_DETERMINISTIC"
+  },
+  "audio": {
+    "sampleRate": 16000,
+    "durationMs": 1000,
+    "decisionMs": 560,
+    "decisionSamples": 8960,
+    "futureSamplesAllowed": 0,
+    "conditionsCrossedAcrossLabels": true
+  },
+  "acousticConditions": [
+    {
+      "id": "clean-near",
+      "description": "proxy procedural de fala limpa/próxima",
+      "targetRmsDb": -22,
+      "finalRmsDb": -22
+    },
+    {
+      "id": "low-distant-proxy",
+      "description": "proxy procedural de fala baixa/distante, não medição física",
+      "targetRmsDb": -31,
+      "finalRmsDb": -31,
+      "lowPassAlpha": 0.16,
+      "echoDelayMs": 80,
+      "echoGain": 0.3
+    },
+    {
+      "id": "room-noise-proxy",
+      "description": "proxy procedural de sala com eco e ruído seeded",
+      "targetRmsDb": -25,
+      "finalRmsDb": -25,
+      "echoDelayMs": 45,
+      "echoGain": 0.2,
+      "noiseSnrDb": 18
+    },
+    {
+      "id": "competing-speech-proxy",
+      "description": "fala concorrente causal no mesmo split e ruído leve",
+      "targetRmsDb": -24,
+      "finalRmsDb": -24,
+      "secondary": true,
+      "secondaryRmsDb": -30,
+      "noiseSnrDb": 24
+    }
+  ],
+  "matrix": {
+    "sourceScenesPerSplit": 30,
+    "descendantsPerSource": 4,
+    "examplesPerSplit": 120,
+    "examplesPerClassPerSplit": 60,
+    "secondaryPairing": "opposite-class-same-split-index-v1",
+    "hardDirectedStrata": {
+      "low-distant": "all directed examples under low-distant-proxy",
+      "partially-overlapped": "all directed examples under competing-speech-proxy",
+      "short": "all descendants of the four directed-short sources",
+      "correction": "all descendants of the four directed-correction sources"
+    }
+  },
+  "trainer": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "featureFamily": "speaker-relevance-causal-features-v0.1",
+    "epochs": 2400,
+    "learningRate": 0.3,
+    "l2": 0.001,
+    "initialization": "all-zero",
+    "ordering": "input-order/full-batch",
+    "repetitions": 2
+  },
+  "calibration": {
+    "selectedSplit": "development",
+    "minimumThreshold": 0.5,
+    "objective": "maximize-background-coverage-subject-to-perfect-directed-recall",
+    "tieBreak": [
+      "maximum-background-coverage",
+      "maximum-accuracy",
+      "highest-threshold"
+    ],
+    "holdoutMaySelectThreshold": false
+  },
+  "gates": {
+    "pairedDecisionUnit": "lineage-root-all-descendants-correct",
+    "minimumDirectedRecall": 1,
+    "minimumAccuracy": 0.75,
+    "minimumClassRecall": 0.75,
+    "minimumGainOverAllDirected": 0.2,
+    "minimumPairedNetGainAgainstA0": 1,
+    "futureSamplesUsed": 0,
+    "canProduceEffects": false
+  },
+  "outputs": {
+    "manifest": "eval/datasets/exp-0017-core-manifest-v0.1.json",
+    "developmentDataset": "eval/datasets/exp-0017-core-development-v0.1.json",
+    "transformedAudioRoot": "eval/generated/exp-0017/core-audio",
+    "developmentCheckpoint": "eval/checkpoints/exp-0017-core-a-v0.1.json",
+    "developmentReport": "eval/reports/exp-0017-core-development-v0.1.json",
+    "semanticOracleCheckpoint": "eval/checkpoints/exp-0017-r-oracle-v0.1.json",
+    "semanticDevelopmentReport": "eval/reports/exp-0017-r-development-v0.1.json"
+  },
+  "claims": {
+    "maximumIfCorePasses": "justifica pré-registrar um novo holdout opaco e contextualmente válido; não confirma o Core nem muda o runtime",
+    "excluded": [
+      "autoridade para ignorar fala",
+      "evidência confirmatória ou abertura de holdout nesta execução",
+      "naturalidade humana ou qualidade de produto",
+      "generalização física por sala, distância ou dispositivo",
+      "compreensão semântica ou identificação real de destinatário",
+      "confirmação do probe R"
+    ]
+  }
+}

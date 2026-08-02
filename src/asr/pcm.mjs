@@ -91,7 +91,25 @@ export function decodeWaveToPcm16(buffer, options = {}) {
     );
   }
 
+  const targetSampleRate = options.targetSampleRate ?? 16_000;
   const frameCount = Math.floor(data.size / format.blockAlign);
+  if (
+    format.audioFormat === 1 &&
+    format.bitsPerSample === 16 &&
+    format.channels === 1 &&
+    format.blockAlign === 2 &&
+    format.sampleRate === targetSampleRate
+  ) {
+    return {
+      pcm: Buffer.from(buffer.subarray(
+        data.offset,
+        data.offset + frameCount * format.blockAlign
+      )),
+      source: format,
+      sampleRate: targetSampleRate
+    };
+  }
+
   const mono = new Float32Array(frameCount);
   const bytesPerSample = format.bitsPerSample / 8;
   for (let frame = 0; frame < frameCount; frame += 1) {
@@ -108,7 +126,6 @@ export function decodeWaveToPcm16(buffer, options = {}) {
     mono[frame] = clampSample(sum / format.channels);
   }
 
-  const targetSampleRate = options.targetSampleRate ?? 16_000;
   return {
     pcm: float32ToPcm16(mono, {
       sourceSampleRate: format.sampleRate,

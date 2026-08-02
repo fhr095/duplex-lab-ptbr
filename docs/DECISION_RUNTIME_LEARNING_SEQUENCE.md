@@ -186,9 +186,10 @@ zero amostras futuras e zero autoridade. Isso sustenta
 
 Autoridade continua determinística. Com limiar 0,8, o veto seguro atingiu só
 55,6% no holdout procedural e não passou acurácia, recall por classe ou ganho
-operacional. O próximo experimento deve ampliar diversidade e hard negatives,
-calibrar apenas em treino/desenvolvimento e congelar um novo holdout antes de
-reavaliar qualquer efeito.
+operacional. O EXP-0017 amplia diversidade e hard negatives e calibra apenas
+em treino/desenvolvimento. Seu desenho MSWC foi invalidado como holdout antes
+do fit por expor rótulos e não conter o contexto alegado no áudio; um novo
+holdout opaco só será pré-registrado se o challenger qualificar no screen.
 
 ## Pontos incorporados
 
