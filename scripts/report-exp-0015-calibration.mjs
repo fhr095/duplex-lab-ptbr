@@ -16,9 +16,12 @@ const PROJECT_ROOT = resolve(import.meta.dirname, "..");
 const DEFAULTS = Object.freeze({
   annotations: "eval/generated/exp-0015/v0.2/annotations",
   browser: "eval/reports/exp-0015-calibration-browser-current.json",
-  out: "eval/reports/exp-0015-timing-calibration-instrument-v3.json",
+  out: "eval/reports/exp-0015-timing-calibration-instrument-v4.json",
   pack: "eval/calibration/exp-0015-timing-pack-v0.2.json",
-  rubric: "eval/calibration/exp-0015-scoring-rubric-v0.2.1.json"
+  rubric: "eval/calibration/exp-0015-scoring-rubric-v0.2.1.json",
+  resolutionRubric:
+    "eval/calibration/" +
+    "exp-0015-preference-resolution-rubric-v0.2.2.json"
 });
 
 function parseArgs(args) {
@@ -30,13 +33,16 @@ function parseArgs(args) {
       "--browser",
       "--out",
       "--pack",
-      "--rubric"
+      "--rubric",
+      "--resolution-rubric"
     ].includes(
       argument
     )) {
       throw new TypeError(`argumento desconhecido: ${argument}`);
     }
-    const field = argument.slice(2);
+    const field = argument === "--resolution-rubric"
+      ? "resolutionRubric"
+      : argument.slice(2);
     options[field] = args[++index];
   }
   return options;
@@ -85,6 +91,7 @@ const options = parseArgs(process.argv.slice(2));
 const [
   packSource,
   rubricSource,
+  resolutionRubricSource,
   browserSource,
   annotationSource,
   sourceFingerprint
@@ -92,6 +99,7 @@ const [
   await Promise.all([
     readJson(options.pack),
     readJson(options.rubric),
+    readJson(options.resolutionRubric),
     readJson(options.browser),
     readAnnotations(options.annotations),
     createSourceFingerprint(PROJECT_ROOT)
@@ -107,7 +115,8 @@ const aggregate = aggregateTimingCalibration(
     minimumConsensusShare: protocol.minimumConsensusShare,
     minimumLabelCoverage: protocol.minimumLabelCoverage,
     minimumAttentionPassRate: protocol.minimumAttentionPassRate,
-    attentionScoringRubric: rubricSource.value
+    attentionScoringRubric: rubricSource.value,
+    preferenceResolutionRubric: resolutionRubricSource.value
   }
 );
 const report = evaluateExp0015Instrument({
@@ -115,6 +124,7 @@ const report = evaluateExp0015Instrument({
   browser: browserSource.value,
   pack,
   rubric: rubricSource.value,
+  resolutionRubric: resolutionRubricSource.value,
   fingerprints: {
     source: sourceFingerprint,
     pack: {
@@ -124,6 +134,10 @@ const report = evaluateExp0015Instrument({
     rubric: {
       path: rubricSource.path,
       sha256: rubricSource.sha256
+    },
+    resolutionRubric: {
+      path: resolutionRubricSource.path,
+      sha256: resolutionRubricSource.sha256
     },
     browser: {
       path: browserSource.path,
@@ -153,6 +167,11 @@ console.log(
   `Atenção externa: ` +
     `${(report.metrics.baseAttentionPassRate * 100).toFixed(1)}% base → ` +
     `${(report.metrics.amendedAttentionPassRate * 100).toFixed(1)}% emendada`
+);
+console.log(
+  `Cobertura: ` +
+    `${(report.metrics.singularLabelCoverage * 100).toFixed(1)}% singular → ` +
+    `${(report.metrics.resolutionCoverage * 100).toFixed(1)}% resolvida`
 );
 console.log(`Evidência canônica: ${options.out}`);
 if (!report.instrumentPass) {

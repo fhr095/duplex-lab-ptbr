@@ -85,6 +85,12 @@ dúvidas restantes são naturalidade, conforto, sotaque, comportamento social ou
 acústica física. Assim, humanos calibram a validade externa e lapidam a
 experiência, em vez de serem usados para depurar problemas fundamentais.
 
+O EXP-0016 já sustenta a primeira metade de H1: uma capacidade acústica
+compacta venceu a regra simples em holdout e reencontrou ganho em nove âncoras
+humanas. Ela permanece em shadow porque o veto conservador ainda não passa os
+gates procedurais. A fase atual, portanto, é calibração segura e diversidade,
+não ampliar autoridade nem treinar um backbone maior por reflexo.
+
 ## Contrato de experiência
 
 O usuário pode:

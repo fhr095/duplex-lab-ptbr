@@ -7,6 +7,7 @@ import {
   finalizeTimingCalibrationPack,
   selectFitEligibleTimingLabels,
   validateTimingCalibrationRecord,
+  validateTimingCalibrationResolutionRubric,
   validateTimingCalibrationScoringRubric,
   validateTimingCalibrationSubmission
 } from "../src/eval/calibration/blind-session.mjs";
@@ -81,6 +82,34 @@ function packFixture() {
       annotationsMayContainOptionalComment: true
     }
   });
+}
+
+function resolutionRubricFixture(pack) {
+  return {
+    schemaVersion:
+      "timing-calibration-preference-resolution-rubric-v1",
+    rubricId: "timing-pack-test-preference-resolution-v0.2.2",
+    packId: pack.packId,
+    packSha256: pack.packSha256,
+    baseProtocolVersion: pack.protocol.version,
+    policy: "additive-set-valued-resolution-only",
+    thresholds: {
+      minimumVotesPerResolution: pack.protocol.minimumVotesPerScene,
+      minimumConsensusShare: pack.protocol.minimumConsensusShare,
+      minimumResolutionCoverage: pack.protocol.minimumLabelCoverage
+    },
+    safeguards: {
+      singularLabelsRemainUnchanged: true,
+      setValuedResolutionsCreateSingularLabels: false,
+      setValuedResolutionsEligibleForDirectFit: false,
+      uncertainResponsesCountAsPreferenceVotes: false,
+      rawRecordsMutated: false,
+      stimuliOrQuestionsChanged: false
+    },
+    rationale:
+      "Conjuntos de preferência consensuais resolvem a calibração sem " +
+      "inventar um rótulo singular ou autorizar ajuste direto de pesos."
+  };
 }
 
 function completedSubmission(session, input = {}) {
@@ -335,6 +364,63 @@ test("agregado usa apenas externos e só cria rótulo com votos singulares", () 
   );
   assert.equal(internalOnly.gates.minimumExternalParticipants, false);
   assert.equal(internalOnly.metrics.externalParticipants, 0);
+});
+
+test("resolução consensual preserva equivalência sem criar rótulo singular", () => {
+  const pack = packFixture();
+  const records = [40, 41, 42].map((index) =>
+    completedRecord(pack, index, {
+      selections: {
+        "scene-clear": ["WAIT_FOR_EVIDENCE", "PAUSE_OUTPUT"]
+      }
+    })
+  );
+  const rubric = resolutionRubricFixture(pack);
+  assert.equal(
+    validateTimingCalibrationResolutionRubric(pack, rubric).valid,
+    true
+  );
+
+  const base = aggregateTimingCalibration(pack, records, pack.protocol);
+  const amended = aggregateTimingCalibration(pack, records, {
+    ...pack.protocol,
+    preferenceResolutionRubric: rubric
+  });
+  assert.equal(base.calibrationReady, false);
+  assert.equal(base.metrics.labelCoverage, 0);
+  assert.equal(amended.calibrationReady, true);
+  assert.equal(amended.readyToFreezeM4bExperiment, true);
+  assert.equal(amended.readyForDirectModelFit, false);
+  assert.equal(amended.labels.length, 0);
+  assert.equal(amended.resolutions.length, 1);
+  assert.deepEqual(amended.resolutions[0].acceptableActions, [
+    "WAIT_FOR_EVIDENCE",
+    "PAUSE_OUTPUT"
+  ]);
+  assert.equal(
+    amended.resolutions[0].resolutionKind,
+    "set-valued-preference"
+  );
+  assert.equal(amended.metrics.resolutionCoverage, 1);
+  assert.equal(amended.metrics.setValuedResolvedScenes, 1);
+  assert.equal(
+    amended.scoring.preferenceResolution.singularBase.pass,
+    false
+  );
+  assert.equal(amended.scoring.preferenceResolution.active.pass, true);
+
+  const unsafe = structuredClone(rubric);
+  unsafe.safeguards.setValuedResolutionsEligibleForDirectFit = true;
+  assert.equal(
+    validateTimingCalibrationResolutionRubric(pack, unsafe).valid,
+    false
+  );
+  const failedClosed = aggregateTimingCalibration(pack, records, {
+    ...pack.protocol,
+    preferenceResolutionRubric: unsafe
+  });
+  assert.equal(failedClosed.calibrationReady, false);
+  assert.equal(failedClosed.gates.preferenceResolutionRubric, false);
 });
 
 test("emenda aditiva reclassifica silêncio sem alterar registro bruto", () => {

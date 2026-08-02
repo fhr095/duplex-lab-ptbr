@@ -21,6 +21,9 @@ import {
   isAcousticReflexDecisionPoint
 } from "/acoustic-reflex-shadow.mjs";
 import {
+  SpeakerRelevanceCausalRuntime
+} from "/speaker-relevance-shadow.mjs";
+import {
   OutputInterruptionLifecycle
 } from "/output-interruption-lifecycle.mjs";
 import {
@@ -241,6 +244,87 @@ async function loadAcousticReflexShadow() {
       message: error.message
     });
     log("acoustic-reflex-shadow.error", error.message);
+  }
+}
+
+let speakerRelevanceRuntime = null;
+let speakerRelevanceShadowState = Object.freeze({
+  state: "loading",
+  authority: false
+});
+
+async function loadSpeakerRelevanceShadow() {
+  try {
+    const response = await fetch("/speaker-relevance-checkpoint.json");
+    if (!response.ok) {
+      throw new Error(`checkpoint retornou HTTP ${response.status}`);
+    }
+    speakerRelevanceRuntime = new SpeakerRelevanceCausalRuntime(
+      await response.json()
+    );
+    speakerRelevanceShadowState = speakerRelevanceRuntime.snapshot;
+    log(
+      "speaker-relevance-shadow.ready",
+      `${speakerRelevanceShadowState.checkpointId} · sem autoridade`
+    );
+  } catch (error) {
+    speakerRelevanceRuntime = null;
+    speakerRelevanceShadowState = Object.freeze({
+      state: "error",
+      authority: false,
+      message: error.message
+    });
+    log("speaker-relevance-shadow.error", error.message);
+  }
+}
+
+function logSpeakerRelevanceDecisions(decisions) {
+  for (const decision of decisions) {
+    log(
+      "speaker-relevance-shadow.proposed",
+      JSON.stringify({
+        turnId: decision.turnId,
+        rawLabel: decision.rawLabel,
+        operationalLabel: decision.operationalLabel,
+        suggestedAction: decision.suggestedAction,
+        backgroundProbability:
+          decision.probabilities.BACKGROUND_OR_NOT_DIRECTED,
+        futureSamplesUsed: decision.futureSamplesUsed,
+        inferenceMs: Math.round(decision.inferenceMs * 1_000) / 1_000,
+        authority: false
+      })
+    );
+  }
+}
+
+function observeSpeakerRelevanceFrame(frame) {
+  if (speakerRelevanceRuntime === null) {
+    return;
+  }
+  try {
+    logSpeakerRelevanceDecisions(
+      speakerRelevanceRuntime.pushFrame(frame)
+    );
+  } catch (error) {
+    log("speaker-relevance-shadow.frame.error", error.message);
+  }
+}
+
+function observeSpeakerRelevanceStart(event) {
+  if (speakerRelevanceRuntime === null) {
+    return;
+  }
+  try {
+    logSpeakerRelevanceDecisions(
+      speakerRelevanceRuntime.observeSpeechStart(event, {
+        assistantAudible: session.assistantSpeaking,
+        assistantPending:
+          session.assistantPreparing || session.responseActive,
+        detector: event.detector ?? null
+      })
+    );
+  } catch (error) {
+    log("speaker-relevance-shadow.inference.error", error.message);
   }
 }
 
@@ -2316,6 +2400,7 @@ function handleLocalAudioEvent(event) {
     startAutomationPcmAuditClip(event);
     clearTimeout(session.endpointTimer);
     session.userSpeaking = true;
+    observeSpeakerRelevanceStart(event);
     dispatchLocalAudioReflex({
       type: "USER_SPEECH_STARTED",
       turnId: event.turnId ?? null,
@@ -2356,6 +2441,7 @@ function handleLocalAudioEvent(event) {
   }
   if (event.type === "user.speech.resumed") {
     session.userSpeaking = true;
+    observeSpeakerRelevanceStart(event);
     if (event.turnId) {
       session.earlyBackchannelTurnIds.delete(event.turnId);
     }
@@ -2871,6 +2957,7 @@ function scheduleLocalAudioReconnect() {
 }
 
 async function startLocalPcmSession() {
+  speakerRelevanceRuntime?.reset();
   session.audioTransportEpoch += 1;
   session.audioReconnectPromise = null;
   session.audioDisconnectCount = 0;
@@ -2881,6 +2968,7 @@ async function startLocalPcmSession() {
   const capture = new BrowserPcmCapture({
     async onFrame(frame, { signal }) {
       recordAutomationPcm(frame);
+      observeSpeakerRelevanceFrame(frame);
       const activeSocket = await usableLocalAudioSocket(signal);
       await paceRecoveredAudio(signal);
       await waitForSocketCapacity(activeSocket, signal);
@@ -2992,6 +3080,7 @@ function createRecognition() {
 
 async function startBrowserRecognitionSession() {
   try {
+    speakerRelevanceRuntime?.reset();
     session.mediaStream = await navigator.mediaDevices.getUserMedia({
       audio: {
         autoGainControl: true,
@@ -3133,6 +3222,9 @@ function automationSnapshot() {
         ),
         activeStreamId: session.acousticTraceStreamId
       },
+      speakerRelevanceShadow: speakerRelevanceRuntime === null
+        ? { ...speakerRelevanceShadowState }
+        : speakerRelevanceRuntime.snapshot,
       outputInterruptionLifecycle: {
         ...outputInterruption
       },
@@ -3231,6 +3323,7 @@ function resetAutomation() {
     ring: []
   };
   session.audioRuntimeEvidence = [];
+  speakerRelevanceRuntime?.reset();
   session.tentativePauseCount = 0;
   session.userSpeaking = false;
   session.vadControl = { state: "unknown" };
@@ -3372,6 +3465,7 @@ async function replayAutomationPcm(base64, options = {}) {
         sourceCount
       ));
     }
+    observeSpeakerRelevanceFrame({ sampleStart, pcm16: frame });
     await waitForSocketCapacity(socket);
     socket.send(encodePcmFrame({
       sequence,
@@ -3428,7 +3522,10 @@ function injectAutomationSpeech(rawText, options = {}) {
 }
 
 async function loadHealth() {
-  await loadAcousticReflexShadow();
+  await Promise.all([
+    loadAcousticReflexShadow(),
+    loadSpeakerRelevanceShadow()
+  ]);
   try {
     const response = await fetch("/api/health");
     const health = await response.json();

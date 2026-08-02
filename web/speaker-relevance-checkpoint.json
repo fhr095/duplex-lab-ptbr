@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "speaker-relevance-checkpoint-v1",
+  "checkpointId": "speaker-relevance-m4b-bc09e1311b5034bc",
+  "featureVersion": "speaker-relevance-causal-features-v0.1",
+  "featureNames": [
+    "bias",
+    "elapsedMs",
+    "contextRms",
+    "recentRms",
+    "activeFrameShare",
+    "frameLevelVariation",
+    "zeroCrossingRate",
+    "crestFactor",
+    "pitchPeriodicity",
+    "spectralCentroid",
+    "spectralFlatness",
+    "highBandShare"
+  ],
+  "classes": [
+    "BACKGROUND_OR_NOT_DIRECTED",
+    "DIRECTED_TO_ASSISTANT"
+  ],
+  "modelSha256": "sha256:bc09e1311b5034bca801bb44b7fbdd60db07354abd4035c53c97191ec454fbfc",
+  "model": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "weights": [
+      [
+        1.681495841174,
+        0.530765774201,
+        -1.991363217,
+        -3.531979453341,
+        1.680319869052,
+        -1.396241895833,
+        -4.481782207326,
+        -0.848806906227,
+        0.799822034619,
+        -0.568667817048,
+        -2.384706059632,
+        -0.884284901108
+      ],
+      [
+        -1.681495841174,
+        -0.530765774201,
+        1.991363217,
+        3.531979453341,
+        -1.680319869052,
+        1.396241895833,
+        4.481782207326,
+        0.848806906227,
+        -0.799822034619,
+        0.568667817048,
+        2.384706059632,
+        0.884284901108
+      ]
+    ]
+  },
+  "decision": {
+    "backgroundVetoConfidence": 0.8,
+    "backgroundAction": "CONTINUE_OUTPUT",
+    "directedAction": "DEFER_TO_DETERMINISTIC",
+    "lowConfidenceAction": "DEFER_TO_DETERMINISTIC"
+  },
+  "runtime": {
+    "sampleRate": 16000,
+    "decisionMs": 560,
+    "decisionSamples": 8960,
+    "bufferSamples": 48000,
+    "futureSamplesAllowed": 0
+  },
+  "training": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "datasetPath": "eval/datasets/exp-0016-speaker-relevance-v0.1.json",
+    "datasetSha256": "sha256:e33fe48c07ea289c90665690dbc9fec9a8cb5f0eae78e48eab3a8a631459a8d6",
+    "experimentConfigPath": "eval/experiments/exp-0016-speaker-relevance-m4b.pt-BR.json",
+    "experimentConfigSha256": "sha256:fb1d249bbc3936c439b6daa00c74fc84d6225d3604c67f7a55a8e63a90553c9d",
+    "selectedSplit": "train",
+    "excludedFromFit": [
+      "development",
+      "holdout",
+      "exp-0015-timing-calibration-v0.2"
+    ],
+    "examples": 72,
+    "hyperparameters": {
+      "epochs": 2400,
+      "learningRate": 0.3,
+      "l2": 0.001,
+      "initialization": "all-zero",
+      "ordering": "input-order/full-batch"
+    },
+    "finalLoss": 0.365099644399,
+    "classCounts": {
+      "BACKGROUND_OR_NOT_DIRECTED": 36,
+      "DIRECTED_TO_ASSISTANT": 36
+    },
+    "classWeights": {
+      "BACKGROUND_OR_NOT_DIRECTED": 1,
+      "DIRECTED_TO_ASSISTANT": 1
+    }
+  },
+  "authority": {
+    "mode": "shadow",
+    "canProduceEffects": false
+  },
+  "claims": {
+    "scope": "candidato M4b estreito de relevância da fala em shadow",
+    "excluded": [
+      "autoridade para ignorar fala",
+      "generalização por falante, gênero, sala ou conteúdo espontâneo",
+      "detecção semântica de backchannel ou correção",
+      "qualidade full-duplex de produto"
+    ]
+  }
+}

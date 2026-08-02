@@ -36,6 +36,9 @@ A primeira vertical local já é funcional de ponta a ponta:
 - `AcousticReflexShadow` carrega um checkpoint local treinado para
   `WAIT_FOR_EVIDENCE / PAUSE_OUTPUT / CONTINUE_OUTPUT`, registra probabilidades
   sobre PCM hasheado e permanece estruturalmente sem autoridade;
+- `SpeakerRelevanceCausalRuntime` carrega o primeiro candidato M4b comparável,
+  distingue fala dirigida de fala de fundo em uma janela causal de 560 ms e
+  registra a proposta no Chrome sem produzir efeitos;
 - fala do usuário mantém a captura contínua, mas cancela resposta, tarefa,
   síntese/player e áudio já enfileirado até o último quantum do renderer;
 - campanhas reproduzíveis cobrem fala sintética, CORAA, silêncio, correção,
@@ -83,10 +86,11 @@ ainda parcialmente rotulada, diversidade acústica limitada a uma voz e ausênci
 de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
 
-O EXP-0014 foi promovido com 324/324 testes. Após o instrumento EXP-0015, a
-suíte corrente possui **338/338 testes** e também cobre sessão cega,
+O EXP-0014 foi promovido com 324/324 testes. Após EXP-0015 e EXP-0016, a
+suíte corrente possui **355/355 testes** e também cobre sessão cega,
 contrafactuais estéreo, integridade das anotações, fronteira de fit e separação
-entre promoção técnica e calibração humana. Os 223/223 acima pertencem à
+entre promoção técnica, calibração humana, capacidade aprendida e autoridade.
+Os 223/223 acima pertencem à
 execução congelada da campanha v0.2 e não são reescritos retrospectivamente.
 
 ## Fatias promovidas do runtime comum
@@ -138,8 +142,8 @@ no dispositivo corrente sem falsa ativação. A decisão é
 `promote-m4a-acoustic-shadow-infrastructure`: 100% no holdout significa
 imitação consistente da regra, não ganho humano ou generalização.
 
-O EXP-0015 fechou a v0.2 do instrumento que antecede M4b, não a calibração
-humana. Doze cenas geraram **36 contrafactuais estéreo**; sete usam trechos
+O EXP-0015 fechou o instrumento e a calibração pequena que antecedem M4b.
+Doze cenas geraram **36 contrafactuais estéreo**; sete usam trechos
 públicos CORAA apenas como âncoras de avaliação, três usam fala sintética local
 e duas são controles. Um piloto v0.1 com duas execuções revelou alternativas
 byte a byte idênticas apresentadas separadamente, atribuição da fala misturada
@@ -149,12 +153,26 @@ separadamente se a fala parece dirigida à assistente e preserva comentário
 curto opcional somente no armazenamento local. Uma emenda aditiva v0.2.1
 passou a aceitar, no controle de silêncio, tanto “não direcionado” quanto “não
 consigo saber”; somente “direcionado” falha. O pack e as respostas não foram
-alterados, e o relatório preserva 66,7% no gabarito-base e 100% no emendado. No
+alterados. Uma política v0.2.2 passou a contar também conjuntos de ações
+consensualmente equivalentes como resolução da cena, sem inventar rótulo
+singular ou liberar fit direto. No
 Chrome real do Windows, cenas de 2 e 3 opções, empate e atribuição passaram sem
 erro ou anotação artificial. A decisão é
-`promote-timing-calibration-instrument`; a campanha permanece
-`await-human-calibration` em **2/3 participantes externos**, e o pack contém
-zero rótulos autorizados para fit direto.
+`calibration-sufficient-to-freeze-m4b-experiment`: **3/3 participantes
+externos**, atenção 77,8% base → 100% emendada e **8/9 cenas resolvidas** — 5
+singulares, 3 por conjunto e 1 ambígua. O pack continua com zero rótulos
+autorizados para fit direto e nenhuma autoridade sobre o runtime.
+
+O EXP-0016 fechou o primeiro M4b comparável para relevância acústica da fala.
+Trinta e seis clips FLEURS PT-BR com licença CC-BY-4.0 geraram **108 exemplos**
+em splits de clips e famílias separados; respostas humanas forneceram direção
+e avaliação, mas **zero exemplos de fit**. O classificador bruto obteve 77,8%
+no holdout contra 50% da regra “toda fala é dirigida”. Nas nove âncoras humanas
+resolvidas, o veto conservador acertou **7/9 contra 5/9** e preservou 5/5 falas
+dirigidas. Quatro probes no Chrome confirmaram paridade exata com o Node, zero
+amostras futuras e zero autoridade. A decisão é
+`promote-m4b-speaker-relevance-shadow-candidate`; o veto operacional permanece
+em `hold` porque ainda não passa os gates procedurais.
 
 Com o servidor local e o Chrome de depuração abertos, a evidência é reproduzida
 por `npm run eval:exp:0013:browser` e consolidada por
@@ -181,6 +199,19 @@ Chrome do Windows. Com o Chrome de depuração disponível, rode
 `npm run eval:exp:0015:browser`; consolide o estado, inclusive quando ainda não
 há participantes, com `npm run eval:exp:0015:report`. O smoke técnico nunca
 envia uma opinião, para não contaminar a unidade humana de análise.
+
+O ciclo M4b é reproduzido por:
+
+```bash
+npm run eval:exp:0016:source
+npm run eval:exp:0016:data
+npm run eval:exp:0016:train
+npm run eval:exp:0016:browser
+npm run eval:exp:0016:report
+```
+
+Fonte bruta, áudio transformado e relatórios intermediários permanecem fora do
+Git. Manifest, features, checkpoint e relatório canônico são versionados.
 
 ## Rodar
 
@@ -335,6 +366,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0013 — trace causal e ledger da interrupção](docs/experiments/EXP-0013-training-trace-interruption.md)
 - [EXP-0014 — reflexo acústico treinável em shadow](docs/experiments/EXP-0014-acoustic-reflex-m4a.md)
 - [EXP-0015 — instrumento cego de calibração de timing](docs/experiments/EXP-0015-timing-calibration-instrument.md)
+- [EXP-0016 — relevância acústica da fala em M4b](docs/experiments/EXP-0016-speaker-relevance-m4b.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -345,16 +377,13 @@ prefinal acústica, o EXP-0008 encontrou um verificador semanticamente útil mas
 lento, e o EXP-0009 bloqueou a confirmação monetária insegura sem LLM. A ordem
 executável existe somente no
 [roadmap consolidado](docs/ROADMAP.md#ordem-operacional-consolidada): a baseline
-v0.3 está congelada e as fatias stateful, de reflexo, lifecycle, trace causal e
-M4a acústico em shadow foram promovidas. O instrumento EXP-0015 também está
-promovido e pronto; falta um participante para alcançar o mínimo de três
-externos únicos, ainda sujeito a atenção, cobertura e consenso suficientes.
-Avaliações internas ajudam
-na usabilidade, mas não contam para esse mínimo. Essa calibração orientará a criação
-de um conjunto novo e legalmente elegível para M4b — os áudios CORAA e
-sintéticos atuais não entram diretamente em fit. O comparador M4b terá de
-superar a regra em famílias realmente não vistas. Até lá, o checkpoint não
-recebe autoridade e o comando físico rápido permanece determinístico no
+v0.3 está congelada e as fatias stateful, de reflexo, lifecycle, trace causal,
+M4a e o candidato M4b de relevância em shadow foram promovidas. O instrumento
+EXP-0015 concluiu 3/3 participantes externos e liberou o desenho, não o fit.
+O EXP-0016 já superou a regra em holdout e reencontrou ganho nas âncoras
+humanas; agora o maior retorno é calibrar o veto conservador com diversidade
+acústica nova e um holdout novamente congelado. Até esse gate, o checkpoint
+continua observacional e o comando físico rápido permanece determinístico no
 navegador.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só

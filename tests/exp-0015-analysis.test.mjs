@@ -24,11 +24,23 @@ const rubric = JSON.parse(await readFile(
   ),
   "utf8"
 ));
+const resolutionRubric = JSON.parse(await readFile(
+  new URL(
+    "../eval/calibration/" +
+      "exp-0015-preference-resolution-rubric-v0.2.2.json",
+    import.meta.url
+  ),
+  "utf8"
+));
 
 function fingerprintsFixture() {
   return {
     source: { sha256: "fixture" },
-    rubric: { path: "fixture-rubric.json", sha256: "sha256:fixture" }
+    rubric: { path: "fixture-rubric.json", sha256: "sha256:fixture" },
+    resolutionRubric: {
+      path: "fixture-resolution-rubric.json",
+      sha256: "sha256:fixture"
+    }
   };
 }
 
@@ -68,13 +80,15 @@ function browserFixture(candidatePack = pack) {
 test("instrumento promove sem fingir calibração humana", () => {
   const aggregate = aggregateTimingCalibration(pack, [], {
     ...pack.protocol,
-    attentionScoringRubric: rubric
+    attentionScoringRubric: rubric,
+    preferenceResolutionRubric: resolutionRubric
   });
   const report = evaluateExp0015Instrument({
     aggregate,
     browser: browserFixture(),
     pack,
     rubric,
+    resolutionRubric,
     fingerprints: fingerprintsFixture()
   });
 
@@ -102,13 +116,18 @@ test("instrumento falha se áudio público se declarar elegível a fit", () => {
   const aggregate = aggregateTimingCalibration(
     unsafePack,
     [],
-    { ...unsafePack.protocol, attentionScoringRubric: rubric }
+    {
+      ...unsafePack.protocol,
+      attentionScoringRubric: rubric,
+      preferenceResolutionRubric: resolutionRubric
+    }
   );
   const report = evaluateExp0015Instrument({
     aggregate,
     browser: browserFixture(unsafePack),
     pack: unsafePack,
     rubric,
+    resolutionRubric,
     fingerprints: fingerprintsFixture()
   });
 
@@ -124,13 +143,18 @@ test("instrumento falha se a decisão anteceder evidência acústica", () => {
   const aggregate = aggregateTimingCalibration(
     misalignedPack,
     [],
-    { ...misalignedPack.protocol, attentionScoringRubric: rubric }
+    {
+      ...misalignedPack.protocol,
+      attentionScoringRubric: rubric,
+      preferenceResolutionRubric: resolutionRubric
+    }
   );
   const report = evaluateExp0015Instrument({
     aggregate,
     browser: browserFixture(misalignedPack),
     pack: misalignedPack,
     rubric,
+    resolutionRubric,
     fingerprints: fingerprintsFixture()
   });
 
@@ -145,13 +169,15 @@ test("instrumento falha fechado se emenda aceitar fala direcionada", () => {
   );
   const aggregate = aggregateTimingCalibration(pack, [], {
     ...pack.protocol,
-    attentionScoringRubric: unsafeRubric
+    attentionScoringRubric: unsafeRubric,
+    preferenceResolutionRubric: resolutionRubric
   });
   const report = evaluateExp0015Instrument({
     aggregate,
     browser: browserFixture(),
     pack,
     rubric: unsafeRubric,
+    resolutionRubric,
     fingerprints: fingerprintsFixture()
   });
 

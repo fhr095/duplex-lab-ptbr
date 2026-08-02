@@ -206,9 +206,9 @@ causalidade de eco.
 - Avaliação humana: ordem randomizada, identidade escondida e análise por
   participante; não tratar turnos da mesma pessoa como amostras independentes.
 - Piloto EXP-0015 v0.2: no mínimo 3 participantes externos únicos, 3 votos de
-  ação singular por cena, consenso ≥2/3, cobertura rotulada ≥60% e atenção
-  externa agregada ≥80%; participante interno, equivalência, empate ou dúvida
-  não satisfazem o respectivo gate/rótulo.
+  preferência por cena, consenso ≥2/3, cobertura resolvida ≥60% e atenção
+  externa agregada ≥80%. Um conjunto consensual resolve a calibração, mas não
+  cria rótulo singular nem fit direto; participante interno e dúvida não contam.
 - Toda comparação registra hardware, região, rede, versão, seed e configuração.
 
 ## Dados
@@ -314,7 +314,8 @@ canônico é `eval/reports/eval-factory-campaign-v0.2.json`.
 | EXP-0012 | seis fluxos Chrome com replay exato; quatro fases/oito intenções; STOP 48 ms; onset PCM→renderer 183,66 ms; seis corridas protegidas | `promote-output-interruption-lifecycle-slice`; probe físico não iniciado e M2.5 amplo em `hold` |
 | EXP-0013 | seis bundles causais; 28 decisões reproduzidas; 22 efeitos encerrados; STOP 38 ms; onset PCM→renderer 169,82 ms; 12/12 gates formais | `promote-training-trace-interruption-slice`; áudio hasheado, clocks entre processos, M4a e generalização não promovidos |
 | EXP-0014 | 330 exemplos/60 streams; split por família; treino idêntico; 11 decisões Chrome cobrindo três classes; replay exato; p95 0,2 ms; zero efeitos | `promote-m4a-acoustic-shadow-infrastructure`; imitação da regra, sem ganho, autoridade ou generalização |
-| EXP-0015 v0.2 + gabarito v0.2.1 | 12 cenas/36 WAVs; 7 âncoras CORAA; 16 gates; cenas com 2/3 opções; 3 registros válidos, 2/3 externos; atenção 66,7% base → 100% emendada | instrumento `promote`; humano `await`; respostas intactas; zero fit direto e zero autoridade |
+| EXP-0015 v0.2 + gabaritos v0.2.1/v0.2.2 | 12 cenas/36 WAVs; 7 âncoras CORAA; 17 gates; 4 registros válidos, 3/3 externos; atenção 77,8% base → 100%; 5 singulares + 3 conjuntos = 8/9 resolvidas | instrumento e calibração `promote`; respostas intactas; zero fit direto e zero autoridade |
+| EXP-0016 | 108 exemplos/36 clips FLEURS; famílias e clips disjuntos; holdout bruto 77,8% vs 50%; âncora humana conservadora 7/9 vs 5/9; 4 probes Chrome com paridade | capacidade de relevância em shadow `promote`; veto seguro e autoridade em `hold` |
 
 A configuração resultante está congelada em
 [`runtime-baseline-v0.3.json`](../eval/baselines/runtime-baseline-v0.3.json).
@@ -343,9 +344,10 @@ sessões humanas rotuladas.
 
 No EXP-0015, os trechos CORAA são `evaluation-only`, o TTS é
 `development-synthetic` e os controles são `control-only`. O agregado pode
-calibrar a direção do próximo experimento, mas nenhum rótulo corrente é
+calibrar — e calibrou — a direção do próximo experimento, mas nenhum rótulo corrente é
 selecionável para fit. O relatório canônico mantém separados
-`instrumentPass=true` e `humanCalibrationPass=false`. Comentários opcionais e
+`instrumentPass=true`, `humanCalibrationPass=true` e
+`readyForDirectModelFit=false`. Comentários opcionais e
 registros individuais ficam no armazenamento local ignorado pelo Git; o
 relatório público recebe apenas o agregado sem texto livre.
 
@@ -353,6 +355,24 @@ O gabarito v0.2.1 é uma emenda aditiva vinculada ao hash do pack. No controle
 de silêncio, aceita `BACKGROUND_OR_NOT_DIRECTED` e `UNCERTAIN`, mas rejeita
 `DIRECTED_TO_ASSISTANT`. O agregado publica lado a lado o placar-base e o
 emendado; nenhum registro bruto, estímulo ou pergunta é reescrito.
+
+A resolução v0.2.2 mantém a cobertura singular de 55,6% como placar-base e
+acrescenta conjuntos de preferência consensuais, chegando a 88,9% de cobertura
+resolvida. Ela usa os mesmos mínimos de votos, consenso e cobertura; conjuntos
+não são convertidos em uma ação única nem autorizados para treino.
+
+No EXP-0016, FLEURS PT-BR CC-BY-4.0 é a fonte `fit-eligible`; o recorte usa 36
+clips, mas todos são masculinos e não expõem `speakerId`. Receitas procedurais
+criam as duas classes e permanecem separadas por família; clips também não
+cruzam splits. O holdout mede capacidade bruta e política conservadora
+separadamente. O EXP-0015 volta somente como direção e âncora de avaliação:
+`humanFitExamples=0`. Os quatro probes Chrome são `runtime-contract-only`, sem
+rótulo de qualidade e sem fit.
+
+O relatório EXP-0016 só promove shadow quando dataset, checkpoint, treino
+repetido, reencontro humano e navegador estão vinculados e verdes. Mesmo assim,
+`authorityEligible=false`: a leitura operacional precisa vencer a baseline no
+novo holdout mantendo recall de 100% para fala dirigida.
 
 O ciclo completo e seus limites estão em
 [AUTONOMOUS_LOOP.md](AUTONOMOUS_LOOP.md).

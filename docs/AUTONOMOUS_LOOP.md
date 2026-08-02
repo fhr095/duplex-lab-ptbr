@@ -99,7 +99,7 @@ reproduzível, checkpoint em shadow e 11 decisões online com replay exato. O
 EXP-0015 executou o máximo autônomo imediatamente seguinte: construiu 12 cenas,
 36 trajetórias estéreo, sessão cega, persistência pseudônima, agregação
 fail-closed e smoke no Chrome real. O instrumento foi promovido sem gravar uma
-opinião sintética. A calibração humana pequena de timing/rótulos é agora o ponto
+opinião sintética. A calibração humana pequena de timing/rótulos foi o ponto
 deliberado de contato humano; ela não equivale a uma avaliação ampla de
 produto.
 
@@ -115,7 +115,24 @@ Com duas respostas externas na v0.2, o controle de silêncio revelou uma
 ambiguidade apenas no gabarito: ausência de som admite tanto “não direcionado”
 quanto “não consigo saber”. A emenda aditiva v0.2.1 aceita ambas, continua
 rejeitando “direcionado” e preserva dados, pack e placar-base. A atenção externa
-fica observável como 66,7% base e 100% emendada, sem esconder a decisão.
+ficou observável como 66,7% base e 100% emendada naquele checkpoint, sem
+esconder a decisão.
+
+Após a terceira resposta externa, o agregado mostrou 5/9 rótulos singulares,
+mas também três conjuntos de ações repetidos por todos os participantes. Dois
+backchannels já agrupavam WAVs exatamente idênticos; a fala preparada recebeu
+`WAIT + PAUSE` das três pessoas. A resolução v0.2.2 passou a contar esses
+conjuntos como cenas resolvidas, mantendo os mesmos limiares e proibindo sua
+conversão em rótulo singular ou fit direto. O resultado final é atenção 77,8%
+base → 100% emendada, 8/9 cenas resolvidas e uma ambígua.
+
+O EXP-0016 consumiu essa direção sem consumir as respostas como treino. Uma
+fonte FLEURS PT-BR `fit-eligible` produziu 108 exemplos de relevância acústica
+com clips e receitas separados. O modelo bruto venceu a baseline no holdout
+por 77,8% contra 50%; o veto conservador reencontrou ganho humano por 7/9 contra
+5/9 e preservou 5/5 falas dirigidas. Quatro probes no Chrome confirmaram o
+checkpoint no caminho real com paridade exata e zero autoridade. Isso promove
+M4b em shadow, mas deixa o veto operacional em `hold`.
 
 O ciclo é reproduzido por:
 
@@ -125,10 +142,26 @@ npm run eval:exp:0015:browser
 npm run eval:exp:0015:report
 ```
 
-O relatório distingue `promote-timing-calibration-instrument` de
-`await-human-calibration`. O smoke termina antes do envio, pois gerar registros
+O relatório distingue `promote-timing-calibration-instrument`,
+`calibration-sufficient-to-freeze-m4b-experiment` e a proibição de fit direto.
+O smoke termina antes do envio, pois gerar registros
 “humanos” automaticamente destruiria o oráculo que o experimento pretende
 medir.
+
+O ciclo M4b corrente é reproduzido por:
+
+```bash
+npm run eval:exp:0016:source:check
+npm run eval:exp:0016:data:check
+npm run eval:exp:0016:train:check
+npm run eval:exp:0016:browser
+npm run eval:exp:0016:report:check
+```
+
+O próximo loop autônomo amplia diversidade e hard negatives, escolhe a
+calibração somente em treino/desenvolvimento e congela um novo holdout antes de
+reavaliar o veto. A ação aprendida continua desabilitada enquanto ganho
+operacional e recall dirigido perfeito não coexistirem.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O
@@ -208,8 +241,8 @@ verificador mais forte → apenas slot crítico, baixa confiança ou efeito
 ```
 
 TTS aberto, cérebro local e modelos nativos entram depois pelo maior gargalo
-medido. O primeiro modelo de interação já entrou como M4a estreito, em shadow e
-sem alegação de generalização.
+medido. M4a provou infraestrutura e o EXP-0016 introduziu a primeira capacidade
+M4b comparável, ainda em shadow e sem alegação ampla de generalização.
 
 ## Onde humanos continuam indispensáveis
 
@@ -217,14 +250,14 @@ Automação não mede de forma confiável conforto, naturalidade, incômodo com
 backchannels, percepção de eco ou vontade de continuar conversando. Também não
 mede a cauda acústica que sai fisicamente pelo alto-falante.
 
-Gravações do dono do projeto não são uma exigência. Depois de M4a, uma amostra
-humana pequena passa a ser a próxima evidência externa para calibrar timing e
-rótulos antes de M4b; protocolo, cenas e tooling já estão preparados no
-EXP-0015. O piloto exige ao menos três participantes externos únicos, preserva
-empate, dúvida, atribuição da fala, atenção e consenso; avaliações internas não
-contam para o mínimo. Essa amostra não promove qualidade de produto. Pessoas entram
-como caminho crítico para preferência quando sessões e tarefas forem robustas
-sob grande diversidade, novas campanhas encontrarem principalmente caudas conhecidas e
+Gravações do dono do projeto não são uma exigência. Depois de M4a, a amostra
+humana pequena forneceu a evidência externa para calibrar timing e rótulos antes
+de M4b. O EXP-0015 concluiu três participantes externos únicos, preservou
+equivalência, dúvida, atribuição da fala, atenção e consenso; avaliações
+internas não contaram para o mínimo. Essa amostra não promove qualidade de
+produto. Pessoas entram como caminho crítico para preferência quando sessões e
+tarefas forem robustas sob grande diversidade, novas campanhas encontrarem
+principalmente caudas conhecidas e
 existirem finalistas maduros que só possam ser separados por percepção. Uma
 bateria humana então calibra sotaque, linguagem natural, TTS e eco; suas
 descobertas voltam à automação como novas famílias congeladas.

@@ -1,0 +1,1444 @@
+{
+  "schemaVersion": "exp-0016-speaker-relevance-m4b-report-v1",
+  "experimentId": "exp-0016-speaker-relevance-m4b-v0.1",
+  "question": "Uma capacidade acústica causal estreita supera a regra que trata toda fala como dirigida sem receber autoridade prematura?",
+  "decision": "promote-m4b-speaker-relevance-shadow-candidate",
+  "pass": true,
+  "shadowCandidateReady": true,
+  "safeVetoOfflineReady": false,
+  "authorityEligible": false,
+  "gates": {
+    "datasetValid": true,
+    "calibrationPackValid": true,
+    "calibrationCampaignComplete": true,
+    "calibrationBinding": true,
+    "checkpointValid": true,
+    "checkpointModelHashBound": true,
+    "checkpointReproduced": true,
+    "offlineReportReproduced": true,
+    "offlineShadowCapacity": true,
+    "human.minimumResolvedAnchors": true,
+    "human.calibrationNeverUsedForFit": true,
+    "human.actionVariantCausalWindowsInvariant": true,
+    "human.zeroFutureSamples": true,
+    "human.gainOverBaseline": true,
+    "human.directedRecallForAuthority": true,
+    "browser.reportValid": true,
+    "browser.experimentBound": true,
+    "browser.checkpointBound": true,
+    "browser.fourDistinctCases": true,
+    "browser.zeroFutureSamples": true,
+    "browser.nodeBrowserParity": true,
+    "browser.zeroAuthority": true,
+    "browser.zeroFitExamples": true
+  },
+  "humanGates": {
+    "minimumResolvedAnchors": true,
+    "calibrationNeverUsedForFit": true,
+    "actionVariantCausalWindowsInvariant": true,
+    "zeroFutureSamples": true,
+    "gainOverBaseline": true,
+    "directedRecallForAuthority": true
+  },
+  "browserGates": {
+    "reportValid": true,
+    "experimentBound": true,
+    "checkpointBound": true,
+    "fourDistinctCases": true,
+    "zeroFutureSamples": true,
+    "nodeBrowserParity": true,
+    "zeroAuthority": true,
+    "zeroFitExamples": true
+  },
+  "metrics": {
+    "dataset": {
+      "examples": 108,
+      "sourceClips": 36,
+      "trainExamples": 72,
+      "developmentExamples": 18,
+      "holdoutExamples": 18,
+      "humanFitExamples": 0
+    },
+    "offline": {
+      "train": {
+        "baseline": {
+          "observations": 72,
+          "correct": 36,
+          "accuracy": 0.5,
+          "classRecall": {
+            "BACKGROUND_OR_NOT_DIRECTED": 0,
+            "DIRECTED_TO_ASSISTANT": 1
+          },
+          "confusion": {
+            "BACKGROUND_OR_NOT_DIRECTED": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 36
+            },
+            "DIRECTED_TO_ASSISTANT": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 36
+            }
+          },
+          "errors": [
+            {
+              "exampleId": "train/background-distant/7377029495898915434",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/7377029495898915434",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/16969810939976829407",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/16969810939976829407",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/8138757114198992748",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/8138757114198992748",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/11868703931408793172",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/11868703931408793172",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/7528725649411082568",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/7528725649411082568",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/5203800839162025155",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/5203800839162025155",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/7450437965739451777",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/7450437965739451777",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/3882676591443843152",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/3882676591443843152",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/14884580071509395321",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/14884580071509395321",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/18138514788264254070",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/18138514788264254070",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/3009929680353589233",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/3009929680353589233",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/3198007100466734105",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/3198007100466734105",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/14883712346346541347",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/14883712346346541347",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/8744429348259055476",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/8744429348259055476",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/9776935321561977831",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/9776935321561977831",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/12818291475688349546",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/12818291475688349546",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/16775975320998459020",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/16775975320998459020",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-distant/14259488304418287904",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "train/background-side/14259488304418287904",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            }
+          ]
+        },
+        "candidate": {
+          "raw": {
+            "observations": 72,
+            "correct": 63,
+            "accuracy": 0.875,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0.9444444444444444,
+              "DIRECTED_TO_ASSISTANT": 0.8055555555555556
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 34,
+                "DIRECTED_TO_ASSISTANT": 2
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 7,
+                "DIRECTED_TO_ASSISTANT": 29
+              }
+            },
+            "errors": [
+              {
+                "exampleId": "train/directed-soft-noisy/16969810939976829407",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.5711123619394378
+              },
+              {
+                "exampleId": "train/directed-soft-noisy/7528725649411082568",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.5467437325959693
+              },
+              {
+                "exampleId": "train/directed-soft-noisy/5203800839162025155",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.5818468698849745
+              },
+              {
+                "exampleId": "train/background-distant/7450437965739451777",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.3418847431936757
+              },
+              {
+                "exampleId": "train/directed-soft-noisy/3882676591443843152",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.5524072937288478
+              },
+              {
+                "exampleId": "train/directed-soft-noisy/3009929680353589233",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.5698450932265223
+              },
+              {
+                "exampleId": "train/directed-soft-noisy/8744429348259055476",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.6293835222264782
+              },
+              {
+                "exampleId": "train/background-side/9776935321561977831",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.494009433269657
+              },
+              {
+                "exampleId": "train/directed-clean/14259488304418287904",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.8329129503237561
+              }
+            ]
+          },
+          "safeVeto": {
+            "observations": 72,
+            "correct": 48,
+            "accuracy": 0.6666666666666666,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0.3611111111111111,
+              "DIRECTED_TO_ASSISTANT": 0.9722222222222222
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 13,
+                "DIRECTED_TO_ASSISTANT": 23
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 1,
+                "DIRECTED_TO_ASSISTANT": 35
+              }
+            },
+            "errors": [
+              {
+                "exampleId": "train/background-side/7377029495898915434",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.638233721950893
+              },
+              {
+                "exampleId": "train/background-side/16969810939976829407",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.6129157221798827
+              },
+              {
+                "exampleId": "train/background-side/8138757114198992748",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.5707943785029165
+              },
+              {
+                "exampleId": "train/background-side/11868703931408793172",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.5623497720042352
+              },
+              {
+                "exampleId": "train/background-side/7528725649411082568",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7655465115947618
+              },
+              {
+                "exampleId": "train/background-side/5203800839162025155",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.6843026180744941
+              },
+              {
+                "exampleId": "train/background-distant/7450437965739451777",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.3418847431936757
+              },
+              {
+                "exampleId": "train/background-side/7450437965739451777",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.6004801655807863
+              },
+              {
+                "exampleId": "train/background-side/3882676591443843152",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7304206936095695
+              },
+              {
+                "exampleId": "train/background-side/14884580071509395321",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.6008891565592985
+              },
+              {
+                "exampleId": "train/background-distant/18138514788264254070",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.709819177681414
+              },
+              {
+                "exampleId": "train/background-side/18138514788264254070",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.6849033196464633
+              },
+              {
+                "exampleId": "train/background-side/3009929680353589233",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.5761894919325824
+              },
+              {
+                "exampleId": "train/background-distant/3198007100466734105",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7766453041098128
+              },
+              {
+                "exampleId": "train/background-side/3198007100466734105",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.5729643877427826
+              },
+              {
+                "exampleId": "train/background-side/14883712346346541347",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.6514536370961956
+              },
+              {
+                "exampleId": "train/background-side/8744429348259055476",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7108850570442139
+              },
+              {
+                "exampleId": "train/background-distant/9776935321561977831",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7910351962570222
+              },
+              {
+                "exampleId": "train/background-side/9776935321561977831",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.494009433269657
+              },
+              {
+                "exampleId": "train/background-distant/12818291475688349546",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7164184116470523
+              },
+              {
+                "exampleId": "train/background-side/12818291475688349546",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.645762108241012
+              },
+              {
+                "exampleId": "train/background-side/16775975320998459020",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7482335615819725
+              },
+              {
+                "exampleId": "train/directed-clean/14259488304418287904",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.8329129503237561
+              },
+              {
+                "exampleId": "train/background-side/14259488304418287904",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.5291227898991345
+              }
+            ]
+          }
+        },
+        "gainOverBaseline": {
+          "rawAccuracy": 0.375,
+          "safeVetoAccuracy": 0.16666666666666663
+        }
+      },
+      "development": {
+        "baseline": {
+          "observations": 18,
+          "correct": 9,
+          "accuracy": 0.5,
+          "classRecall": {
+            "BACKGROUND_OR_NOT_DIRECTED": 0,
+            "DIRECTED_TO_ASSISTANT": 1
+          },
+          "confusion": {
+            "BACKGROUND_OR_NOT_DIRECTED": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 9
+            },
+            "DIRECTED_TO_ASSISTANT": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 9
+            }
+          },
+          "errors": [
+            {
+              "exampleId": "development/background-lowpass/3120476782377592022",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "development/background-lowpass/2932522176903992902",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "development/background-lowpass/2350591635813132689",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "development/background-lowpass/16465353713071621886",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "development/background-lowpass/9507917054154897567",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "development/background-lowpass/8821974356183732066",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "development/background-lowpass/14489787904327624501",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "development/background-lowpass/5037915141983285048",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "development/background-lowpass/14766032859754327062",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            }
+          ]
+        },
+        "candidate": {
+          "raw": {
+            "observations": 18,
+            "correct": 18,
+            "accuracy": 1,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 1,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 9,
+                "DIRECTED_TO_ASSISTANT": 0
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 9
+              }
+            },
+            "errors": []
+          },
+          "safeVeto": {
+            "observations": 18,
+            "correct": 12,
+            "accuracy": 0.6666666666666666,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0.3333333333333333,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 3,
+                "DIRECTED_TO_ASSISTANT": 6
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 9
+              }
+            },
+            "errors": [
+              {
+                "exampleId": "development/background-lowpass/3120476782377592022",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.6896500083971275
+              },
+              {
+                "exampleId": "development/background-lowpass/2932522176903992902",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7628210420318481
+              },
+              {
+                "exampleId": "development/background-lowpass/2350591635813132689",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7513976267874075
+              },
+              {
+                "exampleId": "development/background-lowpass/16465353713071621886",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7996261160677062
+              },
+              {
+                "exampleId": "development/background-lowpass/9507917054154897567",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7334323727069086
+              },
+              {
+                "exampleId": "development/background-lowpass/8821974356183732066",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7454243257713601
+              }
+            ]
+          }
+        },
+        "gainOverBaseline": {
+          "rawAccuracy": 0.5,
+          "safeVetoAccuracy": 0.16666666666666663
+        }
+      },
+      "holdout": {
+        "baseline": {
+          "observations": 18,
+          "correct": 9,
+          "accuracy": 0.5,
+          "classRecall": {
+            "BACKGROUND_OR_NOT_DIRECTED": 0,
+            "DIRECTED_TO_ASSISTANT": 1
+          },
+          "confusion": {
+            "BACKGROUND_OR_NOT_DIRECTED": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 9
+            },
+            "DIRECTED_TO_ASSISTANT": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 9
+            }
+          },
+          "errors": [
+            {
+              "exampleId": "holdout/background-competing/11683751341396655038",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "holdout/background-competing/12126840954183360354",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "holdout/background-competing/4931226475989746884",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "holdout/background-competing/10336892012774138351",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "holdout/background-competing/17857703682678104542",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "holdout/background-competing/16206913263836063463",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "holdout/background-competing/13919746146739148478",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "holdout/background-competing/12232741499785750591",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            },
+            {
+              "exampleId": "holdout/background-competing/8660620707600224009",
+              "expected": "BACKGROUND_OR_NOT_DIRECTED",
+              "predicted": "DIRECTED_TO_ASSISTANT",
+              "correct": false
+            }
+          ]
+        },
+        "candidate": {
+          "raw": {
+            "observations": 18,
+            "correct": 14,
+            "accuracy": 0.7777777777777778,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0.7777777777777778,
+              "DIRECTED_TO_ASSISTANT": 0.7777777777777778
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 7,
+                "DIRECTED_TO_ASSISTANT": 2
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 2,
+                "DIRECTED_TO_ASSISTANT": 7
+              }
+            },
+            "errors": [
+              {
+                "exampleId": "holdout/directed-quiet/4931226475989746884",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.6965202057117676
+              },
+              {
+                "exampleId": "holdout/background-competing/17857703682678104542",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.17955924915277383
+              },
+              {
+                "exampleId": "holdout/directed-quiet/13919746146739148478",
+                "expected": "DIRECTED_TO_ASSISTANT",
+                "predicted": "BACKGROUND_OR_NOT_DIRECTED",
+                "correct": false,
+                "backgroundProbability": 0.7999402669149039
+              },
+              {
+                "exampleId": "holdout/background-competing/12232741499785750591",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.4311943216355636
+              }
+            ]
+          },
+          "safeVeto": {
+            "observations": 18,
+            "correct": 10,
+            "accuracy": 0.5555555555555556,
+            "classRecall": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0.1111111111111111,
+              "DIRECTED_TO_ASSISTANT": 1
+            },
+            "confusion": {
+              "BACKGROUND_OR_NOT_DIRECTED": {
+                "BACKGROUND_OR_NOT_DIRECTED": 1,
+                "DIRECTED_TO_ASSISTANT": 8
+              },
+              "DIRECTED_TO_ASSISTANT": {
+                "BACKGROUND_OR_NOT_DIRECTED": 0,
+                "DIRECTED_TO_ASSISTANT": 9
+              }
+            },
+            "errors": [
+              {
+                "exampleId": "holdout/background-competing/11683751341396655038",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.5160331126998766
+              },
+              {
+                "exampleId": "holdout/background-competing/12126840954183360354",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.5952559445997042
+              },
+              {
+                "exampleId": "holdout/background-competing/4931226475989746884",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7748626514954657
+              },
+              {
+                "exampleId": "holdout/background-competing/10336892012774138351",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.6717355519198999
+              },
+              {
+                "exampleId": "holdout/background-competing/17857703682678104542",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.17955924915277383
+              },
+              {
+                "exampleId": "holdout/background-competing/16206913263836063463",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.7350733844395119
+              },
+              {
+                "exampleId": "holdout/background-competing/12232741499785750591",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.4311943216355636
+              },
+              {
+                "exampleId": "holdout/background-competing/8660620707600224009",
+                "expected": "BACKGROUND_OR_NOT_DIRECTED",
+                "predicted": "DIRECTED_TO_ASSISTANT",
+                "correct": false,
+                "backgroundProbability": 0.5600714161654351
+              }
+            ]
+          }
+        },
+        "gainOverBaseline": {
+          "rawAccuracy": 0.2777777777777778,
+          "safeVetoAccuracy": 0.05555555555555558
+        }
+      }
+    },
+    "humanAnchor": {
+      "anchors": 9,
+      "unresolvedOrExcluded": 1,
+      "rawHumanRecordsUsedForFit": 0,
+      "actionVariantCausalWindowsInvariant": true,
+      "futureSamplesUsed": 0,
+      "baseline": {
+        "observations": 9,
+        "correct": 5,
+        "accuracy": 0.5555555555555556,
+        "classRecall": {
+          "BACKGROUND_OR_NOT_DIRECTED": 0,
+          "DIRECTED_TO_ASSISTANT": 1
+        },
+        "confusion": {
+          "BACKGROUND_OR_NOT_DIRECTED": {
+            "BACKGROUND_OR_NOT_DIRECTED": 0,
+            "DIRECTED_TO_ASSISTANT": 4
+          },
+          "DIRECTED_TO_ASSISTANT": {
+            "BACKGROUND_OR_NOT_DIRECTED": 0,
+            "DIRECTED_TO_ASSISTANT": 5
+          }
+        }
+      },
+      "candidate": {
+        "raw": {
+          "observations": 9,
+          "correct": 8,
+          "accuracy": 0.8888888888888888,
+          "classRecall": {
+            "BACKGROUND_OR_NOT_DIRECTED": 1,
+            "DIRECTED_TO_ASSISTANT": 0.8
+          },
+          "confusion": {
+            "BACKGROUND_OR_NOT_DIRECTED": {
+              "BACKGROUND_OR_NOT_DIRECTED": 4,
+              "DIRECTED_TO_ASSISTANT": 0
+            },
+            "DIRECTED_TO_ASSISTANT": {
+              "BACKGROUND_OR_NOT_DIRECTED": 1,
+              "DIRECTED_TO_ASSISTANT": 4
+            }
+          }
+        },
+        "safeVeto": {
+          "observations": 9,
+          "correct": 7,
+          "accuracy": 0.7777777777777778,
+          "classRecall": {
+            "BACKGROUND_OR_NOT_DIRECTED": 0.5,
+            "DIRECTED_TO_ASSISTANT": 1
+          },
+          "confusion": {
+            "BACKGROUND_OR_NOT_DIRECTED": {
+              "BACKGROUND_OR_NOT_DIRECTED": 2,
+              "DIRECTED_TO_ASSISTANT": 2
+            },
+            "DIRECTED_TO_ASSISTANT": {
+              "BACKGROUND_OR_NOT_DIRECTED": 0,
+              "DIRECTED_TO_ASSISTANT": 5
+            }
+          }
+        }
+      },
+      "gains": {
+        "rawScenes": 3,
+        "safeVetoScenes": 2,
+        "rawAccuracy": 0.33333333333333326,
+        "safeVetoAccuracy": 0.2222222222222222
+      },
+      "observations": [
+        {
+          "sceneId": "negation-short-early",
+          "family": "negation-short",
+          "expected": "BACKGROUND_OR_NOT_DIRECTED",
+          "confidence": 0.6666666666666666,
+          "responses": 3,
+          "uncertain": 1,
+          "raw": "BACKGROUND_OR_NOT_DIRECTED",
+          "operational": "BACKGROUND_OR_NOT_DIRECTED",
+          "baseline": "DIRECTED_TO_ASSISTANT",
+          "backgroundProbability": 0.8856321871772616,
+          "suggestedAction": "CONTINUE_OUTPUT",
+          "causalWindow": {
+            "durationMs": 160,
+            "sha256": "sha256:c002c05c4b4a0565054a5205be47b7c6f13f91bcf786d8e2e3a07dae3ec5cc81",
+            "variantsInvariant": true,
+            "futureSamplesUsed": 0
+          },
+          "featureContract": {
+            "version": "speaker-relevance-causal-features-v0.1",
+            "names": [
+              "bias",
+              "elapsedMs",
+              "contextRms",
+              "recentRms",
+              "activeFrameShare",
+              "frameLevelVariation",
+              "zeroCrossingRate",
+              "crestFactor",
+              "pitchPeriodicity",
+              "spectralCentroid",
+              "spectralFlatness",
+              "highBandShare"
+            ]
+          },
+          "fitEligibility": "evaluation-only",
+          "eligibleForDirectFit": false
+        },
+        {
+          "sceneId": "hesitation-early",
+          "family": "hesitation",
+          "expected": "BACKGROUND_OR_NOT_DIRECTED",
+          "confidence": 0.6666666666666666,
+          "responses": 3,
+          "uncertain": 1,
+          "raw": "BACKGROUND_OR_NOT_DIRECTED",
+          "operational": "DIRECTED_TO_ASSISTANT",
+          "baseline": "DIRECTED_TO_ASSISTANT",
+          "backgroundProbability": 0.7542586818680888,
+          "suggestedAction": "DEFER_TO_DETERMINISTIC",
+          "causalWindow": {
+            "durationMs": 160,
+            "sha256": "sha256:ef5a3d3c05dc6e1c0a6ccd751249b34b7d5fc47b8861dccd38386f9c6f5512b6",
+            "variantsInvariant": true,
+            "futureSamplesUsed": 0
+          },
+          "featureContract": {
+            "version": "speaker-relevance-causal-features-v0.1",
+            "names": [
+              "bias",
+              "elapsedMs",
+              "contextRms",
+              "recentRms",
+              "activeFrameShare",
+              "frameLevelVariation",
+              "zeroCrossingRate",
+              "crestFactor",
+              "pitchPeriodicity",
+              "spectralCentroid",
+              "spectralFlatness",
+              "highBandShare"
+            ]
+          },
+          "fitEligibility": "evaluation-only",
+          "eligibleForDirectFit": false
+        },
+        {
+          "sceneId": "filled-pause-mid",
+          "family": "filled-pause",
+          "expected": "DIRECTED_TO_ASSISTANT",
+          "confidence": 0.6666666666666666,
+          "responses": 3,
+          "uncertain": 1,
+          "raw": "BACKGROUND_OR_NOT_DIRECTED",
+          "operational": "DIRECTED_TO_ASSISTANT",
+          "baseline": "DIRECTED_TO_ASSISTANT",
+          "backgroundProbability": 0.6914244704274133,
+          "suggestedAction": "DEFER_TO_DETERMINISTIC",
+          "causalWindow": {
+            "durationMs": 640,
+            "sha256": "sha256:e566ac8587df681b0692f2a82ec342f3b491daa4124e128f38ea3de357ec51e4",
+            "variantsInvariant": true,
+            "futureSamplesUsed": 0
+          },
+          "featureContract": {
+            "version": "speaker-relevance-causal-features-v0.1",
+            "names": [
+              "bias",
+              "elapsedMs",
+              "contextRms",
+              "recentRms",
+              "activeFrameShare",
+              "frameLevelVariation",
+              "zeroCrossingRate",
+              "crestFactor",
+              "pitchPeriodicity",
+              "spectralCentroid",
+              "spectralFlatness",
+              "highBandShare"
+            ]
+          },
+          "fitEligibility": "evaluation-only",
+          "eligibleForDirectFit": false
+        },
+        {
+          "sceneId": "second-voice-mid",
+          "family": "second-voice",
+          "expected": "BACKGROUND_OR_NOT_DIRECTED",
+          "confidence": 1,
+          "responses": 3,
+          "uncertain": 0,
+          "raw": "BACKGROUND_OR_NOT_DIRECTED",
+          "operational": "DIRECTED_TO_ASSISTANT",
+          "baseline": "DIRECTED_TO_ASSISTANT",
+          "backgroundProbability": 0.5729237806197948,
+          "suggestedAction": "DEFER_TO_DETERMINISTIC",
+          "causalWindow": {
+            "durationMs": 520,
+            "sha256": "sha256:cd8f1ef7ac339db393990bba0d905b47c106f248dc1cad9ea8443bdfc70c2242",
+            "variantsInvariant": true,
+            "futureSamplesUsed": 0
+          },
+          "featureContract": {
+            "version": "speaker-relevance-causal-features-v0.1",
+            "names": [
+              "bias",
+              "elapsedMs",
+              "contextRms",
+              "recentRms",
+              "activeFrameShare",
+              "frameLevelVariation",
+              "zeroCrossingRate",
+              "crestFactor",
+              "pitchPeriodicity",
+              "spectralCentroid",
+              "spectralFlatness",
+              "highBandShare"
+            ]
+          },
+          "fitEligibility": "evaluation-only",
+          "eligibleForDirectFit": false
+        },
+        {
+          "sceneId": "spontaneous-clean-late",
+          "family": "spontaneous-clean",
+          "expected": "BACKGROUND_OR_NOT_DIRECTED",
+          "confidence": 1,
+          "responses": 3,
+          "uncertain": 0,
+          "raw": "BACKGROUND_OR_NOT_DIRECTED",
+          "operational": "BACKGROUND_OR_NOT_DIRECTED",
+          "baseline": "DIRECTED_TO_ASSISTANT",
+          "backgroundProbability": 0.9421168775478851,
+          "suggestedAction": "CONTINUE_OUTPUT",
+          "causalWindow": {
+            "durationMs": 640,
+            "sha256": "sha256:2f553334ce6366111de44722e12b0319fe0945f9c9b712d708fdf7fe4e22f6cc",
+            "variantsInvariant": true,
+            "futureSamplesUsed": 0
+          },
+          "featureContract": {
+            "version": "speaker-relevance-causal-features-v0.1",
+            "names": [
+              "bias",
+              "elapsedMs",
+              "contextRms",
+              "recentRms",
+              "activeFrameShare",
+              "frameLevelVariation",
+              "zeroCrossingRate",
+              "crestFactor",
+              "pitchPeriodicity",
+              "spectralCentroid",
+              "spectralFlatness",
+              "highBandShare"
+            ]
+          },
+          "fitEligibility": "evaluation-only",
+          "eligibleForDirectFit": false
+        },
+        {
+          "sceneId": "short-backchannel-sim",
+          "family": "synthetic-backchannel",
+          "expected": "DIRECTED_TO_ASSISTANT",
+          "confidence": 1,
+          "responses": 3,
+          "uncertain": 0,
+          "raw": "DIRECTED_TO_ASSISTANT",
+          "operational": "DIRECTED_TO_ASSISTANT",
+          "baseline": "DIRECTED_TO_ASSISTANT",
+          "backgroundProbability": 0.06663215133585845,
+          "suggestedAction": "DEFER_TO_DETERMINISTIC",
+          "causalWindow": {
+            "durationMs": 320,
+            "sha256": "sha256:92d2e8aa5a7ec988b7bf476275321c8547cde883bdc085caad72cf892ea6ba84",
+            "variantsInvariant": true,
+            "futureSamplesUsed": 0
+          },
+          "featureContract": {
+            "version": "speaker-relevance-causal-features-v0.1",
+            "names": [
+              "bias",
+              "elapsedMs",
+              "contextRms",
+              "recentRms",
+              "activeFrameShare",
+              "frameLevelVariation",
+              "zeroCrossingRate",
+              "crestFactor",
+              "pitchPeriodicity",
+              "spectralCentroid",
+              "spectralFlatness",
+              "highBandShare"
+            ]
+          },
+          "fitEligibility": "evaluation-only",
+          "eligibleForDirectFit": false
+        },
+        {
+          "sceneId": "explicit-correction",
+          "family": "synthetic-correction",
+          "expected": "DIRECTED_TO_ASSISTANT",
+          "confidence": 1,
+          "responses": 3,
+          "uncertain": 0,
+          "raw": "DIRECTED_TO_ASSISTANT",
+          "operational": "DIRECTED_TO_ASSISTANT",
+          "baseline": "DIRECTED_TO_ASSISTANT",
+          "backgroundProbability": 0.23239559531368298,
+          "suggestedAction": "DEFER_TO_DETERMINISTIC",
+          "causalWindow": {
+            "durationMs": 320,
+            "sha256": "sha256:7f5499d9fda2d6aa7247d18d6c4a5023a586da54a6291561df78442dedc0dd2c",
+            "variantsInvariant": true,
+            "futureSamplesUsed": 0
+          },
+          "featureContract": {
+            "version": "speaker-relevance-causal-features-v0.1",
+            "names": [
+              "bias",
+              "elapsedMs",
+              "contextRms",
+              "recentRms",
+              "activeFrameShare",
+              "frameLevelVariation",
+              "zeroCrossingRate",
+              "crestFactor",
+              "pitchPeriodicity",
+              "spectralCentroid",
+              "spectralFlatness",
+              "highBandShare"
+            ]
+          },
+          "fitEligibility": "evaluation-only",
+          "eligibleForDirectFit": false
+        },
+        {
+          "sceneId": "short-backchannel-aham",
+          "family": "synthetic-backchannel",
+          "expected": "DIRECTED_TO_ASSISTANT",
+          "confidence": 0.6666666666666666,
+          "responses": 3,
+          "uncertain": 1,
+          "raw": "DIRECTED_TO_ASSISTANT",
+          "operational": "DIRECTED_TO_ASSISTANT",
+          "baseline": "DIRECTED_TO_ASSISTANT",
+          "backgroundProbability": 0.4185734337412647,
+          "suggestedAction": "DEFER_TO_DETERMINISTIC",
+          "causalWindow": {
+            "durationMs": 160,
+            "sha256": "sha256:94130604bf628a3bfcb07c973b14dc1bc11ac6319cff3cc6049f46d8c1a17834",
+            "variantsInvariant": true,
+            "futureSamplesUsed": 0
+          },
+          "featureContract": {
+            "version": "speaker-relevance-causal-features-v0.1",
+            "names": [
+              "bias",
+              "elapsedMs",
+              "contextRms",
+              "recentRms",
+              "activeFrameShare",
+              "frameLevelVariation",
+              "zeroCrossingRate",
+              "crestFactor",
+              "pitchPeriodicity",
+              "spectralCentroid",
+              "spectralFlatness",
+              "highBandShare"
+            ]
+          },
+          "fitEligibility": "evaluation-only",
+          "eligibleForDirectFit": false
+        },
+        {
+          "sceneId": "prepared-speech-late",
+          "family": "prepared-speech",
+          "expected": "DIRECTED_TO_ASSISTANT",
+          "confidence": 1,
+          "responses": 3,
+          "uncertain": 0,
+          "raw": "DIRECTED_TO_ASSISTANT",
+          "operational": "DIRECTED_TO_ASSISTANT",
+          "baseline": "DIRECTED_TO_ASSISTANT",
+          "backgroundProbability": 0.02168633808693339,
+          "suggestedAction": "DEFER_TO_DETERMINISTIC",
+          "causalWindow": {
+            "durationMs": 960,
+            "sha256": "sha256:0302df336dbec127e051d8074d6578bfa5797fb02dcfba78a0107d8f5993b30b",
+            "variantsInvariant": true,
+            "futureSamplesUsed": 0
+          },
+          "featureContract": {
+            "version": "speaker-relevance-causal-features-v0.1",
+            "names": [
+              "bias",
+              "elapsedMs",
+              "contextRms",
+              "recentRms",
+              "activeFrameShare",
+              "frameLevelVariation",
+              "zeroCrossingRate",
+              "crestFactor",
+              "pitchPeriodicity",
+              "spectralCentroid",
+              "spectralFlatness",
+              "highBandShare"
+            ]
+          },
+          "fitEligibility": "evaluation-only",
+          "eligibleForDirectFit": false
+        }
+      ]
+    },
+    "browserShadow": {
+      "cases": 4,
+      "rawLabels": {
+        "BACKGROUND_OR_NOT_DIRECTED": 1,
+        "DIRECTED_TO_ASSISTANT": 3
+      },
+      "operationalLabels": {
+        "BACKGROUND_OR_NOT_DIRECTED": 0,
+        "DIRECTED_TO_ASSISTANT": 4
+      },
+      "maximumFutureSamplesUsed": 0
+    }
+  },
+  "evidence": {
+    "config": {
+      "path": "eval/experiments/exp-0016-speaker-relevance-m4b.pt-BR.json",
+      "sha256": "sha256:fb1d249bbc3936c439b6daa00c74fc84d6225d3604c67f7a55a8e63a90553c9d"
+    },
+    "dataset": {
+      "path": "eval/datasets/exp-0016-speaker-relevance-v0.1.json",
+      "fileSha256": "sha256:e2e736eef5b066772acd10c8cd55cf3ed748592a9aa367363932c58bc57f003e",
+      "datasetSha256": "sha256:e33fe48c07ea289c90665690dbc9fec9a8cb5f0eae78e48eab3a8a631459a8d6"
+    },
+    "checkpoint": {
+      "path": "web/speaker-relevance-checkpoint.json",
+      "fileSha256": "sha256:dcd54b658c86af23c32884cc390fb588f84fff5a900f16f869c6e026c067209f",
+      "modelSha256": "sha256:bc09e1311b5034bca801bb44b7fbdd60db07354abd4035c53c97191ec454fbfc"
+    },
+    "offlineReport": {
+      "path": "eval/generated/exp-0016/offline-training-report.json",
+      "sha256": "sha256:45eb484c12a0dd570fef941a193dd07ab08507799ac7af27d724ae3ccd0ea989"
+    },
+    "browserReport": {
+      "path": "eval/generated/exp-0016/browser-shadow-report.json",
+      "sha256": "sha256:34f1f0bb40d5ff5ec1d45a3808845891b00e35de554b6cca3a52703aa24c8c6f"
+    },
+    "calibrationPack": {
+      "path": "eval/calibration/exp-0015-timing-pack-v0.2.json",
+      "fileSha256": "sha256:fec2e07feffe097c0e247108fab9fb5875689eab2f1e4ca0b2219fb5d4c96bd5",
+      "packSha256": "sha256:30e62d9b64c4781939c3a7d46d5a8c8a54be6eaa8bc4396405436512750d2b65"
+    },
+    "calibrationReport": {
+      "path": "eval/reports/exp-0015-timing-calibration-instrument-v4.json",
+      "sha256": "sha256:5a4261f7bdf37c4400454f28c0c752c598f35d736a3a9b3fb8b7e79039ec0db1"
+    }
+  },
+  "promoted": "capacidade M4b estreita de relevância da fala em shadow",
+  "notPromoted": [
+    "autoridade para continuar falando diante de voz humana",
+    "generalização ampla por falante, gênero, sala ou conteúdo",
+    "detecção semântica de correção ou backchannel",
+    "qualidade full-duplex de produto"
+  ],
+  "authorityBlockers": [
+    "veto conservador não passa todos os gates procedurais",
+    "os quatro probes de navegador validam o contrato, mas não têm rótulo humano de relevância",
+    "nenhuma decisão aprendida possui efeitos no runtime"
+  ],
+  "nextExperiment": "Melhorar a calibração do veto conservador em famílias acústicas mais diversas, congelar novo holdout e só então reavaliar autoridade limitada.",
+  "limitations": [
+    "rótulos de treino são proxies procedurais, não intenção humana direta",
+    "as 36 fontes selecionadas neste recorte do FLEURS são masculinas",
+    "speakerId não está disponível; não há alegação ampla por falante",
+    "EXP-0015 orienta política e avaliação, mas fornece zero exemplos de fit",
+    "checkpoint permanece em shadow e não produz efeitos",
+    "o ganho humano é um reencontro pequeno de nove cenas, não validação de produto",
+    "a mesma calibração orientou as famílias procedurais e serve apenas como âncora de avaliação; não é holdout independente de formulação",
+    "a baseline é deliberadamente simples e representa a regra atual, não o estado da arte",
+    "os quatro probes no Chrome validam integração e paridade, não qualidade perceptiva"
+  ],
+  "paidApiCalls": 0
+}

@@ -1,7 +1,7 @@
 # Decisão — runtime comum e sequência até o primeiro peso
 
-Status: **aceita em 31/07/2026; atualizada em 02/08/2026 após o piloto, a
-revisão EXP-0015 v0.2 e o gabarito v0.2.1; execução incremental em andamento**
+Status: **aceita em 31/07/2026; atualizada em 02/08/2026 após a calibração
+EXP-0015 e o candidato M4b EXP-0016; execução incremental em andamento**
 
 ## Contexto
 
@@ -153,15 +153,37 @@ comentário opcional somente local. O Chrome do Windows confirmou cenas com 2 e
 não chegam à interface, o token local é hasheado antes da persistência e o smoke
 não envia anotação.
 
-Quinze gates técnicos sustentam `promote-timing-calibration-instrument`. O
-agregado v0.2 registra `await-human-calibration`, com 2/3 participantes
-externos, 1 interno, zero cena rotulada e zero item `fit-eligible`; avaliações
-internas não contam para o mínimo. O gabarito aditivo v0.2.1 aceita no silêncio
-“não direcionado” ou “não consigo saber”, rejeita “direcionado” e mostra 66,7%
-base ao lado de 100% emendado, sem alterar registros. CORAA permanece apenas
-avaliação e o sintético apenas desenvolvimento. Mesmo após o piloto, M4b
-exigirá um novo artefato treinável e holdout ainda não observado; a política
-determinística continua autoritativa.
+Dezessete gates técnicos sustentam `promote-timing-calibration-instrument`.
+Com 3/3 participantes externos e 1 interno, o gabarito v0.2.1 mostra atenção
+77,8% base ao lado de 100% emendada. A resolução v0.2.2 preserva 5 rótulos
+singulares, reconhece 3 conjuntos de preferência consensuais e fecha 8/9 cenas;
+`calibration-sufficient-to-freeze-m4b-experiment` passa. A cena restante fica
+explicitamente ambígua. Nenhum registro foi alterado, equivalência não virou
+ação única e há zero item `fit-eligible`. CORAA permanece apenas avaliação e o
+sintético apenas desenvolvimento. Naquele ponto, M4b exigia um novo artefato
+treinável e holdout ainda não observado; o EXP-0016 abaixo os materializou sem
+mudar a autoridade determinística.
+
+## Atualização após o EXP-0016
+
+M4b foi aberto com uma capacidade menor e mais testável que a ontologia inteira:
+relevância acústica da fala. O dataset versionado contém 108 exemplos derivados
+de 36 clips FLEURS PT-BR CC-BY-4.0. Clips e famílias de transformação não
+cruzam treino, desenvolvimento e holdout; a calibração humana orienta a
+pergunta, mas fornece zero exemplos de fit.
+
+O classificador bruto alcançou 77,8% no holdout contra 50% da baseline. Nas
+nove âncoras humanas resolvidas, o mapeamento conservador atingiu 7/9 contra
+5/9 e recall de 100% para fala dirigida. O mesmo checkpoint percorreu quatro
+probes no Chrome, com paridade exata de probabilidades entre Node e navegador,
+zero amostras futuras e zero autoridade. Isso sustenta
+`promote-m4b-speaker-relevance-shadow-candidate`.
+
+Autoridade continua determinística. Com limiar 0,8, o veto seguro atingiu só
+55,6% no holdout procedural e não passou acurácia, recall por classe ou ganho
+operacional. O próximo experimento deve ampliar diversidade e hard negatives,
+calibrar apenas em treino/desenvolvimento e congelar um novo holdout antes de
+reavaliar qualquer efeito.
 
 ## Pontos incorporados
 
@@ -229,11 +251,11 @@ Não são bloqueadores do fechamento M2.5:
 
 - eventual mudança da autoridade hoje hospedada no backend; qualquer mudança
   precisa preservar uma única autoridade por sessão;
-- primeira família comparável de M4b e desenho do holdout pós-calibração;
+- calibração segura e eventual autoridade limitada do M4b de relevância;
 - candidato nativo e provedor de GPU, somente após pergunta/orçamento;
-- expansão da amostra após o piloto EXP-0015; o protocolo mínimo de 3
-  participantes externos, atenção, votos singulares, consenso e cobertura já
-  está congelado;
+- eventual expansão da amostra após o piloto EXP-0015 para perguntas novas; o
+  gate atual já fechou e não deve receber participantes apenas para forçar ação
+  singular onde houve equivalência;
 - licença do código, escolhida pelo proprietário em trilha de governança.
 
 ## Gatilhos para rever esta decisão
@@ -242,7 +264,8 @@ Reabrir a arquitetura somente se evidência mostrar que:
 
 - um kernel comum não consegue representar eventos de um candidato relevante;
 - o reflexo local causa mais cortes percebidos do que evita;
-- sinais incrementais compactos não vencem uma baseline simples em M4b;
+- sinais incrementais compactos não conseguem converter o ganho bruto de M4b
+  em veto seguro sob diversidade nova;
 - um modelo nativo produz ganho humano grande sob os mesmos guardrails;
 - custo ou complexidade do trace excede seu valor de replay/aprendizado.
 

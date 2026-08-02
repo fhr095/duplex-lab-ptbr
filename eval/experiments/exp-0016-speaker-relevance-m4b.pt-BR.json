@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "id": "exp-0016-speaker-relevance-m4b-v0.1",
+  "locale": "pt-BR",
+  "hypothesis": "Um classificador acústico causal pequeno consegue distinguir fala provavelmente dirigida de fala de fundo melhor que a baseline que trata toda fala detectada como dirigida, sem ignorar fala humana dirigida nem receber autoridade.",
+  "calibration": {
+    "report": "eval/reports/exp-0015-timing-calibration-instrument-v4.json",
+    "packId": "exp-0015-timing-calibration-v0.2",
+    "packSha256": "sha256:30e62d9b64c4781939c3a7d46d5a8c8a54be6eaa8bc4396405436512750d2b65",
+    "resolutionRubricId": "exp-0015-preference-resolution-v0.2.2",
+    "lesson": "Fala percebida como fundo favoreceu CONTINUE; fala dirigida nunca pode ser ignorada por um veto acústico inseguro."
+  },
+  "source": {
+    "manifest": "eval/sources/exp-0016-fleurs-pt-br-v0.1.json",
+    "license": "CC-BY-4.0",
+    "fitEligibility": "fit-eligible",
+    "rawAudioInGit": false
+  },
+  "task": {
+    "classes": [
+      "BACKGROUND_OR_NOT_DIRECTED",
+      "DIRECTED_TO_ASSISTANT"
+    ],
+    "baseline": "all-vad-positive-speech-is-directed",
+    "candidateMode": "shadow",
+    "shadowDecisionMs": 560,
+    "backgroundVetoConfidence": 0.8,
+    "lowConfidenceAction": "DEFER_TO_DETERMINISTIC",
+    "backgroundAction": "CONTINUE_OUTPUT",
+    "directedAction": "DEFER_TO_DETERMINISTIC"
+  },
+  "audio": {
+    "sampleRate": 16000,
+    "durationMs": 1000,
+    "maximumDecisionMs": 640,
+    "futureSamplesAllowed": 0
+  },
+  "splits": {
+    "train": [
+      {
+        "id": "directed-clean",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "decisionMs": 480,
+        "targetRmsDb": -20
+      },
+      {
+        "id": "directed-soft-noisy",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "decisionMs": 640,
+        "targetRmsDb": -28,
+        "noiseSnrDb": 15
+      },
+      {
+        "id": "background-distant",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "decisionMs": 480,
+        "targetRmsDb": -31,
+        "lowPassAlpha": 0.12,
+        "echoDelayMs": 80,
+        "echoGain": 0.35
+      },
+      {
+        "id": "background-side",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "decisionMs": 640,
+        "targetRmsDb": -27,
+        "lowPassAlpha": 0.22,
+        "echoDelayMs": 50,
+        "echoGain": 0.25,
+        "secondary": true,
+        "secondaryRmsDb": -34
+      }
+    ],
+    "development": [
+      {
+        "id": "directed-reverberant",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "decisionMs": 560,
+        "targetRmsDb": -24,
+        "echoDelayMs": 35,
+        "echoGain": 0.18,
+        "noiseSnrDb": 20
+      },
+      {
+        "id": "background-lowpass",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "decisionMs": 560,
+        "targetRmsDb": -29,
+        "lowPassAlpha": 0.16,
+        "echoDelayMs": 90,
+        "echoGain": 0.3
+      }
+    ],
+    "holdout": [
+      {
+        "id": "directed-quiet",
+        "label": "DIRECTED_TO_ASSISTANT",
+        "decisionMs": 600,
+        "targetRmsDb": -27,
+        "echoDelayMs": 45,
+        "echoGain": 0.12,
+        "noiseSnrDb": 18
+      },
+      {
+        "id": "background-competing",
+        "label": "BACKGROUND_OR_NOT_DIRECTED",
+        "decisionMs": 600,
+        "targetRmsDb": -28,
+        "lowPassAlpha": 0.28,
+        "echoDelayMs": 70,
+        "echoGain": 0.3,
+        "secondary": true,
+        "secondaryRmsDb": -31
+      }
+    ]
+  },
+  "trainer": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "epochs": 2400,
+    "learningRate": 0.3,
+    "l2": 0.001,
+    "initialization": "all-zero",
+    "ordering": "input-order/full-batch"
+  },
+  "gates": {
+    "minimumDevelopmentAccuracy": 0.75,
+    "minimumHoldoutAccuracy": 0.75,
+    "minimumHoldoutClassRecall": 0.75,
+    "minimumHoldoutGainOverBaseline": 0.2,
+    "minimumHumanAnchorGainScenes": 1,
+    "minimumHumanDirectedRecallForAuthority": 1
+  },
+  "claims": {
+    "promotable": "candidato M4b estreito de relevância da fala em shadow",
+    "excluded": [
+      "autoridade para ignorar fala",
+      "generalização por falante, gênero, sala ou conteúdo espontâneo",
+      "detecção semântica de backchannel ou correção",
+      "qualidade full-duplex de produto"
+    ]
+  }
+}

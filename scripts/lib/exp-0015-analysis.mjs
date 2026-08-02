@@ -4,16 +4,29 @@ import {
 import {
   selectFitEligibleTimingLabels,
   validateTimingCalibrationPack,
+  validateTimingCalibrationResolutionRubric,
   validateTimingCalibrationScoringRubric
 } from "../../src/eval/calibration/blind-session.mjs";
 
 export function evaluateExp0015Instrument(input) {
-  const { aggregate, browser, fingerprints, pack, rubric } = input;
+  const {
+    aggregate,
+    browser,
+    fingerprints,
+    pack,
+    resolutionRubric,
+    rubric
+  } = input;
   const packValidation = validateTimingCalibrationPack(pack);
   const rubricValidation = validateTimingCalibrationScoringRubric(
     pack,
     rubric
   );
+  const resolutionRubricValidation =
+    validateTimingCalibrationResolutionRubric(
+      pack,
+      resolutionRubric
+    );
   const artifacts = (pack.scenes ?? []).flatMap((scene) =>
     TIMING_CALIBRATION_ACTIONS.map((action) => scene.artifacts?.[action])
   );
@@ -97,7 +110,7 @@ export function evaluateExp0015Instrument(input) {
     noSyntheticHumanRecord:
       browser?.protocol?.annotationSubmitted === false,
     aggregateBinding:
-      aggregate?.schemaVersion === "timing-calibration-aggregate-v2" &&
+      aggregate?.schemaVersion === "timing-calibration-aggregate-v3" &&
       aggregate?.packId === pack.packId &&
       aggregate?.packSha256 === pack.packSha256,
     scoringRubricBinding:
@@ -108,6 +121,15 @@ export function evaluateExp0015Instrument(input) {
         "versioned-additive-amendment" &&
       fingerprints?.rubric?.path !== undefined &&
       fingerprints?.rubric?.sha256 !== undefined,
+    preferenceResolutionRubricBinding:
+      resolutionRubricValidation.valid &&
+      aggregate?.gates?.preferenceResolutionRubric === true &&
+      aggregate?.scoring?.preferenceResolution?.rubricId ===
+        resolutionRubric.rubricId &&
+      aggregate?.scoring?.preferenceResolution?.mode ===
+        "versioned-set-valued-resolution" &&
+      fingerprints?.resolutionRubric?.path !== undefined &&
+      fingerprints?.resolutionRubric?.sha256 !== undefined,
     annotationIntegrity:
       aggregate?.gates?.recordsValid === true &&
       aggregate?.metrics?.invalidRecords === 0,
@@ -121,7 +143,7 @@ export function evaluateExp0015Instrument(input) {
   const instrumentPass = Object.values(gates).every(Boolean);
   const humanCalibrationPass = aggregate.calibrationReady === true;
   return {
-    schemaVersion: "exp-0015-timing-calibration-instrument-report-v3",
+    schemaVersion: "exp-0015-timing-calibration-instrument-report-v4",
     experimentId: pack.packId,
     question:
       "O instrumento local cego separa timing, atribuição da fala e " +
@@ -159,7 +181,14 @@ export function evaluateExp0015Instrument(input) {
       amendedAttentionPassRate: aggregate.metrics.attentionPassRate,
       attentionPassedDelta: aggregate.metrics.attentionPassedDelta,
       labelledScenes: aggregate.metrics.labelledScenes,
-      labelCoverage: aggregate.metrics.labelCoverage,
+      singularLabelCoverage: aggregate.metrics.labelCoverage,
+      resolvedScenes: aggregate.metrics.resolvedScenes,
+      setValuedResolvedScenes:
+        aggregate.metrics.setValuedResolvedScenes,
+      unresolvedScenes: aggregate.metrics.unresolvedScenes,
+      resolutionCoverage: aggregate.metrics.resolutionCoverage,
+      activeCalibrationCoverage:
+        aggregate.metrics.calibrationCoverage,
       fitEligibleLabels: fitLabels.length,
       paidApiCalls: pack.paidApiCalls
     },
@@ -192,7 +221,8 @@ export function evaluateExp0015Instrument(input) {
             "coleta pseudônima com validação fail-closed",
             "equivalências exatas e empates preservados",
             "atribuição da fala separada da preferência de timing",
-            "emenda aditiva de gabarito versionada sem mutar respostas"
+            "emenda aditiva de gabarito versionada sem mutar respostas",
+            "equivalências consensuais preservadas sem inventar rótulo singular"
           ]
         : [],
       held: [

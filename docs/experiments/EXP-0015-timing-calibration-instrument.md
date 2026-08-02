@@ -1,7 +1,7 @@
 # EXP-0015 — instrumento cego de calibração de timing
 
-Status: **instrumento v0.2 + gabarito v0.2.1 promovidos; calibração humana em
-`await` (2/3 participantes externos)**.
+Status: **campanha concluída; instrumento v0.2, gabarito v0.2.1 e resolução
+de preferências v0.2.2 promovidos; M4b liberado para congelamento**.
 
 ## Pergunta
 
@@ -15,9 +15,10 @@ modelo?
 
 `promote-timing-calibration-instrument` para a v0.2.
 
-Essa decisão promove pack, interface, persistência e agregação. Ela não promove
-preferência, naturalidade, generalização, M4b ou uso direto dos dados atuais em
-ajuste de pesos. O estado complementar continua `await-human-calibration`.
+Essa decisão promove pack, interface, persistência e agregação. A coleta humana
+complementar sustenta `calibration-sufficient-to-freeze-m4b-experiment`. Ela
+não promove naturalidade, generalização, qualidade de produto, uso direto dos
+dados atuais em ajuste de pesos ou autoridade para o modelo.
 
 ## O que o piloto v0.1 revelou
 
@@ -74,8 +75,15 @@ estatística é a pessoa, não cada clique ou cena.
 
 Uma opção formada por WAVs idênticos preserva todas as ações equivalentes. Uma
 seleção múltipla preserva o conjunto escolhido. Apenas respostas com exatamente
-uma ação alimentam votos para um rótulo singular; equivalências, empates e
-dúvidas ficam visíveis no agregado, mas não ganham um vencedor arbitrário.
+uma ação alimentam votos para um rótulo singular; equivalências e empates nunca
+ganham uma ação vencedora arbitrária.
+
+Para a finalidade distinta de saber se a calibração resolveu a direção do
+M4b, o agregado aceita também um **conjunto de preferência estável**: ao menos
+três respostas válidas e dois terços escolhendo exatamente o mesmo conjunto de
+ações. Isso registra que aquelas ações são equivalentemente aceitáveis na cena,
+sem convertê-las em rótulo singular ou dado apto a treino. Dúvidas continuam
+fora dos votos e desacordo sem consenso continua irresolvido.
 
 A atribuição da fala é agregada por cena em uma dimensão separada. Nos controles
 de atenção, tanto o conjunto de ações quanto a atribuição precisam estar dentro
@@ -98,11 +106,37 @@ do mesmo pack:
 - nenhuma aceitação anterior foi removida;
 - pack, WAVs, perguntas, opções e registros brutos não foram modificados.
 
-O agregado preserva os dois placares: **66,7% no gabarito-base e 100% no
-gabarito v0.2.1**. A emenda está em
+Naquele checkpoint, o agregado preservou os dois placares: **66,7% no
+gabarito-base e 100% no gabarito v0.2.1**. Com a terceira resposta, os placares
+passaram a 77,8% e 100%, respectivamente. A emenda está em
 [`exp-0015-scoring-rubric-v0.2.1.json`](../../eval/calibration/exp-0015-scoring-rubric-v0.2.1.json)
 e falha fechado se for usada com outro pack, aceitar as três classes ou remover
 a resposta originalmente correta.
+
+## Resolução aditiva de preferências v0.2.2
+
+Com três participantes externos, o placar singular cobriu 5/9 cenas. O
+feedback qualitativo e o próprio agregado mostraram que as seleções múltiplas
+não eram falta de atenção: nos dois backchannels, `WAIT` e `CONTINUE` apontam
+para o mesmo WAV; em fala preparada, as três pessoas escolheram conjuntamente
+`WAIT + PAUSE`. Exigir uma ação única descartaria uma conclusão humana estável
+que o instrumento foi desenhado para preservar.
+
+A política v0.2.2, vinculada ao mesmo pack, mantém todos os limiares originais
+e acrescenta cobertura por conjuntos consensuais:
+
+- 5 cenas têm rótulo singular;
+- 3 cenas têm conjunto de preferência estável;
+- 1 cena, `filled-pause-mid`, permanece irresolvida;
+- cobertura singular permanece **55,6%** e cobertura resolvida passa a
+  **88,9%**;
+- equivalências não criam rótulo singular, não são `fit-eligible` e não
+  autorizam ajuste de pesos.
+
+A política está em
+[`exp-0015-preference-resolution-rubric-v0.2.2.json`](../../eval/calibration/exp-0015-preference-resolution-rubric-v0.2.2.json).
+Ela falha fechado se mudar os limiares congelados, permitir fit direto, mutar
+registros ou se for usada com outro pack.
 
 ## Privacidade e integridade
 
@@ -161,10 +195,11 @@ No Chrome 150 do Windows, acessando o IP direto do WSL:
 - zero chamada paga.
 
 O relatório canônico corrente é
-[`exp-0015-timing-calibration-instrument-v3.json`](../../eval/reports/exp-0015-timing-calibration-instrument-v3.json).
-Seus 16 gates técnicos passam. O placar humano permanece separado: 2
-participantes externos e 1 interno, 3 registros válidos, zero cena formalmente
-rotulada, zero rótulo elegível a fit e nenhuma autoridade.
+[`exp-0015-timing-calibration-instrument-v4.json`](../../eval/reports/exp-0015-timing-calibration-instrument-v4.json).
+Seus 17 gates técnicos passam. O placar humano tem 3 participantes externos e
+1 interno, 4 registros válidos, atenção de 77,8% no gabarito-base e 100% no
+emendado, 5 rótulos singulares e 3 resoluções por conjunto. A campanha fecha em
+8/9 cenas resolvidas, zero rótulo elegível a fit e nenhuma autoridade.
 
 O pack e os relatórios
 [`v0.1`](../../eval/reports/exp-0015-timing-calibration-instrument-v1.json)
@@ -193,14 +228,15 @@ npm run eval:exp:0015:report
 
 ## Gate humano congelado
 
-A calibração só fica suficiente para congelar o experimento M4b se, no mínimo:
+A calibração fica suficiente para congelar o experimento M4b quando:
 
 - houver 3 participantes **externos** únicos;
 - participantes internos forem preservados apenas como evidência de
   usabilidade e não contarem para o mínimo;
-- cada cena rotulada tiver 3 votos de ação singular válidos;
-- o vencedor tiver pelo menos 2/3 desses votos;
-- ao menos 60% das 9 cenas não-controle forem rotuladas;
+- cada cena resolvida tiver 3 votos válidos de preferência;
+- uma ação ou o mesmo conjunto de ações tiver pelo menos 2/3 desses votos;
+- ao menos 60% das 9 cenas não-controle forem resolvidas;
+- conjuntos de ações não forem convertidos em rótulo singular ou fit direto;
 - a taxa agregada de atenção externa sob o gabarito v0.2.1 for pelo menos 80%,
   preservando também o placar-base no relatório;
 - não houver registro inválido ou participante duplicado.
@@ -210,10 +246,13 @@ avaliação estatística de produto. Se a discordância for alta, o resultado ú
 é preservar a ambiguidade e redesenhar a cena, não aumentar artificialmente o
 consenso.
 
+Todos esses critérios passaram. O pack, as respostas e os comentários locais
+foram preservados sem alteração.
+
 ## Próximo passo
 
-Coletar uma amostra nova na v0.2 com pelo menos três pessoas externas. Depois,
-usar somente o agregado sem comentários para decidir se as famílias e o holdout
-M4b podem ser congelados. A política determinística continua autoritativa; o
-candidato permanece em shadow até demonstrar ganho no mesmo runtime e nos
-guardrails.
+Congelar um experimento M4b separado, com dados novos `fit-eligible`, famílias
+de treino separadas e holdout não observado. A política determinística continua
+autoritativa; o candidato permanece em shadow até demonstrar ganho no mesmo
+runtime e nos guardrails. Nenhum áudio ou rótulo do EXP-0015 entra diretamente
+no ajuste de pesos.

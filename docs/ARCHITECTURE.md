@@ -77,9 +77,10 @@ CANCEL(task, epoch)
 ROLLBACK(previous, current)
 ```
 
-A autoridade atual continua determinística. O checkpoint M4a já aprende uma
-subinterface estreita, mas apenas observa; candidatos futuros podem ampliar a
-mesma interface somente por gates específicos.
+A autoridade atual continua determinística. O checkpoint M4a aprende a
+subinterface `WAIT/PAUSE/CONTINUE`; o checkpoint M4b EXP-0016 aprende
+`BACKGROUND_OR_NOT_DIRECTED / DIRECTED_TO_ASSISTANT`. Ambos apenas observam;
+candidatos só ampliam a interface ou recebem efeitos por gates específicos.
 
 A separação obrigatória é:
 
@@ -98,8 +99,9 @@ backend não mantêm duas políticas concorrentes. O reflexo local é a única
 antecipação permitida e precisa ser reconciliado no trace.
 
 O primeiro checkpoint não precisa emitir toda a ontologia. M4a começou com uma
-capacidade estreita e probabilidades; o runtime pode escolher
-`WAIT_FOR_EVIDENCE` por confiança, risco e deadline.
+capacidade estreita e probabilidades. M4b adicionou relevância do falante em
+uma janela causal de 560 ms; baixa confiança ou fala dirigida sempre volta à
+política determinística.
 
 Na fatia v0.1, `USER_TURN_FINAL` cobre somente correção semântica e confirmação
 monetária. O backend guarda versão, revisão e confirmação pendente por sessão;
@@ -175,6 +177,13 @@ posição de amostra, features incrementais são extraídas causalmente e o
 `AcousticReflexShadow` registra as probabilidades do checkpoint ao lado do
 rótulo da regra. O modelo é somente observador; `LocalAudioReflex` e
 `OutputInterruptionLifecycle` continuam sendo as autoridades e executores.
+
+O EXP-0016 adicionou `SpeakerRelevanceCausalRuntime`. Frames PCM ficam num
+buffer limitado; um evento Silero registra o onset e a inferência só ocorre
+quando todas as amostras até 560 ms existem. O extrator do navegador tem
+paridade numérica com o extrator de treino. A saída registra rótulo bruto,
+probabilidade e sugestão conservadora, mas `authority=false` e nenhum executor
+consome a sugestão. Quatro replays no Chrome provaram esse caminho.
 
 ## Duas implementações sob o mesmo contrato
 
@@ -278,9 +287,10 @@ Ainda não implementado:
   controlada estão materializadas, mas clocks entre processos e captura geral
   de streams não;
 - ledger verificável de efeitos externos — o ledger local da interrupção está
-  promovido — e holdout independente novo;
-- primeiro checkpoint comparável a comportamento humano ou com autoridade — o
-  checkpoint M4a estreito já roda em shadow;
+  promovido;
+- autoridade limitada para um checkpoint comparável — o M4b de relevância já
+  vence a baseline bruta e reencontra ganho humano em shadow, mas seu veto
+  conservador ainda falha no holdout procedural;
 - geração/crítica autônoma ampla e ambientalização multivoz da fábrica;
 - loopback físico separado para medir a cauda do alto-falante e da sala;
 - AEC controlado por hardware/ambiente além das constraints do navegador;

@@ -276,6 +276,11 @@ const STATIC_ROUTES = new Map([
   ["/", "index.html"],
   ["/acoustic-reflex-checkpoint.json", "acoustic-reflex-checkpoint.json"],
   ["/acoustic-reflex-shadow.mjs", "acoustic-reflex-shadow.mjs"],
+  [
+    "/speaker-relevance-checkpoint.json",
+    "speaker-relevance-checkpoint.json"
+  ],
+  ["/speaker-relevance-shadow.mjs", "speaker-relevance-shadow.mjs"],
   ["/app.mjs", "app.mjs"],
   ["/critical-conflict.mjs", "critical-conflict.mjs"],
   ["/interaction-browser-adapter.mjs", "interaction-browser-adapter.mjs"],

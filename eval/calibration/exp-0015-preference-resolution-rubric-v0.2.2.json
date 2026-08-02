@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "timing-calibration-preference-resolution-rubric-v1",
+  "rubricId": "exp-0015-preference-resolution-v0.2.2",
+  "packId": "exp-0015-timing-calibration-v0.2",
+  "packSha256": "sha256:30e62d9b64c4781939c3a7d46d5a8c8a54be6eaa8bc4396405436512750d2b65",
+  "baseProtocolVersion": "blind-timing-preference-and-attribution-v2",
+  "policy": "additive-set-valued-resolution-only",
+  "decisionContext": {
+    "decidedAt": "2026-08-02",
+    "observedExternalParticipants": 3,
+    "appliesToExistingRecords": true,
+    "feedback": "Os participantes relataram que as seleções múltiplas representavam alternativas acusticamente indistinguíveis, e não ausência de uma preferência observável."
+  },
+  "thresholds": {
+    "minimumVotesPerResolution": 3,
+    "minimumConsensusShare": 0.6666666666666666,
+    "minimumResolutionCoverage": 0.6
+  },
+  "safeguards": {
+    "singularLabelsRemainUnchanged": true,
+    "setValuedResolutionsCreateSingularLabels": false,
+    "setValuedResolutionsEligibleForDirectFit": false,
+    "uncertainResponsesCountAsPreferenceVotes": false,
+    "rawRecordsMutated": false,
+    "stimuliOrQuestionsChanged": false
+  },
+  "rationale": "O protocolo já permitia selecionar alternativas igualmente boas e agrupava WAVs byte a byte idênticos. Um conjunto de ações repetido por participantes suficientes é uma resolução válida da preferência, mas não autoriza inventar uma ação singular, transformar o pack em dado de treino ou reduzir qualquer limiar previamente congelado."
+}

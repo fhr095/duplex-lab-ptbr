@@ -364,7 +364,10 @@ shadow. Seu holdout por família verifica a infraestrutura e ausência de
 vazamento estrutural; como os rótulos imitam a política determinística, a
 acurácia perfeita permanece explicitamente “sem alegação de generalização”.
 
-M4b exige famílias separadas, holdout não observado, calibração humana pequena
-para rótulos sociais/temporais e comparação contra a baseline sob o mesmo
-kernel/runtime. Efeitos externos, commit, delegação e cancelamento permanecem
-determinísticos até gates específicos concederem autoridade.
+O primeiro M4b foi executado no EXP-0016 para relevância acústica: 108 exemplos
+com famílias/clips separados, holdout não usado no fit, calibração humana como
+âncora e comparação contra a baseline. O checkpoint percorre um buffer causal
+no Chrome e registra probabilidades em telemetria shadow; essa prova de runtime
+ainda não amplia o ledger canônico de efeitos. Efeitos externos, commit,
+delegação, cancelamento e `CONTINUE_OUTPUT` permanecem determinísticos até
+gates específicos concederem autoridade.

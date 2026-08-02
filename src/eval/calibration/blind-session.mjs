@@ -353,6 +353,70 @@ export function validateTimingCalibrationScoringRubric(pack, rubric) {
   });
 }
 
+export function validateTimingCalibrationResolutionRubric(pack, rubric) {
+  const errors = [];
+  const packValidation = validateTimingCalibrationPack(pack);
+  errors.push(...packValidation.errors);
+  if (
+    rubric?.schemaVersion !==
+      "timing-calibration-preference-resolution-rubric-v1"
+  ) {
+    errors.push("schemaVersion da resolução é incompatível");
+  }
+  try {
+    identifier(rubric?.rubricId, "rubricId");
+  } catch (error) {
+    errors.push(error.message);
+  }
+  if (
+    rubric?.packId !== pack?.packId ||
+    rubric?.packSha256 !== pack?.packSha256 ||
+    rubric?.baseProtocolVersion !== pack?.protocol?.version
+  ) {
+    errors.push("resolução não pertence ao pack/protocolo");
+  }
+  if (
+    rubric?.policy !== "additive-set-valued-resolution-only"
+  ) {
+    errors.push(
+      "policy da resolução precisa ser " +
+        "additive-set-valued-resolution-only"
+    );
+  }
+  const thresholds = rubric?.thresholds;
+  if (
+    thresholds?.minimumVotesPerResolution !==
+      pack?.protocol?.minimumVotesPerScene ||
+    thresholds?.minimumConsensusShare !==
+      pack?.protocol?.minimumConsensusShare ||
+    thresholds?.minimumResolutionCoverage !==
+      pack?.protocol?.minimumLabelCoverage
+  ) {
+    errors.push("limiares da resolução divergem do protocolo congelado");
+  }
+  const safeguards = rubric?.safeguards;
+  if (
+    safeguards?.singularLabelsRemainUnchanged !== true ||
+    safeguards?.setValuedResolutionsCreateSingularLabels !== false ||
+    safeguards?.setValuedResolutionsEligibleForDirectFit !== false ||
+    safeguards?.uncertainResponsesCountAsPreferenceVotes !== false ||
+    safeguards?.rawRecordsMutated !== false ||
+    safeguards?.stimuliOrQuestionsChanged !== false
+  ) {
+    errors.push("salvaguardas da resolução são incompatíveis");
+  }
+  if (
+    typeof rubric?.rationale !== "string" ||
+    rubric.rationale.trim().length < 40
+  ) {
+    errors.push("resolução precisa documentar rationale");
+  }
+  return Object.freeze({
+    valid: errors.length === 0,
+    errors
+  });
+}
+
 function score(...parts) {
   return sha256(parts.join("/"));
 }
@@ -874,7 +938,10 @@ export function validateTimingCalibrationRecord(pack, record) {
 }
 
 export function selectFitEligibleTimingLabels(aggregate) {
-  if (aggregate?.schemaVersion !== "timing-calibration-aggregate-v2") {
+  if (![
+    "timing-calibration-aggregate-v2",
+    "timing-calibration-aggregate-v3"
+  ].includes(aggregate?.schemaVersion)) {
     throw new TypeError("agregado de calibração incompatível");
   }
   return Object.freeze((aggregate.labels ?? [])
@@ -940,6 +1007,8 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
     options.minimumAttentionPassRate ?? 0.8;
   const attentionScoringRubric =
     options.attentionScoringRubric ?? null;
+  const preferenceResolutionRubric =
+    options.preferenceResolutionRubric ?? null;
   const rubricValidation = attentionScoringRubric === null
     ? { valid: true, errors: [] }
     : validateTimingCalibrationScoringRubric(
@@ -948,6 +1017,15 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
       );
   const activeRubric = rubricValidation.valid
     ? attentionScoringRubric
+    : null;
+  const resolutionRubricValidation = preferenceResolutionRubric === null
+    ? { valid: true, errors: [] }
+    : validateTimingCalibrationResolutionRubric(
+        pack,
+        preferenceResolutionRubric
+      );
+  const activeResolutionRubric = resolutionRubricValidation.valid
+    ? preferenceResolutionRubric
     : null;
   const recordValidations = (records ?? []).map((record, index) => ({
     index,
@@ -1010,6 +1088,9 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
         (response) => actionSetKey(response.selectedActions)
       )].map(([key, entries]) => [key, entries.length])
     );
+    const validPreferenceResponses = allResponses.filter(
+      (response) => !response.uncertain
+    );
     const maximumVotes = Math.max(...Object.values(votes));
     const winners = TIMING_CALIBRATION_ACTIONS.filter(
       (action) => votes[action] === maximumVotes
@@ -1024,6 +1105,29 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
       winner !== null &&
       singleActionResponses.length >= minimumVotesPerScene &&
       consensusShare >= minimumConsensusShare;
+    const maximumPreferenceSetVotes = Math.max(
+      0,
+      ...Object.values(preferenceSets)
+    );
+    const winningPreferenceSets = Object.keys(preferenceSets).filter(
+      (key) => preferenceSets[key] === maximumPreferenceSetVotes
+    );
+    const preferenceSetWinner =
+      validPreferenceResponses.length > 0 &&
+      winningPreferenceSets.length === 1
+        ? winningPreferenceSets[0]
+        : null;
+    const preferenceConsensusShare =
+      validPreferenceResponses.length === 0
+        ? 0
+        : maximumPreferenceSetVotes / validPreferenceResponses.length;
+    const resolved =
+      preferenceSetWinner !== null &&
+      validPreferenceResponses.length >= minimumVotesPerScene &&
+      preferenceConsensusShare >= minimumConsensusShare;
+    const resolvedActions = resolved
+      ? orderedActions(preferenceSetWinner.split("+"))
+      : [];
     return {
       sceneId: scene.sceneId,
       family: scene.family,
@@ -1032,6 +1136,7 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
       preferenceSets,
       responses: allResponses.length,
       validSingleActionVotes: singleActionResponses.length,
+      validPreferenceVotes: validPreferenceResponses.length,
       tiedOrEquivalentPreferences: allResponses.filter(
         (response) => !response.uncertain &&
           response.selectedActions.length > 1
@@ -1041,7 +1146,16 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
       ).length,
       winner,
       consensusShare,
-      labelled
+      labelled,
+      preferenceSetWinner,
+      preferenceConsensusShare,
+      resolvedActions,
+      resolutionKind: resolved
+        ? resolvedActions.length === 1
+          ? "singular-action"
+          : "set-valued-preference"
+        : "unresolved",
+      resolved
     };
   });
   const labels = sceneResults.filter((scene) => scene.labelled).map(
@@ -1075,6 +1189,31 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
   const labelCoverage = eligibleScenes.length === 0
     ? 0
     : labels.length / eligibleScenes.length;
+  const resolutions = sceneResults.filter((scene) => scene.resolved).map(
+    (scene) => ({
+      sceneId: scene.sceneId,
+      task: "acoustic-reflex-preference-set",
+      acceptableActions: [...scene.resolvedActions],
+      resolutionKind: scene.resolutionKind,
+      source: {
+        kind: "human-annotation-aggregate",
+        ref: pack.packId,
+        version: activeResolutionRubric?.rubricId ??
+          "singular-label-base"
+      },
+      confidence: scene.preferenceConsensusShare,
+      participantCount: scene.validPreferenceVotes,
+      fitEligibility: scene.fitEligibility,
+      eligibleForDirectFit: scene.resolutionKind === "singular-action" &&
+        scene.fitEligibility === "fit-eligible"
+    })
+  );
+  const resolutionCoverage = eligibleScenes.length === 0
+    ? 0
+    : resolutions.length / eligibleScenes.length;
+  const calibrationCoverage = activeResolutionRubric === null
+    ? labelCoverage
+    : resolutionCoverage;
   const gates = {
     packValid: validateTimingCalibrationPack(pack).valid,
     recordsValid: invalidRecords.length === 0,
@@ -1082,15 +1221,16 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
       externalRecords.length >= minimumExternalParticipants,
     uniqueParticipants: duplicateParticipantCount === 0,
     attentionScoringRubric: rubricValidation.valid,
+    preferenceResolutionRubric: resolutionRubricValidation.valid,
     attention: attentionPassRate >= minimumAttentionPassRate,
-    labelCoverage: labelCoverage >= minimumLabelCoverage
+    calibrationCoverage: calibrationCoverage >= minimumLabelCoverage
   };
   const calibrationReady = Object.values(gates).every(Boolean);
   const fitEligibleLabels = labels.filter(
     (label) => label.fitEligibility === "fit-eligible"
   );
   return Object.freeze({
-    schemaVersion: "timing-calibration-aggregate-v2",
+    schemaVersion: "timing-calibration-aggregate-v3",
     packId: pack.packId,
     packSha256: pack.packSha256,
     calibrationReady,
@@ -1112,8 +1252,17 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
       attentionPassedDelta:
         activeAttention.passed - baseAttention.passed,
       labelledScenes: labels.length,
+      resolvedScenes: resolutions.length,
+      setValuedResolvedScenes: resolutions.filter(
+        (resolution) =>
+          resolution.resolutionKind === "set-valued-preference"
+      ).length,
+      unresolvedScenes: eligibleScenes.length - resolutions.length,
       eligibleScenes: eligibleScenes.length,
       labelCoverage,
+      resolutionCoverage,
+      calibrationCoverage,
+      coverageDelta: calibrationCoverage - labelCoverage,
       fitEligibleLabels: fitEligibleLabels.length
     },
     invalidRecords: invalidRecords.map((entry) => ({
@@ -1122,6 +1271,7 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
       errors: entry.validation.errors
     })),
     labels,
+    resolutions,
     scenes: sceneResults,
     speakerRelevance,
     scoring: {
@@ -1135,6 +1285,28 @@ export function aggregateTimingCalibration(pack, records, options = {}) {
         base: baseAttention,
         active: activeAttention,
         amendmentsApplied: activeRubric?.amendments.length ?? 0
+      },
+      preferenceResolution: {
+        mode: activeResolutionRubric === null
+          ? "singular-label-base"
+          : "versioned-set-valued-resolution",
+        rubricId: activeResolutionRubric?.rubricId ?? null,
+        rubricValid: resolutionRubricValidation.valid,
+        rubricErrors: [...resolutionRubricValidation.errors],
+        singularBase: {
+          scenes: labels.length,
+          coverage: labelCoverage,
+          pass: labelCoverage >= minimumLabelCoverage
+        },
+        active: {
+          scenes: activeResolutionRubric === null
+            ? labels.length
+            : resolutions.length,
+          coverage: calibrationCoverage,
+          pass: calibrationCoverage >= minimumLabelCoverage
+        },
+        setValuedResolutionsCreateSingularLabels: false,
+        setValuedResolutionsEligibleForDirectFit: false
       }
     }
   });

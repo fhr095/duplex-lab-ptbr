@@ -1,7 +1,7 @@
 # Referência macro do projeto
 
 Status: **referência canônica — consolidada em 02/08/2026 após auditoria,
-contranálise, M4a acústico e gabarito EXP-0015 v0.2.1**
+contranálise, calibração EXP-0015 e M4b acústico EXP-0016 em shadow**
 
 ## Tese
 
@@ -287,12 +287,12 @@ e falta de proveniência interno/externo. A v0.2 agrupa equivalências, aceita
 empates, separa atribuição, permite comentário local opcional e reserva o gate
 humano a participantes externos. O Chrome do Windows confirmou cenas com 2 e 3
 opções sem expor ação ou cena, sem erro e sem submeter opinião artificial. A
-decisão técnica é `promote-timing-calibration-instrument`; a conclusão humana
-permanece `await-human-calibration` em 2/3 externos e a política não ganhou
-autoridade. O gabarito aditivo v0.2.1 aceita no silêncio tanto “não direcionado”
-quanto “não consigo saber”, mantendo “direcionado” como erro. Ele reprocessa
-atenção de 66,7% para 100% sem alterar pack, perguntas ou registros e preserva
-os dois placares no relatório.
+decisão técnica é `promote-timing-calibration-instrument`. Com 3 participantes
+externos e 1 interno, o gabarito aditivo v0.2.1 preserva atenção de 77,8% base e
+100% emendada. A resolução v0.2.2 preserva 5 rótulos singulares e reconhece 3
+conjuntos de ações consensualmente equivalentes: 8/9 cenas ficam resolvidas e
+`calibration-sufficient-to-freeze-m4b-experiment` passa. Pack, perguntas e
+registros permanecem intactos; há zero fit direto e nenhuma autoridade.
 
 ### M3 — qualidade modular local
 
@@ -316,10 +316,20 @@ e comparar contra a baseline determinística. Autoridade só entra para a
 capacidade que vencer seus gates; efeitos externos continuam protegidos por
 regras determinísticas.
 
-O agregado do EXP-0015 poderá dizer que há calibração suficiente para congelar
-esse experimento, mas não será dataset de fit. M4b exige novas famílias e fontes
-explicitamente elegíveis, com a linhagem de como a calibração influenciou sua
-construção.
+**Primeira capacidade promovida em shadow no EXP-0016; autoridade em hold.**
+O agregado do EXP-0015 congelou a pergunta sem entrar no fit. O EXP-0016 usou
+36 clips FLEURS PT-BR CC-BY-4.0 para construir 108 exemplos procedurais, com
+clips e famílias separados entre treino, desenvolvimento e holdout. O modelo
+bruto atingiu 77,8% no holdout contra 50% da baseline. No reencontro com nove
+âncoras humanas resolvidas, o modo conservador atingiu 7/9 contra 5/9 e recall
+5/5 em fala dirigida. Quatro probes no Chrome confirmaram paridade Node/browser,
+zero futuro e zero autoridade.
+
+Isso sustenta `promote-m4b-speaker-relevance-shadow-candidate`, não autoridade.
+O veto conservador ainda atinge apenas 55,6% no holdout procedural e falha os
+gates operacionais. O próximo valor de informação é ampliar diversidade,
+calibrar abstention sem olhar o holdout final e congelar um novo conjunto não
+visto.
 
 ### M5 — calibração e avaliação humana
 
@@ -329,12 +339,14 @@ Ela não é uma avaliação de produto. Quando os erros estruturais estiverem
 raros, conversas cegas maiores medem naturalidade, conforto, sotaque, confiança
 e cauda acústica. Falhas reais voltam para a fábrica como novas famílias.
 
-**Instrumento v0.2 do piloto promovido; coleta externa pendente.** O gate mínimo
-congelado é três participantes externos únicos, atenção externa agregada de
-80%, três votos de ação singular por cena, consenso de dois terços e cobertura
-de 60%. Participantes internos, equivalências, empates e dúvidas permanecem
-evidência, mas não satisfazem o respectivo mínimo/rótulo. Trata-se de um detector
-barato de direção e ambiguidade, não de uma estimativa final de preferência.
+**Piloto concluído; calibração suficiente para congelar M4b.** O gate manteve
+três participantes externos únicos, mínimo de atenção de 80% — com 100%
+observado após a emenda —, três votos de preferência por cena, consenso de dois
+terços e cobertura resolvida de 60%.
+Uma resolução pode ser singular ou um conjunto de ações consensual; somente a
+primeira pode virar rótulo, e ainda depende de origem `fit-eligible`. O resultado
+corrente é 8/9 resolvidas, uma ambígua e zero fit direto. Trata-se de um detector
+barato de direção e ambiguidade, não de uma estimativa final de produto.
 
 ### M6 — adaptação nativa de áudio, se necessária
 
@@ -354,16 +366,16 @@ Esta referência preserva apenas a lógica macro:
 3. usar a baseline v0.3 congelada como comparador de desenvolvimento;
 4. preservar as fatias promovidas do kernel, reflexo, lifecycle, trace causal
    e M4a acústico local;
-5. preservar o instrumento EXP-0015 v0.2 e coletar ao menos três avaliações
-   externas, sem tratar avaliações internas como gate ou o piloto como
-   avaliação de produto;
-6. a partir do agregado, congelar famílias novas `fit-eligible` e comparar um
-   M4b contra a regra no mesmo runtime;
-7. conceder autoridade somente se houver ganho percebido sem regressão dos
+5. preservar o EXP-0015 concluído, sem transformar equivalências em ação única
+   ou o piloto em avaliação de produto;
+6. preservar o candidato M4b EXP-0016 em shadow como evidência de capacidade,
+   sem confundir seu rótulo bruto com uma decisão segura;
+7. calibrar o veto sobre diversidade nova e um holdout pré-congelado;
+8. conceder autoridade somente se houver ganho percebido sem regressão dos
    guardrails;
-8. desafiar contrato/evaluator com referência nativa apenas quando houver uma
+9. desafiar contrato/evaluator com referência nativa apenas quando houver uma
    pergunta experimental concreta;
-9. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+10. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
    observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo

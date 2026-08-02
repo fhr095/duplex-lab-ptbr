@@ -259,6 +259,9 @@ generalização não são alegados.
 
 ## Fase 4b — primeiro peso comportamental comparável
 
+Status: **primeira capacidade promovida em shadow no EXP-0016; veto seguro e
+autoridade em hold**.
+
 Hipótese: sinais incrementais compactos bastam para vencer a política
 determinística em uma capacidade observada, sem reduzir os guardrails.
 
@@ -278,18 +281,28 @@ guardrails e em casos não vistos. A primeira capacidade é estreita; a ontologi
 `WAIT/BACKCHANNEL/SPEAK/STOP/DELEGATE/CANCEL/ROLLBACK` continua sendo o
 contrato de longo prazo, não a saída obrigatória do primeiro checkpoint.
 
-O EXP-0015 promoveu a v0.2 do instrumento que alimenta o item 3, mas não rótulos
-para fit. As duas execuções da v0.1 foram reclassificadas como piloto de
+O EXP-0015 promoveu a v0.2 do instrumento e concluiu a calibração que alimenta
+o item 3, mas não produziu rótulos para fit. As duas execuções da v0.1 foram
+reclassificadas como piloto de
 usabilidade após revelarem opções idênticas separadas, atribuição da fala
 confundida com timing e ausência de proveniência interno/externo. O agregado
-humano v0.2 poderá congelar a direção do novo experimento; o dataset M4b deverá
+humano v0.2.2 congelou a direção do novo experimento; o dataset M4b deverá
 ser outro artefato, com famílias ainda não observadas e fontes explicitamente
 `fit-eligible`.
 
+O EXP-0016 executou os itens 1–4 e 7 para uma primeira capacidade estreita:
+relevância acústica da fala. Com 108 exemplos derivados de 36 clips FLEURS
+PT-BR CC-BY-4.0, o classificador bruto atingiu 77,8% no holdout contra 50% da
+baseline. O modo conservador reencontrou ganho nas âncoras humanas — 7/9 contra
+5/9, com recall dirigido 5/5 — e percorreu quatro probes no Chrome com paridade
+exata, zero futuro e zero autoridade. O candidato M4b foi promovido em shadow;
+o item 5 continua bloqueado porque o veto seguro ainda não passa os gates
+procedurais.
+
 ## Fase 5 — calibração humana
 
-Status: **instrumento v0.2 promovido no EXP-0015; coleta externa nova
-pendente**.
+Status: **instrumento e calibração pequena promovidos no EXP-0015; M4b
+liberado para congelamento**.
 
 Há duas atividades diferentes:
 
@@ -308,14 +321,16 @@ novas famílias que voltam para a automação.
 Gate: preferência e guardrails humanos com desenho estatístico versionado;
 nenhum turno da mesma pessoa contado como participante independente.
 
-O piloto de timing usa 12 cenas, comparação cega com duas ou três opções,
+O piloto de timing usou 12 cenas, comparação cega com duas ou três opções,
 empate/dúvida explícitos, atribuição da fala separada e participante como
 unidade. Comentários opcionais permanecem somente locais. O instrumento passou
-16 gates técnicos no Chrome do Windows. O agregado corrente tem 2/3
+17 gates técnicos no Chrome do Windows. O agregado corrente tem 3/3
 participantes externos e 1 interno; internos não contam para o mínimo. A emenda
-aditiva de gabarito v0.2.1 preserva 66,7% no placar-base e aceita 100% sob a
-interpretação congelada do silêncio, sem mutar respostas. Isso promove
-capacidade de coleta, não o gate humano nem uma avaliação de produto.
+de gabarito v0.2.1 preserva 77,8% no placar-base e aceita 100% sob a
+interpretação congelada do silêncio. A resolução v0.2.2 mantém 5/9 rótulos
+singulares, reconhece 3 conjuntos consensuais e fecha 8/9 cenas, sem mutar
+respostas nem autorizar fit direto. Isso promove o congelamento do experimento
+M4b, não uma avaliação de produto ou autoridade no runtime.
 
 ## Fase 6 — adaptação nativa de áudio
 
@@ -366,18 +381,19 @@ card de dados e splits por família, gerador e pessoa.
 | 9 | EXP-0013: trace causal + ledger local — **`promote-training-trace-interruption-slice`** | seis bundles; 28 decisões reproduzidas; 22 efeitos encerrados; projeção v0 perceptiva | fatia sem áudio persistido, clocks entre processos ou generalização |
 | 10 | EXP-0014: vínculo acústico mínimo — **concluído** | 60 streams PCM hasheados, posições de amostra, features causais e split por família | WAV/PCM pesado local; clocks entre processos não promovidos |
 | 11 | EXP-0014: M4a shadow acústico — **`promote-m4a-acoustic-shadow-infrastructure`** | treino reproduzível, checkpoint, 11 decisões Chrome, replay exato, três classes e zero efeitos | imita a regra; sem ganho, generalização ou autoridade |
-| 12a | EXP-0015 v0.2 + gabarito v0.2.1 — **`promote-timing-calibration-instrument`** | 12 cenas, 36 WAVs, equivalências agrupadas, empate + atribuição, 16 gates e Chrome real | emenda aditiva vinculada ao pack; dados brutos intactos; zero fit direto |
-| 12b | Calibração humana piloto — **`await-human-calibration`, 2/3 externos** | falta 1 para o mínimo; atenção emendada 100%; votos singulares, consenso e cobertura ainda pendentes | internos não contam; empate/dúvida não viram rótulo; não é preferência de produto |
-| 13 | M4b e próximo PDCA | novo conjunto `fit-eligible`, ganho em holdout e autoridade limitada ou rejeição | efeitos críticos continuam determinísticos |
+| 12a | EXP-0015 v0.2 + gabaritos v0.2.1/v0.2.2 — **`promote-timing-calibration-instrument`** | 12 cenas, 36 WAVs, equivalências agrupadas, empate + atribuição, 17 gates e Chrome real | emendas vinculadas ao pack; dados brutos intactos; zero fit direto |
+| 12b | Calibração humana piloto — **`calibration-sufficient-to-freeze-m4b-experiment`** | 3/3 externos; atenção 77,8% base → 100%; 5 singulares + 3 conjuntos = 8/9 resolvidas | equivalência não vira rótulo singular; uma cena ambígua; não é preferência de produto |
+| 13 | EXP-0016: relevância acústica M4b — **`promote-m4b-speaker-relevance-shadow-candidate`** | 108 exemplos/36 clips; holdout bruto 77,8% vs 50%; humano conservador 7/9 vs 5/9; 4 probes Chrome com paridade | veto conservador ainda falha no holdout; uma só faixa de gênero; zero autoridade |
+| 14 | EXP-0017: calibração segura do veto — **próximo** | diversidade nova, hard negatives, calibração sem olhar o holdout final e recall dirigido de 100% | EXP-0016 vira evidência histórica; autoridade continua determinística até todos os gates |
 
 Depois da baseline congelada e da fatia causal do trace, um desafio nativo pode
 rodar em paralelo para validar
 ontologia/adaptador, desde que exista pergunta decisória. Ele não bloqueia M4a
 ou calibração humana; GPU paga exige autorização.
 
-Depois de M4b, ASR, TTS, diversidade acústica, cérebro local, loopback ou
-backbone nativo entram pela maior falha percebida no relatório, não por ordem
-fixa.
+Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
+pela maior falha percebida no relatório, não por ordem fixa. Diversidade
+acústica já é o gargalo imediato porque limita diretamente a calibração segura.
 
 ## Trilha paralela de governança
 

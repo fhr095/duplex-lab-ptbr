@@ -22,5 +22,7 @@ eval/reports/*
 !eval/reports/exp-0015-timing-calibration-instrument-v1.json
 !eval/reports/exp-0015-timing-calibration-instrument-v2.json
 !eval/reports/exp-0015-timing-calibration-instrument-v3.json
+!eval/reports/exp-0015-timing-calibration-instrument-v4.json
+!eval/reports/exp-0016-speaker-relevance-m4b-v1.json
 coverage/
 tmp/
