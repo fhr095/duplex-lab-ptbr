@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "exp-0018-development-attempt-v1",
+  "experimentId": "EXP-0018",
+  "status": "development-attempt-consumed",
+  "bindings": {
+    "developmentOpeningFileSha256": "sha256:4c247c3e0f5783a657b36311872f39932f8e877abedc62dab5118922a2184bad",
+    "developmentOpeningSha256": "sha256:9d10f85c4f72856f321d2bad8c914c49b82b9ad66d223f6bd1928cf9f5ecb401",
+    "checkpointSha256": "sha256:2d6d21adc3a27bebd9aa24a635068ce06be2a62b6c8c7545dce57623af3cb87b"
+  },
+  "attempt": {
+    "ordinal": 1,
+    "createdBeforeDevelopmentPermission": true,
+    "preflightCommit": "0b3eeaa2bf8c271f1482b5cc73b0509f0e73f888"
+  },
+  "authority": {
+    "mode": "offline-shadow-only",
+    "canProduceEffects": false
+  },
+  "developmentAttemptSha256": "sha256:e6e1a4567542ce0857828c11e1ab42cd356c9a5f7c9d6973618c175b1799da27"
+}
