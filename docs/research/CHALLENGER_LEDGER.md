@@ -47,11 +47,14 @@ EXP-0021 recuperou 4/4 corpos, mas confundiu dois healths; EXP-0022 separou os
 healths e repetiu as 4/4 capturas, porém revelou que timestamps internos do CDP
 não são autoridade da ordem de entrega. O EXP-0023 testou somente a correção
 ordinal e passou 10/10 gates, qualificando a captura sem medir STOP. O EXP-0024
-agora integra essa captura à campanha física já desenhada. Isso não cria motivo
-para baixar ou executar qualquer challenger: primeiro precisamos saber se há
-uma falha física concreta e qual mecanismo ela exige. ASR continua desconhecido
-e deferido; os experimentos não autorizam concluir que reconhecimento deixou
-de ser um gargalo futuro.
+integrou essa captura à campanha física, mas foi invalidado antes do primeiro
+STOP persistido porque atividade acústica segmentada gerou múltiplos
+`render.active`. O EXP-0025 corrige somente a âncora causal e a persistência de
+falhas. Isso não cria motivo para baixar ou executar qualquer challenger:
+primeiro precisamos obter uma medição física válida e então saber se existe
+falha concreta e qual mecanismo ela exige. ASR continua desconhecido e
+deferido; os experimentos não autorizam concluir que reconhecimento deixou de
+ser um gargalo futuro.
 
 ## Fila atual
 

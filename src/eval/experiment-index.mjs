@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { access, readFile } from "node:fs/promises";
 import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
-import { promisify } from "node:util";
+import { isDeepStrictEqual, promisify } from "node:util";
 
 import {
   validateExp0018CheckpointChain,
@@ -22,6 +22,14 @@ import {
   validateExp0018FitCandidate
 } from
   "./exp-0018-training.mjs";
+import {
+  EXP0024_C0_CHANGED_PATHS,
+  EXP0024_IMPLEMENTATION_BASE_COMMIT,
+  validateExp0024InstrumentationFreeze,
+  validateExp0024PhysicalStopAttempt
+} from "./exp-0024-boundary.mjs";
+import { inspectExp0024Journal } from "./exp-0024-journal.mjs";
+import { validateExp0024Report } from "./exp-0024-stop-order.mjs";
 import { canonicalSha256 } from "./factory/canonical-hash.mjs";
 
 const execFileAsync = promisify(execFile);
@@ -105,6 +113,10 @@ export const EXP0023_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0023-cdp-ordinal-timestamp-semantics-v0.1.json";
 export const EXP0023_EVIDENCE_COMMIT =
   "ee0d5864aac4a984b33c9bdb86273ca9e7283b38";
+export const EXP0024_CANONICAL_REPORT_PATH =
+  "eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json";
+export const EXP0024_EVIDENCE_COMMIT =
+  "5a65d155787f3875973c280c5ed8d576d69d2853";
 
 const EXP0023_C0_COMMIT =
   "de919470f0b4b59db4f911b7ae5e40fcc9606707";
@@ -118,10 +130,24 @@ const EXP0023_ATTEMPT_PATH =
   "eval/commitments/exp-0023-capture-attempt-v0.1.json";
 const EXP0023_RECEIPT_PATH =
   "eval/generated/exp-0023/capture-attempt-consumed-v0.1.json";
+const EXP0024_C0_COMMIT =
+  "82f8874c391adf41e25c10efcf31ec1f851f8ae3";
+const EXP0024_FREEZE_COMMIT =
+  "26c7a09ea4d9f9550a43453cb187368f4fab535a";
+const EXP0024_OPENING_COMMIT =
+  "a860e7806193286d79bda5a1cfc373ff8d03710d";
+const EXP0024_FREEZE_PATH =
+  "eval/commitments/exp-0024-instrumentation-freeze-v0.1.json";
+const EXP0024_ATTEMPT_PATH =
+  "eval/commitments/exp-0024-physical-stop-attempt-v0.1.json";
+const EXP0024_RECEIPT_PATH =
+  "eval/generated/exp-0024/physical-stop-attempt-consumed-v0.1.json";
+const EXP0024_JOURNAL_PATH =
+  "eval/generated/exp-0024/physical-stop-journal-v0.1.ndjson";
 
 const ACTIVE_PREREGISTRATION_PATHS = Object.freeze({
-  "EXP-0024":
-    "docs/experiments/EXP-0024-physical-stop-after-capture-qualification.md"
+  "EXP-0025":
+    "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md"
 });
 
 export function validateExp0018HistoricalOutcome(entry, index, decision) {
@@ -480,6 +506,80 @@ const CANONICAL_REPORT_CONTRACTS = Object.freeze({
       ["analysis.metrics.usageDelta.paidApiCalls", 0],
       ["analysis.metrics.usageDelta.externalLlmUsed", false]
     ]
+  },
+  "EXP-0024": {
+    status: "invalidated",
+    authority: "none",
+    decisionPath: "decision",
+    assertions: [
+      ["schemaVersion",
+        "exp-0024-physical-stop-after-capture-qualification-report-v1"],
+      ["physicalMeasurementStatus", "NOT_EVALUATED"],
+      ["browserCdpByteIdentityStatus", "NOT_EVALUATED"],
+      ["browserCdpByteIdentity", null],
+      ["analysis.physicalMeasurementStatus", "NOT_EVALUATED"],
+      ["analysis.browserCdpByteIdentityStatus", "NOT_EVALUATED"],
+      ["analysis.decision",
+        "INVALIDATE_PHYSICAL_STOP_AFTER_CAPTURE_QUALIFICATION"],
+      ["pass", false],
+      ["instrumentValid", false],
+      ["authorityEligible", false],
+      ["sameExperimentRerunAllowed", false],
+      ["evidenceAcceptance", "PENDING_POST_COMMIT_CHECK"],
+      ["claim", null],
+      ["campaign.boundary.executionState", "FRESH"],
+      ["campaign.boundary.freezeVerified", true],
+      ["campaign.boundary.openingVerified", true],
+      ["campaign.boundary.receiptVerified", true],
+      ["campaign.boundary.receiptWriteOnce", true],
+      ["campaign.boundary.journalVerified", true],
+      ["campaign.boundary.journalAppendOnly", true],
+      ["campaign.boundary.journalFsyncBeforeAck", true],
+      ["campaign.boundary.sourceBindingsVerified", true],
+      ["campaign.boundary.runtimeBindingsVerified", true],
+      ["campaign.boundary.gitTopologyVerified", true],
+      ["campaign.boundary.recoveryOnly", false],
+      ["campaign.boundary.rerunAllowed", false],
+      ["campaign.journal.status", "VALID"],
+      ["campaign.journal.valid", true],
+      ["campaign.journal.completeFrameCount", 68],
+      ["campaign.journal.errors.length", 0],
+      ["analysis.structural.outerShapeValid", true],
+      ["analysis.structural.journalInspectionValid", true],
+      ["analysis.structural.journalSequenceValid", false],
+      ["analysis.structural.reconstructedTrialCount", 0],
+      ["analysis.structural.diagnosticCount", 1],
+      ["analysis.metrics.network.requestCount", 20],
+      ["analysis.metrics.network.ttsRequestCount", 1],
+      ["analysis.metrics.network.healthRequestCount", 2],
+      ["analysis.metrics.network.recordedEventOrdinals", 60],
+      ["analysis.metrics.network.responseAfterTerminalCount", 20],
+      ["analysis.gates.boundaryReconstructed", true],
+      ["analysis.gates.journalReconstructible", false],
+      ["analysis.gates.campaignCardinality", false],
+      ["analysis.gates.environmentStable", false],
+      ["analysis.gates.networkLedgerValid", false],
+      ["analysis.gates.trialRequestBijection", false],
+      ["analysis.gates.captureQualified", false],
+      ["analysis.gates.traceStructural", false],
+      ["analysis.gates.diagnosticsLocalBudget", false],
+      ["analysis.gates.browserCdpByteIdentity", null],
+      ["analysis.gates.singleLifecycleAndEffect", null],
+      ["analysis.gates.pauseReceiptBeforeMarkers", null],
+      ["analysis.gates.terminalStopStable", null],
+      ["analysis.gates.terminalProjectionEquivalent", null],
+      ["analysis.gates.orderDiversity", null],
+      ["analysis.gates.classTemporalEquivalence", null],
+      ["analysis.nextMove.action",
+        "REPAIR_AND_PREREGISTER_NEW_PHYSICAL_STOP_INSTRUMENT"],
+      ["analysis.nextMove.authorityEligible", false],
+      ["analysis.nextMove.sameExperimentRerunAllowed", false],
+      ["contract.browserCdpByteIdentity", "NOT_EVALUATED"],
+      ["contract.paidApiCalls", 0],
+      ["contract.gpuRuns", 0],
+      ["contract.canProduceNewEffects", false],
+      ["contract.sameExperimentRerunAllowed", false]
+    ]
   }
 });
 
@@ -702,6 +802,14 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0023 terminal exige evidenceCommit");
     assert(entry.evidenceCommit === EXP0023_EVIDENCE_COMMIT,
       "EXP-0023 evidenceCommit precisa ser o fechamento oficial imutável");
+  }
+  if (entry.id === "EXP-0024") {
+    assert(entry.canonicalReport === EXP0024_CANONICAL_REPORT_PATH,
+      "EXP-0024 canonicalReport precisa usar o output canônico");
+    assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
+      "EXP-0024 terminal exige evidenceCommit");
+    assert(entry.evidenceCommit === EXP0024_EVIDENCE_COMMIT,
+      "EXP-0024 evidenceCommit precisa ser o fechamento oficial imutável");
   }
 
   const path = resolveRepositoryPath(
@@ -1423,6 +1531,242 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0023 opening"
     );
   }
+  if (entry.id === "EXP-0024") {
+    const reportValidation = validateExp0024Report(report);
+    assert(
+      reportValidation.valid,
+      "EXP-0024 report canônico inválido: " +
+        reportValidation.errors.join("; ")
+    );
+
+    const [freezeArtifact, openingArtifact, receiptArtifact, journalBytes] =
+      await Promise.all([
+        readArtifact(projectRoot, EXP0024_FREEZE_PATH,
+          "EXP-0024 freeze"),
+        readArtifact(projectRoot, EXP0024_ATTEMPT_PATH,
+          "EXP-0024 opening"),
+        readArtifact(projectRoot, EXP0024_RECEIPT_PATH,
+          "EXP-0024 receipt"),
+        readFile(resolveRepositoryPath(
+          projectRoot,
+          EXP0024_JOURNAL_PATH,
+          "EXP-0024 journal"
+        ))
+      ]);
+    const freezeValidation = validateExp0024InstrumentationFreeze(
+      freezeArtifact.value
+    );
+    const openingValidation = validateExp0024PhysicalStopAttempt(
+      openingArtifact.value
+    );
+    assert(
+      freezeValidation.valid,
+      "EXP-0024 freeze inválido: " + freezeValidation.errors.join("; ")
+    );
+    assert(
+      openingValidation.valid,
+      "EXP-0024 opening inválido: " + openingValidation.errors.join("; ")
+    );
+
+    const journalInspection = inspectExp0024Journal(journalBytes);
+    assert(
+      journalInspection.valid &&
+        isDeepStrictEqual(journalInspection, report.campaign?.journal),
+      "EXP-0024 report não reproduz a inspeção dos bytes reais do journal"
+    );
+
+    const receipt = receiptArtifact.value;
+    const receiptCore = structuredClone(receipt);
+    delete receiptCore.receiptSha256;
+    assert(
+      exactKeys(receipt, [
+        "consumedAt",
+        "deadlineMs",
+        "experimentId",
+        "nonce",
+        "opening",
+        "receiptSha256",
+        "rerunAllowed",
+        "schemaVersion",
+        "supervisorPid",
+        "workerCommand"
+      ]) &&
+        exactKeys(receipt.opening, [
+          "canonicalSha256", "commit", "fileSha256", "path"
+        ]) &&
+        receipt.schemaVersion ===
+          "exp-0024-physical-stop-attempt-consumption-v1" &&
+        receipt.experimentId === "EXP-0024" &&
+        receipt.nonce === "exp-0024-official-v0.1" &&
+        Number.isFinite(Date.parse(receipt.consumedAt ?? "")) &&
+        receipt.deadlineMs === 600_000 &&
+        Number.isSafeInteger(receipt.supervisorPid) &&
+        receipt.supervisorPid > 0 &&
+        receipt.workerCommand === "node scripts/run-exp-0024-worker.mjs" &&
+        receipt.opening.path === EXP0024_ATTEMPT_PATH &&
+        receipt.opening.fileSha256 === openingArtifact.fileSha256 &&
+        receipt.opening.canonicalSha256 ===
+          openingArtifact.value.physicalStopAttemptSha256 &&
+        receipt.opening.commit === EXP0024_OPENING_COMMIT &&
+        receipt.rerunAllowed === false &&
+        receipt.receiptSha256 ===
+          `sha256:${canonicalSha256(receiptCore)}`,
+      "EXP-0024 receipt diverge do consumo canônico"
+    );
+    assert(
+      freezeArtifact.value.runnerSourceCommit === EXP0024_C0_COMMIT &&
+        openingArtifact.value.openingParentCommit ===
+          EXP0024_FREEZE_COMMIT &&
+        openingArtifact.value.freeze.path === EXP0024_FREEZE_PATH &&
+        openingArtifact.value.freeze.fileSha256 ===
+          freezeArtifact.fileSha256 &&
+        openingArtifact.value.freeze.instrumentationFreezeSha256 ===
+          freezeArtifact.value.instrumentationFreezeSha256 &&
+        openingArtifact.value.freeze.runnerSourceCommit ===
+          EXP0024_C0_COMMIT &&
+        openingArtifact.value.freeze.freezeCommit ===
+          EXP0024_FREEZE_COMMIT,
+      "EXP-0024 freeze e opening não formam a cadeia congelada"
+    );
+    assert(
+      Date.parse(receipt.consumedAt) <= Date.parse(
+        report.campaign?.boundary?.workerStartedAt ?? ""
+      ),
+      "EXP-0024 receipt precisa preceder o worker pelos bytes reais"
+    );
+    assert(
+      report.campaign?.boundary?.freezePath === EXP0024_FREEZE_PATH &&
+        report.campaign.boundary.openingPath === EXP0024_ATTEMPT_PATH &&
+        report.campaign.boundary.receiptPath === EXP0024_RECEIPT_PATH &&
+        report.campaign.boundary.journalPath === EXP0024_JOURNAL_PATH &&
+        report.campaign.boundary.journalSha256 ===
+          journalInspection.sha256 &&
+        report.campaign.boundary.journalByteLength ===
+          journalInspection.byteLength &&
+        report.campaign.boundary.receiptConsumedAt === receipt.consumedAt &&
+        report.campaign.boundary.expectedRuntimeFingerprintSha256 ===
+          openingArtifact.value.freeze.expectedRuntimeFingerprintSha256,
+      "EXP-0024 report não está ligado aos bytes reais do boundary"
+    );
+
+    const diagnosticFrames = journalInspection.frames.filter(
+      (frame) => frame.type === "DIAGNOSTIC"
+    );
+    const workerOutcome = journalInspection.frames.at(-1);
+    assert(
+      diagnosticFrames.length === 1 &&
+        diagnosticFrames[0].ordinal === 67 &&
+        diagnosticFrames[0].payload?.category === "structural" &&
+        diagnosticFrames[0].payload?.code === "WORKER_UNCAUGHT" &&
+        diagnosticFrames[0].payload?.message ===
+          "Error: trial precisa de um único render.active inicial\n" +
+            "    at <anonymous>:33:13" &&
+        workerOutcome?.ordinal === 68 &&
+        workerOutcome?.type === "WORKER_OUTCOME" &&
+        workerOutcome?.payload?.status === "failed" &&
+        workerOutcome?.payload?.code === "WORKER_EXIT_FAILURE" &&
+        workerOutcome?.payload?.exitCode === 1 &&
+        workerOutcome?.payload?.signal === null &&
+        workerOutcome?.payload?.outcome?.kind === "worker-failure" &&
+        workerOutcome?.payload?.outcome?.protocolError === null &&
+        workerOutcome?.payload?.outcome?.recordCount === 65 &&
+        workerOutcome?.payload?.outcome?.stderrByteLength === 35 &&
+        workerOutcome?.payload?.outcome?.stderrTruncated === false,
+      "EXP-0024 precisa preservar a falha instrumental exata, sem inferência física"
+    );
+
+    const reportCore = structuredClone(report);
+    delete reportCore.reportSha256;
+    assert(
+      report.reportSha256 === `sha256:${canonicalSha256(reportCore)}`,
+      "EXP-0024 reportSha256 diverge do conteúdo canônico"
+    );
+
+    const [receiptCommit, journalCommit, reportCommit, evidenceParent,
+      openingParent, freezeParent, c0Parent, evidencePaths, openingPaths,
+      freezePaths, c0Paths] = await Promise.all([
+      gitText(projectRoot, "log", "-1", "--format=%H", "--",
+        EXP0024_RECEIPT_PATH),
+      gitText(projectRoot, "log", "-1", "--format=%H", "--",
+        EXP0024_JOURNAL_PATH),
+      gitText(projectRoot, "log", "-1", "--format=%H", "--",
+        EXP0024_CANONICAL_REPORT_PATH),
+      gitText(projectRoot, "rev-parse", `${EXP0024_EVIDENCE_COMMIT}^`),
+      gitText(projectRoot, "rev-parse", `${EXP0024_OPENING_COMMIT}^`),
+      gitText(projectRoot, "rev-parse", `${EXP0024_FREEZE_COMMIT}^`),
+      gitText(projectRoot, "rev-parse", `${EXP0024_C0_COMMIT}^`),
+      changedPathsAtCommit(projectRoot, EXP0024_EVIDENCE_COMMIT),
+      changedPathsAtCommit(projectRoot, EXP0024_OPENING_COMMIT),
+      changedPathsAtCommit(projectRoot, EXP0024_FREEZE_COMMIT),
+      changedPathsAtCommit(projectRoot, EXP0024_C0_COMMIT)
+    ]);
+    assert(
+      receiptCommit === EXP0024_EVIDENCE_COMMIT &&
+        journalCommit === EXP0024_EVIDENCE_COMMIT &&
+        reportCommit === EXP0024_EVIDENCE_COMMIT &&
+        evidenceParent === EXP0024_OPENING_COMMIT &&
+        openingParent === EXP0024_FREEZE_COMMIT &&
+        freezeParent === EXP0024_C0_COMMIT &&
+        c0Parent === EXP0024_IMPLEMENTATION_BASE_COMMIT,
+      "EXP-0024 topologia C0→freeze→opening→evidence divergiu"
+    );
+    assert(
+      isDeepStrictEqual(evidencePaths, [
+        EXP0024_JOURNAL_PATH,
+        EXP0024_RECEIPT_PATH,
+        EXP0024_CANONICAL_REPORT_PATH
+      ].toSorted()) &&
+        isDeepStrictEqual(openingPaths, [EXP0024_ATTEMPT_PATH]) &&
+        isDeepStrictEqual(freezePaths, [EXP0024_FREEZE_PATH]) &&
+        isDeepStrictEqual(c0Paths, EXP0024_C0_CHANGED_PATHS),
+      "EXP-0024 commits isolados alteraram paths não autorizados"
+    );
+
+    await Promise.all([
+      assertGitFileMatches(
+        projectRoot,
+        EXP0024_EVIDENCE_COMMIT,
+        EXP0024_CANONICAL_REPORT_PATH,
+        await readFile(path),
+        "EXP-0024 canonical report"
+      ),
+      assertGitFileMatches(
+        projectRoot,
+        EXP0024_EVIDENCE_COMMIT,
+        EXP0024_RECEIPT_PATH,
+        receiptArtifact.bytes,
+        "EXP-0024 receipt"
+      ),
+      assertGitFileMatches(
+        projectRoot,
+        EXP0024_EVIDENCE_COMMIT,
+        EXP0024_JOURNAL_PATH,
+        journalBytes,
+        "EXP-0024 journal"
+      ),
+      assertGitFileMatches(
+        projectRoot,
+        EXP0024_FREEZE_COMMIT,
+        EXP0024_FREEZE_PATH,
+        freezeArtifact.bytes,
+        "EXP-0024 freeze"
+      ),
+      assertGitFileMatches(
+        projectRoot,
+        EXP0024_OPENING_COMMIT,
+        EXP0024_ATTEMPT_PATH,
+        openingArtifact.bytes,
+        "EXP-0024 opening"
+      )
+    ]);
+    const headCommit = await gitText(projectRoot, "rev-parse", "HEAD");
+    await assertGitAncestor(
+      projectRoot,
+      entry.evidenceCommit,
+      headCommit,
+      "EXP-0024 evidenceCommit→HEAD"
+    );
+  }
 }
 
 function validateEntryShape(entry, index) {
@@ -1511,7 +1855,7 @@ function validateEntryShape(entry, index) {
       "EXP-0021.evidenceCommit precisa ser null ou commit completo"
     );
   }
-  if (entry.id === "EXP-0022" || entry.id === "EXP-0023") {
+  if (["EXP-0022", "EXP-0023", "EXP-0024"].includes(entry.id)) {
     assert(
       entry.evidenceCommit === null ||
         /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),

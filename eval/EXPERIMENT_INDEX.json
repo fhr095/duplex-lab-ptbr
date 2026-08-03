@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T07:43:32-03:00",
+  "updatedAt": "2026-08-03T09:15:00-03:00",
   "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
@@ -19,15 +19,15 @@
     "id": "runtime-baseline-ptbr-v0.3",
     "manifest": "eval/baselines/runtime-baseline-v0.3.json"
   },
-  "currentCriticalPath": "EXP-0024",
+  "currentCriticalPath": "EXP-0025",
   "currentParallelProbe": {
-    "id": "EXP-0024-R",
-    "parent": "EXP-0024",
-    "preRegistration": "docs/experiments/EXP-0024-physical-stop-after-capture-qualification.md",
+    "id": "EXP-0025-R",
+    "parent": "EXP-0025",
+    "preRegistration": "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md",
     "status": "deferred",
     "blocking": false,
     "authority": "none",
-    "decision": "Trilha sem execução: challengers permanecem no ledger enquanto o EXP-0024 mede se há uma falha física concreta de STOP; nenhum backbone será aberto sem mecanismo e gate derivados da evidência."
+    "decision": "Trilha sem execução: challengers permanecem no ledger enquanto o EXP-0025 corrige e qualifica a âncora causal do instrumento; nenhum backbone será aberto sem uma falha física ou percebida medida."
   },
   "entries": [
     {
@@ -360,22 +360,46 @@
     },
     {
       "id": "EXP-0024",
+      "status": "invalidated",
+      "decision": "INVALIDATE_PHYSICAL_STOP_AFTER_CAPTURE_QUALIFICATION",
+      "canonicalReport": "eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json",
+      "evidenceCommit": "5a65d155787f3875973c280c5ed8d576d69d2853",
+      "authority": "none",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0024-boundary.test.mjs",
+        "node --test tests/exp-0024-browser-harness.test.mjs",
+        "node --test tests/exp-0024-journal.test.mjs",
+        "node --test tests/exp-0024-stop-order.test.mjs",
+        "node --test tests/exp-0024-supervisor.test.mjs",
+        "node --test tests/exp-0024-worker.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0024:report:check",
+        "node --test tests/exp-0024-*.test.mjs",
+        "npm run eval:index:check"
+      ],
+      "supersedes": [],
+      "nextDecision": "Pré-registrar um experimento novo que selecione o primeiro render.active pós-reset por posição causal, preserve multiplicidade pré-STOP e persista falhas tipadas; sem rerun do EXP-0024."
+    },
+    {
+      "id": "EXP-0025",
       "status": "active",
-      "decision": "pending-physical-stop-after-capture-qualification",
+      "decision": "pending-causal-render-onset-physical-stop",
       "canonicalReport": null,
       "authority": "none",
       "criticalPath": true,
       "cleanCloneChecks": [
-        "node --test tests/exp-0020-analysis.test.mjs",
-        "node --test tests/exp-0020-browser-harness.test.mjs",
-        "node --test tests/exp-0021-cdp-capture.test.mjs",
-        "node --test tests/exp-0023-analysis.test.mjs"
+        "node --test tests/exp-0024-browser-harness.test.mjs",
+        "node --test tests/exp-0024-journal.test.mjs",
+        "node --test tests/exp-0024-stop-order.test.mjs",
+        "node --test tests/exp-0024-supervisor.test.mjs"
       ],
       "localReproductionCommands": [
         "npm run eval:index:check"
       ],
       "supersedes": [],
-      "nextDecision": "Implementar e auditar o menor adaptador que una a campanha física EXP-0020 ao coletor qualificado EXP-0023; só depois decidir freeze e abertura única."
+      "nextDecision": "Implementar e auditar somente a âncora pelo primeiro render.active e o resultado tipado obrigatório; depois decidir C0, freeze e uma abertura nova."
     }
   ]
 }

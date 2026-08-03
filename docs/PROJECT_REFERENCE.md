@@ -4,7 +4,7 @@ Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
 invalidações instrumentais dos EXP-0020/0021/0022, passe instrumental do
-EXP-0023 e EXP-0024 físico pré-registrado**
+EXP-0023, invalidação instrumental do EXP-0024 e EXP-0025 pré-registrado**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -23,9 +23,14 @@ pontos diferentes do Chromium. O
 para ordinais e passou prospectivamente: 4/4 browser=CDP, 120 ordinais globais
 únicos e 10/10 gates, sem STOP ou autoridade. O
 [EXP-0024](experiments/EXP-0024-physical-stop-after-capture-qualification.md)
-está pré-registrado para unir essa captura à campanha física 2×6 do EXP-0020,
-mantendo o runtime byte a byte; implementação e auditoria precedem qualquer
-freeze ou abertura.
+uniu a captura à campanha física, mas sua
+[tentativa única](experiments/EXP-0024-closeout.md) foi invalidada antes do
+primeiro STOP persistido: uma fala natural gerou múltiplos `render.active` e o
+instrumento exigia exatamente um. O físico permanece `NOT_EVALUATED`. O
+[EXP-0025](experiments/EXP-0025-causal-render-onset-physical-stop.md) está
+pré-registrado para selecionar o primeiro marcador por posição causal,
+preservar toda multiplicidade e persistir falhas tipadas, ainda sem mudar o
+runtime produtivo.
 
 ## Tese
 
@@ -414,13 +419,16 @@ Esta referência preserva apenas a lógica macro:
     congelada;
 13. preservar o passe estreito do EXP-0023: ordinais qualificaram 40
     lifecycles e 4/4 capturas, mas nenhum STOP ou áudio renderizado foi medido;
-14. executar no EXP-0024 somente a integração mínima entre campanha física e
-    coletor qualificado, sem mudar o runtime ou reinterpretar EXP-0020;
-15. conceder autoridade somente se houver ganho percebido sem regressão dos
+14. preservar a invalidação do EXP-0024: a cardinalidade unitária de
+    `render.active` falhou antes de qualquer STOP persistido, logo o resultado
+    físico continua desconhecido e a tentativa não será repetida;
+15. executar no EXP-0025 somente a correção causal da âncora e a persistência
+    tipada de falhas, sem mudar o runtime ou reinterpretar EXP-0024;
+16. conceder autoridade somente se houver ganho percebido sem regressão dos
     guardrails;
-16. manter backbones nativos no ledger até existir um teto local que justifique
+17. manter backbones nativos no ledger até existir um teto local que justifique
     custo e integração;
-17. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+18. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
     observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo

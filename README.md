@@ -383,6 +383,8 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0023 — semântica causal de ordinais e timestamps CDP](docs/experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md)
 - [EXP-0023 — fechamento e passe instrumental](docs/experiments/EXP-0023-closeout.md)
 - [EXP-0024 — equivalência física do STOP com captura qualificada](docs/experiments/EXP-0024-physical-stop-after-capture-qualification.md)
+- [EXP-0024 — fechamento e invalidação da âncora de render](docs/experiments/EXP-0024-closeout.md)
+- [EXP-0025 — âncora causal de render e STOP físico observável](docs/experiments/EXP-0025-causal-render-onset-physical-stop.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -420,9 +422,13 @@ timestamps gerados em pontos diferentes do Chromium: os 40/40 ordinais estavam
 corretos enquanto `responseTimestamp > finishedTimestamp`. O EXP-0023 manteve
 a mesma campanha sem STOP, mudou somente a autoridade causal e passou 10/10
 gates: 4/4 browser=CDP, 40 lifecycles e 120 ordinais globais únicos. O
-EXP-0024 está pré-registrado para integrar esse coletor à campanha física 2×6
-do EXP-0020 sem alterar o runtime. Implementação e auditoria precedem C0,
-freeze e a abertura única; ASR continua fora.
+EXP-0024 integrou esse coletor à campanha física 2×6, mas a tentativa única foi
+invalidada no primeiro trial: a fala natural produziu múltiplos
+`render.active` e o instrumento exigia exatamente um. Nenhum STOP foi
+persistido e o físico continua `NOT_EVALUATED`. O EXP-0025 está pré-registrado
+para escolher o primeiro marcador por posição causal, preservar os demais e
+persistir falhas tipadas, ainda sem alterar o runtime. Implementação e
+auditoria precedem C0, freeze e uma abertura nova; ASR continua fora.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

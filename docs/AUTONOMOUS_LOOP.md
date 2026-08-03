@@ -125,11 +125,18 @@ tentativa única passou 10/10 gates: 4/4 browser=CDP, 120 ordinais globais
 únicos e as 40 inversões temporais exercitadas. Isso qualifica o instrumento
 neste escopo, não o runtime de voz.
 
-O EXP-0024 agora integra o menor conjunto já existente: expressão e análise
-física do EXP-0020 mais captura fail-closed dos EXP-0021–0023, sem alterar as
-fontes de produção. Ele está apenas pré-registrado; implementação, fixtures e
-auditoria vêm antes de C0, freeze e abertura. Trocar ASR, TTS ou backbone
-continua fora até uma falha física ou perceptiva escolher o mecanismo.
+O EXP-0024 integrou esse conjunto sem alterar as fontes de produção, mas sua
+única tentativa parou no primeiro trial: a expressão esperava exatamente um
+`render.active`, enquanto a fala natural apresentou múltiplas transições de
+atividade acústica. Nenhum STOP foi persistido, o físico é `NOT_EVALUATED` e a
+tentativa não será repetida.
+
+O EXP-0025 aplica o PDCA mínimo à premissa que falhou: ancora o trigger no
+primeiro `render.active` pós-reset por posição causal, preserva todos os demais
+e obriga cada trial iniciado a persistir `COLLECTED` ou
+`INSTRUMENT_FAILURE`. O runtime produtivo continua intocado; implementação,
+fixtures e auditoria vêm antes de C0, freeze e abertura. Trocar ASR, TTS ou
+backbone continua fora até uma falha física ou perceptiva escolher o mecanismo.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
@@ -141,8 +148,10 @@ npm run eval:exp:0020:report:check
 npm run eval:exp:0021:report:check
 npm run eval:exp:0022:report:check
 npm run eval:exp:0023:report:check
+npm run eval:exp:0024:report:check
 node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
 node --test tests/exp-0023-*.test.mjs
+node --test tests/exp-0024-*.test.mjs
 npm run eval:index:check
 ```
 

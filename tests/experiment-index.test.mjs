@@ -11,6 +11,8 @@ import {
   EXP0022_CANONICAL_REPORT_PATH,
   EXP0023_CANONICAL_REPORT_PATH,
   EXP0023_EVIDENCE_COMMIT,
+  EXP0024_CANONICAL_REPORT_PATH,
+  EXP0024_EVIDENCE_COMMIT,
   readExperimentIndex,
   validateExp0018HistoricalOutcome,
   validateExperimentIndex
@@ -68,7 +70,7 @@ test("outcome histórico EXP-0018 sobrevive ao próximo caminho crítico", () =>
     }
   };
   assert.doesNotThrow(() => validateExp0018HistoricalOutcome(entry, {
-    currentCriticalPath: "EXP-0024",
+    currentCriticalPath: "EXP-0025",
     currentParallelProbe: {
       status: "planned",
       decision: "probe novo e independente"
@@ -92,25 +94,43 @@ async function fixture() {
 
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
-  assert.equal(index.currentCriticalPath, "EXP-0024");
+  assert.equal(index.currentCriticalPath, "EXP-0025");
   assert.equal(index.transitionState, "active");
-  assert.equal(index.currentParallelProbe.id, "EXP-0024-R");
+  assert.equal(index.currentParallelProbe.id, "EXP-0025-R");
   assert.equal(index.currentParallelProbe.status, "deferred");
   assert.equal(index.currentParallelProbe.blocking, false);
   assert.equal(
     index.currentParallelProbe.preRegistration,
-    "docs/experiments/EXP-0024-physical-stop-after-capture-qualification.md"
+    "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md"
   );
-  assert.equal(index.entries.at(-1).id, "EXP-0024");
+  assert.equal(index.entries.at(-1).id, "EXP-0025");
   assert.equal(index.entries.at(-1).status, "active");
   assert.equal(index.entries.at(-1).canonicalReport, null);
   assert.equal(index.entries.at(-1).authority, "none");
   assert.equal(index.entries.at(-1).criticalPath, true);
   assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
-    "node --test tests/exp-0020-analysis.test.mjs",
-    "node --test tests/exp-0020-browser-harness.test.mjs",
-    "node --test tests/exp-0021-cdp-capture.test.mjs",
-    "node --test tests/exp-0023-analysis.test.mjs"
+    "node --test tests/exp-0024-browser-harness.test.mjs",
+    "node --test tests/exp-0024-journal.test.mjs",
+    "node --test tests/exp-0024-stop-order.test.mjs",
+    "node --test tests/exp-0024-supervisor.test.mjs"
+  ]);
+  const exp0024 = index.entries.find(({ id }) => id === "EXP-0024");
+  assert.equal(exp0024.status, "invalidated");
+  assert.equal(
+    exp0024.decision,
+    "INVALIDATE_PHYSICAL_STOP_AFTER_CAPTURE_QUALIFICATION"
+  );
+  assert.equal(exp0024.canonicalReport, EXP0024_CANONICAL_REPORT_PATH);
+  assert.equal(exp0024.evidenceCommit, EXP0024_EVIDENCE_COMMIT);
+  assert.equal(exp0024.authority, "none");
+  assert.equal(exp0024.criticalPath, false);
+  assert.deepEqual(exp0024.cleanCloneChecks, [
+    "node --test tests/exp-0024-boundary.test.mjs",
+    "node --test tests/exp-0024-browser-harness.test.mjs",
+    "node --test tests/exp-0024-journal.test.mjs",
+    "node --test tests/exp-0024-stop-order.test.mjs",
+    "node --test tests/exp-0024-supervisor.test.mjs",
+    "node --test tests/exp-0024-worker.test.mjs"
   ]);
   const exp0023 = index.entries.find(({ id }) => id === "EXP-0023");
   assert.equal(exp0023.status, "completed");
@@ -374,6 +394,40 @@ test("EXP-0023 preserva passe instrumental sem conceder autoridade", async () =>
   await assert.rejects(
     validateExperimentIndex(preEvidenceCommit, { projectRoot }),
     /EXP-0023 evidenceCommit precisa ser o fechamento oficial imutável/u
+  );
+});
+
+test("EXP-0024 preserva falha instrumental sem inventar resultado físico", async () => {
+  const changedStatus = await fixture();
+  changedStatus.entries.find(({ id }) => id === "EXP-0024").status =
+    "completed";
+  await assert.rejects(
+    validateExperimentIndex(changedStatus, { projectRoot }),
+    /EXP-0024.status contradicts its canonical report contract/u
+  );
+
+  const inventedDecision = await fixture();
+  inventedDecision.entries.find(({ id }) => id === "EXP-0024").decision =
+    "PASS_PHYSICAL_STOP_AFTER_CAPTURE_QUALIFICATION";
+  await assert.rejects(
+    validateExperimentIndex(inventedDecision, { projectRoot }),
+    /EXP-0024.decision contradicts its canonical report/u
+  );
+
+  const inventedAuthority = await fixture();
+  inventedAuthority.entries.find(({ id }) => id === "EXP-0024").authority =
+    "runtime-control";
+  await assert.rejects(
+    validateExperimentIndex(inventedAuthority, { projectRoot }),
+    /EXP-0024.authority contradicts its canonical report contract/u
+  );
+
+  const preEvidenceCommit = await fixture();
+  preEvidenceCommit.entries.find(({ id }) => id === "EXP-0024")
+    .evidenceCommit = "a860e7806193286d79bda5a1cfc373ff8d03710d";
+  await assert.rejects(
+    validateExperimentIndex(preEvidenceCommit, { projectRoot }),
+    /EXP-0024 evidenceCommit precisa ser o fechamento oficial imutável/u
   );
 });
 
