@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "exp-0020-stop-order-report-v1",
+  "experimentId": "EXP-0020",
+  "startedAt": "2026-08-03T06:52:40.092Z",
+  "completedAt": "2026-08-03T06:55:57.122Z",
+  "contract": {
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0020",
+    "navigations": 2,
+    "stopsPerNavigation": 6,
+    "totalStops": 12,
+    "phrase": "Esta fala contínua mede uma única parada física do assistente.",
+    "ttsRate": 1,
+    "triggerAfterRenderActiveMs": 320,
+    "triggerTimerErrorMaxMs": 10,
+    "postStopObservationMs": 250,
+    "renderStopLimitMs": 250,
+    "classMinimumCount": 2,
+    "classLatencyEquivalenceMarginMs": 16.7,
+    "provider": "local",
+    "asrState": "disabled",
+    "vadControlEngine": "adaptive-energy-vad",
+    "vadShadowState": "disabled",
+    "ttsEngine": "windows-system-speech",
+    "paidApiCalls": 0,
+    "gpuRuns": 0,
+    "canProduceNewEffects": false
+  },
+  "campaign": {
+    "boundary": {
+      "attemptCanonicalSha256": "sha256:2c74e0b166626d51b0ca2be70bad4208a98423915a63a432fca4f13afd3e428e",
+      "attemptFileSha256": "sha256:9e6bad3b1285c5da984da32edf603c8b98ad9d8be5ad4b01d4c1a5f5d911bc3b",
+      "attemptPath": "eval/commitments/exp-0020-browser-attempt-v0.1.json",
+      "attemptVerified": true,
+      "freezeCanonicalSha256": "sha256:a2916424162a1404c7e8c85d152fe1491fa94e5312a346c1d0a7273f1c738d8f",
+      "freezeFileSha256": "sha256:ed3324ef9c0ff37f3222cf6b716e1c8069bc31a5015995f6b6d3c58e53eca7ae",
+      "freezePath": "eval/commitments/exp-0020-instrumentation-freeze-v0.1.json",
+      "freezeVerified": true,
+      "receiptFileSha256": "sha256:f56616cf80810ecf7337342676ee171484d553e195fd9b1f97f8e80aea0fa367",
+      "receiptPath": "eval/generated/exp-0020/browser-attempt-consumed-v0.1.json",
+      "rerunAllowed": false
+    },
+    "health": {
+      "before": null,
+      "after": null
+    },
+    "cost": {
+      "gpuRuns": 0
+    },
+    "authority": {
+      "canProduceNewEffects": false
+    },
+    "diagnostics": {
+      "consoleErrors": [],
+      "runtimeErrors": [
+        "17384.350: EXP-0020 browser harness: Network.getResponseBody retornou corpo vazio"
+      ],
+      "httpErrors": []
+    },
+    "navigations": [],
+    "failure": {
+      "code": "CDP_TTS_RESPONSE_BODY_EMPTY",
+      "phase": "navigation-1-trial-1-tts-body-capture",
+      "message": "Network.getResponseBody retornou corpo vazio para a primeira resposta /api/tts.",
+      "requestId": "17384.350",
+      "completedNavigationsPersisted": 0,
+      "completedTrialsPersisted": 0,
+      "inferredPhysicalTrialsTriggeredBeforeFailure": 1,
+      "inferenceBasis": "O runner concluiu a expressão do trial 1.1 antes de chamar waitForTtsBodies(1), onde a captura falhou.",
+    "crashConsumedAttempt": true,
+    "rerunPerformed": false,
+    "interpretationAllowed": false,
+    "physicalEvaluation": "NOT_EVALUATED",
+    "physicalGateConclusionSupported": false,
+    "vacuouslyTrueGateNames": [
+      "markersCollected",
+      "collectionWindowValid",
+      "trainingTraceValid",
+      "singleLifecycleAndEffect",
+      "pauseReceiptBeforeMarkers",
+      "terminalStopStable"
+    ],
+    "vacuousGateExplanation": "Esses seis valores aparecem true somente porque o analisador congelado aplica every([]) sem trials persistidos; nenhum deles sustenta uma conclusão física.",
+    "failureBlockOrigin": "Reconstrução pós-crash baseada no receipt write-once, no stderr do runner e em observações somente-leitura feitas após a falha.",
+    "failureBlockEmittedByFrozenRunner": false,
+    "observedAfterFailure": {
+        "server": {
+          "status": "ok",
+          "brain": "local",
+          "runId": "b688bf7b-3040-41d6-b65e-8723fdc89aab",
+          "runtimeFingerprintSha256": "351fbca326d3e646c905d5a233fce16efd0967c06a9b24bcd94bea31a8ffada9",
+          "usage": {
+            "requests": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "totalTokens": 0,
+            "requestLimit": null
+          },
+          "asr": {
+            "state": "disabled",
+            "model": null
+          },
+          "vadControl": {
+            "state": "ready",
+            "engine": "adaptive-energy-vad"
+          },
+          "vadShadow": {
+            "state": "disabled",
+            "mode": "disabled"
+          },
+          "tts": {
+            "state": "ready",
+            "engine": "windows-system-speech",
+            "voice": "Microsoft Maria Desktop",
+            "culture": "pt-BR",
+            "primed": true
+          }
+        },
+        "browser": {
+          "product": "Chrome/150.0.7871.187",
+          "protocolVersion": "1.3"
+        },
+        "windowsLocalhostHealthReachable": true,
+        "cdpReachable": true
+      }
+    }
+  },
+  "analysis": {
+    "trials": [],
+    "metrics": {
+      "classes": {
+        "PAUSE_THEN_RENDER": {
+          "count": 0,
+          "minimum": null,
+          "median": null,
+          "p95": null,
+          "maximum": null
+        },
+        "RENDER_THEN_PAUSE": {
+          "count": 0,
+          "minimum": null,
+          "median": null,
+          "p95": null,
+          "maximum": null
+        }
+      },
+      "aggregate": {
+        "renderStopLatencyMs": {
+          "count": 0,
+          "minimum": null,
+          "median": null,
+          "p95": null,
+          "maximum": null
+        },
+        "markerGapMs": {
+          "count": 0,
+          "minimum": null,
+          "median": null,
+          "p95": null,
+          "maximum": null
+        }
+      },
+      "classMedianDeltaMs": null,
+      "classP95DeltaMs": null,
+      "wavSha256": null,
+      "usageDelta": null
+    },
+    "gates": {
+      "boundaryBound": true,
+      "campaignCardinality": false,
+      "trialIdentity": false,
+      "markersCollected": true,
+      "collectionWindowValid": true,
+      "sameRuntimeAndBrowser": false,
+      "localNetworkOnly": false,
+      "controlledStimulus": false,
+      "trainingTraceValid": true,
+      "diagnosticsClean": false,
+      "zeroExternalCostAndNewAuthority": false,
+      "singleLifecycleAndEffect": true,
+      "pauseReceiptBeforeMarkers": true,
+      "terminalStopStable": true,
+      "terminalProjectionEquivalent": false,
+      "orderDiversity": false,
+      "classTemporalEquivalence": null
+    },
+    "decision": "INVALIDATE_STOP_ORDER_INSTRUMENT",
+    "pass": false
+  },
+  "gates": {
+    "boundaryBound": true,
+    "campaignCardinality": false,
+    "trialIdentity": false,
+    "markersCollected": true,
+    "collectionWindowValid": true,
+    "sameRuntimeAndBrowser": false,
+    "localNetworkOnly": false,
+    "controlledStimulus": false,
+    "trainingTraceValid": true,
+    "diagnosticsClean": false,
+    "zeroExternalCostAndNewAuthority": false,
+    "singleLifecycleAndEffect": true,
+    "pauseReceiptBeforeMarkers": true,
+    "terminalStopStable": true,
+    "terminalProjectionEquivalent": false,
+    "orderDiversity": false,
+    "classTemporalEquivalence": null
+  },
+  "decision": "INVALIDATE_STOP_ORDER_INSTRUMENT",
+  "pass": false,
+  "instrumentValid": false,
+  "authorityEligible": false,
+  "claim": null,
+  "limitations": [
+    "não mede alto-falante, sala ou percepção humana",
+    "não mede ASR, conversa espontânea ou outros schedulers",
+    "player-received é telemetria de software, não sensor físico independente"
+  ],
+  "reportSha256": "sha256:1287f4c37125121f5108f4e9a9f3f16da711fec1302776d5ba38fa19e7cd0933"
+}

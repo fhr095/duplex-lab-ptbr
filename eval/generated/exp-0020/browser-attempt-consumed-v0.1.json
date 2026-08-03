@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "exp-0020-browser-attempt-consumption-v1",
+  "experimentId": "EXP-0020",
+  "status": "browser-attempt-consumed",
+  "startedAt": "2026-08-03T06:52:40.092Z",
+  "processId": 1776366,
+  "executionCommit": "0d060b02fa0d73ae980966c43e54a4381094f042",
+  "attemptPath": "eval/commitments/exp-0020-browser-attempt-v0.1.json",
+  "attemptFileSha256": "sha256:9e6bad3b1285c5da984da32edf603c8b98ad9d8be5ad4b01d4c1a5f5d911bc3b",
+  "attemptCanonicalSha256": "sha256:2c74e0b166626d51b0ca2be70bad4208a98423915a63a432fca4f13afd3e428e",
+  "nonce": "exp-0020-official-v0.1",
+  "command": "node scripts/smoke-exp-0020-browser.mjs",
+  "targetUrl": "http://localhost:4173/?automation=1&experiment=0020",
+  "reportPath": "eval/reports/exp-0020-stop-order-v0.1.json",
+  "rerunAllowed": false,
+  "receiptSha256": "sha256:0a7923a964f48d08a8ed1b0516474b943fc119a2e6edff28916bce09a661927d"
+}
