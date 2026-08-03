@@ -2,6 +2,7 @@ import { execFile as execFileCallback } from "node:child_process";
 import { createHash } from "node:crypto";
 import { access, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { isDeepStrictEqual, promisify } from "node:util";
 
 import {
@@ -132,4 +133,9 @@ async function main() {
   console.log("Commite somente a tentativa antes de qualquer Chrome.");
 }
 
-await main();
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(resolve(process.argv[1])).href
+) {
+  await main();
+}

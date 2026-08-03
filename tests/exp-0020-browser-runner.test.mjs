@@ -316,6 +316,13 @@ test("CLI recusa qualquer ampliação de campanha ou CDP em modo check", () => {
   );
 });
 
+test("entrypoints de freeze e abertura ligam imports sem efeitos laterais", async () => {
+  await Promise.all([
+    import("../scripts/freeze-exp-0020-instrumentation.mjs"),
+    import("../scripts/open-exp-0020-browser-attempt.mjs")
+  ]);
+});
+
 test("preflight recusa cérebro externo, ASR ativo e TTS indisponível", () => {
   assert.deepEqual(validateExp0020HealthPreflight(health()), {
     valid: true,

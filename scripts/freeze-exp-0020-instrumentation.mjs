@@ -2,15 +2,17 @@ import { execFile as execFileCallback } from "node:child_process";
 import { createHash } from "node:crypto";
 import { access, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 
 import {
   EXP0020_BOUNDARY_PATHS,
-  EXP0020_EXP0019_EVIDENCE_COMMIT,
   EXP0020_INSTRUMENTATION_SOURCE_PATHS,
   EXP0020_PRODUCTION_SOURCE_PATHS,
   createExp0020InstrumentationFreeze
 } from "../src/eval/exp-0020-boundary.mjs";
+import { EXP0020_EXP0019_EVIDENCE_COMMIT } from
+  "../src/eval/exp-0020-stop-order.mjs";
 
 const execFile = promisify(execFileCallback);
 const PROJECT_ROOT = resolve(import.meta.dirname, "..");
@@ -122,4 +124,9 @@ async function main() {
   console.log("Zero abertura, Chrome, API paga, GPU ou nova autoridade.");
 }
 
-await main();
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(resolve(process.argv[1])).href
+) {
+  await main();
+}
