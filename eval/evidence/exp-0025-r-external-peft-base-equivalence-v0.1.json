@@ -1,0 +1,1663 @@
+{
+  "schemaVersion": "exp-0025-r-peft-base-equivalence-v1",
+  "experimentId": "EXP-0025-R",
+  "candidateId": "E-official-duplexcascade-v0.1",
+  "role": "POST_RUN_LOAD_VALIDITY_DIAGNOSTIC_NOT_CANDIDATE_INFERENCE",
+  "createdAt": "2026-08-03T20:07:06.064Z",
+  "sourceEvidence": {
+    "path": "eval/evidence/exp-0025-r-external-development-raw-v0.1.json",
+    "fileSha256": "47e873e127015d918179f4d0cea5850790c11a45b6fa2889a89859ce68e32e84",
+    "evidenceSha256": "645b05a441c242b2ba2d85fc7e4ea1dda2141df923e89efb8fb54abd1f341fa8"
+  },
+  "checkpoint": {
+    "externalRevision": "dca21cb1309bb533d80f5aa5600c7b0cc2c470e3",
+    "baseRevision": "f2826a00ceef68f0f2b946d945ecc0477ce4450c"
+  },
+  "observedLoadDifference": {
+    "missingKeyCount": 112,
+    "unexpectedKeyCount": 112,
+    "relation": "ONE_TO_ONE_PEFT_BASE_LAYER_RENAME"
+  },
+  "budget": {
+    "priorTransferBytesUpperBound": 3400000000,
+    "frozenArtifactBytes": 32662348987,
+    "diagnosticTransferBytes": 1644625920,
+    "projectedCumulativeTransferBytes": 37706974907,
+    "maximumDownloadBytes": 42949672960,
+    "withinLimit": true
+  },
+  "comparison": {
+    "tensorCount": 112,
+    "oneSideTensorBytes": 822312960,
+    "equalCount": 112,
+    "mismatchCount": 0,
+    "allEqual": true,
+    "comparisons": [
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.0.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.0.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.0.self_attn.q_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "a42b942581515d2652dc016c75beb186d18d452c8a3660d19b2a628147ba73ab",
+        "baseSha256": "a42b942581515d2652dc016c75beb186d18d452c8a3660d19b2a628147ba73ab",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.0.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.0.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.0.self_attn.q_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "25ccc8201a8cad2b97f3a2dad1e57b3a4e2f08112244a324c86d253c8cfff694",
+        "baseSha256": "25ccc8201a8cad2b97f3a2dad1e57b3a4e2f08112244a324c86d253c8cfff694",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.0.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.0.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.0.self_attn.v_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "009d6d9951925399cc411ba4d132d63ea2175fa0acd38a6a19c07fa1ac1ef02d",
+        "baseSha256": "009d6d9951925399cc411ba4d132d63ea2175fa0acd38a6a19c07fa1ac1ef02d",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.0.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.0.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.0.self_attn.v_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "ecd6d2be36527c63d24ff52406e37e5827baccd107c8690d80713404644a97a2",
+        "baseSha256": "ecd6d2be36527c63d24ff52406e37e5827baccd107c8690d80713404644a97a2",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.1.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.1.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.1.self_attn.q_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "44c7de3ba43c9352c846cbff13c7225d31407fe513030fd2e953315bc54a028f",
+        "baseSha256": "44c7de3ba43c9352c846cbff13c7225d31407fe513030fd2e953315bc54a028f",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.1.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.1.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.1.self_attn.q_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "a87b8a0840b6fa5d4776fc7b4de0aff0ed7af939b518f1642c4cedf8fbeea3f1",
+        "baseSha256": "a87b8a0840b6fa5d4776fc7b4de0aff0ed7af939b518f1642c4cedf8fbeea3f1",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.1.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.1.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.1.self_attn.v_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "ecd54a515a66e4f78d4847acbaa6e065bc435d71850d43758d32fbfc480c56bb",
+        "baseSha256": "ecd54a515a66e4f78d4847acbaa6e065bc435d71850d43758d32fbfc480c56bb",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.1.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.1.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.1.self_attn.v_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "917908d009773cf74a87b32b4e76a2aa387ebaf9924f5e1ebad82cc33aa2ea90",
+        "baseSha256": "917908d009773cf74a87b32b4e76a2aa387ebaf9924f5e1ebad82cc33aa2ea90",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.2.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.2.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.2.self_attn.q_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "be2706fadd39b489d39bd08b1a3e2ea3c77d40aa2f7ba567dc8b5a13fd47e28f",
+        "baseSha256": "be2706fadd39b489d39bd08b1a3e2ea3c77d40aa2f7ba567dc8b5a13fd47e28f",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.2.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.2.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.2.self_attn.q_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "d9288a0912089bf5886c0d91d4adc58816fa01a6ea26c5bf2a8a2b62c730fd9b",
+        "baseSha256": "d9288a0912089bf5886c0d91d4adc58816fa01a6ea26c5bf2a8a2b62c730fd9b",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.2.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.2.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.2.self_attn.v_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "e52836ca01dd4825072e15cf8b11777a870ccaf1c4460ad0c880537fcf090581",
+        "baseSha256": "e52836ca01dd4825072e15cf8b11777a870ccaf1c4460ad0c880537fcf090581",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.2.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.2.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.2.self_attn.v_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "f49675b49c69926552731c65b57576341a1f6d398e38bfe237d869dcedffa6be",
+        "baseSha256": "f49675b49c69926552731c65b57576341a1f6d398e38bfe237d869dcedffa6be",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.3.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.3.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.3.self_attn.q_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "e304eae023550c68d4a0e9f643d156754b7b6eacaa7fd5fb720d995ebe7ef2e1",
+        "baseSha256": "e304eae023550c68d4a0e9f643d156754b7b6eacaa7fd5fb720d995ebe7ef2e1",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.3.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.3.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.3.self_attn.q_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "31eb3141860ce6a6ff5c6cd7483fb6eb7c497f997a4d22f0cacab0ecfaa3df68",
+        "baseSha256": "31eb3141860ce6a6ff5c6cd7483fb6eb7c497f997a4d22f0cacab0ecfaa3df68",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.3.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.3.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.3.self_attn.v_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "5535f90323e664b98d1f4bee14b108603f130f57c3a5aeea8e1bb5cbfc17efab",
+        "baseSha256": "5535f90323e664b98d1f4bee14b108603f130f57c3a5aeea8e1bb5cbfc17efab",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.3.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.3.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.3.self_attn.v_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "fc5a452760c54a4bbadeaae9f03786d224ff747a2ac0477319c2e1fa6fb09505",
+        "baseSha256": "fc5a452760c54a4bbadeaae9f03786d224ff747a2ac0477319c2e1fa6fb09505",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.4.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.4.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.4.self_attn.q_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "ed524bde395cd5556b20842d231f69e3091607f16e7b1b903fc6ba67cb2759fc",
+        "baseSha256": "ed524bde395cd5556b20842d231f69e3091607f16e7b1b903fc6ba67cb2759fc",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.4.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.4.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.4.self_attn.q_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "1296776196ad7dde9e6a16fa62c456e226b69651e39426276d56430efc3e195a",
+        "baseSha256": "1296776196ad7dde9e6a16fa62c456e226b69651e39426276d56430efc3e195a",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.4.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.4.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.4.self_attn.v_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "7529fb267da3ed2845e72b34f002145afbef84ad76fdbe22c77aabcbc2b6daf2",
+        "baseSha256": "7529fb267da3ed2845e72b34f002145afbef84ad76fdbe22c77aabcbc2b6daf2",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.4.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.4.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.4.self_attn.v_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "e3cd27df46933fff6fb00fb09a8831a3b3db0b2e9f72a00d55ad5f8ca3bc87b5",
+        "baseSha256": "e3cd27df46933fff6fb00fb09a8831a3b3db0b2e9f72a00d55ad5f8ca3bc87b5",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.5.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.5.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.5.self_attn.q_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "18ac8da23147eb29ec8c6c93dddae1341c4a2f32bac1bb70fc8d64c9ab4bdb4d",
+        "baseSha256": "18ac8da23147eb29ec8c6c93dddae1341c4a2f32bac1bb70fc8d64c9ab4bdb4d",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.5.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.5.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.5.self_attn.q_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "7977ee2c06d79ae3454b0fa6f386afe9388035b932b4c8a6712d4477a8f721bb",
+        "baseSha256": "7977ee2c06d79ae3454b0fa6f386afe9388035b932b4c8a6712d4477a8f721bb",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.5.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.5.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.5.self_attn.v_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "4987890aaa92f35e462bc2fd8bc0812260b36204b1bca32c696ecc4e4c523b33",
+        "baseSha256": "4987890aaa92f35e462bc2fd8bc0812260b36204b1bca32c696ecc4e4c523b33",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.5.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.5.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.5.self_attn.v_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "8646bd1e5cbb5c9951ab01b1baeb79f9e945a331c16e8c4bbfcef21bfa1b83d8",
+        "baseSha256": "8646bd1e5cbb5c9951ab01b1baeb79f9e945a331c16e8c4bbfcef21bfa1b83d8",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.6.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.6.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.6.self_attn.q_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "e80c42a7b819e8a62cde3ed87a9212db7e1891f2a8cec9f2f9041ecc066b4bd1",
+        "baseSha256": "e80c42a7b819e8a62cde3ed87a9212db7e1891f2a8cec9f2f9041ecc066b4bd1",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.6.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.6.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.6.self_attn.q_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "e3bb29ea2cd4577f7c75ec6727d12925ec0a1ca268a8d7844be43c73b34a4777",
+        "baseSha256": "e3bb29ea2cd4577f7c75ec6727d12925ec0a1ca268a8d7844be43c73b34a4777",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.6.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.6.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.6.self_attn.v_proj.bias",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "a772f07e72e605c0e8b0bef099865f60cd2df3641f7d3e8c23f23d60e1fe2b8f",
+        "baseSha256": "a772f07e72e605c0e8b0bef099865f60cd2df3641f7d3e8c23f23d60e1fe2b8f",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.6.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.6.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.6.self_attn.v_proj.weight",
+        "baseShard": "model-00001-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "3510e9f0f28fb5b07a0b1034e7eafcc1779ad3d62da695031cf4def0fbcec0a0",
+        "baseSha256": "3510e9f0f28fb5b07a0b1034e7eafcc1779ad3d62da695031cf4def0fbcec0a0",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.7.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.7.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.7.self_attn.q_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "c43fa3d088f2e312ff4db9881d2229d2c7c87881badbf1f991b32df6a6aa3e74",
+        "baseSha256": "c43fa3d088f2e312ff4db9881d2229d2c7c87881badbf1f991b32df6a6aa3e74",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.7.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.7.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.7.self_attn.q_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "1e02a35c9059f15d72924a8d09b449b38e97ec730b18adc03cbdbd9791a25bd7",
+        "baseSha256": "1e02a35c9059f15d72924a8d09b449b38e97ec730b18adc03cbdbd9791a25bd7",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.7.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.7.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.7.self_attn.v_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "2b2cf8fce5f1bf05f52a668f50821363992a3a6e791abaf1eeae37a142d80bda",
+        "baseSha256": "2b2cf8fce5f1bf05f52a668f50821363992a3a6e791abaf1eeae37a142d80bda",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.7.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.7.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.7.self_attn.v_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "553952ccbf83173d89d66d114a855e47b95020c5eee9f78b76018cc3d0e9471a",
+        "baseSha256": "553952ccbf83173d89d66d114a855e47b95020c5eee9f78b76018cc3d0e9471a",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.8.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.8.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.8.self_attn.q_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "e50e31305695b3313bbdacb3f584975f2aa1dd175e333429bed8c3fcb316885a",
+        "baseSha256": "e50e31305695b3313bbdacb3f584975f2aa1dd175e333429bed8c3fcb316885a",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.8.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.8.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.8.self_attn.q_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "6c61d40d94b560bf923d95c148bec6fdd81d55412f4180f68b12c11891858cf3",
+        "baseSha256": "6c61d40d94b560bf923d95c148bec6fdd81d55412f4180f68b12c11891858cf3",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.8.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.8.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.8.self_attn.v_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "a315b08ad7006f79cf07caef2f02d4e160d5598bbbe487e37416e2e5427b944e",
+        "baseSha256": "a315b08ad7006f79cf07caef2f02d4e160d5598bbbe487e37416e2e5427b944e",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.8.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.8.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.8.self_attn.v_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "c91140549b1b9e14340fce0b7b420d502e2fd420a0a9d5286582c1a129c5c971",
+        "baseSha256": "c91140549b1b9e14340fce0b7b420d502e2fd420a0a9d5286582c1a129c5c971",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.9.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.9.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.9.self_attn.q_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "dd1eaa4b68c16bd798d529bfe090af7910eb118d84b1891d3408b94a73edb755",
+        "baseSha256": "dd1eaa4b68c16bd798d529bfe090af7910eb118d84b1891d3408b94a73edb755",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.9.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.9.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.9.self_attn.q_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "25128a1ee9a7aaf193e274d5062e49614afb5b29c7918851192353ac8affa1ac",
+        "baseSha256": "25128a1ee9a7aaf193e274d5062e49614afb5b29c7918851192353ac8affa1ac",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.9.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.9.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.9.self_attn.v_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "eb3026b9d6ea0ccc8073181d57fa825ffaaa8b5daf7ca440a2ef7fd469fb06fb",
+        "baseSha256": "eb3026b9d6ea0ccc8073181d57fa825ffaaa8b5daf7ca440a2ef7fd469fb06fb",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.9.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.9.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.9.self_attn.v_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "6766b38b32f2f5cb0d6c038168cf0dca8c684b91cf8539ee30f5c68729b54bbf",
+        "baseSha256": "6766b38b32f2f5cb0d6c038168cf0dca8c684b91cf8539ee30f5c68729b54bbf",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.10.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.10.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.10.self_attn.q_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "794ac908a48bf918def0e302eadc64257dbdcab58188db58fd3f38ef153e482d",
+        "baseSha256": "794ac908a48bf918def0e302eadc64257dbdcab58188db58fd3f38ef153e482d",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.10.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.10.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.10.self_attn.q_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "78af13abcc6cce700c30e9076c1a9c2088fcb292bdf4a4024920cc817beb3e28",
+        "baseSha256": "78af13abcc6cce700c30e9076c1a9c2088fcb292bdf4a4024920cc817beb3e28",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.10.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.10.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.10.self_attn.v_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "34d116ef97b0a4b5162a7fc4d4984b16f3a563c743c8b046af97d60a47283a6e",
+        "baseSha256": "34d116ef97b0a4b5162a7fc4d4984b16f3a563c743c8b046af97d60a47283a6e",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.10.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.10.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.10.self_attn.v_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "6b10e00f552341cc82f5dd901bb8efe1df2409d4f2f9bd3696939e7f901e1255",
+        "baseSha256": "6b10e00f552341cc82f5dd901bb8efe1df2409d4f2f9bd3696939e7f901e1255",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.11.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.11.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.11.self_attn.q_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "f3dbacec14494d80230ab3b7615033cca073086de9703cc9369ef88ccdf82f68",
+        "baseSha256": "f3dbacec14494d80230ab3b7615033cca073086de9703cc9369ef88ccdf82f68",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.11.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.11.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.11.self_attn.q_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "316d209b5c4b00a8bcf8488f8c81e80d90afba84a9dff1cd52fa7a55b119e313",
+        "baseSha256": "316d209b5c4b00a8bcf8488f8c81e80d90afba84a9dff1cd52fa7a55b119e313",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.11.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.11.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.11.self_attn.v_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "9db730cb9bc5fac559e95d8023fdec7dc5e619feeb416729763e6fe436d4c946",
+        "baseSha256": "9db730cb9bc5fac559e95d8023fdec7dc5e619feeb416729763e6fe436d4c946",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.11.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.11.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.11.self_attn.v_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "1e9b2e01602136ecac02fb97744174689a1d9de07b654185cc5c0387b2018861",
+        "baseSha256": "1e9b2e01602136ecac02fb97744174689a1d9de07b654185cc5c0387b2018861",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.12.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.12.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.12.self_attn.q_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "7a0ec9a3a3a0e83559169317b909340da44659bad878773230fdc095fe97056a",
+        "baseSha256": "7a0ec9a3a3a0e83559169317b909340da44659bad878773230fdc095fe97056a",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.12.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.12.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.12.self_attn.q_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "ab6989b0b3a85a5d8dc0f6f30c6999fc9dc0b7cec8e9898eb100e7654b911f8e",
+        "baseSha256": "ab6989b0b3a85a5d8dc0f6f30c6999fc9dc0b7cec8e9898eb100e7654b911f8e",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.12.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.12.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.12.self_attn.v_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "c92198559f50185937003a1b0feba67fda2821bc8e345506820f53670596738a",
+        "baseSha256": "c92198559f50185937003a1b0feba67fda2821bc8e345506820f53670596738a",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.12.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.12.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.12.self_attn.v_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "245c84e8cfe01177e3d886c85c61d7dafbc84c8dc9fe4a24808b1302a59da0e0",
+        "baseSha256": "245c84e8cfe01177e3d886c85c61d7dafbc84c8dc9fe4a24808b1302a59da0e0",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.13.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.13.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.13.self_attn.q_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "e680c57637aff4e3bc241a1239f42f7e0b05f59bdb1800e6aef0177c94311e48",
+        "baseSha256": "e680c57637aff4e3bc241a1239f42f7e0b05f59bdb1800e6aef0177c94311e48",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.13.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.13.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.13.self_attn.q_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "f3e2d43d1a447d124c83a30a46b5526b0e27e22da11f43dee9a0732b91ef36b2",
+        "baseSha256": "f3e2d43d1a447d124c83a30a46b5526b0e27e22da11f43dee9a0732b91ef36b2",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.13.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.13.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.13.self_attn.v_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "558033f17b6bc2efa04e1095bb060fe8094ac0b8dec4f83a3129ae9ba418685c",
+        "baseSha256": "558033f17b6bc2efa04e1095bb060fe8094ac0b8dec4f83a3129ae9ba418685c",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.13.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.13.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.13.self_attn.v_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "d38d2aaaf00c9683ec6694096a3fe9298129a788814d9ea2092ffe0dbedb2831",
+        "baseSha256": "d38d2aaaf00c9683ec6694096a3fe9298129a788814d9ea2092ffe0dbedb2831",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.14.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.14.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.14.self_attn.q_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "cabc558b6a0a5ae1fdf73e0cfbebd2830c4bcfe2dbdaafb81059fbe8c248a5f1",
+        "baseSha256": "cabc558b6a0a5ae1fdf73e0cfbebd2830c4bcfe2dbdaafb81059fbe8c248a5f1",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.14.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.14.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.14.self_attn.q_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "fcb52683925fce7a1292ef22bd00c3dd097f5c28711cf92f4e4e7baaf98f9e3c",
+        "baseSha256": "fcb52683925fce7a1292ef22bd00c3dd097f5c28711cf92f4e4e7baaf98f9e3c",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.14.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.14.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.14.self_attn.v_proj.bias",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "32e990305aecccdd8a8edc2e8a78277f9ca2950f78f27b25ce27d79654972191",
+        "baseSha256": "32e990305aecccdd8a8edc2e8a78277f9ca2950f78f27b25ce27d79654972191",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.14.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.14.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.14.self_attn.v_proj.weight",
+        "baseShard": "model-00002-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "70f4c2a2267a7f411ea379a9e2a4fb01410715000a21230892926c1aa99e6560",
+        "baseSha256": "70f4c2a2267a7f411ea379a9e2a4fb01410715000a21230892926c1aa99e6560",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.15.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.15.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.15.self_attn.q_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "0b0b034e5bf0a46a685fb98eae89fa623ebb22055f1c20005176df8aa2440545",
+        "baseSha256": "0b0b034e5bf0a46a685fb98eae89fa623ebb22055f1c20005176df8aa2440545",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.15.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.15.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.15.self_attn.q_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "8343d5905a93ac4ec0fa10a4e86af4efa2a663f69c15b9a742644922256d903f",
+        "baseSha256": "8343d5905a93ac4ec0fa10a4e86af4efa2a663f69c15b9a742644922256d903f",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.15.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.15.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.15.self_attn.v_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "d863e97ecd2217a5694ac6a5e1798b2944f99cc12f4b5aedfc6b0dcf6a21385d",
+        "baseSha256": "d863e97ecd2217a5694ac6a5e1798b2944f99cc12f4b5aedfc6b0dcf6a21385d",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.15.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.15.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.15.self_attn.v_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "27baa9c68ea38490fcc0c2da324547cfe8245e1efd5c887617d9e7ef0494a2f8",
+        "baseSha256": "27baa9c68ea38490fcc0c2da324547cfe8245e1efd5c887617d9e7ef0494a2f8",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.16.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.16.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.16.self_attn.q_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "ce38f32f0fc64f6ed167d27bd89e95131ca7f3dd1bfd02237f7eaef2d436ae22",
+        "baseSha256": "ce38f32f0fc64f6ed167d27bd89e95131ca7f3dd1bfd02237f7eaef2d436ae22",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.16.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.16.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.16.self_attn.q_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "2b8e3bb473259310a7f09652b04ae5b1ad2af9dc3fd77b99f55a1eb3285f4d54",
+        "baseSha256": "2b8e3bb473259310a7f09652b04ae5b1ad2af9dc3fd77b99f55a1eb3285f4d54",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.16.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.16.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.16.self_attn.v_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "34ad7d6cf9b4deddd1fc65660c0c598846cddb426cf60d26cae1eb754b89e7b2",
+        "baseSha256": "34ad7d6cf9b4deddd1fc65660c0c598846cddb426cf60d26cae1eb754b89e7b2",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.16.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.16.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.16.self_attn.v_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "fdcc21d641ebb0ad763ef04ce8d34e4379da6b68a8ad4ed15ab1f70fae542320",
+        "baseSha256": "fdcc21d641ebb0ad763ef04ce8d34e4379da6b68a8ad4ed15ab1f70fae542320",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.17.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.17.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.17.self_attn.q_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "91432bbb42f31b040f23159e90608e51d4d70b0e393cc82f01ccb50bda04d30f",
+        "baseSha256": "91432bbb42f31b040f23159e90608e51d4d70b0e393cc82f01ccb50bda04d30f",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.17.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.17.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.17.self_attn.q_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "720bb3bb25c5a8bf2619b15a7bc37f5d91b307231418ec44e0bd508856331e7a",
+        "baseSha256": "720bb3bb25c5a8bf2619b15a7bc37f5d91b307231418ec44e0bd508856331e7a",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.17.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.17.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.17.self_attn.v_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "9ac7e633b2bbc79ea1bdcc4020c3954fe6955c0bb5fe065133fae34685b231d4",
+        "baseSha256": "9ac7e633b2bbc79ea1bdcc4020c3954fe6955c0bb5fe065133fae34685b231d4",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.17.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.17.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.17.self_attn.v_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "f1e53ec3186a3b4a6f55aa776ad82f9239b23917fcca42a2377a96f1a9b94ec4",
+        "baseSha256": "f1e53ec3186a3b4a6f55aa776ad82f9239b23917fcca42a2377a96f1a9b94ec4",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.18.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.18.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.18.self_attn.q_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "8451890aa9b6eb25685b2fd18c191ea474a7ece6338cca034b027ab199086625",
+        "baseSha256": "8451890aa9b6eb25685b2fd18c191ea474a7ece6338cca034b027ab199086625",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.18.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.18.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.18.self_attn.q_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "d4c50e2ddcd95bff0216e37be90fc26129368cbea7fb5f807dac58e56c394448",
+        "baseSha256": "d4c50e2ddcd95bff0216e37be90fc26129368cbea7fb5f807dac58e56c394448",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.18.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.18.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.18.self_attn.v_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "882935d1b23ce2b7134e19ea0094bd837c1533eaf48cf1ec606e2d57c293a3d6",
+        "baseSha256": "882935d1b23ce2b7134e19ea0094bd837c1533eaf48cf1ec606e2d57c293a3d6",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.18.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.18.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.18.self_attn.v_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "63b0dc49029db5752c2f4bbacb6770714b9c7ff505161bf2862c7de3af85ccdd",
+        "baseSha256": "63b0dc49029db5752c2f4bbacb6770714b9c7ff505161bf2862c7de3af85ccdd",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.19.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.19.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.19.self_attn.q_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "5a5d979a03e5e5b91a701c711b8a2e97f75fc53bb4e6632394c4cb57e67c8870",
+        "baseSha256": "5a5d979a03e5e5b91a701c711b8a2e97f75fc53bb4e6632394c4cb57e67c8870",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.19.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.19.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.19.self_attn.q_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "bfdf5f9194c8ac42671f534c26a8934cfb3d52211ff3049018ff1ae8717a0a6f",
+        "baseSha256": "bfdf5f9194c8ac42671f534c26a8934cfb3d52211ff3049018ff1ae8717a0a6f",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.19.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.19.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.19.self_attn.v_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "d219fffd8c0a1256b7555fb183e4d00ddc48ee14accf87fdb3bbb78f8d078d7b",
+        "baseSha256": "d219fffd8c0a1256b7555fb183e4d00ddc48ee14accf87fdb3bbb78f8d078d7b",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.19.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.19.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.19.self_attn.v_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "96263ea9e3750ca5085378f7aec6167d53aa76b156ded4f3b78e08dd9ab286ab",
+        "baseSha256": "96263ea9e3750ca5085378f7aec6167d53aa76b156ded4f3b78e08dd9ab286ab",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.20.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.20.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.20.self_attn.q_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "06b98fe4cb3d920fa89d2278e58f69bbe61a34e37c7235ceab3ba893c46d9e62",
+        "baseSha256": "06b98fe4cb3d920fa89d2278e58f69bbe61a34e37c7235ceab3ba893c46d9e62",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.20.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.20.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.20.self_attn.q_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "fa8e808da0d951dc414a485be71a22613e3f9217af40d57d690de60138e07ff1",
+        "baseSha256": "fa8e808da0d951dc414a485be71a22613e3f9217af40d57d690de60138e07ff1",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.20.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.20.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.20.self_attn.v_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "8d0fc96c5b6d8eaa928ce6d3f9e7530c57306466c8fd8c81bb498b1a87ee44f1",
+        "baseSha256": "8d0fc96c5b6d8eaa928ce6d3f9e7530c57306466c8fd8c81bb498b1a87ee44f1",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.20.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.20.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.20.self_attn.v_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "692423590c6245b678cde8dea526639622d330c33907eaf630c421f93846a94a",
+        "baseSha256": "692423590c6245b678cde8dea526639622d330c33907eaf630c421f93846a94a",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.21.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.21.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.21.self_attn.q_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "b1be8ca7d7a64701d4bf7b9cf8be1191a301cfd73842526a5ca84f31d0a15254",
+        "baseSha256": "b1be8ca7d7a64701d4bf7b9cf8be1191a301cfd73842526a5ca84f31d0a15254",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.21.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.21.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.21.self_attn.q_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "413357a75bc75bf513bec95feac43c6198cb2316995e2bb934bf26c14b8a8cb5",
+        "baseSha256": "413357a75bc75bf513bec95feac43c6198cb2316995e2bb934bf26c14b8a8cb5",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.21.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.21.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.21.self_attn.v_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "12479526f5fe0e9355a4cd4e0a05b6081f42fb5560b1d53748eabad6729e4234",
+        "baseSha256": "12479526f5fe0e9355a4cd4e0a05b6081f42fb5560b1d53748eabad6729e4234",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.21.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.21.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.21.self_attn.v_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "c96973546f5180070daa8f32c05823f57a653967fcf0f3e5218fff4d92f0aafa",
+        "baseSha256": "c96973546f5180070daa8f32c05823f57a653967fcf0f3e5218fff4d92f0aafa",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.22.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.22.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.22.self_attn.q_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "b6c8d74ce1169c63fef030c186208771bbee9100fdde67bb4a8efe4e9b224acd",
+        "baseSha256": "b6c8d74ce1169c63fef030c186208771bbee9100fdde67bb4a8efe4e9b224acd",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.22.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.22.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.22.self_attn.q_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "da5d4f2fe400b368aeb76afafdaa1814f1710aeb8dca3b13f5b90499dcbebb75",
+        "baseSha256": "da5d4f2fe400b368aeb76afafdaa1814f1710aeb8dca3b13f5b90499dcbebb75",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.22.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.22.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.22.self_attn.v_proj.bias",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "87bdbf43c360c4c9cc558f4ae5b4559c7e97cda8f160a98a45564b206acf63dd",
+        "baseSha256": "87bdbf43c360c4c9cc558f4ae5b4559c7e97cda8f160a98a45564b206acf63dd",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.22.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.22.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.22.self_attn.v_proj.weight",
+        "baseShard": "model-00003-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "623f48ea03132ef8901c0ab5df25df51fbe1ac45eb3d6ab8505dda2673f931aa",
+        "baseSha256": "623f48ea03132ef8901c0ab5df25df51fbe1ac45eb3d6ab8505dda2673f931aa",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.23.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.23.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.23.self_attn.q_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "26a2021011713bb9a1e0a6def186134182743fd4b7bacd13e04a04c6ffb3bcc8",
+        "baseSha256": "26a2021011713bb9a1e0a6def186134182743fd4b7bacd13e04a04c6ffb3bcc8",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.23.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.23.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.23.self_attn.q_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "0497ad0d08e58ebca65afc8c4c88069ab61aeca1b46131324bcb524be01ddec3",
+        "baseSha256": "0497ad0d08e58ebca65afc8c4c88069ab61aeca1b46131324bcb524be01ddec3",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.23.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.23.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.23.self_attn.v_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "230b21132731af8a3d4d6ac4fcea819cb14b44dd1a580de15e952417b7d30aa2",
+        "baseSha256": "230b21132731af8a3d4d6ac4fcea819cb14b44dd1a580de15e952417b7d30aa2",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.23.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.23.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.23.self_attn.v_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "525b2835aae10f782c947f4c9ce0d45a7674a344d816362a2d0c2b279c547c02",
+        "baseSha256": "525b2835aae10f782c947f4c9ce0d45a7674a344d816362a2d0c2b279c547c02",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.24.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.24.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.24.self_attn.q_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "30124a9787559240e2445ffa6fbb4be9fb41299c0bc981185dc5261102c3e80c",
+        "baseSha256": "30124a9787559240e2445ffa6fbb4be9fb41299c0bc981185dc5261102c3e80c",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.24.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.24.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.24.self_attn.q_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "2d21e8a69004eebfcdc26781040f2166555f54acd37429fd30fc6ca0e3bbdb91",
+        "baseSha256": "2d21e8a69004eebfcdc26781040f2166555f54acd37429fd30fc6ca0e3bbdb91",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.24.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.24.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.24.self_attn.v_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "15f833ce5ecbbd2e0dd73b156dc2a8f280f802bb3b225e99a7e6d018716e5342",
+        "baseSha256": "15f833ce5ecbbd2e0dd73b156dc2a8f280f802bb3b225e99a7e6d018716e5342",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.24.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.24.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.24.self_attn.v_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "3546d28d9a7150d0daaafdae4a00873e1b3f38730443b650275674014ae54d95",
+        "baseSha256": "3546d28d9a7150d0daaafdae4a00873e1b3f38730443b650275674014ae54d95",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.25.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.25.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.25.self_attn.q_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "684f07cc46f90f4dcf79dcb48ab8fef9f7a4286d885a9c66e1e7cb4137892b37",
+        "baseSha256": "684f07cc46f90f4dcf79dcb48ab8fef9f7a4286d885a9c66e1e7cb4137892b37",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.25.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.25.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.25.self_attn.q_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "c7196be648f314cca0ed586873f61590e4e1cb03c99df1244b4035a90c6ba6af",
+        "baseSha256": "c7196be648f314cca0ed586873f61590e4e1cb03c99df1244b4035a90c6ba6af",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.25.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.25.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.25.self_attn.v_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "0696489cb9cd02e87d6d61b40bd0196db4626b6f5d10d888a6df91232c4020ce",
+        "baseSha256": "0696489cb9cd02e87d6d61b40bd0196db4626b6f5d10d888a6df91232c4020ce",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.25.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.25.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.25.self_attn.v_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "804d7ecb47af2eb5fc01697d92b21c7f436ef4783bf718c55890af3e729e793c",
+        "baseSha256": "804d7ecb47af2eb5fc01697d92b21c7f436ef4783bf718c55890af3e729e793c",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.26.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.26.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.26.self_attn.q_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "a3724dd62995cb5965652f314732a70386a5d6a5c2f3eb0725349792841a4e3e",
+        "baseSha256": "a3724dd62995cb5965652f314732a70386a5d6a5c2f3eb0725349792841a4e3e",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.26.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.26.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.26.self_attn.q_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "508729803c1b2031c85e06b39a6f61e635ca0d820d6123b00c76b2b5a3ceea69",
+        "baseSha256": "508729803c1b2031c85e06b39a6f61e635ca0d820d6123b00c76b2b5a3ceea69",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.26.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.26.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.26.self_attn.v_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "1a727053115450429ab168f6057e5c62d95b95d89438fd28a9a18480043b3414",
+        "baseSha256": "1a727053115450429ab168f6057e5c62d95b95d89438fd28a9a18480043b3414",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.26.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.26.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.26.self_attn.v_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "2fdd02bcc33c5a4e61d6297bbf09f96cb3a9aba614916285e444e7f095ed0804",
+        "baseSha256": "2fdd02bcc33c5a4e61d6297bbf09f96cb3a9aba614916285e444e7f095ed0804",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.27.self_attn.q_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.27.self_attn.q_proj.base_layer.bias",
+        "baseKey": "model.layers.27.self_attn.q_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584
+        ],
+        "byteLength": 7168,
+        "checkpointSha256": "b77a1a024a4f265c1b0a9d951511151d2a6427e3142aa9b307d0a33116552baa",
+        "baseSha256": "b77a1a024a4f265c1b0a9d951511151d2a6427e3142aa9b307d0a33116552baa",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.27.self_attn.q_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.27.self_attn.q_proj.base_layer.weight",
+        "baseKey": "model.layers.27.self_attn.q_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          3584,
+          3584
+        ],
+        "byteLength": 25690112,
+        "checkpointSha256": "e22ff88818a452914ea2be9972bc12246085e4080e55c7124109cf29ba14ce64",
+        "baseSha256": "e22ff88818a452914ea2be9972bc12246085e4080e55c7124109cf29ba14ce64",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.27.self_attn.v_proj.bias",
+        "missingKey": "llm.base_model.model.model.layers.27.self_attn.v_proj.base_layer.bias",
+        "baseKey": "model.layers.27.self_attn.v_proj.bias",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512
+        ],
+        "byteLength": 1024,
+        "checkpointSha256": "710b629dc997d5b399db8b5a1e7d925e21179df08cdacf2ec8c3f6f61b1b70d1",
+        "baseSha256": "710b629dc997d5b399db8b5a1e7d925e21179df08cdacf2ec8c3f6f61b1b70d1",
+        "equal": true
+      },
+      {
+        "checkpointKey": "llm.base_model.model.model.layers.27.self_attn.v_proj.weight",
+        "missingKey": "llm.base_model.model.model.layers.27.self_attn.v_proj.base_layer.weight",
+        "baseKey": "model.layers.27.self_attn.v_proj.weight",
+        "baseShard": "model-00004-of-00004.safetensors",
+        "dtype": "BF16",
+        "shape": [
+          512,
+          3584
+        ],
+        "byteLength": 3670016,
+        "checkpointSha256": "95ba9d10c3e1ce63a9743c0e1451d2114860b657e96d8d1499c6186aaea61829",
+        "baseSha256": "95ba9d10c3e1ce63a9743c0e1451d2114860b657e96d8d1499c6186aaea61829",
+        "equal": true
+      }
+    ]
+  },
+  "interpretation": "IGNORED_CHECKPOINT_KEYS_EQUAL_PINNED_BASE_INITIALIZATION"
+}

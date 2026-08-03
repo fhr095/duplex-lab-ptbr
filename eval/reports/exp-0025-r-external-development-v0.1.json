@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "exp-0025-r-external-development-report-v1",
+  "experimentId": "EXP-0025-R",
+  "candidateId": "E-official-duplexcascade-v0.1",
+  "createdAt": "2026-08-03T20:11:36.442Z",
+  "stage": "EXTERNAL_SENTINELS_COMPLETE_DEVELOPMENT_NOT_EVALUATED",
+  "evidence": {
+    "authorization": {
+      "path": "eval/commitments/exp-0025-r-external-development-authorization-v0.1.json",
+      "fileSha256": "6d4f65fcfe2ce680d558b00d9cf0916a1cf91fd90aeba32097ebb15884d1545f",
+      "authorizationSha256": "sha256:3b011dc3a5d475ce85ccdfe25ceb9b1e191b9dcb215915f01a8e7f51e0abe103"
+    },
+    "raw": {
+      "path": "eval/evidence/exp-0025-r-external-development-raw-v0.1.json",
+      "fileSha256": "47e873e127015d918179f4d0cea5850790c11a45b6fa2889a89859ce68e32e84",
+      "evidenceSha256": "645b05a441c242b2ba2d85fc7e4ea1dda2141df923e89efb8fb54abd1f341fa8",
+      "pythonCanonicalSha256Verified": true
+    },
+    "journal": {
+      "path": "eval/evidence/exp-0025-r-external-development-raw-v0.1.journal.ndjson",
+      "fileSha256": "ecec157670df173800b5bb314f77aab0179065cb4a890a05e6ef3052ba6ee7a8",
+      "entries": 5
+    },
+    "providerLog": {
+      "path": "eval/evidence/exp-0025-r-external-development-runpod-v0.1.log",
+      "fileSha256": "f7cdf8fcce89e2f8fb1ad7c081c9a597b9d30a4dd1bad7dccb1f31a0a29c384b",
+      "byteLength": 1630
+    },
+    "providerReceipts": [
+      {
+        "path": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json",
+        "fileSha256": "f2e9c269706fd73f0d15186e52d3421ffd945ee9650954dce816274561f78cd3",
+        "status": "FAILED",
+        "terminationConfirmed": true
+      },
+      {
+        "path": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.2.json",
+        "fileSha256": "38111013be902507ad05ec43d7be59dce806592cb72c6341707aed0119e0f502",
+        "status": "FAILED",
+        "terminationConfirmed": true
+      },
+      {
+        "path": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.3.json",
+        "fileSha256": "e0bb211fd00d95e0b67d3f7f77cb12c6d5f15e8e1e5b22d1c19d2559093bb343",
+        "status": "COMPLETED",
+        "terminationConfirmed": true
+      }
+    ],
+    "peftBaseEquivalence": {
+      "path": "eval/evidence/exp-0025-r-external-peft-base-equivalence-v0.1.json",
+      "fileSha256": "c718241504581d0fafe717bd83fdc173d205be835f3bab79aaa801b952cad8e1",
+      "tensorCount": 112,
+      "allEqual": true
+    }
+  },
+  "validity": {
+    "checkpointHashesVerified": true,
+    "exactOfficialCodeCommitVerified": true,
+    "modelLoadEquivalent": true,
+    "modelLoadExplanation": "112 ignored plain q/v base keys equal byte-for-byte to the pinned base-layer initialization; LoRA keys loaded",
+    "holdoutRead": false,
+    "oldHoldoutConfirmatoryEligible": false,
+    "rawTokensAndTrajectoriesPreserved": true,
+    "podTerminationConfirmed": true
+  },
+  "sentinels": {
+    "generationCount": 4,
+    "frozenAdapterClassification": {
+      "status": "E_PROTOCOL_FAILURE",
+      "complete": true,
+      "passed": 3,
+      "expected": 4,
+      "results": [
+        {
+          "id": "english-user-talking",
+          "assistantSpeaking": false,
+          "expectedAction": "CONTINUE_LISTENING",
+          "output": "<|user is talking|><|im_end|>",
+          "observedAction": "CONTINUE_LISTENING",
+          "reason": "USER_STILL_TALKING",
+          "pass": true
+        },
+        {
+          "id": "english-user-finished",
+          "assistantSpeaking": false,
+          "expectedAction": "TAKE_FLOOR",
+          "output": "The capital of France is Paris.<|im_end|>",
+          "observedAction": "TAKE_FLOOR",
+          "reason": "ASSISTANT_TEXT_STARTS_RESPONSE",
+          "pass": true
+        },
+        {
+          "id": "english-user-backchannel",
+          "assistantSpeaking": true,
+          "expectedAction": "KEEP_ASSISTANT_FLOOR",
+          "output": " of Earth. When sunlight enters the atmosphere, it coll<|im_end|>",
+          "observedAction": "KEEP_ASSISTANT_FLOOR",
+          "reason": "ASSISTANT_TEXT_CONTINUES_CURRENT_UTTERANCE",
+          "pass": true
+        },
+        {
+          "id": "english-user-interruption",
+          "assistantSpeaking": true,
+          "expectedAction": "YIELD_FLOOR",
+          "output": "<|user is talking|><|im_end|>",
+          "observedAction": "CONTINUE_LISTENING",
+          "reason": "USER_STILL_TALKING",
+          "pass": false
+        }
+      ]
+    },
+    "officialRuntimeClassification": {
+      "status": "PASS",
+      "complete": true,
+      "passed": 4,
+      "expected": 4,
+      "results": [
+        {
+          "id": "english-user-talking",
+          "assistantSpeaking": false,
+          "expectedAction": "CONTINUE_LISTENING",
+          "output": "<|user is talking|><|im_end|>",
+          "observedAction": "CONTINUE_LISTENING",
+          "reason": "USER_STILL_TALKING",
+          "pass": true
+        },
+        {
+          "id": "english-user-finished",
+          "assistantSpeaking": false,
+          "expectedAction": "TAKE_FLOOR",
+          "output": "The capital of France is Paris.<|im_end|>",
+          "observedAction": "TAKE_FLOOR",
+          "reason": "ASSISTANT_TEXT_STARTS_RESPONSE",
+          "pass": true
+        },
+        {
+          "id": "english-user-backchannel",
+          "assistantSpeaking": true,
+          "expectedAction": "KEEP_ASSISTANT_FLOOR",
+          "output": " of Earth. When sunlight enters the atmosphere, it coll<|im_end|>",
+          "observedAction": "KEEP_ASSISTANT_FLOOR",
+          "reason": "ASSISTANT_TEXT_CONTINUES_CURRENT_UTTERANCE",
+          "pass": true
+        },
+        {
+          "id": "english-user-interruption",
+          "assistantSpeaking": true,
+          "expectedAction": "YIELD_FLOOR",
+          "output": "<|user is talking|><|im_end|>",
+          "observedAction": "YIELD_FLOOR",
+          "reason": "OFFICIAL_SERVER_RESETS_TTS_FOR_USER_TALKING",
+          "pass": true
+        }
+      ],
+      "officialRuntimeBinding": {
+        "commit": "42893024ca90c8de8ac3ed624467ebc123512ff8",
+        "path": "server.py",
+        "sha256": "404a1b6f51e87c012e1111cc21a712ed8895e9a5ee99328bd1245a7c6a654037",
+        "rule": "assistant speaking + user talking/interruption both reset TTS"
+      }
+    },
+    "correction": {
+      "type": "POST_RUN_CONSTRUCT_INTERPRETATION_CORRECTION",
+      "modelOutputChanged": false,
+      "rerunUsed": false,
+      "affectedSentinelId": "english-user-interruption",
+      "rawOutput": "<|user is talking|><|im_end|>",
+      "rationale": "Pinned server.py resets TTS for both user interruption and user talking while assistant is speaking"
+    }
+  },
+  "development": {
+    "evaluated": false,
+    "utteranceCount": 0,
+    "reason": "Frozen adapter mislabeled a valid official-runtime sentinel and therefore correctly fail-closed before D",
+    "comparisonsAvailable": {
+      "againstA0Native": false,
+      "againstA0At600": false,
+      "postFinalDelay": false,
+      "gainsAndLosses": false
+    }
+  },
+  "budget": {
+    "cumulativeGpuSeconds": 1193.4900000095367,
+    "maximumGpuSeconds": 7200,
+    "remainingGpuSeconds": 6006.509999990463,
+    "cumulativeEstimatedCostUsd": 0.958107250007656,
+    "maximumExternalCostUsd": 12,
+    "remainingExternalCostUsd": 11.041892749992344,
+    "cumulativeDownloadBytesUpperBound": 37706974907,
+    "maximumDownloadBytes": 42949672960,
+    "remainingDownloadBytes": 5242698053,
+    "terminalSnapshotBytes": 32666833251,
+    "minimumCapForRehydratedD": 70373808158,
+    "minimumCapForRehydratedDGiB": 65.54071619920433
+  },
+  "decision": {
+    "id": "DO_NOT_CUT_E_DO_NOT_CLAIM_D_GAIN",
+    "externalMicroturnFrontCut": false,
+    "freshHoldoutJustified": false,
+    "freshHoldoutAuthorized": false,
+    "localReproductionAuthorized": false,
+    "oldHoldoutUse": "NOT_EXECUTED",
+    "interpretation": "E passed the official runtime protocol gate, but D has no observations",
+    "nextAction": "REQUEST_EXPLICIT_DOWNLOAD_CAP_EXTENSION_THEN_RUN_ONE_D_ONLY_PASS",
+    "requiredNewAuthority": {
+      "reason": "Checkpoint volume was intentionally deleted and rehydration would exceed the frozen cumulative 40 GiB cap",
+      "recommendedMaximumCumulativeDownloadGiB": 70,
+      "additionalModelOrCheckpoint": false,
+      "sentinelRerun": false,
+      "developmentOnly": true,
+      "holdoutInference": false,
+      "mappingSweepOrSeedChange": false,
+      "gpuHourOrCostIncreaseRequired": false
+    }
+  },
+  "reportSha256": "sha256:1276c467c8e68f1427795030e9d2dbb5c85cbc0e0eec4cfbd8bd8c4d5fe12cde"
+}

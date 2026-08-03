@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "exp-0025-r-runpod-allocation-receipt-v1",
+  "experimentId": "EXP-0025-R",
+  "candidateId": "E-official-duplexcascade-v0.1",
+  "infrastructureAttempt": 3,
+  "modelInferenceAttempt": 1,
+  "requestedAt": "2026-08-03T19:57:21.559Z",
+  "completedAt": "2026-08-03T20:02:07.835Z",
+  "status": "COMPLETED",
+  "provider": {
+    "id": "runpod",
+    "podId": "b39asovam4ph7u",
+    "podName": "duplex-exp0025-r-e-1785787041559",
+    "requested": {
+      "name": "duplex-exp0025-r-e-1785787041559",
+      "cloudType": "SECURE",
+      "computeType": "GPU",
+      "gpuTypeIds": [
+        "NVIDIA H100 PCIe"
+      ],
+      "gpuTypePriority": "availability",
+      "gpuCount": 1,
+      "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+      "containerDiskInGb": 30,
+      "volumeInGb": 60,
+      "volumeMountPath": "/workspace",
+      "ports": [
+        "22/tcp"
+      ],
+      "supportPublicIp": true,
+      "interruptible": false,
+      "locked": false,
+      "minRAMPerGPU": 64,
+      "minVCPUPerGPU": 8,
+      "dockerEntrypoint": [],
+      "dockerStartCmd": [],
+      "env": {
+        "PUBLIC_KEY": "EPHEMERAL_REDACTED",
+        "SSH_PUBLIC_KEY": "EPHEMERAL_REDACTED"
+      }
+    },
+    "observed": {
+      "image": null,
+      "gpu": null,
+      "memoryInGb": 251,
+      "vcpuCount": 16,
+      "costPerHr": 2.89,
+      "adjustedCostPerHr": null
+    }
+  },
+  "dataBoundary": {
+    "transferredInputs": [
+      "scripts/run_exp_0025_r_external.py",
+      "eval/datasets/exp-0025-r-development-v0.1.json",
+      "eval/scenarios/exp-0025-r-external-sentinels-v0.1.json"
+    ],
+    "transferredInputSha256": {
+      "scripts/run_exp_0025_r_external.py": "e6102a886af69e2bced944d804efca59b82d8825993ea445266609a93507589e",
+      "eval/datasets/exp-0025-r-development-v0.1.json": "c49b69623bcfccbc836674487bd49ce97f80616a0072e0dc7d7aee76887008b2",
+      "eval/scenarios/exp-0025-r-external-sentinels-v0.1.json": "4a1ff37504bb1eb1f19a2cc3cfea7374ac14aff11eb0b49e92929c1adba55110"
+    },
+    "holdoutTransferred": false,
+    "environmentFileTransferred": false,
+    "accountApiKeyTransferred": false,
+    "openAiApiKeyTransferred": false
+  },
+  "runtime": {
+    "packagePins": {
+      "transformers": "4.46.3",
+      "peft": "0.13.2",
+      "huggingface-hub": "0.26.2",
+      "safetensors": "0.4.5",
+      "hf-transfer": "0.1.9"
+    },
+    "remoteTimeoutSeconds": 6000,
+    "remoteExitCode": 0,
+    "retrieved": {
+      "eval/evidence/exp-0025-r-external-development-raw-v0.1.json": true,
+      "eval/evidence/exp-0025-r-external-development-raw-v0.1.journal.ndjson": true,
+      "eval/evidence/exp-0025-r-external-development-runpod-v0.1.log": true
+    }
+  },
+  "budget": {
+    "allocationSeconds": 286.27500009536743,
+    "priorAllocationSeconds": 907.2149999141693,
+    "cumulativeAllocationSeconds": 1193.4900000095367,
+    "maximumGpuSeconds": 7200,
+    "hourlyUsd": 2.89,
+    "estimatedGpuCostUsd": 0.2298152084098922,
+    "priorEstimatedGpuCostUsd": 0.7282920415977637,
+    "cumulativeEstimatedGpuCostUsd": 0.958107250007656,
+    "maximumExternalCostUsd": 12,
+    "priorTransferBytesUpperBound": 3400000000,
+    "frozenArtifactBytes": 32662348987,
+    "projectedCumulativeTransferBytes": 36062348987,
+    "maximumDownloadBytes": 42949672960,
+    "withinFrozenLimits": true
+  },
+  "termination": {
+    "requestedAt": "2026-08-03T20:02:06.098Z",
+    "confirmedAt": "2026-08-03T20:02:07.835Z",
+    "confirmed": true,
+    "error": null
+  },
+  "error": null
+}
