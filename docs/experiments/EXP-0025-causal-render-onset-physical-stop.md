@@ -1,8 +1,8 @@
 # EXP-0025 — âncora causal e STOP renderizado observável
 
 Status: **pré-registro emendado prospectivamente em 03/08/2026, antes de C0,
-freeze, abertura ou execução oficial; terminal para esta família de
-instrumento; zero autoridade**
+freeze, abertura ou execução oficial; núcleo causal mínimo de STOP-R;
+terminal para esta família de instrumento; zero autoridade**
 
 ## Emenda metodológica e constructo
 
@@ -112,8 +112,11 @@ possa ser persistido no schema fechado invalida o instrumento inteiro.
 - um reset e um turnId novo por trial;
 - trigger planejado 320 ms após a âncora, erro de 0 a 10 ms;
 - horizonte mínimo de 250 ms após o marcador de STOP mais tardio;
-- exatamente 12 TTS sequenciais, um por trial;
-- mesma captura CDP qualificada, SHA-256 e tamanho pré-fixados no EXP-0024.
+- exatamente 12 chamadas TTS sequenciais, uma por trial;
+- CDP usado somente como transporte para identificar o Chrome, navegar e
+  executar/receber o resultado tipado do browser. `Network.getResponseBody`,
+  captura dos WAVs e identidade byte a byte dos 12 TTS não participam do
+  estimando nem do gate primário.
 
 A unidade primária é um **STOP individual** (`n=12`). A navegação é unidade de
 cluster operacional (`2×6`), não nova amostra independente. Não haverá teste
@@ -149,10 +152,11 @@ A expressão do browser retorna exatamente um resultado fechado:
 - `INSTRUMENT_FAILURE`, com fase, código, mensagem limitada, identidade,
   requestId quando conhecido e snapshots/marcadores já observados.
 
-O worker persiste o resultado e aguarda ACK fsyncado antes de qualquer join de
-captura ou próximo trial. Erro de CDP, serialização ou IPC pode encerrar o
-worker, mas o supervisor materializa a falha sem promover prefixos. Body,
-base64 e bytes de áudio são proibidos no IPC, journal e relatório.
+O worker persiste o resultado e aguarda ACK fsyncado antes do próximo trial.
+Erro de CDP, serialização ou IPC anterior à persistência de um resultado
+necessário pode encerrar o worker, mas o supervisor materializa a falha sem
+promover prefixos. Body, base64 e bytes de áudio são proibidos no IPC, journal
+e relatório.
 
 Receipt write-once, journal NDJSON append-only, lock exclusivo do SO, deadline
 total, recovery fail-closed e topologia C0 → freeze → opening → evidence são
@@ -195,18 +199,41 @@ terminal idêntica e deltas ≤16,7 ms. Menor diversidade produz
 
 ## Gates separados
 
-### I — validade do instrumento
+### I-R — validade causal mínima de STOP-R
 
-1. boundary, commits, hashes, runtime, Chrome, receipt, lock e recovery válidos;
-2. exatamente 2×6 resultados tipados e 12 TTS, sem seleção de sobreviventes;
-3. ledger health/TTS ordinal completo, local e bijetivo;
-4. 12 capturas com SHA-256 e tamanho pré-registrados;
-5. 12 âncoras iguais ao primeiro `render.active` pós-reset, trigger
-   320 ms + erro 0–10 ms e snapshots referenciais íntegros;
-6. zero `INSTRUMENT_FAILURE`, diagnóstico, stderr ou conteúdo proibido;
-7. relatório e checker reconstruídos dos artefatos reais.
+Somente estes requisitos podem tornar `S=NOT_EVALUATED`:
 
-Qualquer falha em `I` torna `S`, `A` e `O` `NOT_EVALUATED`.
+1. boundary prospectivo, fontes congeladas, opening/receipt write-once e
+   identidade do Chrome válidos antes da coleta;
+2. exatamente 2×6 resultados tipados persistidos no journal causal, na ordem
+   planejada e sem seleção de sobreviventes;
+3. 12 âncoras iguais ao primeiro `render.active` pós-reset, trigger
+   320 ms + erro 0–10 ms, relógios finitos e snapshots/trace referenciais
+   íntegros;
+4. para cada trial, vínculo interno único entre reset, chamada de fala,
+   `turnId`, `PAUSE_REQUESTED`, efeito de pausa, renderer-silent e horizonte
+   terminal; zero `INSTRUMENT_FAILURE` entre os 12 resultados requeridos;
+5. journal causal canônico, append-only e fsyncado, e relatório/checker
+   reconstruídos exclusivamente desses resultados.
+
+O sinal `assistant.render.active` observado antes do trigger comprova que o
+estímulo chegou ao grafo medido; portanto bytes do WAV não são necessários
+para atribuir a cessação do próprio renderer. O hash das fontes congeladas
+identifica o runtime; o hash do áudio sintetizado caracteriza somente a
+proveniência do estímulo.
+
+### P — proveniência e diagnósticos não bloqueantes
+
+Health antes/depois, ledger ordinal de rede/TTS, captura CDP do corpo, SHA-256
+e tamanho dos WAVs, logs de console, stderr e auditoria de lifecycle podem ser
+registrados como diagnósticos `PASS`, `FAIL` ou `NOT_COLLECTED`, mas **não
+apagam 12 resultados STOP-R causalmente completos** e não integram `I-R`.
+
+Para impedir envenenamento estrutural, esses dados ficam fora do journal
+causal ou só entram em sidecar validado antes do append. Falha ou ausência do
+sidecar não altera `S/A/O`. Corrupção do próprio resultado de renderer,
+conteúdo proibido dentro do journal causal, runtime não identificado ou
+evidência causal incompleta continuam falhando fechado.
 
 ### S, A e O — resultados independentes
 
@@ -225,7 +252,8 @@ autoridade permanece gate global desta campanha.
 - nenhuma alteração nas dez fontes produtivas, nenhum novo sensor e nenhum
   segundo candidato de coleta;
 - uma C0, uma freeze, uma abertura e **uma invocação oficial**;
-- exatamente 12 TTS/STOPs, zero API paga e zero GPU;
+- exatamente 12 TTS/STOPs, zero captura de corpo de resposta, zero API paga e
+  zero GPU;
 - deadline total do supervisor: **600.000 ms**;
 - nenhum rerun, recuperação que volte a executar Chrome ou seleção de prefixo.
 

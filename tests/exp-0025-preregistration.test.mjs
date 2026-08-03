@@ -32,7 +32,10 @@ test("EXP-0025 limita o constructo ao renderer e termina a linhagem", async () =
     "STOP audível (`STOP-A`)",
     "não é o último som audível na sala",
     "A unidade primária é um **STOP individual** (`n=12`)",
-    "### I — validade do instrumento",
+    "### I-R — validade causal mínima de STOP-R",
+    "### P — proveniência e diagnósticos não bloqueantes",
+    "apagam 12 resultados STOP-R causalmente completos",
+    "Network.getResponseBody",
     "### S — STOP renderizado, primário",
     "### A — delta da âncora, instrumental",
     "### O — ordem de telemetria, secundário",
@@ -56,6 +59,11 @@ test("EXP-0025-R separa checkpoint externo de reprodução local", async () => {
     "f2826a00ceef68f0f2b946d945ecc0477ce4450c",
     "wait → CONTINUE_LISTENING",
     "commit → TAKE_FLOOR",
+    "`A0@600` não é challenger",
+    "`<|user backchannel|>` significa `KEEP_ASSISTANT_FLOOR`",
+    "significa `YIELD_FLOOR`",
+    "E_PROTOCOL_FAILURE",
+    "PT_BR_TRANSFER_OR_CONTENT_SHIFT",
     "**desenvolvimento `D`:** 32 falas, 16 pares",
     "**holdout `H`:** 48 falas, 24 pares",
     "**par de prefixo** (`n=24` no holdout)",
@@ -71,5 +79,9 @@ test("EXP-0025-R separa checkpoint externo de reprodução local", async () => {
   assert.match(
     document,
     /Se `E` não for executado,[\s\S]*nunca de comparação externa/iu
+  );
+  assert.doesNotMatch(
+    document,
+    /`TAKE_FLOOR`:[^\n]*<\|user backchannel\|>/iu
   );
 });

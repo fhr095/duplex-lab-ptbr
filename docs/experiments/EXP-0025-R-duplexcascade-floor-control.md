@@ -46,8 +46,11 @@ O card oficial declara idioma `en`. A execução principal continuará usando o
 pack pt-BR porque a decisão local é transferência para pt-BR. Uma falha pode
 ser atribuível a idioma e não falsifica universalmente o mecanismo; ela apenas
 impede promover este checkpoint como referência comportamental local. Quatro
-sentinelas em inglês, fora das métricas, verificam que pesos, tokenizer e
-protocolo carregaram corretamente.
+sentinelas em inglês, fora das métricas, verificam não apenas carga, mas as
+quatro transições contextuais publicadas: usuário ainda falando → esperar;
+usuário terminou → responder; backchannel do usuário enquanto o assistente
+fala → manter a fala corrente; interrupção do usuário enquanto o assistente
+fala → parar/ceder. As quatro precisam passar antes de executar `E` em `D`.
 
 Se `E` não for executado, qualquer trabalho local será chamado honestamente de
 **probe inspirado no mecanismo publicado**, nunca de comparação externa nem de
@@ -91,19 +94,33 @@ artigo/protocolo público e do desenvolvimento local, com o rótulo
   1.500 ms.
 
 `A0`, `E` e `L` recebem a mesma trajetória causal. Nenhum recebe o instante
-ground truth do final como feature. `A0` é consultado a cada frame de 20 ms,
-como no runtime; `E` e `L` atualizam no grid de 600 ms congelado. O replay
-preserva o mesmo relógio e registra quando a ação se torna observável.
+ground truth do final como feature. `A0-native` é consultado a cada frame de
+20 ms, como no runtime, e permanece o comparador decisório. Também será
+registrada a projeção diagnóstica `A0@600`: o mesmo código, estado, thresholds
+e trace de `A0`, mas com ações observáveis somente nos mesmos ticks de 600 ms
+de `E/L`. `A0@600` não é challenger e nunca pode vencer, promover ou mudar um
+gate; decompõe apenas a penalidade de cadência. O replay preserva o mesmo
+relógio em todas as projeções.
 
 ### Mapeamento fechado de E
 
-O primeiro output acionável de cada tick é reduzido antes da execução:
+O protocolo será congelado e testado antes de qualquer holdout. No pack
+primário, o assistente está silencioso e o usuário detém o piso na fronteira
+crítica. Nesse contexto, o primeiro output acionável de cada tick é reduzido:
 
-- `CONTINUE_LISTENING`: `<|user is talking|>`,
-  `<|user is thinking|>` ou `<|user interruption|>`;
-- `TAKE_FLOOR`: `<|user finish talking|>`, `<|user backchannel|>` ou primeiro
-  token de texto comum do assistente;
-- `PROTOCOL_FAILURE`: erro, timeout, EOS ou ausência de output acionável.
+- `CONTINUE_LISTENING`: `<|user is talking|>` ou
+  `<|user is thinking|>`;
+- `TAKE_FLOOR`: `<|user finish talking|>` ou primeiro token de texto comum do
+  assistente;
+- `PROTOCOL_FAILURE`: `<|user backchannel|>` ou
+  `<|user interruption|>` com o assistente silencioso, erro, timeout, EOS ou
+  ausência de output acionável.
+
+Nas sentinelas com o assistente falando não há projeção binária artificial:
+`<|user backchannel|>` significa `KEEP_ASSISTANT_FLOOR` — ignorar o
+backchannel e continuar a resposta corrente — e `<|user interruption|>`
+significa `YIELD_FLOOR`. Esses resultados validam o protocolo, mas não entram
+em `prematureTakeover` ou `postFinalDecisionDelayMs`.
 
 Esse colapso binário mede cessão/tomada do piso. Ele não afirma que tokens
 semanticamente distintos são equivalentes em outras tarefas.
@@ -132,6 +149,9 @@ como teste acústico.
   sintática, correção/recomeço e fechamento lexicalmente ambíguo;
 - cada `CONTINUES` contém uma pausa não terminal; cada `ENDS` contém exatamente
   um final verdadeiro na fronteira pareada;
+- o assistente está silencioso na fronteira crítica de todas as falas de
+  `D/H`; backchannel/interrupção enquanto o assistente fala pertencem somente
+  às sentinelas de protocolo;
 - superfícies, nomes e conteúdos não se repetem entre `D` e `H`.
 
 As métricas são calculadas por **fala**, mas a unidade estatística primária é o
@@ -161,6 +181,18 @@ No agregado serão reportados contagem/taxa, pares discordantes contra `A0` e,
 para atraso, mínimo, mediana, p95 nearest-rank e máximo. Latência wall-clock de
 inferência será registrada separadamente; por depender do hardware remoto, não
 substitui o atraso lógico da política.
+
+O diagnóstico de cadência reportará, por fala e agregado,
+`A0@600 − A0-native` para atraso/misses e qualquer mudança de tomada prematura.
+O resíduo `E − A0@600` descreve desempenho sob a mesma oportunidade de decisão,
+mas não substitui a regra de vitória contra `A0-native`.
+
+As atribuições são fechadas: falha em qualquer sentinela produz
+`E_PROTOCOL_FAILURE` e impede interpretar `D`; sentinelas 4/4 válidas seguidas
+de falha pt-BR produzem `PT_BR_TRANSFER_OR_CONTENT_SHIFT`, não “mecanismo
+universalmente refutado”. `A0@600` separa a parcela observável de cadência; com
+quatro sentinelas não alegaremos separar definitivamente idioma de distribuição
+de conteúdo.
 
 ## Gate de necessidade antes do custo externo
 
