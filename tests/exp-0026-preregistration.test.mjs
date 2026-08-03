@@ -52,6 +52,69 @@ test("EXP-0026 congela cérebro, prompt, parâmetros, TTS, dispositivo e ruído"
   ]);
 });
 
+test("EXP-0026 usa o cérebro econômico real e admite gargalo semântico", async () => {
+  const document = await readFile(preregistrationPath, "utf8");
+  requiresAll(document, [
+    "configuração econômica que este MVP pretende usar",
+    "não um controle premium",
+    "`QUALIDADE_DA_RESPOSTA` e `TAREFA_E_CONTINUIDADE` são resultados",
+    "legítimos e podem dominar o ranking",
+    "não para criar dependência arquitetural"
+  ]);
+});
+
+test("EXP-0026 preserva conversa espontânea sem inflar a amostra", async () => {
+  const document = await readFile(preregistrationPath, "utf8");
+  requiresAll(document, [
+    "`F0`, um bloco fixo de **dois minutos de",
+    "conversa espontânea**",
+    "sempre na última posição",
+    "não é uma sétima unidade estatística",
+    "não cria categoria, voto, métrica ou",
+    "O timer encerra o bloco"
+  ]);
+});
+
+test("EXP-0026 congela lifecycle novo e smoke de seis processos", async () => {
+  const document = await readFile(preregistrationPath, "utf8");
+  requiresAll(document, [
+    "Lifecycle isolado por participante",
+    "novo processo Node do servidor",
+    "nova instância do cérebro, histórico vazio e contador em `0/25`",
+    "novo contexto/perfil efêmero do Chrome",
+    "preservam intencionalmente processo,",
+    "smoke automatizado simulará seis ciclos completos",
+    "`processRunId` distinto",
+    "storage do navegador vazio"
+  ]);
+});
+
+test("EXP-0026 congela diversidade mínima e define S5 sem fala concorrente", async () => {
+  const document = await readFile(preregistrationPath, "utf8");
+  requiresAll(document, [
+    "estratégia mínima de diversidade",
+    "no máximo duas pessoas do mesmo domicílio",
+    "`18–34` e `35+`",
+    "região brasileira de formação/exposição de sotaque",
+    "interação por voz semanalmente",
+    "Sotaque ou origem nunca serão inferidos pela",
+    "não simula conversa concorrente, ambiente",
+    "público, outra pessoa ao fundo"
+  ]);
+});
+
+test("EXP-0026 sela a codificação técnica antes da percepção", async () => {
+  const document = await readFile(preregistrationPath, "utf8");
+  requiresAll(document, [
+    "Ordem cega de abertura",
+    "codificação técnica é concluída antes",
+    "sem categorias, severidades, comentários, top-2 individuais ou",
+    "sela e hasheia essa primeira codificação",
+    "somente então",
+    "máquina de estados fail-closed"
+  ]);
+});
+
 test("EXP-0026 separa consentimento, avaliação e treino", async () => {
   const document = await readFile(preregistrationPath, "utf8");
   requiresAll(document, [

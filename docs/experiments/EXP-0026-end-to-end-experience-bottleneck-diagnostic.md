@@ -1,8 +1,9 @@
 # EXP-0026 — diagnóstico formativo dos gargalos da experiência ponta a ponta
 
-Status: **pré-registrado; instrumento ainda não implementado; zero dry-run,
-zero sessão humana e zero bloco comercial executados; zero GPU, runner externo
-ou mudança de runtime autorizados**
+Status: **pré-registrado com emenda prospectiva de 2026-08-03; instrumento
+ainda não implementado; zero dry-run, zero sessão humana e zero bloco
+comercial executados; zero GPU, runner externo ou mudança de runtime
+autorizados**
 
 ## Decisão que este experimento desbloqueia
 
@@ -61,6 +62,21 @@ determinístico será substituído pelo adaptador externo já existente para que
 conversa aberta seja funcional. Isso não torna o provider parte da arquitetura
 proprietária nem o elege como cérebro definitivo.
 
+### Constructo da escolha de cérebro
+
+`gpt-5.6-luna` representa a **configuração econômica que este MVP pretende usar
+agora**, e não um controle premium escolhido para tornar a camada semântica
+artificialmente invisível. Este experimento examina a experiência ponta a ponta;
+por isso `QUALIDADE_DA_RESPOSTA` e `TAREFA_E_CONTINUIDADE` são resultados
+legítimos e podem dominar o ranking. Se isso ocorrer, a conclusão será que o
+cérebro, seu prompt, adaptador ou lifecycle merecem o próximo experimento — não
+que a camada de voz deva receber prioridade apesar da percepção humana.
+
+O modelo é congelado entre participantes para comparabilidade, custo e
+atribuição, não para criar dependência arquitetural nem alegar que seja o
+melhor cérebro possível. Um modelo premium que funcionasse como teto semântico
+mudaria o constructo e continua proibido.
+
 Antes de qualquer sessão analisável, um único artefato
 `eval/commitments/exp-0026-session-freeze-v0.1.json` deverá registrar e hashear:
 
@@ -118,13 +134,33 @@ técnica ou na calibração comercial.
   brasileiro, uma sessão por pessoa;
 - uma única estação física e os mesmos dispositivos nas seis sessões;
 - um dry-run interno adicional, explicitamente excluído;
-- sessão local alvo de 10 a 12 minutos; módulo comercial opcional limitado a
+- sessão local alvo de 12 a 14 minutos; módulo comercial opcional limitado a
   mais 4 minutos;
 - as seis sessões analisáveis são concluídas dentro da janela de sete dias do
   freeze;
 - seis ordens de cena em quadrado latino congelado, uma por participante, para
   que cada cena ocupe cada posição uma vez;
 - nenhuma repetição seletiva de uma cena porque o resultado pareceu ruim.
+
+Antes de abrir a primeira sessão externa, o roster de seis pessoas deverá
+cumprir uma estratégia mínima de diversidade, baseada apenas em autorrelato:
+
+- no máximo duas pessoas do mesmo domicílio ou círculo imediato de trabalho ou
+  convívio;
+- pelo menos duas faixas etárias representadas (`18–34` e `35+`), com no mínimo
+  duas pessoas em cada;
+- pelo menos dois grupos de região brasileira de formação/exposição de sotaque,
+  com no mínimo duas pessoas em cada grupo declarado; e
+- pelo menos duas pessoas que usam interação por voz semanalmente e duas que a
+  usam raramente ou nunca.
+
+O dry-run interno não pode integrar esse roster. Essas cotas reduzem uma
+amostra excessivamente homogênea, mas não autorizam análise por subgrupo nem
+alegação de representatividade. Sotaque ou origem nunca serão inferidos pela
+voz. Os metadados mínimos são `evaluation-only`, não alteram ranking ou gates
+de dominância e não entram no agregado público. Se a estratégia não estiver
+cumprida, novas sessões externas não são abertas; podem-se recrutar até os
+limites administrativos já definidos.
 
 Só são exclusões válidas antes do início da primeira cena: freeze divergente,
 consentimento de participação ausente ou impossibilidade física de aplicar o
@@ -149,6 +185,14 @@ roteiro e suas variantes semânticas serão versionados antes do dry-run.
 | S5 | nome, data e valor críticos sob ruído congelado | captura, ASR parcial/final e confirmação segura |
 | S6 | tarefa delegada, seguida de alteração ou cancelamento | delegação assíncrona, obsolescência e resultado correto |
 
+Depois das seis cenas guiadas haverá `F0`, um bloco fixo de **dois minutos de
+conversa espontânea**. Ele foi preservado para expor rupturas que o roteiro não
+provoca, sempre na última posição para não romper o quadrado latino. `F0` usa o
+mesmo formulário, categorias, severidade, consentimentos e atribuição técnica,
+mas não é uma sétima unidade estatística, não cria categoria, voto, métrica ou
+gate. Sua ocorrência pode fundamentar o top-2 único da sessão exatamente como
+as cenas guiadas. O timer encerra o bloco sem prolongamento seletivo.
+
 O mesmo objetivo, risco e evento obrigatório são preservados entre variantes;
 nomes e conteúdos mudam apenas para reduzir memorização. O observador não pode
 ajudar o sistema, reformular a fala ou orientar o participante durante a cena.
@@ -156,10 +200,12 @@ ajudar o sistema, reformular a fala ou orientar o participante durante a cena.
 ## Ruído repetível
 
 A cena S5 usa um WAV de ruído branco seeded, sem fala de terceiros, produzido
-pela mesma receita determinística já usada pela fábrica. O artefato bruto,
-seed, PCM, duração, ganho e SHA-256 serão congelados. Ele será reproduzido por
-um segundo dispositivo na mesma posição e volume, qualificados antes de cada
-sessão por um probe curto com tolerância congelada.
+pela mesma receita determinística já usada pela fábrica. Ela caracteriza
+somente **ruído branco reproduzido**: não simula conversa concorrente, ambiente
+público, outra pessoa ao fundo ou decisão de fala dirigida versus não dirigida.
+O artefato bruto, seed, PCM, duração, ganho e SHA-256 serão congelados. Ele será
+reproduzido por um segundo dispositivo na mesma posição e volume, qualificados
+antes de cada sessão por um probe curto com tolerância congelada.
 
 O experimento caracteriza essa **condição de reprodução**, não promete SNR
 idêntico para vozes humanas de intensidades diferentes. Se o probe falhar, a
@@ -229,6 +275,29 @@ a própria pessoa marcou com severidade maior que zero; `NENHUM_PROBLEMA_MATERIA
 é exclusivo e não pode coexistir com outra categoria. Esse top-2 é selado antes
 de abrir o módulo comercial e não pode ser refeito depois de ouvir a referência.
 
+## Lifecycle isolado por participante
+
+Cada participante, inclusive o dry-run, recebe um ciclo novo e exclusivo:
+
+1. novo processo Node do servidor, com `processRunId` único;
+2. nova instância do cérebro, histórico vazio e contador em `0/25`;
+3. novo coordenador/kernel de turnos, sem sessões ativas;
+4. novo contexto/perfil efêmero do Chrome, sem storage, cache de aplicação ou
+   memória da pessoa anterior; e
+5. alias opaco de participante e diretório de sessão próprios.
+
+As seis cenas e `F0` de uma mesma pessoa preservam intencionalmente processo,
+histórico e contador para medir continuidade dentro da sessão. Ao final, Chrome
+e servidor são encerrados antes de criar o ciclo seguinte. O teto de 25 chamadas
+é independente por participante; chamadas não utilizadas não migram e atingir
+o teto de uma pessoa não reduz nem amplia o orçamento de outra.
+
+Antes do dry-run humano, um smoke automatizado simulará seis ciclos completos e
+deverá provar, para cada novo processo, `processRunId` distinto, uso inicial
+`0/25`, histórico vazio, zero kernels ativos, storage do navegador vazio e
+encerramento limpo. Qualquer reutilização ou vazamento falha de forma fechada e
+impede o freeze.
+
 ## Atribuição técnica por estágio
 
 Todo problema relatado recebe uma análise local que pode apontar um estágio
@@ -263,6 +332,24 @@ um destes caminhos congelados:
 Relato isolado, comentário, opinião do analista ou diferença contra o produto
 comercial não satisfazem `R`. Replays são diagnósticos e não acrescentam
 participantes ao denominador.
+
+### Ordem cega de abertura
+
+A codificação técnica é concluída antes de qualquer junção com percepção
+humana. Após a sexta sessão, o instrumento:
+
+1. sela formulários, comentários, severidades e top-2 humanos;
+2. exporta ao codificador técnico apenas áudio/traces consentidos, IDs opacos e
+   cena, sem categorias, severidades, comentários, top-2 individuais ou
+   agregado humano;
+3. registra estágio, assinatura objetiva, confiança e resultado de reprodução;
+4. sela e hasheia essa primeira codificação; e somente então
+5. libera a abertura do agregado humano e produz a junção final.
+
+Essa ordem é uma máquina de estados fail-closed: não existe comando suportado
+para gerar a junção antes do selo técnico. Correção posterior de erro material
+é versionada e preserva o primeiro arquivo; não pode ser silenciosa. O dry-run
+valida essa sequência sem entrar em qualquer estimando.
 
 ## Métrica e regra de prioridade
 
@@ -365,7 +452,11 @@ Todos precisam passar:
 8. caminho local para dados sensíveis fora do Git e política de deleção ativa;
 9. persistência incremental ou snapshot fechado por cena; o buffer visual de
    eventos do navegador não pode ser a única fonte de trace;
-10. zero Pod/GPU e zero External Challenger Runner.
+10. zero Pod/GPU e zero External Challenger Runner;
+11. roster externo atende à estratégia mínima de diversidade autorrelatada;
+12. smoke de seis lifecycles prova zero vazamento de contexto, storage e
+    orçamento entre pessoas; e
+13. fluxo cego impede abrir o agregado humano antes do selo técnico.
 
 Uma falha antes da primeira cena impede abrir a sessão; ela não pode ser
 reinterpretada como resposta humana.
