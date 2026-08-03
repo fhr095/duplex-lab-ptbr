@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "exp-0017-invalidation-v1",
+  "experimentId": "exp-0017-r-oracle-v0.1",
+  "stage": "causal-instrumentation-before-dataset-freeze-fit-threshold-or-development-metrics",
+  "decision": "cut-r-before-fit-insufficient-independent-causal-prefix-lineages",
+  "config": {
+    "path": "eval/experiments/exp-0017-r-oracle-v0.1.json",
+    "fileSha256": "sha256:2bb835314619a4e672a239454f5b1b99de62242e79931d64ca6bb4baec8fd9a8",
+    "status": "cut-before-fit-insufficient-independent-causal-prefix-lineages",
+    "executionAllowed": false
+  },
+  "evidence": {
+    "kind": "causal-prefix-availability-only",
+    "prefixMapPath": "eval/datasets/exp-0017-r-oracle-prefixes-v0.1.json",
+    "prefixMapFileSha256": "sha256:dae9d8b1d79ac0ecdd58e7b30a1dd9c8ae14c08b51b8840b00e46d6a51fdb3b0",
+    "prefixMapCanonicalSha256": "sha256:9f032ce492ff5c3e3a5aa3c8227062386f51843bf1ed76bfd2077b05518d35a2",
+    "alignmentRequestFileSha256": "sha256:7a2cc90a6103f6437653d1b5ae7de286ceb69c2b7ddcd90ac6ed55a340f1a696",
+    "rawAlignmentFileSha256": "sha256:fbb4a628572603719e5925a51b857f447440bdce883e7cdf0b68d0289c3e5684",
+    "physicalDecoderBoundary": "source-sample-zero-through-source-onset-plus-8960-exclusive",
+    "acceptedWordBoundary": "ceil-word-end-sample-minus-source-onset-at-most-7680",
+    "futureSamplesUsed": 0,
+    "train": {
+      "lineages": 30,
+      "accepted": 21,
+      "deferred": 9,
+      "byClass": {
+        "BACKGROUND_OR_NOT_DIRECTED": {
+          "lineages": 15,
+          "accepted": 11,
+          "deferred": 4,
+          "maximumFitAfterRequiredCalibration": 7
+        },
+        "DIRECTED_TO_ASSISTANT": {
+          "lineages": 15,
+          "accepted": 10,
+          "deferred": 5,
+          "maximumFitAfterRequiredCalibration": 6
+        }
+      }
+    },
+    "developmentAvailabilityOnly": {
+      "lineages": 30,
+      "accepted": 19,
+      "deferred": 11,
+      "semanticPredictionsOrMetricsRead": false
+    }
+  },
+  "frozenRequirements": {
+    "eligibleCalibrationLineagesPerClass": 4,
+    "minimumEligibleFitLineagesPerClass": 8,
+    "crossSplitLineagesAllowed": false,
+    "minimumIndependentEligibleLineagesPerClass": 12
+  },
+  "infeasibility": {
+    "backgroundShortfall": 1,
+    "directedShortfall": 2,
+    "minimumFloorWeakened": false,
+    "lineageOverlapIntroduced": false,
+    "alignmentRuleExpandedAfterCoverage": false,
+    "causalReplacementRunPerformed": true,
+    "alternativeAlignmentModelTried": false
+  },
+  "executionBoundary": {
+    "trainDatasetFrozen": false,
+    "trainAttestationMaterialized": false,
+    "freezeManifestMaterializedFromCausalMap": false,
+    "modelFitPerformed": false,
+    "thresholdSelected": false,
+    "developmentSemanticMetricsRead": false,
+    "holdoutRead": false,
+    "paidApiCalls": 0,
+    "paidGpuRuns": 0,
+    "authorityGranted": false
+  },
+  "rejectedPostHocRepairs": [
+    "lower the preregistered fit or calibration floors",
+    "reuse one lineage across fit and calibration",
+    "relax exact lexical alignment after observing coverage",
+    "search a second aligner under the same experiment"
+  ],
+  "nextDecision": "Do not estimate B quality from this run. Prioritize a new, smaller preregistration whose paired scenes make recipient context observable and lexically counterbalanced before testing a larger controller or real partial ASR.",
+  "claim": "A indisponibilidade instrumental corta esta execução de R; não é resultado positivo ou negativo do controlador semântico."
+}

@@ -86,13 +86,14 @@ baseline, ganho conservador nas âncoras humanas e quatro probes causais no
 Chrome. O checkpoint foi promovido em shadow, mas o veto operacional permanece
 em `hold`.
 
-O ciclo corrente é o EXP-0017. O Core amplia diversidade e hard negatives,
-calibra somente em treino/desenvolvimento e decide uma única vez em novo
-holdout congelado. Um probe paralelo e timeboxed mede se texto parcial causal
-adiciona informação: começa por transcrição-oráculo e só gasta esforço com ASR
-real se esse teto superior ganhar. Nenhuma variante recebe autoridade, muda o
-STOP físico ou bloqueia o Core. Hipóteses, gates e regras de corte estão no
-[pré-registro](experiments/EXP-0017-safe-veto-and-semantic-probe.md).
+O EXP-0017 foi fechado: o Core não ganhou de `A0`, e o probe `R` foi cortado
+antes do fit porque o mapa causal não atingiu os pisos independentes de fit e
+calibração. O ciclo corrente é o EXP-0018. Ele começa por pares textuais cujo
+microturno e léxico contextual aparecem nas duas classes, comparando alvo
+isolado com alvo mais contexto recente. Áudio só é materializado se esse teto
+informacional ganhar sem atalho; ASR parcial permanece posterior. Nenhuma
+variante recebe autoridade ou muda o STOP físico. Hipóteses e gates estão no
+[pré-registro](experiments/EXP-0018-context-observability-screen.md).
 
 O ciclo é reproduzido por:
 
@@ -118,10 +119,10 @@ npm run eval:exp:0016:browser
 npm run eval:exp:0016:report:check
 ```
 
-No EXP-0017 Core, o loop autônomo amplia diversidade e hard negatives, escolhe
-a calibração somente em treino/desenvolvimento e congela um novo holdout antes
-de reavaliar o veto. A ação aprendida continua desabilitada enquanto ganho
-operacional e recall dirigido perfeito não coexistirem.
+No EXP-0018, o loop autônomo valida primeiro integridade pareada,
+contrabalanceamento de lexemas/templates e separação de linhagens. Fit e
+development continuam fisicamente separados; qualquer inviabilidade de piso
+corta a rodada sem emenda oportunista.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O

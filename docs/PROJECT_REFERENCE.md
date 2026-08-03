@@ -2,7 +2,7 @@
 
 Status: **referência canônica — consolidada em 02/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow e
-pré-registro da carteira EXP-0017**
+fechamento do EXP-0017 com pré-registro do EXP-0018**
 
 ## Tese
 
@@ -374,15 +374,17 @@ Esta referência preserva apenas a lógica macro:
    ou o piloto em avaliação de produto;
 6. preservar o candidato M4b EXP-0016 em shadow como evidência de capacidade,
    sem confundir seu rótulo bruto com uma decisão segura;
-7. executar o EXP-0017 Core: calibrar o veto sobre diversidade nova e um
-   holdout pré-congelado;
-8. em paralelo e sem bloquear o Core, testar se transcrição parcial causal
-   acrescenta informação; ASR real só entra se o oráculo semântico ganhar;
-9. conceder autoridade somente se houver ganho percebido sem regressão dos
+7. preservar o fechamento do EXP-0017: Core sem ganho e `R` inviável antes do
+   fit sob pisos causais independentes;
+8. executar o EXP-0018 textual pareado: alvo e contexto isolados
+   contrabalanceados, testando se a relação contextual agrega valor;
+9. materializar áudio do mesmo challenger somente após passe textual; ASR real
+   continua posterior à prova de disponibilidade causal;
+10. conceder autoridade somente se houver ganho percebido sem regressão dos
    guardrails;
-10. manter backbones nativos no ledger até existir um teto local que justifique
+11. manter backbones nativos no ledger até existir um teto local que justifique
    custo e integração;
-11. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+12. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
    observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo

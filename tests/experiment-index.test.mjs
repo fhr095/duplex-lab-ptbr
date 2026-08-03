@@ -18,14 +18,18 @@ async function fixture() {
 
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
-  assert.equal(index.currentCriticalPath, "EXP-0017");
-  assert.equal(index.currentParallelProbe.id, "EXP-0017-R");
+  assert.equal(index.currentCriticalPath, "EXP-0018");
+  assert.equal(index.currentParallelProbe.id, "EXP-0018-R");
   assert.equal(index.currentParallelProbe.blocking, false);
   assert.equal(
     index.entries.at(-1).canonicalReport,
-    "eval/reports/exp-0017-core-development-v0.1.json"
+    null
   );
   assert.equal(index.entries.at(-1).authority, "none");
+  assert.equal(
+    index.entries.find(({ id }) => id === "EXP-0017").canonicalReport,
+    "eval/reports/exp-0017-summary-v0.1.json"
+  );
 });
 
 test("rejeita IDs duplicados", async () => {
@@ -117,6 +121,14 @@ test("rejeita autoridade sem relatório e drift contra decisão canônica", asyn
   activeAuthority.entries.at(-1).authority = "runtime-control";
   await assert.rejects(
     validateExperimentIndex(activeAuthority, { projectRoot }),
+    /cannot have authority before a canonical report/u
+  );
+
+  const cutAuthority = await fixture();
+  cutAuthority.entries.find(({ id }) => id === "EXP-0017").authority =
+    "runtime-control";
+  await assert.rejects(
+    validateExperimentIndex(cutAuthority, { projectRoot }),
     /authority contradicts its canonical report contract/u
   );
 

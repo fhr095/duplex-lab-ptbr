@@ -100,14 +100,18 @@ const CANONICAL_REPORT_CONTRACTS = Object.freeze({
     ]
   },
   "EXP-0017": {
-    status: "active",
+    status: "cut",
     authority: "none",
-    decisionPath: "core.decision",
+    decisionPath: "decision",
     assertions: [
       ["confirmatory", false],
       ["holdoutRead", false],
-      ["core.aQualified", false],
+      ["core.qualified", false],
       ["core.aRef", "A0"],
+      ["semanticProbeR.candidateFitPerformed", false],
+      ["semanticProbeR.developmentSemanticMetricsRead", false],
+      ["claims.semanticTextHelped", null],
+      ["claims.semanticTextFailed", null],
       ["authority.canProduceEffects", false]
     ]
   }

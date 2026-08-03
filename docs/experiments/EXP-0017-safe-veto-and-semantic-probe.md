@@ -1,7 +1,7 @@
 # EXP-0017 — veto seguro e probe semântico causal
 
-Status: **Core development-screen executado e cortado; `R` pendente;
-zero autoridade**
+Status: **Core executado e cortado; `R` cortado por inviabilidade instrumental
+antes do fit; zero autoridade**
 
 Este documento congela a pergunta, a ordem das comparações e as regras de
 corte antes de materializar resultados. O EXP-0017 tem um caminho acústico
@@ -64,8 +64,8 @@ cortar um teste confirmatório semântico independente.
 
 - no máximo **duas hipóteses**: uma do `Core` e uma do probe `R`;
 - no máximo **um challenger ativo por vez**;
-- os braços `B` e `C` são duas etapas do mesmo challenger semântico, não duas
-  arquiteturas concorrentes;
+- `B` é o único braço semântico executável; `C` permanece uma etapa futura do
+  mesmo challenger, condicionada a evidência contextual contrabalanceada;
 - nenhuma GPU ou API paga por padrão;
 - nenhum fine-tuning de modelo grande e nenhuma troca de arquitetura;
 - somente componentes locais/abertos e execução reproduzível;
@@ -122,6 +122,14 @@ O probe é inspirado no princípio de microturnos do DuplexCascade, mas testa
 somente o mecanismo mínimo — informação semântica incremental — dentro do
 runtime atual.
 
+Nesta rodada sintética, o destinatário não é diretamente observável no prefixo:
+ele vem do contexto autoral usado para rotular a cena, e as classes também têm
+famílias lexicais diferentes. Portanto, mesmo um passe de `R` demonstra no
+máximo **separabilidade lexical exploratória neste corpus autoral**. Não prova
+detecção real de destinatário, generalização humana nem utilidade de ASR
+parcial. O próximo teste permitido por um passe precisa cruzar ou
+contrabalancear conteúdo e contexto antes de aumentar o controlador.
+
 ## Ordem de execução e braços
 
 ### Etapa 0 — emenda e quarentena
@@ -167,25 +175,108 @@ Depois da decisão do Core:
 - `A — acústico atual`: `A-ref`, recebendo somente o prefixo acústico causal;
 - `B — acústico + texto-oráculo`: exatamente `A-ref` mais o texto correto
   pronunciado até a amostra de decisão;
-- `C — acústico + ASR parcial real`: o mesmo controlador de `B`, sem
-  retreinamento oportunista, substituindo o texto correto pelos eventos
-  parciais realmente disponíveis até a mesma decisão.
+- `C — acústico + ASR parcial real` (futuro e condicional): o mesmo controlador
+  de `B`, sem retreinamento oportunista, substituindo o texto correto pelos
+  eventos parciais realmente disponíveis até a mesma decisão.
 
 O “oráculo” de `B` conhece somente a transcrição correta do prefixo já falado.
 Ele não recebe o rótulo, a intenção futura, o restante da frase ou a ação
 esperada. O controlador semântico deve ser o menor mecanismo local suficiente
 e fica congelado antes de sua avaliação exploratória em desenvolvimento.
 
-`C` só pode ser implementado/executado se `B` vencer `A-ref` em desenvolvimento
-pelos gates deste documento. Assim:
+`C` não é elegível nesta execução sintética. Um passe integral de `B` permite
+somente congelar o mecanismo e pré-registrar uma confirmação pequena,
+contextual, adversarial e lexicalmente contrabalanceada. Somente esse novo
+teste poderá decidir se vale implementar/executar `C`. Assim:
 
 - se `B` não ganhar, a hipótese semântica é cortada para este gargalo;
-- se `B` ganhar e `C` não, `B` fornece sinal exploratório de valor e a falha de
-  `C` sugere ASR parcial, representação ou disponibilidade temporal como
-  dependência ainda sujeita a confirmação independente;
-- se `C` ganhar, há valor suficiente para pré-registrar confirmação semântica
-  em dados ainda não observados; o resultado de desenvolvimento não promove o
-  controlador.
+- se `B` ganhar, existe apenas sinal lexical exploratório suficiente para o
+  challenger contrabalanceado seguinte;
+- disponibilidade, erro e atraso de ASR parcial permanecem perguntas futuras,
+  sem resultado nesta execução.
+
+### Emenda pré-R — protocolo executável e ordem de informação
+
+Uma primeira versão desta emenda foi escrita enquanto o alinhador era
+materializado. Depois de inspecionar **somente a disponibilidade de prefixos em
+train**, antes de qualquer fit, limiar ou métrica semântica de development, a
+partição puramente por hash foi corrigida porque não atingia seu piso
+instrumental. Uma auditoria posterior também detectou que o decoder havia
+recebido o WAV completo antes do corte por timestamps; esse mapa foi invalidado
+e não pode alimentar fit ou avaliação. A configuração atual foi, portanto,
+recongelada após essas duas inspeções instrumentais de train e antes de fit ou
+métricas de `B`. Margem, família de features e gates de qualidade não foram
+escolhidos por resultado do candidato. A configuração canônica é
+`eval/experiments/exp-0017-r-oracle-v0.1.json`.
+
+O prefixo-oráculo usa `faster-whisper small` local, versão `1.2.1`, revisão
+cacheada `536b0662742c02347bc0e980a01041f333bce120`, timestamps de palavra e
+decodificação determinística. O decoder recebe fisicamente apenas um novo WAV
+contendo a fonte da amostra zero até `onset + 8960`, o instante da decisão;
+nunca recebe amostras posteriores. Os 80 ms entre `7680` e `8960` funcionam
+como lookahead causal para confirmar que a última palavra terminou, sem liberar
+essa margem como conteúdo. Hashes do WAV e do PCM truncados, onset e intervalo
+exato ficam vinculados ao request, à saída bruta e ao mapa canônico. Só entram
+palavras completas cujo fim alinhado
+seja no máximo a amostra `7680` após o onset: 80 ms antes da decisão na amostra
+`8960`. O prefixo alinhado precisa coincidir exatamente, após normalização, com
+o início da transcrição de referência. Discordância, ausência ou palavra
+incompleta produz `text=null`; nunca se usa a frase inteira por timestamp
+declarado.
+
+O primeiro mapa, produzido ao decodificar o áudio completo e filtrar somente a
+saída por timestamp, é causalmente inválido porque o decoder podia usar áudio
+futuro para influenciar tokens e alinhamento. Nenhum fit, seleção de limiar ou
+métrica semântica o consumiu. A invalidação e os hashes substituídos ficam em
+`eval/invalidations/exp-0017-r-full-audio-alignment-v0.1.json`.
+
+As 30 linhagens de `train` são separadas por classe e disponibilidade causal de
+prefixo, sempre com desempate por hash fixo. Quatro linhagens com prefixo por
+classe são reservadas para calibração, a quinta vaga é preenchida primeiro por
+uma linhagem sem prefixo, e as dez restantes ajustam pesos. Nenhuma linhagem
+cruza esses papéis. Exemplos sem palavra completa e todos os
+`competing-speech-proxy` ficam fora do fit do classificador. Na calibração e em
+development, porém, continuam no denominador e `B` precisa devolver uma cópia
+imutável e exatamente igual a `A0` quando não há texto elegível.
+
+A regra inicial puramente por hash foi executada apenas como checagem de
+instrumentação e deixou três, em vez de quatro, linhagens dirigidas elegíveis
+na calibração. Antes de fit, limiar ou métricas de `B`, ela foi invalidada sem
+reduzir o piso; a correção acima usa somente disponibilidade do prefixo de
+`train`, rótulo e hash. O registro é
+`eval/invalidations/exp-0017-r-hash-partition-v0.1.json`.
+
+O único delta de `B` sobre `A0` são features do texto normalizado; estado do
+assistente não entra no classificador. `A0` é recalculado das features acústicas
+do mesmo artefato e precisa corresponder ao checkpoint, modelo e limiar
+selecionados pelo relatório Core. Prefixo, cena, WAV/PCM, artefato, split,
+linhagem, condição e `A0` são validados contra artefatos canônicos, não apenas
+contra hashes fornecidos pela própria observação.
+
+O protocolo previa dois executáveis separados: um trainer limitado a config,
+dataset/attestation de `train`, freeze-manifest e `A0`, seguido por um evaluator
+de passagem única em development somente após commit do checkpoint. A
+inviabilidade de cobertura foi detectada antes da materialização desses
+artefatos; por isso os executáveis downstream nunca foram usados e foram
+removidos na consolidação do corte.
+
+O ganho decisivo de `R` compara, por raiz, a quantidade de quatro descendentes
+corretos em `B` e `A0`: mais é `WIN`, menos é `LOSS`, igualdade é `TIE`.
+Métricas por exemplo usam os 120 casos completos, inclusive fallbacks. O p95
+local de `B` mede com clock monotônico a invocação na decisão até a proposta,
+usa apenas casos com texto e o nearest-rank, após 64 warm-ups fixos no primeiro
+caso elegível; fallbacks e a folga amostral entre o fim do prefixo e a decisão
+são reportados separadamente. Essa medida exclui alinhamento oráculo, geração e
+disponibilidade do texto: é custo computacional local do delta semântico, não
+latência percebida nem ponta a ponta. O intervalo fim-do-áudio até proposta
+continua reservado a um futuro gate causal de `C`, com eventos em tempo real.
+
+Para poupar engenharia sem reduzir o gate final, `B` passa primeiro pelos gates
+de qualidade, causalidade, determinismo, custo local e shadow. Se falhar, é
+cortado antes de integração. Se passar, o mesmo checkpoint congelado recebe a
+checagem Node/Chrome e a regressão do `STOP` físico; só então pode qualificar
+integralmente para o próximo pré-registro contrabalanceado. Este corpus sozinho
+não desbloqueia a triagem temporal de `C`.
 
 ## Instrumentação compartilhada
 
@@ -250,8 +341,8 @@ Antes do primeiro fit, o manifest desta execução deve congelar somente estes
 papéis:
 
 1. `train` — ajuste dos parâmetros predefinidos de `A`;
-2. `development` — limiar, calibração, seleção de `A`, probe de `B` e decisão
-   condicional de executar `C`;
+2. `development` — limiar, calibração, seleção de `A` e probe de `B`; não
+   executa `C` nesta rodada;
 3. `mswc-isolated-diagnostic` — observação procedural separada, excluída de fit,
    calibração, seleção, gates e qualquer alegação confirmatória.
 
@@ -287,8 +378,9 @@ e protocolo antes de qualquer exemplo ser construído:
 6. o novo documento deve explicitar o que um passe permite afirmar. Mesmo um
    passe não concede automaticamente autoridade ao runtime.
 
-`B` e `C` usam apenas desenvolvimento nesta rodada. Uma futura confirmação
-semântica exige conjunto próprio, pré-registrado e ainda não observado. Âncoras
+`B` usa apenas desenvolvimento nesta rodada. `C` permanece futuro. Uma
+confirmação semântica exige conjunto próprio, pré-registrado e ainda não
+observado. Âncoras
 humanas do EXP-0015 podem ser usadas apenas como reencontro declarado, nunca
 para fit, escolha de limiar ou alegação de independência.
 
@@ -314,19 +406,20 @@ contribui uma única vez: `WIN` quando `A` acerta mais descendentes que `A0`,
 inflar a unidade efetiva.
 
 O `Core` compara `A` com `A0` somente em desenvolvimento. O probe compara `B`
-e, condicionalmente, `C` com `A-ref` também somente em desenvolvimento. O gap
-entre `B` e `C` mede perda causada por erro/atraso do ASR; nenhum resultado
-desta execução é alegação confirmatória. Resultados do MSWC isolado, se
+com `A-ref` também somente em desenvolvimento. A futura comparação entre `B`
+e `C` poderá medir perda causada por erro/atraso do ASR, mas não pertence a esta
+execução. Nenhum resultado desta execução é alegação confirmatória. Resultados
+do MSWC isolado, se
 calculados, aparecem em seção diagnóstica própria e nunca são agregados a essas
 métricas.
 
 ### Causalidade, integração e custo temporal
 
 - amostras futuras utilizadas: exatamente zero;
-- latência adicional de decisão p50/p95, medida do fim do prefixo elegível até
-  a proposta em shadow;
-- em `C`, proporção de parciais disponíveis até a decisão; parcial atrasado
-  conta como indisponível/deferência;
+- custo computacional local p50/p95 da invocação de `B` até a proposta em
+  shadow, sem alegação de latência percebida ou ponta a ponta;
+- em um futuro `C`, proporção de parciais disponíveis até a decisão; parcial
+  atrasado conta como indisponível/deferência;
 - paridade Node/Chrome de 100% para rótulo e proposta operacional;
 - paridade numérica de features/probabilidades dentro da tolerância relativa
   de `1e-10` usada pelo caminho browser existente;
@@ -336,7 +429,7 @@ métricas.
 - chamadas pagas, GPU paga e exemplos humanos usados no fit: zero.
 
 Para qualificar, o cálculo local adicional de `B` deve ter p95 menor ou igual a
-50 ms. Em `C`, o intervalo causal entre `audioEndSample` do prefixo necessário
+50 ms. Em um futuro `C`, o intervalo causal entre `audioEndSample` do prefixo necessário
 e a proposta deve ter p95 menor ou igual a 300 ms, e ao menos 90% dos casos em
 que `B` propõe precisam possuir parcial real elegível nesse teto. Caso sem texto
 a tempo conta como deferência e reduz cobertura; não pode ser removido do
@@ -359,8 +452,9 @@ não significa confirmar o mecanismo:
 5. zero amostras futuras e zero vazamento do restante da transcrição;
 6. `STOP` físico sem alteração de efeito, falsa ativação ou regressão do gate
    de 350 ms;
-7. p95 local de `B` ≤ 50 ms; em `C`, p95 causal ≤ 300 ms, disponibilidade
-   elegível ≥90% e informação atrasada tratada como deferência;
+7. p95 local de `B` ≤ 50 ms; os gates de `C` (p95 causal ≤ 300 ms,
+   disponibilidade elegível ≥90% e informação atrasada como deferência) ficam
+   reservados ao futuro pré-registro;
 8. paridade Node/Chrome integral nos termos acima;
 9. checkpoint/runtime em shadow, `canProduceEffects=false` e zero autoridade;
 10. treino determinístico ou variação entre seeds explicitamente reportada,
@@ -370,8 +464,9 @@ não significa confirmar o mecanismo:
 O MSWC isolado não satisfaz, melhora nem substitui nenhum desses gates. Para
 `A`, passar desenvolvimento permite somente congelar o candidato e iniciar o
 novo pré-registro; **não permite construir o holdout antes desse documento nem
-mudar o runtime autoritativo**. Para `B/C`, passar desenvolvimento permite
-somente recomendar uma confirmação futura em conjunto distinto e opaco.
+mudar o runtime autoritativo**. Para `B`, passar desenvolvimento permite
+somente recomendar uma confirmação futura contextual, contrabalanceada e
+distinta.
 
 ## Regras de corte e parada
 
@@ -382,12 +477,12 @@ somente recomendar uma confirmação futura em conjunto distinto e opaco.
   herdados em desenvolvimento, manter `A0` e congelar a hipótese acústica
   compacta como limitada para esta rodada.
 - **Oráculo sem valor:** se `B` não superar `A-ref` com recall dirigido de
-  100% em desenvolvimento, não construir `C` e marcar `cut` para texto parcial
+  100% em desenvolvimento, não priorizar `C` e marcar `cut` para texto parcial
   como mecanismo de relevância/veto neste ponto de decisão. Isso não corta
   hipóteses de microturnos para prosódia, backchannel ou outros gargalos.
-- **ASR sem viabilidade:** se `B` passar e `C` falhar por conteúdo ou atraso,
-  registrar a decomposição do gap e parar; não treinar controlador maior e não
-  chamar API paga.
+- **Oráculo com sinal:** se `B` passar, congelar o mecanismo e pré-registrar o
+  challenger contextual/lexicalmente contrabalanceado; não saltar direto para
+  ASR parcial nem treinar controlador maior.
 - **Regressão física:** qualquer mudança no efeito ou guardrail do
   `PAUSE/STOP` encerra o challenger, independentemente da qualidade semântica.
 - **Core qualificado:** congelar modelo, limiar, features, código e hashes;
@@ -413,11 +508,9 @@ experimento; correção instrumental não autoriza busca oportunista.
 | Resultado observado | Decisão permitida | Próximo movimento |
 | --- | --- | --- |
 | `A` qualifica; `B` não qualifica | congelar `A`; `cut` de texto parcial para este ponto | pré-registrar e só então construir holdout contextual opaco do Core |
-| `A` não qualifica; `B` e `C` qualificam | manter `A0`; controlador semântico segue apenas como probe | priorizar pré-registro de confirmação semântica em dados novos |
-| `B` qualifica e `C` falha | sinal semântico exploratório; ASR/latência é dependência provável | confirmar a decomposição antes de qualquer controlador maior |
+| `A` não qualifica; `B` qualifica | manter `A0`; há somente sinal lexical exploratório | pré-registrar challenger contextual e lexicalmente contrabalanceado |
 | `B` não qualifica | cortar hipótese semântica para relevância da fala | escolher o próximo gargalo medido, não um modelo maior |
-| `A` e `C` qualificam | dois sinais de desenvolvimento, sem confirmação | congelar ambos; priorizar o próximo holdout pelo maior valor da informação, começando pelo Core crítico |
-| `A` e `C` não qualificam | não promover | revisar rótulos/representação ou escolher outro gargalo sob novo experimento |
+| `B` qualifica e integração falha | sinal lexical sem viabilidade no runtime atual | decompor paridade/STOP antes de qualquer `C` |
 | MSWC isolado parece forte ou fraco | nenhuma promoção, confirmação ou corte por si só | registrar como diagnóstico de atalho/proxy, separado dos gates |
 | evidência de desenvolvimento inválida | nenhuma conclusão de qualidade | corrigir linhagem/instrumentação e pré-registrar nova execução de desenvolvimento |
 
@@ -443,6 +536,34 @@ holdout foi construído, nenhuma evidência confirmatória foi alegada e nenhuma
 autoridade foi concedida. O relatório canônico é
 `eval/reports/exp-0017-core-development-v0.1.json`.
 
+### Resultado de R — corte antes do fit
+
+Uma auditoria causal invalidou o primeiro mapa porque o Whisper havia recebido
+o WAV completo. O mapa substituto usa somente WAV físico da amostra zero até
+`onset + 8960`, aceita palavra apenas quando
+`ceil(end × 16000) - onset <= 7680` e vincula os hashes do áudio truncado e do
+snapshot local. A cobertura caiu de forma material: 21/30 linhagens de `train`
+possuem prefixo aceito — 11/15 de fundo e 10/15 dirigidas.
+
+O protocolo exige, de forma independente por classe, quatro linhagens elegíveis
+para calibração e pelo menos oito para fit. Seriam necessárias 12; existem 11 e
+10. Depois de reservar calibração, restariam no máximo sete e seis,
+respectivamente. O piso não foi reduzido, nenhuma linhagem foi compartilhada e
+a regra lexical não foi relaxada depois de observar cobertura.
+
+Decisão: `cut-r-before-fit-insufficient-independent-causal-prefix-lineages`.
+Nenhum dataset/freeze causal foi materializado, nenhum classificador foi
+treinado, nenhum limiar foi escolhido e nenhuma métrica semântica de
+development foi lida. Portanto, a rodada não conclui que texto ajuda ou não;
+conclui somente que este desenho não consegue responder à pergunta sem violar
+seus próprios pisos. O registro canônico é
+`eval/invalidations/exp-0017-r-insufficient-causal-prefix-coverage-v0.1.json`.
+
+O próximo movimento de maior informação não é reduzir amostra nem trocar de
+modelo: é pré-registrar cenas pareadas menores em que o mesmo conteúdo lexical
+apareça com contexto de destinatário audível/observável, separando “texto do
+microturno” de “contexto recente” antes de qualquer teste com ASR parcial.
+
 ## Artefatos esperados
 
 - esta emenda e um registro de invalidação/quarentena que vincule os hashes dos
@@ -452,7 +573,7 @@ autoridade foi concedida. O relatório canônico é
   `development`;
 - card de dados e proveniência/licenças;
 - traces causais com prefixos acústicos e textuais;
-- checkpoints `A` e controlador `B/C`, quando elegíveis;
+- checkpoints `A` e controlador `B`, quando elegíveis;
 - relatório único de development-screen do Core e de `R`;
 - prova de paridade Node/Chrome;
 - relatório canônico com decisão, blockers e próximo experimento.

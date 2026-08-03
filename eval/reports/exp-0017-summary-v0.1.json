@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "exp-0017-summary-v1",
+  "experimentId": "EXP-0017",
+  "status": "cut",
+  "evidenceLevel": "development-screen-plus-prefit-instrumentation",
+  "confirmatory": false,
+  "holdoutRead": false,
+  "decision": "close-exp-0017-retain-a0-cut-core-and-r",
+  "authority": {
+    "mode": "none",
+    "canProduceEffects": false
+  },
+  "core": {
+    "reportPath": "eval/reports/exp-0017-core-development-v0.1.json",
+    "reportFileSha256": "sha256:df0e970872ef26ed041dd188a2beed064f52db1b35f84e8bb02b670cf1ad86ca",
+    "reportCanonicalSha256": "sha256:31416a440e2b97e7e77f8f5eb9bea535638ed9fdac25281e8f39def496cc8f9f",
+    "decision": "retain-a0-and-cut-acoustic-core",
+    "aRef": "A0",
+    "candidateFitPerformed": true,
+    "developmentMetricsRead": true,
+    "qualified": false
+  },
+  "semanticProbeR": {
+    "configPath": "eval/experiments/exp-0017-r-oracle-v0.1.json",
+    "configFileSha256": "sha256:2bb835314619a4e672a239454f5b1b99de62242e79931d64ca6bb4baec8fd9a8",
+    "prefixMapPath": "eval/datasets/exp-0017-r-oracle-prefixes-v0.1.json",
+    "prefixMapFileSha256": "sha256:dae9d8b1d79ac0ecdd58e7b30a1dd9c8ae14c08b51b8840b00e46d6a51fdb3b0",
+    "prefixMapCanonicalSha256": "sha256:9f032ce492ff5c3e3a5aa3c8227062386f51843bf1ed76bfd2077b05518d35a2",
+    "cutRecordPath": "eval/invalidations/exp-0017-r-insufficient-causal-prefix-coverage-v0.1.json",
+    "cutRecordFileSha256": "sha256:22790248275854b48d82d3f51edf926cdbea954aaccdd962b9f8b78027280cd0",
+    "decision": "cut-r-before-fit-insufficient-independent-causal-prefix-lineages",
+    "trainAcceptedLineages": 21,
+    "requiredIndependentEligibleLineagesPerClass": 12,
+    "acceptedByClass": {
+      "BACKGROUND_OR_NOT_DIRECTED": 11,
+      "DIRECTED_TO_ASSISTANT": 10
+    },
+    "datasetFrozen": false,
+    "candidateFitPerformed": false,
+    "thresholdSelected": false,
+    "developmentSemanticMetricsRead": false,
+    "qualityConclusionAvailable": false
+  },
+  "resources": {
+    "paidApiCalls": 0,
+    "paidGpuRuns": 0
+  },
+  "claims": {
+    "acousticCandidateQualified": false,
+    "semanticTextHelped": null,
+    "semanticTextFailed": null,
+    "recipientIdentificationProven": false,
+    "runtimeChanged": false,
+    "authorityGranted": false
+  },
+  "nextDecision": "Pré-registrar um screen menor com conteúdo lexical pareado e contexto de destinatário observável, comparando texto do microturno isolado com texto mais contexto recente antes de ASR parcial.",
+  "summarySha256": "sha256:e2f4100e8361e88f2ef1aba366a3356d87465a99bdb0a8b593dc085c407e120c"
+}

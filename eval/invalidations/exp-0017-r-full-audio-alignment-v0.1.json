@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "exp-0017-invalidation-v1",
+  "experimentId": "exp-0017-r-oracle-v0.1",
+  "stage": "instrumentation-before-fit-threshold-or-development-metrics",
+  "invalidated": {
+    "component": "oracle-prefix-alignment-map",
+    "mapPath": "eval/datasets/exp-0017-r-oracle-prefixes-v0.1.json",
+    "mapFileSha256": "sha256:2bf139c3e9a41fecce4858d6258c6f4535c1b160d599b490d95d9e3b040dd595",
+    "mapCanonicalSha256": "sha256:41053ad117192fccc052ea7c1db51ead04b71540b3cc510b69757f41de670943",
+    "alignmentRequestFileSha256": "sha256:033e93be088f8f02ff0f13980a03569f56ea6412f7ee0c00aa51191af2690c12",
+    "rawAlignmentFileSha256": "sha256:c3a366dbb5d93737c3743a2488371f883362a64a1b042885e714fcc44c5ab24b",
+    "reason": "O decoder recebeu cada WAV de fonte completo; filtrar palavras por timestamp somente depois da inferência não impede que áudio posterior ao limite causal influencie tokens ou alinhamento."
+  },
+  "evidenceObserved": {
+    "kind": "static-causal-boundary-audit",
+    "decoderReceivedFullSource": true,
+    "postDecodeTimestampFilterOnly": true,
+    "modelFitPerformed": false,
+    "thresholdSelected": false,
+    "developmentSemanticMetricsRead": false,
+    "holdoutRead": false
+  },
+  "resolution": {
+    "replacementRequired": true,
+    "replacementBoundary": "materialize-and-hash-a-physical-wave-prefix-from-source-sample-zero-through-source-onset-plus-8960-before-decoding-and-accept-only-words-ending-by-onset-plus-7680",
+    "futureSamplesAllowedAtDecoderInput": 0,
+    "oldCoverageOrPrefixesReusable": false,
+    "qualityGatesChanged": false,
+    "semanticFeatureFamilyChanged": false,
+    "replacementMustBind": [
+      "full source WAV and PCM hashes",
+      "source onset sample",
+      "physical causal WAV and PCM hashes",
+      "physical causal interval",
+      "alignment request, raw output and canonical prefix entry hashes"
+    ]
+  },
+  "claim": "Correção instrumental causal; o mapa invalidado não é resultado positivo ou negativo de B e não pode alimentar fit, calibração ou development."
+}

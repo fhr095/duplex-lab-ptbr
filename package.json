@@ -67,6 +67,8 @@
     "eval:exp:0017:data:check": "node scripts/build-exp-0017-core-dataset.mjs --check",
     "eval:exp:0017:core:dev": "node scripts/train-exp-0017-core-development.mjs",
     "eval:exp:0017:core:dev:check": "node scripts/train-exp-0017-core-development.mjs --check",
+    "eval:exp:0017:r:prefixes": "node scripts/build-exp-0017-r-oracle-prefixes.mjs",
+    "eval:exp:0017:r:prefixes:check": "node scripts/build-exp-0017-r-oracle-prefixes.mjs --check",
     "eval:baseline:freeze": "node scripts/freeze-runtime-baseline.mjs",
     "eval:live-audio": "node scripts/live-audio-probe.mjs",
     "eval:live-campaign": "node scripts/live-audio-campaign.mjs --no-fail",

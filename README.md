@@ -370,6 +370,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0015 — instrumento cego de calibração de timing](docs/experiments/EXP-0015-timing-calibration-instrument.md)
 - [EXP-0016 — relevância acústica da fala em M4b](docs/experiments/EXP-0016-speaker-relevance-m4b.md)
 - [EXP-0017 — veto seguro e probe semântico causal](docs/experiments/EXP-0017-safe-veto-and-semantic-probe.md)
+- [EXP-0018 — contexto observável com conteúdo pareado](docs/experiments/EXP-0018-context-observability-screen.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -386,9 +387,12 @@ EXP-0015 concluiu 3/3 participantes externos e liberou o desenho, não o fit.
 O EXP-0016 já superou a regra em holdout e reencontrou ganho nas âncoras
 humanas. O EXP-0017 Core preservou todas as falas dirigidas, mas acertou só
 1/60 fundos e foi cortado sem construir holdout; `A0` permanece referência.
-O caminho crítico agora é o probe curto que testa se transcrição parcial causal
-acrescenta informação ao M4b; começa por oráculo e só usa ASR real se houver
-ganho. Até esses gates, o
+O probe semântico `R` também terminou antes do fit: o mapa causal físico deixou
+11/15 e 10/15 linhagens elegíveis por classe, abaixo das 12 independentes
+exigidas por seus pisos. O caminho crítico agora é o EXP-0018: primeiro cruza o
+mesmo microturno nas duas classes e testa se contexto recente observável agrega
+valor além do alvo isolado; áudio e ASR só entram depois de um passe textual sem
+atalhos. Até esses gates, o
 checkpoint continua observacional e o comando físico rápido permanece
 determinístico no navegador.
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02T00:00:00.000-03:00",
+  "updatedAt": "2026-08-02T22:00:00.000-03:00",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
     "legacyRange": "EXP-0000..EXP-0006",
@@ -18,15 +18,15 @@
     "id": "runtime-baseline-ptbr-v0.3",
     "manifest": "eval/baselines/runtime-baseline-v0.3.json"
   },
-  "currentCriticalPath": "EXP-0017",
+  "currentCriticalPath": "EXP-0018",
   "currentParallelProbe": {
-    "id": "EXP-0017-R",
-    "parent": "EXP-0017",
-    "preRegistration": "docs/experiments/EXP-0017-safe-veto-and-semantic-probe.md",
-    "status": "active",
+    "id": "EXP-0018-R",
+    "parent": "EXP-0018",
+    "preRegistration": "docs/experiments/EXP-0018-context-observability-screen.md",
+    "status": "planned",
     "blocking": false,
     "authority": "none",
-    "decision": "Medir em desenvolvimento se texto parcial causal agrega valor antes de qualquer confirmação semântica independente."
+    "decision": "Medir se contexto recente agrega valor além de um microturno lexicalmente idêntico antes de materializar áudio ou testar ASR parcial."
   },
   "entries": [
     {
@@ -194,15 +194,16 @@
     },
     {
       "id": "EXP-0017",
-      "status": "active",
-      "decision": "retain-a0-and-cut-acoustic-core",
-      "canonicalReport": "eval/reports/exp-0017-core-development-v0.1.json",
+      "status": "cut",
+      "decision": "close-exp-0017-retain-a0-cut-core-and-r",
+      "canonicalReport": "eval/reports/exp-0017-summary-v0.1.json",
       "authority": "none",
-      "criticalPath": true,
+      "criticalPath": false,
       "cleanCloneChecks": [
         "node --test tests/exp-0017-contract.test.mjs",
         "node --test tests/exp-0017-core-development.test.mjs",
         "node --test tests/exp-0017-matrix.test.mjs",
+        "node --test tests/exp-0017-r-cut.test.mjs",
         "node --test tests/exp-0017-semantic-probe.test.mjs",
         "node --test tests/exp-0017-supertonic.test.mjs"
       ],
@@ -210,10 +211,23 @@
         "npm run eval:exp:0017:supertonic",
         "npm run eval:exp:0017:data",
         "npm run eval:exp:0017:core:dev",
-        "npm run eval:exp:0017:core:dev:check"
+        "npm run eval:exp:0017:core:dev:check",
+        "npm run eval:exp:0017:r:prefixes:check"
       ],
       "supersedes": [],
-      "nextDecision": "Executar B com prefixo-oráculo causal sobre A0; cortar texto parcial para este ponto se não houver ganho seguro e só testar disponibilidade do ASR real se B qualificar."
+      "nextDecision": "Testar conteúdo lexical pareado com contexto de destinatário observável antes de qualquer ASR parcial ou controlador maior."
+    },
+    {
+      "id": "EXP-0018",
+      "status": "active",
+      "decision": "preregister-context-observability-screen",
+      "canonicalReport": null,
+      "authority": "none",
+      "criticalPath": true,
+      "cleanCloneChecks": [],
+      "localReproductionCommands": [],
+      "supersedes": [],
+      "nextDecision": "Construir e auditar a matriz textual pareada; só materializar áudio se target+context vencer target-only sem atalhos."
     }
   ]
 }

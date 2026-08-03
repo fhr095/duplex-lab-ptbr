@@ -14,22 +14,24 @@ histórico, esta carteira prevalece.
 - **Concluído/cortado — EXP-0017 Core:** `A` preservou 60/60 falas dirigidas,
   mas acertou só 1/60 fundos e empatou `A0` em 50,8% por exemplo; nenhum
   holdout foi construído e a autoridade continua desligada.
-- **Agora — EXP-0017-R:** medir no mesmo replay se texto
-  parcial causal contém valor além do M4b acústico. Primeiro entra uma
-  transcrição-oráculo; ASR parcial real só é testado se o oráculo ganhar.
-- **Depois, condicional:** pré-registrar uma confirmação independente do menor
-  controlador semântico somente se oráculo e ASR real qualificarem em
-  desenvolvimento sem futuro, perda de segurança ou regressão material de
-  latência. Sem ganho do oráculo, cortar texto parcial para relevância/veto
-  neste ponto; ganho apenas do oráculo estaciona a execução e registra ASR ou
-  disponibilidade temporal como dependência.
+- **Concluído/cortado — EXP-0017-R:** o alinhamento causal físico aceitou 11/15
+  linhagens de fundo e 10/15 dirigidas em train, abaixo das 12 independentes
+  exigidas por classe. Nenhum fit, limiar ou métrica semântica foi executado;
+  os pisos não foram reduzidos.
+- **Agora — EXP-0018:** construir primeiro uma matriz textual em que alvo e
+  léxico de contexto sejam cruzados entre classes, comparando `target-only`
+  com `target+context`. Só materializar áudio se contexto ganhar sem atalho.
+- **Depois, condicional:** testar disponibilidade causal em áudio do mesmo
+  checkpoint congelado. ASR parcial continua fora até esse teto informacional
+  e a integração shadow qualificarem.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
   local capaz de mudar uma decisão.
 
-O contrato e as regras de corte estão no
-[pré-registro do EXP-0017](experiments/EXP-0017-safe-veto-and-semantic-probe.md).
+O fechamento anterior e o contrato corrente estão no
+[EXP-0017](experiments/EXP-0017-safe-veto-and-semantic-probe.md) e no
+[pré-registro do EXP-0018](experiments/EXP-0018-context-observability-screen.md).
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar outra prioridade, e o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
@@ -416,16 +418,17 @@ card de dados e splits por família, gerador e pessoa.
 | 12b | Calibração humana piloto — **`calibration-sufficient-to-freeze-m4b-experiment`** | 3/3 externos; atenção 77,8% base → 100%; 5 singulares + 3 conjuntos = 8/9 resolvidas | equivalência não vira rótulo singular; uma cena ambígua; não é preferência de produto |
 | 13 | EXP-0016: relevância acústica M4b — **`promote-m4b-speaker-relevance-shadow-candidate`** | 108 exemplos/36 clips; holdout bruto 77,8% vs 50%; humano conservador 7/9 vs 5/9; 4 probes Chrome com paridade | veto conservador ainda falha no holdout; uma só faixa de gênero; zero autoridade |
 | 14a | EXP-0017 Core: calibração segura do veto — **`retain-a0-and-cut-acoustic-core`** | 240 exemplos train/dev; `A` 50,8%, 60/60 dirigidas e 1/60 fundos; empate pareado por exemplo com `A0` | nenhum holdout; `A0` vira `A-ref`; família acústica compacta cortada nesta rodada |
-| 14b | EXP-0017-R: probe semântico causal — **agora, timeboxed** | A/B/C em desenvolvimento; oráculo antes de ASR real; zero futuro, autoridade ou alteração do STOP físico | sem ganho do oráculo, cortar; confirmação exige dados novos |
+| 14b | EXP-0017-R: probe semântico causal — **cortado antes do fit** | mapa causal físico: 21/30 train; 11 fundos e 10 dirigidas elegíveis | pisos exigiam 12/classe; nenhum fit/limiar/métrica semântica; zero autoridade |
+| 15 | EXP-0018: contexto observável com conteúdo pareado — **agora, pré-registrado** | `D0` all-directed, `B0` target-only e `B1` target+context em blocos lexicais cruzados | texto primeiro; áudio só após passe; sem ASR, GPU/API paga ou autoridade |
 
-O probe 14b é a única frente de challenger ativa. Modelos completos continuam
+O EXP-0018 é a única frente de challenger ativa. Modelos completos continuam
 no ledger como `watch` ou `defer`; pesquisa externa não autoriza download,
-adaptação ou GPU. O probe não bloqueia 14a e perde prioridade se o veto acústico
-fechar com segurança.
+adaptação ou GPU.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
-pela maior falha percebida no relatório, não por ordem fixa. Diversidade
-acústica já é o gargalo imediato porque limita diretamente a calibração segura.
+pela maior falha percebida no relatório, não por ordem fixa. O gargalo imediato
+é provar que o contexto conversacional — e não um atalho lexical — contém sinal
+útil antes de gastar com a disponibilidade desse sinal em áudio.
 
 ## Trilha paralela de governança
 

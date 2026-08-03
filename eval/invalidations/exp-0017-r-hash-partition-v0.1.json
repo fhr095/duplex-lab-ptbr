@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "exp-0017-invalidation-v1",
+  "experimentId": "exp-0017-r-oracle-v0.1",
+  "stage": "instrumentation-before-fit-or-development-metrics",
+  "status": "superseded-by-causal-boundary-audit-never-used",
+  "invalidated": {
+    "component": "train-lineage-partition-rule",
+    "rule": "first-ten-lineages-by-fixed-hash-per-class-for-fit-and-last-five-for-calibration",
+    "reason": "A regra deixou somente três linhagens dirigidas com prefixo elegível na calibração, abaixo do piso pré-definido de quatro."
+  },
+  "evidenceObserved": {
+    "kind": "alignment-availability-only",
+    "directedEligibleCalibrationLineages": 3,
+    "requiredMinimum": 4,
+    "modelFitPerformed": false,
+    "thresholdSelected": false,
+    "developmentSemanticMetricsRead": false,
+    "holdoutRead": false
+  },
+  "resolution": {
+    "minimumFloorWeakened": false,
+    "replacementRule": "reserve-four-prefix-eligible-lineages-per-class-for-calibration-by-fixed-hash, fill its fifth slot from deferred-by-hash, and assign the remaining ten lineages to fit",
+    "selectionUses": [
+      "train label",
+      "prefix availability from the then-current map later invalidated for full-audio decoder leakage",
+      "fixed hash order"
+    ],
+    "selectionDoesNotUse": [
+      "model predictions",
+      "model losses",
+      "candidate metrics",
+      "development labels or semantic metrics",
+      "holdout data"
+    ]
+  },
+  "supersededBy": "eval/invalidations/exp-0017-r-full-audio-alignment-v0.1.json",
+  "operationalUse": {
+    "trainDatasetFrozen": false,
+    "modelFitPerformed": false,
+    "thresholdSelected": false,
+    "developmentSemanticMetricsRead": false
+  },
+  "claim": "Registro histórico de uma correção de partição que foi superseded antes de uso pelo achado causal; não é resultado positivo ou negativo de B."
+}

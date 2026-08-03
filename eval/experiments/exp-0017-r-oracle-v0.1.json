@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "exp-0017-r-config-v1",
+  "id": "exp-0017-r-oracle-v0.1",
+  "locale": "pt-BR",
+  "status": "cut-before-fit-insufficient-independent-causal-prefix-lineages",
+  "executionAllowed": false,
+  "preRegistration": "docs/experiments/EXP-0017-safe-veto-and-semantic-probe.md",
+  "hypothesis": "Neste corpus sintético autoral, texto correto limitado ao que terminou até 80 ms antes da decisão de 560 ms acrescentaria separabilidade lexical ao A0 entre os dois rótulos, sem perder nenhum caso rotulado como dirigido.",
+  "evidenceLevel": "prefit-instrumentation-only",
+  "budget": {
+    "modelFamiliesAllowed": 1,
+    "alignmentModelsUsed": 1,
+    "developmentMetricRunsUsed": 0,
+    "holdoutOpenings": 0,
+    "paidApiCalls": 0,
+    "paidGpuRuns": 0
+  },
+  "inputs": {
+    "scenePlan": {
+      "path": "eval/experiments/exp-0017-supertonic-scenes.pt-BR.json",
+      "fileSha256": "sha256:d8f8d82f4f0b012c1316efb05d4334d4c20f570d3c557b839b25b396e954ab51"
+    },
+    "sourceManifest": {
+      "path": "eval/sources/exp-0017-supertonic-v0.1.json",
+      "fileSha256": "sha256:6cb731013b731ad8723c4795f0273fc8e9fe0a2c39f88e1c8b7deb42e367ce0a",
+      "canonicalSha256": "sha256:b386e85464fc1e6a8503d637eb5046f7bc270cb26ca9fc11799544fb7c7c9751"
+    },
+    "referenceA0": {
+      "path": "web/speaker-relevance-checkpoint.json",
+      "fileSha256": "sha256:dcd54b658c86af23c32884cc390fb588f84fff5a900f16f869c6e026c067209f",
+      "checkpointId": "speaker-relevance-m4b-bc09e1311b5034bc",
+      "modelSha256": "sha256:bc09e1311b5034bca801bb44b7fbdd60db07354abd4035c53c97191ec454fbfc",
+      "backgroundVetoConfidence": 0.8
+    }
+  },
+  "causalBoundary": {
+    "sampleRate": 16000,
+    "onsetPolicy": "speaker-relevance-find-pcm16-speech-onset-v1",
+    "decisionSamplesAfterOnset": 8960,
+    "decisionMsAfterOnset": 560,
+    "alignmentMarginSamples": 1280,
+    "alignmentMarginMs": 80,
+    "eligibleThroughSampleAfterOnset": 7680,
+    "decoderInput": "physical-wave-from-source-sample-zero-through-source-onset-plus-8960-exclusive",
+    "acceptedPrefixRule": "longest-exact-normalized-reference-prefix-of-complete-aligned-words-with-ceil-end-minus-onset-at-most-7680",
+    "futureSamplesAllowed": 0
+  },
+  "alignment": {
+    "engine": "faster-whisper",
+    "packageVersion": "1.2.1",
+    "model": "small",
+    "cachedRevision": "536b0662742c02347bc0e980a01041f333bce120",
+    "device": "cpu",
+    "computeType": "int8",
+    "cpuThreads": 4,
+    "numWorkers": 1,
+    "language": "pt",
+    "beamSize": 1,
+    "bestOf": 1,
+    "temperature": 0,
+    "conditionOnPreviousText": false,
+    "vadFilter": false,
+    "wordTimestamps": true,
+    "localFilesOnly": true,
+    "snapshotFiles": [
+      {
+        "name": "config.json",
+        "sha256": "sha256:b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828",
+        "sizeBytes": 2370
+      },
+      {
+        "name": "model.bin",
+        "sha256": "sha256:3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671",
+        "sizeBytes": 483546902
+      },
+      {
+        "name": "tokenizer.json",
+        "sha256": "sha256:fb7b63191e9bb045082c79fd742a3106a12c99513ab30df4a0d47fa6cb6fd0ab",
+        "sizeBytes": 2203239
+      },
+      {
+        "name": "vocabulary.txt",
+        "sha256": "sha256:34ce3fe1c5041027b3f8d42912270993f986dbc4bb34cf27f951e34a1e453913",
+        "sizeBytes": 459861
+      }
+    ]
+  },
+  "frozenFeasibilityRequirements": {
+    "unit": "lineageRootId",
+    "crossSplitLineagesAllowed": false,
+    "eligibleCalibrationLineagesPerClass": 4,
+    "minimumEligibleFitLineagesPerClass": 8,
+    "minimumIndependentEligibleLineagesPerClass": 12,
+    "minimumFloorMayBeReducedAfterCoverage": false
+  },
+  "outputs": {
+    "prefixMap": "eval/datasets/exp-0017-r-oracle-prefixes-v0.1.json",
+    "cutRecord": "eval/invalidations/exp-0017-r-insufficient-causal-prefix-coverage-v0.1.json"
+  },
+  "outcome": {
+    "prefixMapFileSha256": "sha256:dae9d8b1d79ac0ecdd58e7b30a1dd9c8ae14c08b51b8840b00e46d6a51fdb3b0",
+    "prefixMapCanonicalSha256": "sha256:9f032ce492ff5c3e3a5aa3c8227062386f51843bf1ed76bfd2077b05518d35a2",
+    "trainAcceptedByClass": {
+      "BACKGROUND_OR_NOT_DIRECTED": 11,
+      "DIRECTED_TO_ASSISTANT": 10
+    },
+    "maximumFitAfterRequiredCalibrationByClass": {
+      "BACKGROUND_OR_NOT_DIRECTED": 7,
+      "DIRECTED_TO_ASSISTANT": 6
+    },
+    "modelFitPerformed": false,
+    "thresholdSelected": false,
+    "developmentSemanticMetricsRead": false,
+    "qualityConclusionAvailable": false
+  },
+  "claims": {
+    "conclusion": "instrumentation-infeasible-under-frozen-independent-lineage-floors",
+    "semanticTextHelped": null,
+    "semanticTextFailed": null,
+    "recipientIdentificationProven": false,
+    "runtimeChanged": false,
+    "authorityGranted": false
+  }
+}
