@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "exp-0025-causal-render-onset-attempt-v1",
+  "experimentId": "EXP-0025",
+  "status": "opened-single-causal-render-onset-attempt",
+  "openingParentCommit": "2b8db80c4d5d33803e0f8593a4cc8458122d05a3",
+  "openedAt": "2026-08-03T15:31:34.904Z",
+  "freeze": {
+    "path": "eval/commitments/exp-0025-instrumentation-freeze-v0.1.json",
+    "fileSha256": "sha256:889851b783d21b22d30465f3f555c36e43ed14aec48b6b6b1af46cd0188e3f01",
+    "instrumentationFreezeSha256": "sha256:fcb80332bd7d0c70a2a6a93248b7a04d7e03e22fcd4e68bcb3e4bf298cf3d51c",
+    "runnerSourceCommit": "9485eadc5469cad0afb4df983c376b5af5a8cb02",
+    "freezeCommit": "2b8db80c4d5d33803e0f8593a4cc8458122d05a3",
+    "nodeVersion": "v22.22.2",
+    "expectedRuntimeFingerprintSha256": "45a77736ad233a87cb7d039dfd6c72b553b82055dac9722fbfb15dc39022f49a"
+  },
+  "preflight": {
+    "completedAt": "2026-08-03T15:31:34.904Z",
+    "nodeVersion": "v22.22.2",
+    "chrome": {
+      "product": "Chrome/150.0.7871.187",
+      "protocolVersion": "1.3"
+    },
+    "runtimeFingerprintSha256": "45a77736ad233a87cb7d039dfd6c72b553b82055dac9722fbfb15dc39022f49a",
+    "provider": "local",
+    "targetAutomationNavigations": 0,
+    "physicalStops": 0,
+    "paidApiCalls": 0,
+    "gpuRuns": 0
+  },
+  "campaign": {
+    "nonce": "exp-0025-official-v0.1",
+    "command": "flock --exclusive --nonblock eval/generated/exp-0025-causal-render-onset-attempt-v0.1.lock node scripts/run-exp-0025-supervisor.mjs",
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0025",
+    "navigations": 2,
+    "stopsPerNavigation": 6,
+    "totalStops": 12,
+    "provider": "local",
+    "attemptDeadlineMs": 600000,
+    "configCanonicalSha256": "sha256:b861ccf43a259c598142826300d4445105e9ffaf6665721fe603af1f783a4dd5",
+    "openingPath": "eval/commitments/exp-0025-causal-render-onset-attempt-v0.1.json",
+    "receiptPath": "eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json",
+    "journalPath": "eval/generated/exp-0025/causal-render-onset-journal-v0.1.ndjson",
+    "reportPath": "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json",
+    "lockPath": "eval/generated/exp-0025-causal-render-onset-attempt-v0.1.lock",
+    "rerunAllowed": false
+  },
+  "gitTopology": {
+    "order": [
+      "C0_INSTRUMENT",
+      "FREEZE",
+      "OPENING",
+      "EVIDENCE"
+    ],
+    "freezeDirectParent": "C0_INSTRUMENT",
+    "freezeAllowedPaths": [
+      "eval/commitments/exp-0025-instrumentation-freeze-v0.1.json"
+    ],
+    "openingDirectParent": "FREEZE",
+    "openingAllowedPaths": [
+      "eval/commitments/exp-0025-causal-render-onset-attempt-v0.1.json"
+    ],
+    "evidenceDirectParent": "OPENING",
+    "normalEvidenceAllowedPaths": [
+      "eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json",
+      "eval/generated/exp-0025/causal-render-onset-journal-v0.1.ndjson",
+      "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json"
+    ],
+    "recoveryBeforeJournalAllowedPaths": [
+      "eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json",
+      "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json"
+    ]
+  },
+  "boundary": {
+    "physicalStopCampaignsBeforeOpening": 0,
+    "openingAbsentBeforeWrite": true,
+    "receiptAbsent": true,
+    "journalAbsent": true,
+    "reportAbsent": true,
+    "lockAbsent": true,
+    "rerunAllowed": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "physicalStopAttemptSha256": "sha256:21da1e5e719b920a6065f9093d148f7e46045165e829f0f709a424f51dc5df9b"
+}
