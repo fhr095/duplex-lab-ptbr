@@ -50,5 +50,6 @@ eval/reports/*
 !eval/reports/exp-0022-bootstrap-audit-health-binding-v0.1.json
 !eval/reports/exp-0023-cdp-ordinal-timestamp-semantics-v0.1.json
 !eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json
+!eval/reports/exp-0025-r-baseline-headroom-v0.1.json
 coverage/
 tmp/

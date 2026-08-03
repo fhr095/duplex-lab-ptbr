@@ -97,7 +97,7 @@ test("índice canônico real referencia evidências existentes", async () => {
   assert.equal(index.currentCriticalPath, "EXP-0025");
   assert.equal(index.transitionState, "active");
   assert.equal(index.currentParallelProbe.id, "EXP-0025-R");
-  assert.equal(index.currentParallelProbe.status, "planned");
+  assert.equal(index.currentParallelProbe.status, "active");
   assert.equal(index.currentParallelProbe.blocking, false);
   assert.equal(
     index.currentParallelProbe.preRegistration,

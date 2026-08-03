@@ -1,7 +1,12 @@
 # EXP-0025-R — referência DuplexCascade e controle local de tomada de turno
 
-Status: **pré-registrado; duas etapas separadas; implementação, freeze e
-execução ausentes; não bloqueante; zero autoridade**
+Status: **pré-registrado; pack D e A0 executados; E/L não executados; holdout
+fechado; não bloqueante; zero autoridade**
+
+Evidência corrente: o pack D materializado está em
+`eval/datasets/exp-0025-r-development-v0.1.json` e o relatório reproduzível de
+headroom em `eval/reports/exp-0025-r-baseline-headroom-v0.1.json`. A inferência
+externa continua sem autorização.
 
 ## Pergunta decisória
 
@@ -128,9 +133,10 @@ semanticamente distintos são equivalentes em outras tarefas.
 ## Falas, splits e unidade estatística
 
 O pack será gerado e hasheado antes da primeira inferência candidata. Cada
-fala possui roteiro pt-BR, WAV determinístico para proveniência, alinhamento de
-palavras, sequência de deltas textuais de 600 ms e intervalos de atividade e
-silêncio.
+fala possui roteiro pt-BR, WAV determinístico para proveniência, agenda-oráculo
+de palavras/segmentos, sequência de deltas textuais de 600 ms e intervalos de
+atividade e silêncio. A agenda não é forced alignment acústico e não entra na
+política: ela documenta a receita causal usada para formar os ticks.
 
 A unidade de desenho é um **par de prefixo**: duas falas têm conteúdo e pausa
 idênticos até a fronteira crítica. Na integrante `CONTINUES`, a pessoa retoma
@@ -206,6 +212,12 @@ de conteúdo.
 Se `A0` tiver menos de quatro falhas prematuras, o efeito disponível é pequeno
 demais para este probe: `CUT_NO_BASELINE_HEADROOM`, sem baixar pesos, alugar
 GPU, tornar `D` mais difícil ou olhar `H`.
+
+Resultado de 03/08/2026: o pack materializado contém 16 pares/32 falas e
+prefixo PCM idêntico dentro de cada par. `A0-native` teve 8/16 tomadas
+prematuras, zero miss e p95 pós-final de 1.060 ms; `A0@600`, apenas
+diagnóstico, teve 4/16, zero miss e p95 de 1.200 ms. O gate produziu
+`BASELINE_HEADROOM_CONFIRMED`; `E` segue não autorizado e `H` não foi aberto.
 
 ## Regra de vitória no holdout
 

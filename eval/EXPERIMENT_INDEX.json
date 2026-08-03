@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T10:30:36-03:00",
+  "updatedAt": "2026-08-03T12:25:00-03:00",
   "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
@@ -24,10 +24,10 @@
     "id": "EXP-0025-R",
     "parent": "EXP-0025",
     "preRegistration": "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md",
-    "status": "planned",
+    "status": "active",
     "blocking": false,
     "authority": "none",
-    "decision": "Pré-registrado em duas etapas: executar a política textual oficial do DuplexCascade como referência E e congelar uma única reprodução local L; comparar A0/E/L por fala no mesmo holdout, sem bloquear o STOP renderizado ou conceder autoridade."
+    "decision": "Pack D pt-BR materializado e baseline A0 executada: 8/16 tomadas prematuras confirmam headroom; A0@600 registrou 4/16 e p95 de 1.200 ms apenas como diagnóstico. E permanece não executado, sem autorização externa, e o holdout continua fechado."
   },
   "entries": [
     {

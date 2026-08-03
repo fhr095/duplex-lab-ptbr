@@ -56,11 +56,11 @@ histórico, esta carteira prevalece.
   o último quantum não silencioso no renderer (`STOP-R`), não o último som
   audível na sala (`STOP-A`). Uma única abertura encerra esta família de
   instrumento em qualquer folha da árvore.
-- **Paralelo planejado — EXP-0025-R:** executar a política textual oficial do
-  DuplexCascade como referência `E` e congelar uma única reprodução local `L`;
-  comparar `A0/E/L` por fala e sessão em tomada prematura e atraso após finais
-  verdadeiros. A trilha é não bloqueante, tem zero autoridade e orçamento
-  externo ainda não autorizado.
+- **Paralelo ativo — EXP-0025-R:** o pack D pt-BR foi materializado e `A0`
+  confirmou headroom com 8/16 tomadas prematuras; `A0@600` registrou 4/16 e
+  p95 pós-final de 1.200 ms apenas como diagnóstico de cadência. A referência
+  externa `E` não foi executada, seu orçamento continua sem autorização e o
+  holdout permanece fechado.
 - **Estacionado:** executar backbones nativos end-to-end em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -488,8 +488,8 @@ prospectivamente a captura sob semântica ordinal. O EXP-0024 foi invalidado
 antes de medir STOP porque confundiu atividade acústica segmentada com um único
 início. O EXP-0025 é a frente crítica e corrige somente essa semântica, mede
 `STOP-R` e persiste falhas, sem alterar o runtime. Em paralelo, o EXP-0025-R
-pode montar pack, adaptador e baseline sem depender desse resultado. A
-inferência da política oficial DuplexCascade continua condicionada a preflight,
+já materializou D e confirmou headroom da baseline, sem depender desse
+resultado. A inferência da política oficial DuplexCascade continua condicionada a preflight,
 orçamento fechado e autorização explícita de GPU; nenhum resultado concede
 autoridade ou troca de backbone.
 

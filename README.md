@@ -431,7 +431,8 @@ pré-registrado para escolher o primeiro marcador por posição causal, preserva
 os demais e medir somente `STOP-R`: último quantum não silencioso no grafo Web
 Audio, não o último som audível na sala. Uma abertura encerra esta família.
 
-Em paralelo, o EXP-0025-R compara a política atual, o checkpoint textual
-oficial do DuplexCascade e uma única reprodução local por fala/sessão. A
-inferência externa depende de orçamento e autorização de GPU separados; a
-trilha não bloqueia o STOP nem concede autoridade.
+Em paralelo, o EXP-0025-R já materializou 16 pares/32 falas em D e confirmou
+headroom: `A0-native` tomou o turno prematuramente em 8/16 continuações;
+`A0@600` registrou 4/16 apenas como diagnóstico. O checkpoint oficial não foi
+executado, depende de autorização externa separada, e o holdout segue fechado;
+a trilha não bloqueia o STOP nem concede autoridade.

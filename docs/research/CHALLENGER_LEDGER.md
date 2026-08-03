@@ -54,12 +54,12 @@ grafo Web Audio; ele não mede o último som audível na sala e é terminal para
 esta família de instrumento.
 
 O rebalanceamento prospectivo abriu o EXP-0025-R sem colocá-lo no caminho
-crítico. A decisão nova não reabre a relevância semântica dos EXP-0018/0019:
-ela testa tomada prematura durante pausa/hesitação e atraso após um final
-verdadeiro. A política textual oficial do DuplexCascade é a única referência
-externa ativa; uma reprodução local separada enfrenta holdout próprio. ASR
-continua desconhecido e deferido, e nenhum resultado autoriza concluir que
-reconhecimento deixou de ser um gargalo futuro.
+crítico. Seu pack D materializado confirmou headroom da baseline: 8/16
+continuações tiveram tomada prematura em `A0-native`; a projeção `A0@600`
+reduziu isso a 4/16, mas adicionou 140 ms ao p95 pós-final e é apenas
+diagnóstico. A política textual oficial do DuplexCascade é a única referência
+externa ativa, ainda não executada nem autorizada; uma reprodução local
+separada enfrenta holdout próprio. ASR continua desconhecido e deferido.
 
 ## Fila atual
 

@@ -138,11 +138,12 @@ Separa validade do instrumento, `STOP-R`, exercício da multiplicidade e ordem
 de telemetria. `STOP-R` termina no grafo Web Audio e não prova som audível na
 sala; qualquer folha encerra o experimento sem reparo instrumental automático.
 
-O EXP-0025-R avança em paralelo e sem autoridade. Primeiro executa, se houver
-budget e autorização próprios, o checkpoint textual oficial DuplexCascade;
-depois congela um único controlador local antes de holdout independente. A
-unidade é a fala, e os gates combinam tomada prematura e atraso após finais
-verdadeiros. ASR/TTS e backbones end-to-end continuam fora.
+O EXP-0025-R avança em paralelo e sem autoridade. O pack D materializado e a
+baseline já confirmaram headroom: 8/16 tomadas prematuras em `A0-native`;
+`A0@600` é apenas diagnóstico. O checkpoint textual oficial DuplexCascade só
+pode rodar com budget e autorização próprios; depois, no máximo um controlador
+local será congelado antes do holdout independente. ASR/TTS não entram na
+política e backbones end-to-end continuam fora.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
@@ -155,6 +156,8 @@ npm run eval:exp:0021:report:check
 npm run eval:exp:0022:report:check
 npm run eval:exp:0023:report:check
 npm run eval:exp:0024:report:check
+npm run eval:exp:0025:r:audio:check
+npm run eval:exp:0025:r:baseline:check
 node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
 node --test tests/exp-0023-*.test.mjs
 node --test tests/exp-0024-*.test.mjs

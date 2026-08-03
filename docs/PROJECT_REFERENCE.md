@@ -5,7 +5,7 @@ contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
 invalidações instrumentais dos EXP-0020/0021/0022, passe instrumental do
 EXP-0023, invalidação instrumental do EXP-0024, EXP-0025 terminal
-pré-registrado e EXP-0025-R paralelo pré-registrado**
+pré-registrado e headroom A0 confirmado no EXP-0025-R paralelo**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -34,9 +34,10 @@ preservar toda multiplicidade e medir `STOP-R` no grafo Web Audio. Ele não
 mede o último som audível na sala e uma única abertura encerra esta família de
 instrumento. O
 [EXP-0025-R](experiments/EXP-0025-R-duplexcascade-floor-control.md) é uma
-trilha não bloqueante: separa a execução da política textual oficial do
-DuplexCascade de uma reprodução local mínima e compara ambas contra a baseline
-por fala e sessão, sem autoridade.
+trilha não bloqueante: seu pack D materializado mostrou 8/16 tomadas
+prematuras em `A0-native`, confirmando headroom, enquanto `A0@600` permaneceu
+diagnóstico. A política oficial externa e a reprodução local continuam etapas
+separadas; `E` não foi executado, o holdout segue fechado e não há autoridade.
 
 ## Tese
 
@@ -431,9 +432,10 @@ Esta referência preserva apenas a lógica macro:
 15. executar no EXP-0025 somente a correção causal da âncora e medir `STOP-R`,
     separando instrumento, renderer e ordem; uma abertura encerra a família e
     não será chamada de último som audível;
-16. executar em paralelo o EXP-0025-R em duas etapas separadas — checkpoint
-    textual oficial `E` e um único controlador local `L` — por fala/sessão,
-    sem ASR/TTS, bloqueio ou autoridade;
+16. preservar o headroom confirmado do EXP-0025-R e executar suas etapas
+    candidatas separadamente — checkpoint textual oficial `E` somente após
+    autorização explícita e um único controlador local `L` — por fala/sessão,
+    sem ASR/TTS na política, bloqueio ou autoridade;
 17. conceder autoridade somente se houver ganho percebido sem regressão dos
     guardrails;
 18. manter backbones nativos end-to-end no ledger até existir um teto local que
