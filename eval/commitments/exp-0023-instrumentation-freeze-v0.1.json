@@ -1,0 +1,343 @@
+{
+  "schemaVersion": "exp-0023-instrumentation-freeze-v1",
+  "experimentId": "EXP-0023",
+  "status": "frozen-before-capture-opening",
+  "runnerSourceCommit": "de919470f0b4b59db4f911b7ae5e40fcc9606707",
+  "nodeVersion": "v22.22.2",
+  "sourceBaseline": {
+    "experimentId": "EXP-0022",
+    "sourceCommit": "29b589a956e4aab487e71673d4c92b141d3c0511",
+    "evidenceCommit": "b8aba7c49715e846a57bafbcbb1eeb4dee2f8a56"
+  },
+  "implementationBoundary": {
+    "baseCommit": "daad5f7c03d43e2454c34a27b02a34af8641bd87",
+    "c0ChangedPaths": [
+      ".gitignore",
+      "docs/AUTONOMOUS_LOOP.md",
+      "docs/PROJECT_REFERENCE.md",
+      "docs/ROADMAP.md",
+      "docs/experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md",
+      "package.json",
+      "scripts/freeze-exp-0023-instrumentation.mjs",
+      "scripts/open-exp-0023-capture-attempt.mjs",
+      "scripts/run-exp-0023-supervisor.mjs",
+      "src/eval/exp-0023-boundary.mjs",
+      "src/eval/exp-0023-cdp-ordinal-timestamp-semantics.mjs",
+      "tests/exp-0023-analysis.test.mjs",
+      "tests/exp-0023-boundary.test.mjs",
+      "tests/exp-0023-supervisor.test.mjs"
+    ],
+    "runtimeBaselineCommit": "29b589a956e4aab487e71673d4c92b141d3c0511",
+    "runtimeChangedPaths": [
+      "package.json",
+      "src/eval/exp-0023-boundary.mjs",
+      "src/eval/exp-0023-cdp-ordinal-timestamp-semantics.mjs",
+      "src/eval/experiment-index.mjs"
+    ]
+  },
+  "runtimeBinding": {
+    "algorithm": "sha256-source-tree-v1",
+    "sha256": "404fdfb9c0c07c08d85caa62507736a9cf3ee54d8f75d772e2d5f9bb5ce5d072",
+    "fileCount": 119,
+    "roots": [
+      "src",
+      "web",
+      "package.json",
+      "package-lock.json",
+      "requirements-asr.txt"
+    ]
+  },
+  "artifacts": {
+    "preregistration": {
+      "path": "docs/experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md",
+      "fileSha256": "sha256:3abc15518671b4d419d0cec78f752915170785a442ac83b19d08c08f36ed6c71"
+    },
+    "exp0022Report": {
+      "path": "eval/reports/exp-0022-bootstrap-audit-health-binding-v0.1.json",
+      "fileSha256": "sha256:4d8c45f4265131be5453299bcfa3a712c3ad1374665a842d68052eedefd2d629"
+    },
+    "exp0022Closeout": {
+      "path": "docs/experiments/EXP-0022-closeout.md",
+      "fileSha256": "sha256:4dbdbca49af6204bb399b8090a46f8ad21a8839e01e4e1149d12f34869bb639b"
+    }
+  },
+  "config": {
+    "orderingAuthority": "cdp-delivery-ordinal-v1",
+    "legacyCompatibilityProjection": "tracked-cdp-lifecycle-timestamps-from-delivery-ordinals-v1",
+    "inheritedExperimentId": "EXP-0022",
+    "inheritedWorkerEnvelopeSchema": "exp-0022-worker-envelope-v1",
+    "inheritedCampaignCanonicalSha256": "sha256:1eb9db8381696b5631569dab2daa4eefacdd11aca462ba88b2829bfa0ac038ad",
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0022",
+    "campaign": {
+      "targetUrl": "http://localhost:4173/?automation=1&experiment=0022",
+      "ttsUrl": "http://localhost:4173/api/tts",
+      "navigationCount": 2,
+      "unitsPerNavigation": 2,
+      "totalUnits": 4,
+      "ttsRate": 1,
+      "payloadOrder": [
+        "A1",
+        "B1",
+        "B2",
+        "A2"
+      ],
+      "healthBinding": {
+        "bootstrapRequestsPerNavigation": 1,
+        "auditRequestsPerNavigation": 1,
+        "totalHealthRequestsPerNavigation": 2,
+        "auditQueryName": "exp0022_probe",
+        "auditProbeIds": [
+          "nav-1",
+          "nav-2"
+        ],
+        "auditHeaderName": "x-duplex-exp-0022-audit",
+        "auditHeaderValue": "audit-health-v0.1"
+      },
+      "networkEnable": {
+        "maxTotalBufferSize": 16777216,
+        "maxResourceBufferSize": 2097152,
+        "maxPostDataSize": 65536,
+        "enableDurableMessages": false
+      },
+      "capture": {
+        "delayBeforeReadMs": [
+          0,
+          8,
+          24,
+          64
+        ],
+        "maxReads": 4,
+        "maximumAccumulatedDelayMs": 96,
+        "minimumWavBytesExclusive": 44,
+        "maximumWavBytesExclusive": 2097152
+      },
+      "provider": "local",
+      "cdp": {
+        "protocol": "http:",
+        "port": "9223",
+        "hostPolicy": "wsl-default-gateway",
+        "initialTarget": "about:blank",
+        "webSocketPathPrefix": "/devtools/page/"
+      },
+      "asrState": "disabled",
+      "vadControlEngine": "adaptive-energy-vad",
+      "vadShadowState": "disabled",
+      "ttsEngine": "windows-system-speech",
+      "negativeBudget": {
+        "ttsRequests": 4,
+        "localTtsSyntheses": 4,
+        "audioConstructors": {
+          "Audio": 0,
+          "AudioContext": 0,
+          "webkitAudioContext": 0
+        },
+        "calls": {
+          "htmlMediaElementPlay": 0,
+          "speechSynthesisSpeak": 0
+        },
+        "lifecycle": {
+          "bargeIn": 0,
+          "stop": 0,
+          "transitions": 0
+        },
+        "trainingTrace": {
+          "decisions": 0,
+          "effects": 0
+        },
+        "inputActivations": 0,
+        "externalRequests": 0,
+        "usageDelta": {
+          "requests": 0,
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "totalTokens": 0
+        },
+        "gpuRuns": 0,
+        "challengerRuns": 0,
+        "backboneRuns": 0,
+        "canProduceNewEffects": false
+      }
+    },
+    "timestampPolicy": {
+      "finiteRequired": true,
+      "requestNotAfterResponse": true,
+      "requestNotAfterTerminal": true,
+      "responseTerminalOrderingRequired": false,
+      "minimumHealthResponseAfterTerminal": 1,
+      "epsilonMs": null
+    },
+    "authority": {
+      "mode": "measurement-only",
+      "canProduceNewEffects": false
+    }
+  },
+  "configCanonicalSha256": "sha256:a51ff6d8228505030ddb27208268b8aafa89d0ef2fab02b1e322597e27a01e26",
+  "productionSources": [
+    {
+      "path": "src/brain/provider.mjs",
+      "fileSha256": "sha256:9ba71504e91de572f8c7531358ca2140b9c1409868074493da3d1eb9118540bd",
+      "exp0022FileSha256": "sha256:9ba71504e91de572f8c7531358ca2140b9c1409868074493da3d1eb9118540bd"
+    },
+    {
+      "path": "src/cli/serve.mjs",
+      "fileSha256": "sha256:b0a305cdc4cec5ca27c837436c1e27555d17a9f3912fab53c6ef2a9eedad7b29",
+      "exp0022FileSha256": "sha256:b0a305cdc4cec5ca27c837436c1e27555d17a9f3912fab53c6ef2a9eedad7b29"
+    },
+    {
+      "path": "src/tts/windows-system-tts.mjs",
+      "fileSha256": "sha256:9f0d019d48176b3db2f0c461865875b55b67645055a9a5480e3db88d9f665518",
+      "exp0022FileSha256": "sha256:9f0d019d48176b3db2f0c461865875b55b67645055a9a5480e3db88d9f665518"
+    },
+    {
+      "path": "web/app.mjs",
+      "fileSha256": "sha256:dc51356b3ec4ddb2e920bdf29c7ff28f4d7fccb66fc29bef145bfb879e304bba",
+      "exp0022FileSha256": "sha256:dc51356b3ec4ddb2e920bdf29c7ff28f4d7fccb66fc29bef145bfb879e304bba"
+    },
+    {
+      "path": "web/index.html",
+      "fileSha256": "sha256:78c55898656f161c7af20c8990a2bf49a949a2a4a49910fddf2cd24f8daa4a32",
+      "exp0022FileSha256": "sha256:78c55898656f161c7af20c8990a2bf49a949a2a4a49910fddf2cd24f8daa4a32"
+    },
+    {
+      "path": "web/local-audio-reflex.mjs",
+      "fileSha256": "sha256:9230ad7fb96bff6472e2338f520cd9ab2f7306cda3e42ae2cb362a14c759b908",
+      "exp0022FileSha256": "sha256:9230ad7fb96bff6472e2338f520cd9ab2f7306cda3e42ae2cb362a14c759b908"
+    },
+    {
+      "path": "web/output-interruption-lifecycle.mjs",
+      "fileSha256": "sha256:b2bda7e6dfcc0393f393c683feba1ae460aa5c2d727529542c6deca1c71238bd",
+      "exp0022FileSha256": "sha256:b2bda7e6dfcc0393f393c683feba1ae460aa5c2d727529542c6deca1c71238bd"
+    },
+    {
+      "path": "web/pcm-capture.mjs",
+      "fileSha256": "sha256:ead10169f18fd4bd11d0139af6167b5333404b1163d30df9d1e25b14562d0c5b",
+      "exp0022FileSha256": "sha256:ead10169f18fd4bd11d0139af6167b5333404b1163d30df9d1e25b14562d0c5b"
+    },
+    {
+      "path": "web/training-trace-recorder.mjs",
+      "fileSha256": "sha256:1a404f8a0cf8cb8d362a56d661ea603a0a68d58bc9ae6fb7212ded6fcef0fa79",
+      "exp0022FileSha256": "sha256:1a404f8a0cf8cb8d362a56d661ea603a0a68d58bc9ae6fb7212ded6fcef0fa79"
+    },
+    {
+      "path": "web/turn-taking.mjs",
+      "fileSha256": "sha256:d9210e3cc8ae0e2f6dde6ec80ebaaf860eaa453b10fdf243fa14b2f2e9fb11f9",
+      "exp0022FileSha256": "sha256:d9210e3cc8ae0e2f6dde6ec80ebaaf860eaa453b10fdf243fa14b2f2e9fb11f9"
+    }
+  ],
+  "instrumentationSources": [
+    {
+      "path": ".gitignore",
+      "fileSha256": "sha256:2fd1e5bc8193e71bc529cd887ea77070ed591b0135d30e75ac4dd8915a325d80"
+    },
+    {
+      "path": "package.json",
+      "fileSha256": "sha256:8f5cf2ed4283f87f012b2c16f8420b680ad5b0af469abc5336a36a9965d6614f"
+    },
+    {
+      "path": "scripts/freeze-exp-0023-instrumentation.mjs",
+      "fileSha256": "sha256:7964121d75a83c62ce76c5b0a1b1be6f05e3a31e51837515a1643199873f17d7"
+    },
+    {
+      "path": "scripts/lib/exp-0021-cdp-capture.mjs",
+      "fileSha256": "sha256:1668300ca7481283b8739d0bcb118b218505d68e5a80b16647522e342483b809",
+      "exp0022FileSha256": "sha256:1668300ca7481283b8739d0bcb118b218505d68e5a80b16647522e342483b809"
+    },
+    {
+      "path": "scripts/open-exp-0023-capture-attempt.mjs",
+      "fileSha256": "sha256:3b67a200559d378059e43bb6b802578fafa24886fd6e1d0facde0334750d6369"
+    },
+    {
+      "path": "scripts/run-exp-0022-worker.mjs",
+      "fileSha256": "sha256:a5303038b143ad945bfa1b7d07a780b2cba9540bbcfe6ef68c5979d00fe13721",
+      "exp0022FileSha256": "sha256:a5303038b143ad945bfa1b7d07a780b2cba9540bbcfe6ef68c5979d00fe13721"
+    },
+    {
+      "path": "scripts/run-exp-0023-supervisor.mjs",
+      "fileSha256": "sha256:0fca8f78d2a5c730c8ef622c9e1e47975c9c3e89da8dc6b2c774561f0f3e5a07"
+    },
+    {
+      "path": "src/eval/exp-0022-bootstrap-audit-health-binding.mjs",
+      "fileSha256": "sha256:d9cde8504d0ec38a6382771d2d5e31723237946187114cb43072970d675fd59e",
+      "exp0022FileSha256": "sha256:d9cde8504d0ec38a6382771d2d5e31723237946187114cb43072970d675fd59e"
+    },
+    {
+      "path": "src/eval/exp-0023-boundary.mjs",
+      "fileSha256": "sha256:facf6694edd79d803898c02639d48798a3410278bbbddf4ae97d632b724616a4"
+    },
+    {
+      "path": "src/eval/exp-0023-cdp-ordinal-timestamp-semantics.mjs",
+      "fileSha256": "sha256:49f65368367ff1236c1a4780d04d58d40fda2f3f058f90addb88f2e77cef65f7"
+    },
+    {
+      "path": "src/eval/factory/canonical-hash.mjs",
+      "fileSha256": "sha256:773d45148e5c8594254a1f91db108f18ff15683ff706044d58251b7fdbc3bac0",
+      "exp0022FileSha256": "sha256:773d45148e5c8594254a1f91db108f18ff15683ff706044d58251b7fdbc3bac0"
+    },
+    {
+      "path": "src/eval/runtime-provenance.mjs",
+      "fileSha256": "sha256:774901d6899342e948883c15da17d6c78d66cec2c15002a69fd4ebbb3f099c4c",
+      "exp0022FileSha256": "sha256:774901d6899342e948883c15da17d6c78d66cec2c15002a69fd4ebbb3f099c4c"
+    },
+    {
+      "path": "src/eval/source-fingerprint.mjs",
+      "fileSha256": "sha256:fe542f4e08db60aadb306553611280ebbd708759d859b9e8fc565262597a22fd",
+      "exp0022FileSha256": "sha256:fe542f4e08db60aadb306553611280ebbd708759d859b9e8fc565262597a22fd"
+    },
+    {
+      "path": "tests/exp-0021-cdp-capture.test.mjs",
+      "fileSha256": "sha256:c951892188c6a264e8fac3e8661cbfb7a533f3427103e29cdd29c51fab5e959e",
+      "exp0022FileSha256": "sha256:c951892188c6a264e8fac3e8661cbfb7a533f3427103e29cdd29c51fab5e959e"
+    },
+    {
+      "path": "tests/exp-0022-analysis.test.mjs",
+      "fileSha256": "sha256:bf9eba940524e07328ee70eb4b143d12859a41598688227d5e4db9c50461f68f",
+      "exp0022FileSha256": "sha256:bf9eba940524e07328ee70eb4b143d12859a41598688227d5e4db9c50461f68f"
+    },
+    {
+      "path": "tests/exp-0022-worker.test.mjs",
+      "fileSha256": "sha256:b21bd1c73058b4638a45fb56254808a5266a8f6d931ded209bcaccef707ae3b9",
+      "exp0022FileSha256": "sha256:b21bd1c73058b4638a45fb56254808a5266a8f6d931ded209bcaccef707ae3b9"
+    },
+    {
+      "path": "tests/exp-0023-analysis.test.mjs",
+      "fileSha256": "sha256:8a496f227253d83c2d9145824ef6a175e1833668affbdf9fe6d445dd128e8025"
+    },
+    {
+      "path": "tests/exp-0023-boundary.test.mjs",
+      "fileSha256": "sha256:2527778586673fdf258fa4be3741ef9a69417b71afc3399520552f9829f7795f"
+    },
+    {
+      "path": "tests/exp-0023-supervisor.test.mjs",
+      "fileSha256": "sha256:5c7a36485b3fd51bd58d39d89ec230f577cec40e4cbd596e5f761e4d921b29c4"
+    }
+  ],
+  "gitTopology": {
+    "order": [
+      "C0_INSTRUMENT",
+      "FREEZE",
+      "OPENING",
+      "EVIDENCE"
+    ],
+    "freezeDirectParent": "C0_INSTRUMENT",
+    "openingDirectParent": "FREEZE",
+    "evidenceDirectParent": "OPENING",
+    "evidenceAllowedPaths": [
+      "eval/generated/exp-0023/capture-attempt-consumed-v0.1.json",
+      "eval/reports/exp-0023-cdp-ordinal-timestamp-semantics-v0.1.json"
+    ]
+  },
+  "boundary": {
+    "browserAttemptsBeforeFreeze": 0,
+    "captureCampaignsBeforeFreeze": 0,
+    "reportAbsent": true,
+    "receiptAbsent": true,
+    "paidApiCalls": 0,
+    "gpuRuns": 0,
+    "canProduceNewEffects": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "instrumentationFreezeSha256": "sha256:0671c803e91d478f27bbbe86acb856782f2df7d30e1caa13bcc12acf464f99db"
+}
