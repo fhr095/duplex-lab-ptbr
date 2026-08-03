@@ -985,8 +985,9 @@ export async function validateExperimentIndex(index, options = {}) {
   assert(
     index.currentParallelProbe.status === "active" ||
       index.currentParallelProbe.status === "planned" ||
+      index.currentParallelProbe.status === "deferred" ||
       index.currentParallelProbe.status === "cut",
-    "currentParallelProbe.status must be active, planned or cut"
+    "currentParallelProbe.status must be active, planned, deferred or cut"
   );
   assert(
     index.currentParallelProbe.blocking === false,

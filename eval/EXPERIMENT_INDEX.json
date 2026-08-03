@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T02:31:10-03:00",
-  "transitionState": "terminal-awaiting-next-registration",
+  "updatedAt": "2026-08-03T02:47:18-03:00",
+  "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
     "legacyRange": "EXP-0000..EXP-0006",
@@ -19,15 +19,15 @@
     "id": "runtime-baseline-ptbr-v0.3",
     "manifest": "eval/baselines/runtime-baseline-v0.3.json"
   },
-  "currentCriticalPath": "EXP-0019",
+  "currentCriticalPath": "EXP-0020",
   "currentParallelProbe": {
-    "id": "EXP-0019-R",
-    "parent": "EXP-0019",
-    "preRegistration": "docs/experiments/EXP-0019-causal-audio-context-bridge.md",
-    "status": "cut",
+    "id": "EXP-0020-R",
+    "parent": "EXP-0020",
+    "preRegistration": "docs/experiments/EXP-0020-physical-stop-order.md",
+    "status": "deferred",
     "blocking": false,
     "authority": "none",
-    "decision": "EXP-0019 isolou a falha no ordenamento físico do lifecycle; executar um backbone maior não resolve esse gate e permanece deferido."
+    "decision": "Trilha sem execução: nenhum backbone será aberto enquanto o EXP-0020 distingue estado físico de ordem concorrente; challengers permanecem somente no ledger."
   },
   "entries": [
     {
@@ -250,7 +250,7 @@
       "canonicalReport": "eval/reports/exp-0019-causal-audio-v0.1.json",
       "evidenceCommit": "0127322ad18a5b1d98de53d9e45898249e05888d",
       "authority": "none",
-      "criticalPath": true,
+      "criticalPath": false,
       "cleanCloneChecks": [
         "node --test tests/exp-0019-contract.test.mjs",
         "node --test tests/exp-0019-audio-materializer.test.mjs",
@@ -266,6 +266,18 @@
       ],
       "supersedes": [],
       "nextDecision": "Pré-registrar o menor probe que distingue corrida observável de mero reordenamento de telemetria no STOP físico; ASR continua fora."
+    },
+    {
+      "id": "EXP-0020",
+      "status": "active",
+      "decision": "pending-physical-stop-order-equivalence",
+      "canonicalReport": null,
+      "authority": "none",
+      "criticalPath": true,
+      "cleanCloneChecks": [],
+      "localReproductionCommands": [],
+      "supersedes": [],
+      "nextDecision": "Implementar e congelar o instrumento, commitar a abertura única e então executar 12 STOPs para decidir equivalência, correção física, diversidade insuficiente ou invalidação."
     }
   ]
 }

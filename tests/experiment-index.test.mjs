@@ -87,25 +87,30 @@ async function fixture() {
 
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
-  assert.equal(index.currentCriticalPath, "EXP-0019");
-  assert.equal(index.transitionState, "terminal-awaiting-next-registration");
-  assert.equal(index.currentParallelProbe.id, "EXP-0019-R");
-  assert.equal(index.currentParallelProbe.status, "cut");
+  assert.equal(index.currentCriticalPath, "EXP-0020");
+  assert.equal(index.transitionState, "active");
+  assert.equal(index.currentParallelProbe.id, "EXP-0020-R");
+  assert.equal(index.currentParallelProbe.status, "deferred");
   assert.equal(index.currentParallelProbe.blocking, false);
+  assert.equal(index.entries.at(-1).id, "EXP-0020");
+  assert.equal(index.entries.at(-1).status, "active");
+  assert.equal(index.entries.at(-1).canonicalReport, null);
+  assert.equal(index.entries.at(-1).authority, "none");
   assert.equal(
-    index.entries.at(-1).canonicalReport,
+    index.entries.at(-2).canonicalReport,
     "eval/reports/exp-0019-causal-audio-v0.1.json"
   );
   assert.equal(
-    index.entries.at(-1).evidenceCommit,
+    index.entries.at(-2).evidenceCommit,
     "0127322ad18a5b1d98de53d9e45898249e05888d"
   );
-  assert.equal(index.entries.at(-1).authority, "none");
+  assert.equal(index.entries.at(-2).authority, "none");
   assert.equal(
-    index.entries.at(-1).decision,
+    index.entries.at(-2).decision,
     "CUT_CAUSAL_AUDIO_BRIDGE"
   );
-  assert.ok(index.entries.at(-1).cleanCloneChecks.length >= 5);
+  assert.equal(index.entries.at(-2).criticalPath, false);
+  assert.ok(index.entries.at(-2).cleanCloneChecks.length >= 5);
   const exp0018 = index.entries.find(({ id }) => id === "EXP-0018");
   assert.equal(
     exp0018.canonicalReport,

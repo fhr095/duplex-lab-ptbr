@@ -103,9 +103,12 @@ Hipótese, resultado e limites permanecem ligados ao
 [pré-registro congelado](experiments/EXP-0019-causal-audio-context-bridge.md) e
 ao [closeout](experiments/EXP-0019-closeout.md).
 
-O próximo PDCA deve isolar somente essa corrida. Ele precisa decidir se existe
-diferença de estado/áudio fisicamente observável ou apenas telemetria
-concorrente equivalente; trocar ASR, TTS ou backbone não entra até essa
+O EXP-0020 pré-registra o próximo PDCA e isola somente essa corrida. Primeiro o
+instrumento será implementado, auditado, congelado e aberto por commit; só
+então uma campanha fará 12 STOPs em duas navegações. O passe exige ao menos
+duas ocorrências de cada ordem, WAV e fase controlados, o mesmo aceite/estado/
+silêncio e latência equivalente por classe. Diversidade insuficiente produz
+hold, sem repetição oportunista. Trocar ASR, TTS ou backbone não entra até essa
 pergunta fechar.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:

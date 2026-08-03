@@ -28,10 +28,11 @@ histórico, esta carteira prevalece.
   streams e 48 probes sem futuro; Node/Chrome tiveram paridade exata e proposta
   p95 de 8,7 ms. O trace físico, porém, alternou a ordem entre
   `speech.paused` e `render.stopped`; 7/9 gates passaram e nada foi promovido.
-- **Agora — registrar o probe mínimo de lifecycle:** distinguir uma corrida de
-  estado/áudio fisicamente observável de mero reordenamento concorrente. Se
-  for estado real, corrigir o happens-before; se for equivalência observável,
-  pré-registrar a normalização causal. ASR continua fora em ambos os casos.
+- **Agora — EXP-0020, equivalência observável no renderer:** implementar,
+  auditar e congelar o instrumento; depois consumir uma única abertura de 12
+  STOPs em duas navegações. O passe exige duas ocorrências de cada ordem, WAV e
+  fase controlados, mesmo estado/silêncio e latência equivalente por classe.
+  Divergência corrige o happens-before; diversidade insuficiente produz hold.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -41,7 +42,8 @@ O fechamento anterior, o contrato congelado e o resultado corrente estão no
 [EXP-0017](experiments/EXP-0017-safe-veto-and-semantic-probe.md), no
 [closeout do EXP-0018](experiments/EXP-0018-closeout.md), no
 [pré-registro do EXP-0019](experiments/EXP-0019-causal-audio-context-bridge.md)
-e em seu [closeout](experiments/EXP-0019-closeout.md).
+e em seu [closeout](experiments/EXP-0019-closeout.md). O caminho corrente está
+no [pré-registro do EXP-0020](experiments/EXP-0020-physical-stop-order.md).
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar outra prioridade, e o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
@@ -431,11 +433,12 @@ card de dados e splits por família, gerador e pessoa.
 | 14b | EXP-0017-R: probe semântico causal — **cortado antes do fit** | mapa causal físico: 21/30 train; 11 fundos e 10 dirigidas elegíveis | pisos exigiam 12/classe; nenhum fit/limiar/métrica semântica; zero autoridade |
 | 15 | EXP-0018: contexto observável com conteúdo pareado — **`PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN`** | 31/32 em `B1` versus 16/32 em `B0`; 16/16 dirigidas, 15/16 fundos; 15 vitórias líquidas; ganho em 8/8 blocos e 4/4 famílias; 12/12 gates | uma abertura e uma tentativa; screen textual sintético sem holdout, áudio, ASR ou autoridade; claim limitado ao matcher relacional |
 | 16 | EXP-0019: bridge causal em áudio — **`CUT_CAUSAL_AUDIO_BRIDGE`** | 8 cenas/4 pares/12 streams; 48 probes sem inferência; 16/16 paridade Node/Chrome; proposta p95 8,7 ms; STOP p95 56,573 ms; 7/9 gates | ordem `speech.paused`/`render.stopped` variou; trace e lifecycle on/off não determinísticos; zero autoridade/API/GPU; ASR não autorizado |
+| 17 | EXP-0020: equivalência observável da ordem no renderer — **ativo, pré-registrado; instrumento pendente** | implementar/fixar o harness; depois 12 STOPs em duas navegações, com ≥2 por ordem, WAV/fase controlados, horizonte silencioso de 250 ms e equivalência temporal por classe | tentativa única commitada antes do Chrome; sem alteração do runtime; zero ASR/modelo/API/GPU/autoridade |
 
-O EXP-0019 está terminal e cortado. A próxima frente crítica ainda precisa ser
-pré-registrada e deve isolar somente a corrida física de lifecycle. Modelos
-completos continuam no ledger como `watch` ou `defer`; pesquisa externa não
-autoriza download, adaptação ou GPU.
+O EXP-0019 está terminal e cortado. O EXP-0020 é a frente crítica registrada e
+isola somente a corrida física de lifecycle. Modelos completos continuam no
+ledger como `watch` ou `defer`; pesquisa externa não autoriza download,
+adaptação ou GPU.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
 pela maior falha percebida no relatório, não por ordem fixa. O matcher textual

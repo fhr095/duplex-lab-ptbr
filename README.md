@@ -374,6 +374,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0018 — fechamento do screen textual](docs/experiments/EXP-0018-closeout.md)
 - [EXP-0019 — bridge causal de contexto em áudio](docs/experiments/EXP-0019-causal-audio-context-bridge.md)
 - [EXP-0019 — fechamento do bridge causal](docs/experiments/EXP-0019-closeout.md)
+- [EXP-0020 — equivalência observável da ordem do STOP no renderer](docs/experiments/EXP-0020-physical-stop-order.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -401,7 +402,10 @@ gates aprovados. O EXP-0019 levou esse matcher a oito cenas de áudio-oráculo:
 em p95 de 8,7 ms e o STOP em 56,573 ms. Mesmo assim, o experimento foi cortado
 porque a ordem entre `speech.paused` e `render.stopped` variou entre controle,
 shadow e repetição; 7/9 gates passaram e nenhuma capacidade ganhou autoridade.
-O próximo teste deve isolar essa corrida física antes de qualquer ASR real.
+O EXP-0020 pré-registra esse teste. Primeiro o instrumento será implementado e
+congelado; a abertura única de 12 STOPs só passa com ao menos duas ocorrências
+de cada ordem, WAV/fase controlados e equivalência de estado, silêncio e
+latência por classe. Diversidade insuficiente produz hold; ASR continua fora.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só
