@@ -74,6 +74,23 @@ export async function validateExp0025RExternalAuthorization(options = {}) {
       authorization.candidate?.configuration?.doSample !== false) {
       errors.push("budget ou configuração externa divergiu");
     }
+    const provider = authorization.providerExecution;
+    if (provider?.provider !== "runpod" ||
+      provider?.cloudType !== "SECURE" ||
+      provider?.gpuTypeId !== "NVIDIA H100 PCIe" ||
+      provider?.gpuCount !== 1 ||
+      provider?.gpuFallbackAllowed !== false ||
+      provider?.imageName !==
+        "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04" ||
+      provider?.maximumAcceptedHourlyUsd !== 6 ||
+      provider?.remoteRunTimeoutSeconds !== 6_000 ||
+      provider?.terminationRequiredInFinally !== true ||
+      provider?.dataBoundary?.holdoutTransferred !== false ||
+      provider?.dataBoundary?.environmentFileTransferred !== false ||
+      provider?.dataBoundary?.accountApiKeyTransferred !== false ||
+      provider?.dataBoundary?.openAiApiKeyTransferred !== false) {
+      errors.push("ambiente RunPod ou fronteira de dados divergiu");
+    }
 
     for (const binding of authorization.sourceBindings ?? []) {
       const bytes = await readFile(resolve(binding.path));

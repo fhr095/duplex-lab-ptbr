@@ -166,6 +166,14 @@ test("adaptador externo não possui rota de holdout, sweep ou quantização", as
   assert.match(source, /OVERLAP_WINDOW_SECONDS = 0\.6/u);
 });
 
+test("adaptador acrescenta cada delta textual uma única vez por microturno", async () => {
+  const source = await readFile("scripts/run_exp_0025_r_external.py", "utf8");
+  const encodeDeltaCalls = source.match(
+    /self\.tokenizer\.encode\(delta_text, add_special_tokens=False\)/gu
+  ) ?? [];
+  assert.equal(encodeDeltaCalls.length, 1);
+});
+
 test("autorização prospectiva vincula D e torna H-L inelegível para E", async () => {
   const validation = await validateExp0025RExternalAuthorization({
     preflight: true
@@ -179,5 +187,17 @@ test("autorização prospectiva vincula D e torna H-L inelegível para E", async
   assert.equal(
     validation.authorization.freshExternalHoldout.creationAuthorized,
     false
+  );
+  assert.equal(
+    validation.authorization.providerExecution.gpuTypeId,
+    "NVIDIA H100 PCIe"
+  );
+  assert.equal(
+    validation.authorization.providerExecution.dataBoundary.holdoutTransferred,
+    false
+  );
+  assert.equal(
+    validation.authorization.providerExecution.terminationRequiredInFinally,
+    true
   );
 });

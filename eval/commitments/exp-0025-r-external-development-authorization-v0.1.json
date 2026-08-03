@@ -75,6 +75,11 @@
       "sha256": "e6102a886af69e2bced944d804efca59b82d8825993ea445266609a93507589e"
     },
     {
+      "path": "scripts/run-exp-0025-r-runpod.mjs",
+      "byteLength": 19109,
+      "sha256": "4863a6f200ec8b9011312ca17711f2782335b8684ef6ef76ece1ff84f049d59b"
+    },
+    {
       "path": "src/eval/exp-0025-r-external.mjs",
       "byteLength": 12312,
       "sha256": "5b2e6920a9f600170a94876199c53cd3f85b66445067600a6a48b69b665b31d1"
@@ -107,6 +112,44 @@
     "maximumExternalCostUsd": 12,
     "firstLimitReachedStopsExecution": true
   },
+  "providerExecution": {
+    "frozenAt": "2026-08-03T16:32:23-03:00",
+    "provider": "runpod",
+    "cloudType": "SECURE",
+    "gpuTypeId": "NVIDIA H100 PCIe",
+    "gpuCount": 1,
+    "gpuFallbackAllowed": false,
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "containerDiskInGb": 30,
+    "volumeInGb": 60,
+    "volumeMountPath": "/workspace",
+    "exposedPorts": [
+      "22/tcp"
+    ],
+    "minimumRamPerGpuGb": 64,
+    "minimumVcpuPerGpu": 8,
+    "interruptible": false,
+    "packagePins": {
+      "transformers": "4.46.3",
+      "peft": "0.13.2",
+      "huggingface-hub": "0.26.2",
+      "safetensors": "0.4.5"
+    },
+    "maximumAcceptedHourlyUsd": 6,
+    "remoteRunTimeoutSeconds": 6000,
+    "terminationRequiredInFinally": true,
+    "dataBoundary": {
+      "transferredInputs": [
+        "scripts/run_exp_0025_r_external.py",
+        "eval/datasets/exp-0025-r-development-v0.1.json",
+        "eval/scenarios/exp-0025-r-external-sentinels-v0.1.json"
+      ],
+      "holdoutTransferred": false,
+      "environmentFileTransferred": false,
+      "accountApiKeyTransferred": false,
+      "openAiApiKeyTransferred": false
+    }
+  },
   "protocol": {
     "sentinelFailureDecision": "CUT_E_PROTOCOL_FAILURE",
     "sentinelFailureAllowsDevelopment": false,
@@ -125,6 +168,8 @@
       "preserveTrajectory": true,
       "preserveGenerationLatency": true
     },
+    "providerReceiptPath": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json",
+    "providerLogPath": "eval/evidence/exp-0025-r-external-development-runpod-v0.1.log",
     "aggregateReportPath": "eval/reports/exp-0025-r-external-development-v0.1.json"
   },
   "residualDevelopmentGateAgainstA0At600": {
@@ -171,5 +216,5 @@
     "anotherModel": false
   },
   "authorityEligible": false,
-  "authorizationSha256": "sha256:db6bb1b661a0ccee64b7bf1a3a7c8feec6903ffb9177892980fb643c367e85cc"
+  "authorizationSha256": "sha256:0f56534a3321b01daf9cf00b59a38abf5c456c24a1da1a3ff222a3ae1404ae9e"
 }

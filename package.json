@@ -130,6 +130,7 @@
     "eval:exp:0025:r:holdout:report:check": "node scripts/run-exp-0025-r-local-holdout.mjs --check",
     "eval:exp:0025:r:external:authorization:check": "node scripts/check-exp-0025-r-external-authorization.mjs",
     "eval:exp:0025:r:external:preflight": "node scripts/check-exp-0025-r-external-authorization.mjs --preflight",
+    "eval:exp:0025:r:external:runpod": "node scripts/run-exp-0025-r-runpod.mjs",
     "eval:exp:0025:freeze": "node scripts/freeze-exp-0025-instrumentation.mjs",
     "eval:exp:0025:open": "node scripts/open-exp-0025-causal-render-onset-attempt.mjs",
     "eval:exp:0025:browser": "flock --exclusive --nonblock eval/generated/exp-0025-causal-render-onset-attempt-v0.1.lock node scripts/run-exp-0025-supervisor.mjs",
