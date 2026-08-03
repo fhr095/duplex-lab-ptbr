@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "exp-0024-physical-stop-attempt-v1",
+  "experimentId": "EXP-0024",
+  "status": "opened-single-physical-stop-attempt",
+  "openingParentCommit": "26c7a09ea4d9f9550a43453cb187368f4fab535a",
+  "openedAt": "2026-08-03T12:07:22.114Z",
+  "freeze": {
+    "path": "eval/commitments/exp-0024-instrumentation-freeze-v0.1.json",
+    "fileSha256": "sha256:f0c1b0ae4dd2f606747d9ef7c833b736b849a575c762a3628045155804c34150",
+    "instrumentationFreezeSha256": "sha256:bf41a9b3a04e20e6001807be8700917aceb6febbe4ec4c423e90f513dfe048b1",
+    "runnerSourceCommit": "82f8874c391adf41e25c10efcf31ec1f851f8ae3",
+    "freezeCommit": "26c7a09ea4d9f9550a43453cb187368f4fab535a",
+    "nodeVersion": "v22.22.2",
+    "expectedRuntimeFingerprintSha256": "6a28a03c0b9ced1f419fa9ddb666e956cc33fb143b4d7f5a5b70616b11914849"
+  },
+  "preflight": {
+    "completedAt": "2026-08-03T12:07:22.114Z",
+    "nodeVersion": "v22.22.2",
+    "chrome": {
+      "product": "Chrome/150.0.7871.187",
+      "protocolVersion": "1.3"
+    },
+    "runtimeFingerprintSha256": "6a28a03c0b9ced1f419fa9ddb666e956cc33fb143b4d7f5a5b70616b11914849",
+    "provider": "local",
+    "targetAutomationNavigations": 0,
+    "physicalStops": 0,
+    "paidApiCalls": 0,
+    "gpuRuns": 0
+  },
+  "campaign": {
+    "nonce": "exp-0024-official-v0.1",
+    "command": "flock --exclusive --nonblock eval/generated/exp-0024-physical-stop-attempt-v0.1.lock node scripts/run-exp-0024-supervisor.mjs",
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0024",
+    "navigations": 2,
+    "stopsPerNavigation": 6,
+    "totalStops": 12,
+    "provider": "local",
+    "attemptDeadlineMs": 600000,
+    "configCanonicalSha256": "sha256:1739a3c57ca2f59d0940ff22c09c07dc19bfe22049348d9e857ad92276ef2bfb",
+    "openingPath": "eval/commitments/exp-0024-physical-stop-attempt-v0.1.json",
+    "receiptPath": "eval/generated/exp-0024/physical-stop-attempt-consumed-v0.1.json",
+    "journalPath": "eval/generated/exp-0024/physical-stop-journal-v0.1.ndjson",
+    "reportPath": "eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json",
+    "lockPath": "eval/generated/exp-0024-physical-stop-attempt-v0.1.lock",
+    "rerunAllowed": false
+  },
+  "gitTopology": {
+    "order": [
+      "C0_INSTRUMENT",
+      "FREEZE",
+      "OPENING",
+      "EVIDENCE"
+    ],
+    "freezeDirectParent": "C0_INSTRUMENT",
+    "freezeAllowedPaths": [
+      "eval/commitments/exp-0024-instrumentation-freeze-v0.1.json"
+    ],
+    "openingDirectParent": "FREEZE",
+    "openingAllowedPaths": [
+      "eval/commitments/exp-0024-physical-stop-attempt-v0.1.json"
+    ],
+    "evidenceDirectParent": "OPENING",
+    "normalEvidenceAllowedPaths": [
+      "eval/generated/exp-0024/physical-stop-attempt-consumed-v0.1.json",
+      "eval/generated/exp-0024/physical-stop-journal-v0.1.ndjson",
+      "eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json"
+    ],
+    "recoveryBeforeJournalAllowedPaths": [
+      "eval/generated/exp-0024/physical-stop-attempt-consumed-v0.1.json",
+      "eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json"
+    ]
+  },
+  "boundary": {
+    "physicalStopCampaignsBeforeOpening": 0,
+    "openingAbsentBeforeWrite": true,
+    "receiptAbsent": true,
+    "journalAbsent": true,
+    "reportAbsent": true,
+    "lockAbsent": true,
+    "rerunAllowed": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "physicalStopAttemptSha256": "sha256:caed773a889ab5e792d2eea56f99d8d57349e3536388409bdcae0b4a63099b6d"
+}
