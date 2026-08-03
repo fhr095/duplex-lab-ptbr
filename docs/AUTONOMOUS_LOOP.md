@@ -110,12 +110,16 @@ persistidos e a decisão é `INVALIDATE_STOP_ORDER_INSTRUMENT`, com físico
 `NOT_EVALUATED`. O [closeout](experiments/EXP-0020-closeout.md) separa essa
 invalidação dos probes exploratórios posteriores.
 
-O EXP-0021 aplica o próximo PDCA ao boundary que efetivamente falhou. Antes de
-qualquer novo STOP, quatro fetches TTS sem renderização precisam coincidir byte
-a byte entre browser e CDP em duas navegações. O retry lê somente o mesmo
-requestId, tem orçamento fechado e nunca converte corpo vazio em sucesso. Um
-passe libera apenas outro pré-registro físico; trocar ASR, TTS ou backbone
-continua fora.
+O EXP-0021 aplicou o próximo PDCA ao boundary que efetivamente falhou e
+recuperou de forma diagnóstica 4/4 WAVs idênticos entre browser e CDP. A
+tentativa, porém, foi invalidada: o instrumento congelado esperava um health
+por navegação, enquanto a página produz um no bootstrap e o auditor produz
+outro explicitamente. O EXP-0022 muda somente esse binding. Ele exige um único
+health já concluído antes da sonda e exatamente um novo health causado pela
+sonda, com requestIds distintos e ordem causal registrada. A campanha 2×2,
+payloads, TTS, buffers, retry e proibição de STOP permanecem iguais. Um passe
+libera apenas outro pré-registro físico; trocar ASR, TTS ou backbone continua
+fora.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
@@ -124,7 +128,7 @@ node --test tests/exp-0019-contract.test.mjs
 node --test tests/exp-0019-browser-runner.test.mjs
 node --test tests/exp-0019-analysis.test.mjs
 npm run eval:exp:0020:report:check
-node --test tests/exp-0021-*.test.mjs
+npm run eval:exp:0021:report:check
 npm run eval:index:check
 ```
 

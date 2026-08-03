@@ -377,6 +377,8 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0020 — equivalência observável da ordem do STOP no renderer](docs/experiments/EXP-0020-physical-stop-order.md)
 - [EXP-0020 — fechamento e invalidação do instrumento](docs/experiments/EXP-0020-closeout.md)
 - [EXP-0021 — qualificação fail-closed da captura TTS pelo CDP](docs/experiments/EXP-0021-cdp-capture-recovery.md)
+- [EXP-0021 — fechamento e invalidação por cardinalidade de health](docs/experiments/EXP-0021-closeout.md)
+- [EXP-0022 — binding causal de bootstrap + audit health](docs/experiments/EXP-0022-bootstrap-audit-health-binding.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -406,9 +408,12 @@ porque a ordem entre `speech.paused` e `render.stopped` variou entre controle,
 shadow e repetição; 7/9 gates passaram e nenhuma capacidade ganhou autoridade.
 O EXP-0020 abriu esse teste uma única vez, mas o primeiro corpo TTS retornou
 vazio pelo CDP. A tentativa foi consumida sem rerun e o físico ficou
-`NOT_EVALUATED`. O EXP-0021 agora qualifica o coletor em quatro respostas sem
-STOP, comparando os bytes observados no browser e no CDP. Só um passe permite
-pré-registrar outra medição física; ASR continua fora.
+`NOT_EVALUATED`. O EXP-0021 recuperou 4/4 respostas TTS com bytes idênticos no
+browser e no CDP, mas foi invalidado porque seu contrato esperava um health por
+navegação e a página mais o auditor produziram dois. O EXP-0022 mantém a mesma
+campanha sem STOP e muda somente a separação causal entre o health de bootstrap
+e o health explícito. Só um passe permite pré-registrar outra medição física;
+ASR continua fora.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

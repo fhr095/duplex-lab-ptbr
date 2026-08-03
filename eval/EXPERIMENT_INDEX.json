@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T04:07:03-03:00",
+  "updatedAt": "2026-08-03T05:49:33-03:00",
   "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
@@ -19,15 +19,15 @@
     "id": "runtime-baseline-ptbr-v0.3",
     "manifest": "eval/baselines/runtime-baseline-v0.3.json"
   },
-  "currentCriticalPath": "EXP-0021",
+  "currentCriticalPath": "EXP-0022",
   "currentParallelProbe": {
-    "id": "EXP-0021-R",
-    "parent": "EXP-0021",
-    "preRegistration": "docs/experiments/EXP-0021-cdp-capture-recovery.md",
+    "id": "EXP-0022-R",
+    "parent": "EXP-0022",
+    "preRegistration": "docs/experiments/EXP-0022-bootstrap-audit-health-binding.md",
     "status": "deferred",
     "blocking": false,
     "authority": "none",
-    "decision": "Trilha sem execução: challengers permanecem somente no ledger enquanto o EXP-0021 qualifica a captura TTS; nenhum backbone será aberto."
+    "decision": "Trilha sem execução: challengers permanecem somente no ledger enquanto o EXP-0022 qualifica o binding causal dos dois healths; nenhum backbone será aberto."
   },
   "entries": [
     {
@@ -291,15 +291,38 @@
     },
     {
       "id": "EXP-0021",
+      "status": "invalidated",
+      "decision": "INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION",
+      "canonicalReport": "eval/reports/exp-0021-cdp-capture-qualification-v0.1.json",
+      "evidenceCommit": "5c3d810c065d28b2d8c5f56f5ade4e9e284cc84f",
+      "authority": "none",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0021-boundary.test.mjs",
+        "node --test tests/exp-0021-worker.test.mjs",
+        "node --test tests/exp-0021-cdp-capture.test.mjs",
+        "node --test tests/exp-0021-supervisor.test.mjs",
+        "node --test tests/exp-0021-analysis.test.mjs",
+        "node --test tests/experiment-index.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0021:report:check",
+        "npm run eval:index:check"
+      ],
+      "supersedes": [],
+      "nextDecision": "Pré-registrar um instrumento que separe causalmente um health de bootstrap e um health explícito de auditoria por navegação, sem STOP nem rerun do EXP-0021."
+    },
+    {
+      "id": "EXP-0022",
       "status": "active",
-      "decision": "pending-cdp-capture-qualification",
+      "decision": "pending-bootstrap-audit-health-binding-qualification",
       "canonicalReport": null,
       "authority": "none",
       "criticalPath": true,
       "cleanCloneChecks": [],
       "localReproductionCommands": [],
       "supersedes": [],
-      "nextDecision": "Qualificar a captura TTS com buffers explícitos e retry fail-closed; somente um passe sob o contrato novo pode autorizar outra campanha física."
+      "nextDecision": "Implementar e congelar a distinção entre um health de bootstrap e um health explícito de auditoria por navegação; somente um passe pode autorizar o pré-registro futuro de STOP."
     }
   ]
 }

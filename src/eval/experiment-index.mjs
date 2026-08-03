@@ -97,6 +97,8 @@ export const EXP0019_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0019-causal-audio-v0.1.json";
 export const EXP0020_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0020-stop-order-v0.1.json";
+export const EXP0021_CANONICAL_REPORT_PATH =
+  "eval/reports/exp-0021-cdp-capture-qualification-v0.1.json";
 
 export function validateExp0018HistoricalOutcome(entry, index, decision) {
   const outcome = EXP0018_CANONICAL_OUTCOMES[decision];
@@ -269,6 +271,55 @@ const CANONICAL_REPORT_CONTRACTS = Object.freeze({
       ["contract.gpuRuns", 0],
       ["contract.canProduceNewEffects", false],
       ["campaign.authority.canProduceNewEffects", false]
+    ]
+  },
+  "EXP-0021": {
+    status: "invalidated",
+    authority: "none",
+    decisionPath: "decision",
+    assertions: [
+      ["schemaVersion", "exp-0021-cdp-tts-capture-qualification-report-v1"],
+      ["measurementStatus", "EVALUATED"],
+      ["analysis.measurementStatus", "EVALUATED"],
+      ["analysis.decision", "INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION"],
+      ["pass", false],
+      ["instrumentValid", false],
+      ["authorityEligible", false],
+      ["claim", null],
+      ["campaign.boundary.freezeVerified", true],
+      ["campaign.boundary.attemptVerified", true],
+      ["campaign.boundary.receiptVerified", true],
+      ["campaign.boundary.receiptWriteOnce", true],
+      ["campaign.boundary.receiptBeforeNetwork", true],
+      ["campaign.boundary.rerunAllowed", false],
+      ["campaign.audits.rerunRefused", true],
+      ["campaign.workerEnvelope.status", "completed"],
+      ["campaign.workerEnvelope.failure", null],
+      ["campaign.workerEnvelope.campaign.navigations.length", 2],
+      ["analysis.units.length", 4],
+      ["analysis.metrics.navigationCount", 2],
+      ["analysis.metrics.unitCount", 4],
+      ["analysis.metrics.successfulCaptures", 4],
+      ["analysis.structural.navigationAuditValid", false],
+      ["analysis.gates.cdpChainAndResponse", true],
+      ["analysis.gates.browserCdpByteIdentity", true],
+      ["analysis.gates.boundedFailClosedCapture", true],
+      ["analysis.gates.diagnosticsNetworkAndBindings", false],
+      ["analysis.nextMove.physicalStopPreregistrationAllowed", false],
+      ["analysis.nextMove.physicalStopExecutionAllowed", false],
+      ["analysis.nextMove.sameExperimentRerunAllowed", false],
+      ["contract.negativeBudget.lifecycle.bargeIn", 0],
+      ["contract.negativeBudget.lifecycle.stop", 0],
+      ["contract.negativeBudget.lifecycle.transitions", 0],
+      ["contract.negativeBudget.trainingTrace.decisions", 0],
+      ["contract.negativeBudget.trainingTrace.effects", 0],
+      ["contract.negativeBudget.externalRequests", 0],
+      ["contract.negativeBudget.gpuRuns", 0],
+      ["contract.negativeBudget.challengerRuns", 0],
+      ["contract.negativeBudget.backboneRuns", 0],
+      ["contract.negativeBudget.canProduceNewEffects", false],
+      ["analysis.metrics.usageDelta.paidApiCalls", 0],
+      ["analysis.metrics.usageDelta.externalLlmUsed", false]
     ]
   }
 });
@@ -450,6 +501,12 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0020 canonicalReport precisa usar o output canônico");
     assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
       "EXP-0020 terminal exige evidenceCommit");
+  }
+  if (entry.id === "EXP-0021") {
+    assert(entry.canonicalReport === EXP0021_CANONICAL_REPORT_PATH,
+      "EXP-0021 canonicalReport precisa usar o output canônico");
+    assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
+      "EXP-0021 terminal exige evidenceCommit");
   }
 
   const path = resolveRepositoryPath(
@@ -856,6 +913,49 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0020 canonical report"
     );
   }
+  if (entry.id === "EXP-0021") {
+    const navigations = report.campaign?.workerEnvelope?.campaign?.navigations;
+    assert(
+      Array.isArray(navigations) && navigations.length === 2 &&
+        navigations.every((navigation) =>
+          Array.isArray(navigation.networkRequests) &&
+          navigation.networkRequests.filter((request) =>
+            request.method === "GET" &&
+            request.url === "http://localhost:4173/api/health"
+          ).length === 2
+        ),
+      "EXP-0021 precisa preservar dois health GETs observados por navegação"
+    );
+    assert(
+      Array.isArray(report.analysis?.units) &&
+        report.analysis.units.length === 4 &&
+        report.analysis.units.every((unit) =>
+          unit.captureQualified === true && unit.byteIdentity === true
+        ),
+      "EXP-0021 precisa preservar as quatro capturas avaliadas"
+    );
+    const core = structuredClone(report);
+    delete core.reportSha256;
+    assert(
+      report.reportSha256 === `sha256:${canonicalSha256(core)}`,
+      "EXP-0021 reportSha256 diverge do conteúdo canônico"
+    );
+    const headCommit = (await git(projectRoot, "rev-parse", "HEAD"))
+      .toString("utf8").trim();
+    await assertGitAncestor(
+      projectRoot,
+      entry.evidenceCommit,
+      headCommit,
+      "EXP-0021 evidenceCommit→HEAD"
+    );
+    await assertGitFileMatches(
+      projectRoot,
+      entry.evidenceCommit,
+      EXP0021_CANONICAL_REPORT_PATH,
+      await readFile(path),
+      "EXP-0021 canonical report"
+    );
+  }
 }
 
 function validateEntryShape(entry, index) {
@@ -935,6 +1035,13 @@ function validateEntryShape(entry, index) {
       entry.evidenceCommit === null ||
         /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),
       "EXP-0020.evidenceCommit precisa ser null ou commit completo"
+    );
+  }
+  if (entry.id === "EXP-0021") {
+    assert(
+      entry.evidenceCommit === null ||
+        /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),
+      "EXP-0021.evidenceCommit precisa ser null ou commit completo"
     );
   }
 }

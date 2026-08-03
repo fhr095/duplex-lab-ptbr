@@ -32,11 +32,16 @@ histórico, esta carteira prevalece.
   preservados, mas o primeiro `Network.getResponseBody` devolveu corpo vazio.
   Nenhuma navegação ou trial foi persistido; a avaliação física é
   `NOT_EVALUATED`, sem rerun e sem alteração do corte anterior.
-- **Agora — EXP-0021, qualificação da captura CDP:** medir primeiro quatro
-  respostas TTS sem STOP, em duas navegações, comparando SHA-256 calculado no
-  browser e no CDP. Buffers explícitos e retry limitado nunca podem refazer o
-  fetch ou aceitar corpo vazio. Só um passe autoriza pré-registrar outro
-  experimento físico; executá-lo exige freeze e abertura próprios.
+- **Concluído/invalidado — EXP-0021:** 4/4 WAVs foram recuperados na primeira
+  leitura, com bytes e SHA-256 idênticos entre browser e CDP, estabilidade A/B
+  e todos os gates de captura verdadeiros. O instrumento, porém, exigia um
+  health por navegação e observou corretamente dois — bootstrap + auditoria.
+  A tentativa foi consumida, o claim permaneceu nulo e não há qualificação.
+- **Agora — EXP-0022, binding bootstrap + audit health:** repetir a mesma
+  campanha TTS 2×2 sem STOP, distinguindo causalmente exatamente um health de
+  bootstrap já concluído e um novo health produzido pela sonda explícita. Não
+  basta aceitar dois requests quaisquer. Só um passe autoriza pré-registrar
+  outro experimento físico; executá-lo ainda exigirá freeze e abertura próprios.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -48,8 +53,11 @@ O fechamento anterior, o contrato congelado e o resultado corrente estão no
 [pré-registro do EXP-0019](experiments/EXP-0019-causal-audio-context-bridge.md)
 e em seu [closeout](experiments/EXP-0019-closeout.md). A tentativa física e sua
 invalidação estão no [EXP-0020](experiments/EXP-0020-physical-stop-order.md) e
-no [closeout](experiments/EXP-0020-closeout.md). O caminho corrente está no
-[pré-registro do EXP-0021](experiments/EXP-0021-cdp-capture-recovery.md).
+no [closeout](experiments/EXP-0020-closeout.md). A qualificação invalidada está
+no [pré-registro](experiments/EXP-0021-cdp-capture-recovery.md) e no
+[closeout do EXP-0021](experiments/EXP-0021-closeout.md). O caminho corrente
+está no
+[pré-registro do EXP-0022](experiments/EXP-0022-bootstrap-audit-health-binding.md).
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar outra prioridade, e o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
@@ -440,11 +448,13 @@ card de dados e splits por família, gerador e pessoa.
 | 15 | EXP-0018: contexto observável com conteúdo pareado — **`PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN`** | 31/32 em `B1` versus 16/32 em `B0`; 16/16 dirigidas, 15/16 fundos; 15 vitórias líquidas; ganho em 8/8 blocos e 4/4 famílias; 12/12 gates | uma abertura e uma tentativa; screen textual sintético sem holdout, áudio, ASR ou autoridade; claim limitado ao matcher relacional |
 | 16 | EXP-0019: bridge causal em áudio — **`CUT_CAUSAL_AUDIO_BRIDGE`** | 8 cenas/4 pares/12 streams; 48 probes sem inferência; 16/16 paridade Node/Chrome; proposta p95 8,7 ms; STOP p95 56,573 ms; 7/9 gates | ordem `speech.paused`/`render.stopped` variou; trace e lifecycle on/off não determinísticos; zero autoridade/API/GPU; ASR não autorizado |
 | 17 | EXP-0020: equivalência observável da ordem no renderer — **`INVALIDATE_STOP_ORDER_INSTRUMENT`** | freeze + abertura isolados; tentativa única consumida; primeiro payload TTS vazio no CDP; zero trials persistidos | físico `NOT_EVALUATED`; seis gates vacuamente true explicitados; sem rerun, API, GPU ou autoridade |
-| 18 | EXP-0021: qualificação fail-closed da captura TTS — **ativo; instrumento implementado e testado sem Chrome, aguardando freeze** | 2 navegações × 2 fetches sem STOP; A/B balanceado; digest browser=CDP; buffers explícitos + até 4 leituras do mesmo requestId | qualifica apenas o boundary de coleta; um passe autoriza novo pré-registro físico, não promove runtime |
+| 18 | EXP-0021: qualificação fail-closed da captura TTS — **`INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION`** | 4/4 WAVs na primeira leitura; browser=CDP; A1=A2, B1=B2 e A≠B; 9/10 gates | contrato esperava um health por navegação, mas bootstrap + auditor produziram dois; tentativa consumida, fatos apenas diagnósticos, zero autoridade |
+| 19 | EXP-0022: binding bootstrap + audit health — **pré-registrado; instrumento ainda não implementado** | mesma campanha 2×2 sem STOP; um health anterior à sonda + exatamente um novo health causado por ela | repara só cardinalidade e ordem causal; um passe autoriza novo pré-registro físico, não promove runtime |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
-de produzir evidência física. O EXP-0021 é a frente crítica e qualifica somente
-esse limite Chrome/CDP antes de outra campanha de STOP. Modelos completos
+de produzir evidência física. O EXP-0021 também está terminal: suas 4/4
+capturas são diagnósticas, não uma qualificação. O EXP-0022 é a frente crítica
+e corrige somente o vínculo causal dos dois healths antes de outra campanha de STOP. Modelos completos
 continuam no ledger como `watch` ou `defer`; pesquisa externa não autoriza
 download, adaptação ou GPU.
 

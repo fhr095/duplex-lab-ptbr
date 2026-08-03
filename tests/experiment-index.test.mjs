@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import {
   EXP0018_CANONICAL_OUTCOMES,
   EXP0020_CANONICAL_REPORT_PATH,
+  EXP0021_CANONICAL_REPORT_PATH,
   readExperimentIndex,
   validateExp0018HistoricalOutcome,
   validateExperimentIndex
@@ -64,7 +65,7 @@ test("outcome histórico EXP-0018 sobrevive ao próximo caminho crítico", () =>
     }
   };
   assert.doesNotThrow(() => validateExp0018HistoricalOutcome(entry, {
-    currentCriticalPath: "EXP-0021",
+    currentCriticalPath: "EXP-0022",
     currentParallelProbe: {
       status: "planned",
       decision: "probe novo e independente"
@@ -74,7 +75,7 @@ test("outcome histórico EXP-0018 sobrevive ao próximo caminho crítico", () =>
     ...entry,
     parallelProbeOutcome: { ...entry.parallelProbeOutcome, status: "cut" }
   }, {
-    currentCriticalPath: "EXP-0021",
+    currentCriticalPath: "EXP-0022",
     currentParallelProbe: { status: "planned", decision: "novo" }
   }, "PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN"), /histórico contradiz/u);
 });
@@ -88,20 +89,41 @@ async function fixture() {
 
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
-  assert.equal(index.currentCriticalPath, "EXP-0021");
+  assert.equal(index.currentCriticalPath, "EXP-0022");
   assert.equal(index.transitionState, "active");
-  assert.equal(index.currentParallelProbe.id, "EXP-0021-R");
+  assert.equal(index.currentParallelProbe.id, "EXP-0022-R");
   assert.equal(index.currentParallelProbe.status, "deferred");
   assert.equal(index.currentParallelProbe.blocking, false);
   assert.equal(
     index.currentParallelProbe.preRegistration,
-    "docs/experiments/EXP-0021-cdp-capture-recovery.md"
+    "docs/experiments/EXP-0022-bootstrap-audit-health-binding.md"
   );
-  assert.equal(index.entries.at(-1).id, "EXP-0021");
+  assert.equal(index.entries.at(-1).id, "EXP-0022");
   assert.equal(index.entries.at(-1).status, "active");
   assert.equal(index.entries.at(-1).canonicalReport, null);
   assert.equal(index.entries.at(-1).authority, "none");
   assert.equal(index.entries.at(-1).criticalPath, true);
+  const exp0021 = index.entries.find(({ id }) => id === "EXP-0021");
+  assert.equal(exp0021.status, "invalidated");
+  assert.equal(
+    exp0021.decision,
+    "INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION"
+  );
+  assert.equal(exp0021.canonicalReport, EXP0021_CANONICAL_REPORT_PATH);
+  assert.equal(
+    exp0021.evidenceCommit,
+    "5c3d810c065d28b2d8c5f56f5ade4e9e284cc84f"
+  );
+  assert.equal(exp0021.authority, "none");
+  assert.equal(exp0021.criticalPath, false);
+  assert.deepEqual(exp0021.cleanCloneChecks, [
+    "node --test tests/exp-0021-boundary.test.mjs",
+    "node --test tests/exp-0021-worker.test.mjs",
+    "node --test tests/exp-0021-cdp-capture.test.mjs",
+    "node --test tests/exp-0021-supervisor.test.mjs",
+    "node --test tests/exp-0021-analysis.test.mjs",
+    "node --test tests/experiment-index.test.mjs"
+  ]);
   const exp0020 = index.entries.find(({ id }) => id === "EXP-0020");
   assert.equal(exp0020.status, "invalidated");
   assert.equal(exp0020.decision, "INVALIDATE_STOP_ORDER_INSTRUMENT");
@@ -201,6 +223,40 @@ test("EXP-0020 preserva invalidação sem inventar avaliação física", async (
   await assert.rejects(
     validateExperimentIndex(preEvidenceCommit, { projectRoot }),
     /EXP-0020 canonical report não existia no commit declarado/u
+  );
+});
+
+test("EXP-0021 preserva captura avaliada sem apagar invalidação", async () => {
+  const changedStatus = await fixture();
+  changedStatus.entries.find(({ id }) => id === "EXP-0021").status =
+    "completed";
+  await assert.rejects(
+    validateExperimentIndex(changedStatus, { projectRoot }),
+    /EXP-0021.status contradicts its canonical report contract/u
+  );
+
+  const inventedDecision = await fixture();
+  inventedDecision.entries.find(({ id }) => id === "EXP-0021").decision =
+    "PASS_CDP_TTS_CAPTURE_QUALIFICATION";
+  await assert.rejects(
+    validateExperimentIndex(inventedDecision, { projectRoot }),
+    /EXP-0021.decision contradicts its canonical report/u
+  );
+
+  const inventedAuthority = await fixture();
+  inventedAuthority.entries.find(({ id }) => id === "EXP-0021").authority =
+    "shadow-only";
+  await assert.rejects(
+    validateExperimentIndex(inventedAuthority, { projectRoot }),
+    /EXP-0021.authority contradicts its canonical report contract/u
+  );
+
+  const preEvidenceCommit = await fixture();
+  preEvidenceCommit.entries.find(({ id }) => id === "EXP-0021")
+    .evidenceCommit = "b334f4d1de3b2b0092b567d69ff5abdc15fa7215";
+  await assert.rejects(
+    validateExperimentIndex(preEvidenceCommit, { projectRoot }),
+    /EXP-0021 canonical report não existia no commit declarado/u
   );
 });
 

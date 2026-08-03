@@ -3,7 +3,7 @@
 Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
-invalidação instrumental do EXP-0020 e implementação pré-freeze do EXP-0021**
+invalidações instrumentais dos EXP-0020/0021 e pré-registro mínimo do EXP-0022**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -12,9 +12,11 @@ permanece imutável no
 O [EXP-0020](experiments/EXP-0020-physical-stop-order.md) isolou a corrida
 física, mas sua única tentativa foi
 [invalidada pelo coletor CDP](experiments/EXP-0020-closeout.md), sem resultado
-físico. O [EXP-0021](experiments/EXP-0021-cdp-capture-recovery.md) qualifica
-esse boundary antes de outra medição, sem alterar o runtime que produziu a
-corrida.
+físico. O [EXP-0021](experiments/EXP-0021-closeout.md) recuperou 4/4 respostas
+TTS de forma diagnóstica, mas foi invalidado porque seu contrato confundiu o
+health de bootstrap com o health explícito do auditor. O
+[EXP-0022](experiments/EXP-0022-bootstrap-audit-health-binding.md) repara apenas
+essa separação causal antes de qualquer nova medição de STOP.
 
 ## Tese
 
@@ -394,13 +396,16 @@ Esta referência preserva apenas a lógica macro:
 9. preservar o corte do EXP-0019: o bridge causal foi exato e rápido, mas a
    ordem física `speech.paused`/`render.stopped` não foi determinística;
 10. preservar a invalidação do EXP-0020: corpo TTS vazio no CDP consumiu a
-    tentativa e não permite conclusão física; qualificar o coletor no EXP-0021
-    antes de abrir outro número para STOP;
-11. conceder autoridade somente se houver ganho percebido sem regressão dos
+    tentativa e não permite conclusão física;
+11. preservar a invalidação do EXP-0021: 4/4 capturas browser=CDP são apenas
+    diagnósticas porque o instrumento esperava um health por navegação e a
+    sequência real tem um health de bootstrap mais um explícito; testar no
+    EXP-0022 somente a separação causal desses dois requests, sem STOP;
+12. conceder autoridade somente se houver ganho percebido sem regressão dos
     guardrails;
-12. manter backbones nativos no ledger até existir um teto local que justifique
+13. manter backbones nativos no ledger até existir um teto local que justifique
     custo e integração;
-13. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+14. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
     observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo
