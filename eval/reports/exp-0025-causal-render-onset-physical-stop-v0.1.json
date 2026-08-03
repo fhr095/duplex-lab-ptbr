@@ -1,0 +1,326 @@
+{
+  "schemaVersion": "exp-0025-causal-render-onset-physical-stop-report-v1",
+  "experimentId": "EXP-0025",
+  "startedAt": "2026-08-03T15:31:46.710Z",
+  "completedAt": "2026-08-03T15:32:51.265Z",
+  "contract": {
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0025",
+    "navigations": 2,
+    "stopsPerNavigation": 6,
+    "totalStops": 12,
+    "phrase": "Esta fala contínua mede uma única parada física do assistente.",
+    "ttsRate": 1,
+    "expectedWavSha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b",
+    "expectedWavByteLength": 237232,
+    "triggerAfterRenderActiveMs": 320,
+    "triggerTimerErrorMaxMs": 10,
+    "postStopObservationMs": 250,
+    "renderStopLimitMs": 250,
+    "classMinimumCount": 2,
+    "classLatencyEquivalenceMarginMs": 16.7,
+    "responseBodyRetryDelaysMs": [
+      0,
+      8,
+      24,
+      64
+    ],
+    "networkEnable": {
+      "maxTotalBufferSize": 16777216,
+      "maxResourceBufferSize": 2097152,
+      "maxPostDataSize": 65536,
+      "enableDurableMessages": false
+    },
+    "browserCdpByteIdentity": "NOT_EVALUATED",
+    "nodeVersion": "v22.22.2",
+    "chrome": {
+      "product": "Chrome/150.0.7871.187",
+      "protocolVersion": "1.3"
+    },
+    "provider": "local",
+    "asrState": "disabled",
+    "vadControlEngine": "adaptive-energy-vad",
+    "vadShadowState": "disabled",
+    "ttsEngine": "windows-system-speech",
+    "attemptDeadlineMs": 600000,
+    "paidApiCalls": 0,
+    "gpuRuns": 0,
+    "canProduceNewEffects": false,
+    "sameExperimentRerunAllowed": false
+  },
+  "paths": {
+    "preregistration": "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md",
+    "exp0019Report": "eval/reports/exp-0019-causal-audio-v0.1.json",
+    "exp0019Closeout": "docs/experiments/EXP-0019-closeout.md",
+    "exp0023Report": "eval/reports/exp-0023-cdp-ordinal-timestamp-semantics-v0.1.json",
+    "exp0023Closeout": "docs/experiments/EXP-0023-closeout.md",
+    "exp0024Report": "eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json",
+    "exp0024Closeout": "docs/experiments/EXP-0024-closeout.md",
+    "freeze": "eval/commitments/exp-0025-instrumentation-freeze-v0.1.json",
+    "opening": "eval/commitments/exp-0025-causal-render-onset-attempt-v0.1.json",
+    "receipt": "eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json",
+    "journal": "eval/generated/exp-0025/causal-render-onset-journal-v0.1.ndjson",
+    "report": "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json",
+    "lock": "eval/generated/exp-0025-causal-render-onset-attempt-v0.1.lock"
+  },
+  "campaign": {
+    "boundary": {
+      "executionState": "FRESH",
+      "expectedRuntimeFingerprintSha256": "45a77736ad233a87cb7d039dfd6c72b553b82055dac9722fbfb15dc39022f49a",
+      "failureCode": null,
+      "freezePath": "eval/commitments/exp-0025-instrumentation-freeze-v0.1.json",
+      "freezeVerified": true,
+      "gitTopologyVerified": true,
+      "journalAppendOnly": true,
+      "journalByteLength": 2415,
+      "journalFsyncBeforeAck": true,
+      "journalPath": "eval/generated/exp-0025/causal-render-onset-journal-v0.1.ndjson",
+      "journalSha256": "sha256:b8ee701d66bd3eae751227241517b972d41b81045928a78be0261511e92fc314",
+      "journalVerified": true,
+      "openingPath": "eval/commitments/exp-0025-causal-render-onset-attempt-v0.1.json",
+      "openingVerified": true,
+      "receiptConsumedAt": "2026-08-03T15:31:46.710Z",
+      "receiptPath": "eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json",
+      "receiptVerified": true,
+      "receiptWriteOnce": true,
+      "recoveryOnly": false,
+      "rerunAllowed": false,
+      "runtimeBindingsVerified": true,
+      "sourceBindingsVerified": true,
+      "workerStartedAt": "2026-08-03T15:31:46.729Z"
+    },
+    "journal": {
+      "status": "VALID",
+      "valid": true,
+      "sha256": "sha256:b8ee701d66bd3eae751227241517b972d41b81045928a78be0261511e92fc314",
+      "byteLength": 2415,
+      "tailSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tailByteLength": 0,
+      "completeFrameCount": 6,
+      "nextOrdinal": 7,
+      "frames": [
+        {
+          "nonce": "exp-0025-official-v0.1",
+          "ordinal": 1,
+          "payload": {
+            "deadlineMs": 600000,
+            "opening": {
+              "canonicalSha256": "sha256:21da1e5e719b920a6065f9093d148f7e46045165e829f0f709a424f51dc5df9b",
+              "commit": "ee549a4a114680db52c09350487159bf14454db4",
+              "fileSha256": "sha256:dde48922992b0b4243b23bb1057640672754cb2d5bc7642c3bfdeb0401b4d460",
+              "path": "eval/commitments/exp-0025-causal-render-onset-attempt-v0.1.json"
+            },
+            "pid": 2610679,
+            "startedAt": "2026-08-03T15:31:46.710Z"
+          },
+          "schemaVersion": "exp-0025-journal-frame-v1",
+          "type": "IN_PROGRESS"
+        },
+        {
+          "nonce": "exp-0025-official-v0.1",
+          "ordinal": 2,
+          "payload": {
+            "command": "node scripts/run-exp-0025-worker.mjs",
+            "pid": 2610898,
+            "startedAt": "2026-08-03T15:31:46.729Z"
+          },
+          "schemaVersion": "exp-0025-journal-frame-v1",
+          "type": "WORKER_STARTED"
+        },
+        {
+          "nonce": "exp-0025-official-v0.1",
+          "ordinal": 3,
+          "payload": {
+            "browser": {
+              "cdpBinding": {
+                "endpoint": "http://172.24.240.1:9223/",
+                "hostPolicy": "wsl-default-gateway",
+                "initialTarget": "about:blank",
+                "targetId": "3D9DAAB65CC198D36DEE56E28C5FD5BA",
+                "webSocketPath": "/devtools/page/3D9DAAB65CC198D36DEE56E28C5FD5BA"
+              },
+              "jsVersion": "15.0.245.21",
+              "product": "Chrome/150.0.7871.187",
+              "protocolVersion": "1.3",
+              "revision": "@30f6543ae91e6a860e73b76e3216b663b050f4e5",
+              "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36"
+            },
+            "observedAt": "2026-08-03T15:31:50.899Z"
+          },
+          "schemaVersion": "exp-0025-journal-frame-v1",
+          "type": "BROWSER_BOUND"
+        },
+        {
+          "nonce": "exp-0025-official-v0.1",
+          "ordinal": 4,
+          "payload": {
+            "navigationIndex": 1,
+            "startedAt": "2026-08-03T15:31:50.906Z",
+            "targetUrl": "http://localhost:4173/?automation=1&experiment=0025"
+          },
+          "schemaVersion": "exp-0025-journal-frame-v1",
+          "type": "NAVIGATION_STARTED"
+        },
+        {
+          "nonce": "exp-0025-official-v0.1",
+          "ordinal": 5,
+          "payload": {
+            "category": "structural",
+            "code": "WORKER_UNCAUGHT",
+            "message": "condição CDP não satisfeita",
+            "navigationIndex": null,
+            "observedAt": "2026-08-03T15:32:51.250Z",
+            "trialId": null
+          },
+          "schemaVersion": "exp-0025-journal-frame-v1",
+          "type": "DIAGNOSTIC"
+        },
+        {
+          "nonce": "exp-0025-official-v0.1",
+          "ordinal": 6,
+          "payload": {
+            "code": "WORKER_EXIT_FAILURE",
+            "completedAt": "2026-08-03T15:32:51.265Z",
+            "exitCode": 1,
+            "outcome": {
+              "kind": "worker-failure",
+              "protocolError": null,
+              "recordCount": 3,
+              "stderrByteLength": 35,
+              "stderrSha256": "sha256:3d21a6b298409135b9094486ab88929b133dbaca866a4550edcd40e1f60777ec",
+              "stderrTruncated": false
+            },
+            "signal": null,
+            "status": "failed"
+          },
+          "schemaVersion": "exp-0025-journal-frame-v1",
+          "type": "WORKER_OUTCOME"
+        }
+      ],
+      "errors": []
+    }
+  },
+  "analysis": {
+    "physicalMeasurementStatus": "NOT_EVALUATED",
+    "browserCdpByteIdentityStatus": "NOT_EVALUATED",
+    "trials": [],
+    "metrics": {
+      "renderOnset": {
+        "resultCount": 0,
+        "collectedCount": 0,
+        "instrumentFailureCount": 0,
+        "activeMarkerCount": {
+          "count": 0,
+          "minimum": null,
+          "median": null,
+          "p95": null,
+          "maximum": null
+        },
+        "multiplicityTrialCount": 0,
+        "failures": []
+      },
+      "classes": null,
+      "aggregate": null,
+      "classMedianDeltaMs": null,
+      "classP95DeltaMs": null,
+      "usageDelta": null,
+      "network": {
+        "requestCount": 0,
+        "ttsRequestCount": 0,
+        "healthRequestCount": 0,
+        "recordedEventOrdinals": 0,
+        "responseAfterTerminalCount": 0
+      }
+    },
+    "provenanceDiagnostics": {
+      "health": "NOT_COLLECTED",
+      "networkLedger": "NOT_COLLECTED",
+      "wavCapture": "NOT_COLLECTED",
+      "runtimeBudget": "NOT_COLLECTED",
+      "workerOutcome": "FAIL",
+      "diagnosticCount": 1
+    },
+    "structural": {
+      "outerShapeValid": true,
+      "journalInspectionValid": true,
+      "journalSequenceValid": false,
+      "reconstructedTrialCount": 0,
+      "collectedTrialCount": 0,
+      "instrumentFailureCount": 0,
+      "diagnosticCount": 1
+    },
+    "gates": {
+      "boundaryReconstructed": true,
+      "journalReconstructible": false,
+      "campaignCardinality": false,
+      "environmentStable": true,
+      "typedTrialResults": false,
+      "causalRenderOnset": false,
+      "traceStructural": false,
+      "networkLedgerValid": null,
+      "trialRequestBijection": null,
+      "captureQualified": null,
+      "diagnosticsLocalBudget": null,
+      "renderOnsetDeltaExercised": false,
+      "browserCdpByteIdentity": null,
+      "singleLifecycleAndEffect": null,
+      "pauseReceiptBeforeMarkers": null,
+      "terminalStopStable": null,
+      "terminalProjectionEquivalent": null,
+      "orderDiversity": null,
+      "classTemporalEquivalence": null
+    },
+    "instrumentValid": false,
+    "decision": "CUT_RENDER_STOP_INSTRUMENT_LINEAGE",
+    "pass": false,
+    "authorityEligible": false,
+    "sameExperimentRerunAllowed": false,
+    "nextMove": {
+      "action": "CUT_RENDER_STOP_INSTRUMENT_LINEAGE",
+      "authorityEligible": false,
+      "sameExperimentRerunAllowed": false
+    }
+  },
+  "physicalMeasurementStatus": "NOT_EVALUATED",
+  "browserCdpByteIdentityStatus": "NOT_EVALUATED",
+  "browserCdpByteIdentity": null,
+  "gates": {
+    "boundaryReconstructed": true,
+    "journalReconstructible": false,
+    "campaignCardinality": false,
+    "environmentStable": true,
+    "typedTrialResults": false,
+    "causalRenderOnset": false,
+    "traceStructural": false,
+    "networkLedgerValid": null,
+    "trialRequestBijection": null,
+    "captureQualified": null,
+    "diagnosticsLocalBudget": null,
+    "renderOnsetDeltaExercised": false,
+    "browserCdpByteIdentity": null,
+    "singleLifecycleAndEffect": null,
+    "pauseReceiptBeforeMarkers": null,
+    "terminalStopStable": null,
+    "terminalProjectionEquivalent": null,
+    "orderDiversity": null,
+    "classTemporalEquivalence": null
+  },
+  "decision": "CUT_RENDER_STOP_INSTRUMENT_LINEAGE",
+  "pass": false,
+  "instrumentValid": false,
+  "authorityEligible": false,
+  "sameExperimentRerunAllowed": false,
+  "evidenceAcceptance": "PENDING_POST_COMMIT_CHECK",
+  "nextMove": {
+    "action": "CUT_RENDER_STOP_INSTRUMENT_LINEAGE",
+    "authorityEligible": false,
+    "sameExperimentRerunAllowed": false
+  },
+  "claim": null,
+  "limitations": [
+    "não mede alto-falante, sala ou percepção humana",
+    "não mede microfone, ASR, fala espontânea ou outros schedulers",
+    "browserCdpByteIdentity não foi reavaliado neste experimento",
+    "player-received é telemetria de software, não sensor físico independente"
+  ],
+  "reportSha256": "sha256:821e4550a13309c2b531a1d713b5c807aa4e4aac5c2bd11b46c06ae526bf3c3e"
+}

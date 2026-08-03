@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "exp-0025-causal-render-onset-attempt-consumption-v1",
+  "experimentId": "EXP-0025",
+  "nonce": "exp-0025-official-v0.1",
+  "consumedAt": "2026-08-03T15:31:46.710Z",
+  "deadlineMs": 600000,
+  "supervisorPid": 2610679,
+  "workerCommand": "node scripts/run-exp-0025-worker.mjs",
+  "opening": {
+    "path": "eval/commitments/exp-0025-causal-render-onset-attempt-v0.1.json",
+    "fileSha256": "sha256:dde48922992b0b4243b23bb1057640672754cb2d5bc7642c3bfdeb0401b4d460",
+    "canonicalSha256": "sha256:21da1e5e719b920a6065f9093d148f7e46045165e829f0f709a424f51dc5df9b",
+    "commit": "ee549a4a114680db52c09350487159bf14454db4"
+  },
+  "rerunAllowed": false,
+  "receiptSha256": "sha256:5e26287d710a23b9efe5d7c85e8e7d057f114e2fcac5c728b75bb598972c2221"
+}
