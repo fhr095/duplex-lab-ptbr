@@ -41,6 +41,8 @@ const pageParameters = new URLSearchParams(window.location.search);
 const automationEnabled =
   pageParameters.get("automation") === "1" &&
   ["localhost", "127.0.0.1"].includes(window.location.hostname);
+const contextRelevanceExperimentEnabled =
+  automationEnabled && pageParameters.get("experiment") === "0019";
 const localAudioReflexMode =
   pageParameters.get("audioReflex") === LOCAL_AUDIO_REFLEX_MODES.IMMEDIATE
     ? LOCAL_AUDIO_REFLEX_MODES.IMMEDIATE
@@ -275,6 +277,43 @@ async function loadSpeakerRelevanceShadow() {
       message: error.message
     });
     log("speaker-relevance-shadow.error", error.message);
+  }
+}
+
+let contextRelevanceRuntime = null;
+let contextRelevanceShadowState = Object.freeze({
+  state: contextRelevanceExperimentEnabled ? "loading" : "disabled",
+  authority: { mode: "shadow-only", canProduceEffects: false }
+});
+
+async function loadContextRelevanceShadow() {
+  if (!contextRelevanceExperimentEnabled) {
+    return;
+  }
+  try {
+    const { ContextRelevanceShadow } = await import(
+      "/context-relevance-shadow.mjs"
+    );
+    const response = await fetch("/context-relevance-checkpoint.json");
+    if (!response.ok) {
+      throw new Error(`checkpoint retornou HTTP ${response.status}`);
+    }
+    contextRelevanceRuntime = new ContextRelevanceShadow(
+      await response.json()
+    );
+    contextRelevanceShadowState = contextRelevanceRuntime.snapshot;
+    log(
+      "context-relevance-shadow.ready",
+      `${contextRelevanceShadowState.checkpointId} · sem autoridade`
+    );
+  } catch (error) {
+    contextRelevanceRuntime = null;
+    contextRelevanceShadowState = Object.freeze({
+      state: "error",
+      authority: { mode: "shadow-only", canProduceEffects: false },
+      message: error.message
+    });
+    log("context-relevance-shadow.error", error.message);
   }
 }
 
@@ -3225,6 +3264,9 @@ function automationSnapshot() {
       speakerRelevanceShadow: speakerRelevanceRuntime === null
         ? { ...speakerRelevanceShadowState }
         : speakerRelevanceRuntime.snapshot,
+      contextRelevanceShadow: contextRelevanceRuntime === null
+        ? { ...contextRelevanceShadowState }
+        : contextRelevanceRuntime.snapshot,
       outputInterruptionLifecycle: {
         ...outputInterruption
       },
@@ -3524,7 +3566,8 @@ function injectAutomationSpeech(rawText, options = {}) {
 async function loadHealth() {
   await Promise.all([
     loadAcousticReflexShadow(),
-    loadSpeakerRelevanceShadow()
+    loadSpeakerRelevanceShadow(),
+    loadContextRelevanceShadow()
   ]);
   try {
     const response = await fetch("/api/health");
@@ -3617,6 +3660,19 @@ if (automationEnabled) {
         handleLocalAudioEvent(event);
         return automationSnapshot();
       },
+      ...(contextRelevanceExperimentEnabled ? {
+        evaluateContextRelevance(payload) {
+          if (contextRelevanceRuntime === null) {
+            throw new Error("context relevance shadow não está pronto");
+          }
+          const result = contextRelevanceRuntime.evaluate(payload);
+          log("context-relevance-shadow.evaluated", result.status);
+          return Object.freeze({
+            result,
+            snapshot: contextRelevanceRuntime.snapshot
+          });
+        }
+      } : {}),
       async refreshCaptureTelemetry() {
         await session.capture?.requestTelemetry();
         return automationSnapshot();

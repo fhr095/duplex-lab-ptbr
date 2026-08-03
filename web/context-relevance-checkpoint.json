@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "exp-0019-browser-context-relevance-checkpoint-v1",
+  "shadowVersion": "exp-0019-context-relevance-shadow-v1",
+  "checkpointId": "exp-0018-context-cc87305b86576fb1",
+  "source": {
+    "path": "eval/checkpoints/exp-0018-context-v0.1.json",
+    "fileSha256": "sha256:3f5080b93b406540d601368dbbfd4d0e05257d3a6171b1d876c636864b0807a8",
+    "checkpointSha256": "sha256:2d6d21adc3a27bebd9aa24a635068ce06be2a62b6c8c7545dce57623af3cb87b",
+    "checkpointId": "exp-0018-context-cc87305b86576fb1"
+  },
+  "featureVersion": "exp-0018-context-relational-features-v1",
+  "featureNames": [
+    "bias",
+    "targetPresent",
+    "targetCharacterLength",
+    "targetTokenCount",
+    "targetHasQuestion",
+    "targetHasNegation",
+    "targetHasCorrectionMarker",
+    "targetHasContinuationMarker",
+    "assistantSpeaking",
+    "contextMask",
+    "assistantHasQuestion",
+    "inboundHasQuestion",
+    "targetAssistantTokenJaccard",
+    "targetInboundTokenJaccard",
+    "tokenJaccardDelta",
+    "targetAssistantTokenCoverage",
+    "targetInboundTokenCoverage",
+    "tokenCoverageDelta",
+    "targetAssistantCharNgramCosine",
+    "targetInboundCharNgramCosine",
+    "charNgramCosineDelta"
+  ],
+  "classes": [
+    "BACKGROUND_OR_NOT_DIRECTED",
+    "DIRECTED_TO_ASSISTANT"
+  ],
+  "arms": {
+    "B0": {
+      "contextEnabled": false,
+      "algorithm": "full-batch-multinomial-logistic-regression-v1",
+      "modelSha256": "sha256:71ce673efe957d4c3ca782f125f32fc29175f77751bf83a2384ada0ca413b792",
+      "weightsSha256": "sha256:a7a209544caaba228090ecd4f8e7b5dc8a80eee332d2018dd47441144f49d2dc",
+      "weights": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "threshold": 1
+    },
+    "B1": {
+      "contextEnabled": true,
+      "algorithm": "full-batch-multinomial-logistic-regression-v1",
+      "modelSha256": "sha256:cc87305b86576fb140ad72f5df9f19be2708cc436c03a261bd05bae7ec5c8d86",
+      "weightsSha256": "sha256:0a2b713f2ce7a14517a60b77152d3ac1519358612b73a7d44b66a62c5e17c9db",
+      "weights": [
+        [
+          -0.042043331263,
+          -0.022499339623,
+          0.005995165785,
+          -0.029583464139,
+          0,
+          0.050594844472,
+          0.217091345541,
+          -0.157359999993,
+          -0.022499339623,
+          -0.022499339623,
+          -0.022499339623,
+          -0.022499339623,
+          -0.474002062241,
+          0.001543080159,
+          -0.4755451424,
+          -1.046076544158,
+          0.229429881507,
+          -1.275506425665,
+          -1.29081563739,
+          1.325145825364,
+          -2.615961462754
+        ],
+        [
+          0.042043331263,
+          0.022499339623,
+          -0.005995165785,
+          0.029583464139,
+          0,
+          -0.050594844472,
+          -0.217091345541,
+          0.157359999993,
+          0.022499339623,
+          0.022499339623,
+          0.022499339623,
+          0.022499339623,
+          0.474002062241,
+          -0.001543080159,
+          0.4755451424,
+          1.046076544158,
+          -0.229429881507,
+          1.275506425665,
+          1.29081563739,
+          -1.325145825364,
+          2.615961462754
+        ]
+      ],
+      "threshold": 0.9342642684830884
+    }
+  },
+  "adapter": {
+    "payloadKeys": [
+      "assistantAudiblePrefixAtDecision",
+      "assistantAudiblePrefixAvailableAtSample",
+      "assistantSpeaking",
+      "currentSample",
+      "recentInbound",
+      "recentInboundAvailableAtSample",
+      "targetAvailableAtSample",
+      "targetText"
+    ],
+    "availabilityKeys": [
+      "assistantAudiblePrefixAvailableAtSample",
+      "recentInboundAvailableAtSample",
+      "targetAvailableAtSample"
+    ],
+    "deferStatus": "DEFER_CAUSAL_EVIDENCE",
+    "proposalStatus": "SHADOW_PROPOSAL",
+    "classifierCallsPerProposal": 2,
+    "effectsAllowed": false
+  },
+  "authority": {
+    "mode": "shadow-only",
+    "canProduceEffects": false
+  },
+  "browserCheckpointSha256": "sha256:42a5f2e422d05cedd210785494a9e83e39b208113566895e0283ccb2e7d3ec0a"
+}

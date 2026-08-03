@@ -281,6 +281,11 @@ const STATIC_ROUTES = new Map([
     "speaker-relevance-checkpoint.json"
   ],
   ["/speaker-relevance-shadow.mjs", "speaker-relevance-shadow.mjs"],
+  [
+    "/context-relevance-checkpoint.json",
+    "context-relevance-checkpoint.json"
+  ],
+  ["/context-relevance-shadow.mjs", "context-relevance-shadow.mjs"],
   ["/app.mjs", "app.mjs"],
   ["/critical-conflict.mjs", "critical-conflict.mjs"],
   ["/interaction-browser-adapter.mjs", "interaction-browser-adapter.mjs"],
