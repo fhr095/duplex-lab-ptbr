@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "exp-0022-capture-attempt-consumption-v1",
+  "experimentId": "EXP-0022",
+  "status": "capture-attempt-consumed",
+  "startedAt": "2026-08-03T09:49:08.309Z",
+  "processId": 2036142,
+  "executionCommit": "8d52894a0ba27a758a3a8c87e41ac8f2bdf99a9e",
+  "attemptPath": "eval/commitments/exp-0022-capture-attempt-v0.1.json",
+  "attemptFileSha256": "sha256:7ea71d8a08d825e30b3fedd8dabb807c17b5d976658740d04dddeb4a7afb3336",
+  "attemptCanonicalSha256": "sha256:a1c5ef7169f29455c77581a7488a22864c15466390e481db7c9a88a440c31b29",
+  "nonce": "exp-0022-official-v0.1",
+  "command": "node scripts/run-exp-0022-supervisor.mjs",
+  "targetUrl": "http://localhost:4173/?automation=1&experiment=0022",
+  "reportPath": "eval/reports/exp-0022-bootstrap-audit-health-binding-v0.1.json",
+  "rerunAllowed": false,
+  "receiptSha256": "sha256:84193a0becdc07ef87ca17a0a995ca20323ec8ecd8f90d07bbf7e1f3f836e0c9"
+}
