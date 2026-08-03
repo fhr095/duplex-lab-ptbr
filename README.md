@@ -375,6 +375,8 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0019 — bridge causal de contexto em áudio](docs/experiments/EXP-0019-causal-audio-context-bridge.md)
 - [EXP-0019 — fechamento do bridge causal](docs/experiments/EXP-0019-closeout.md)
 - [EXP-0020 — equivalência observável da ordem do STOP no renderer](docs/experiments/EXP-0020-physical-stop-order.md)
+- [EXP-0020 — fechamento e invalidação do instrumento](docs/experiments/EXP-0020-closeout.md)
+- [EXP-0021 — qualificação fail-closed da captura TTS pelo CDP](docs/experiments/EXP-0021-cdp-capture-recovery.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -402,10 +404,11 @@ gates aprovados. O EXP-0019 levou esse matcher a oito cenas de áudio-oráculo:
 em p95 de 8,7 ms e o STOP em 56,573 ms. Mesmo assim, o experimento foi cortado
 porque a ordem entre `speech.paused` e `render.stopped` variou entre controle,
 shadow e repetição; 7/9 gates passaram e nenhuma capacidade ganhou autoridade.
-O EXP-0020 pré-registra esse teste. Primeiro o instrumento será implementado e
-congelado; a abertura única de 12 STOPs só passa com ao menos duas ocorrências
-de cada ordem, WAV/fase controlados e equivalência de estado, silêncio e
-latência por classe. Diversidade insuficiente produz hold; ASR continua fora.
+O EXP-0020 abriu esse teste uma única vez, mas o primeiro corpo TTS retornou
+vazio pelo CDP. A tentativa foi consumida sem rerun e o físico ficou
+`NOT_EVALUATED`. O EXP-0021 agora qualifica o coletor em quatro respostas sem
+STOP, comparando os bytes observados no browser e no CDP. Só um passe permite
+pré-registrar outra medição física; ASR continua fora.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

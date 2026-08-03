@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T02:47:18-03:00",
+  "updatedAt": "2026-08-03T04:07:03-03:00",
   "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
@@ -19,15 +19,15 @@
     "id": "runtime-baseline-ptbr-v0.3",
     "manifest": "eval/baselines/runtime-baseline-v0.3.json"
   },
-  "currentCriticalPath": "EXP-0020",
+  "currentCriticalPath": "EXP-0021",
   "currentParallelProbe": {
-    "id": "EXP-0020-R",
-    "parent": "EXP-0020",
-    "preRegistration": "docs/experiments/EXP-0020-physical-stop-order.md",
+    "id": "EXP-0021-R",
+    "parent": "EXP-0021",
+    "preRegistration": "docs/experiments/EXP-0021-cdp-capture-recovery.md",
     "status": "deferred",
     "blocking": false,
     "authority": "none",
-    "decision": "Trilha sem execução: nenhum backbone será aberto enquanto o EXP-0020 distingue estado físico de ordem concorrente; challengers permanecem somente no ledger."
+    "decision": "Trilha sem execução: challengers permanecem somente no ledger enquanto o EXP-0021 qualifica a captura TTS; nenhum backbone será aberto."
   },
   "entries": [
     {
@@ -269,15 +269,37 @@
     },
     {
       "id": "EXP-0020",
+      "status": "invalidated",
+      "decision": "INVALIDATE_STOP_ORDER_INSTRUMENT",
+      "canonicalReport": "eval/reports/exp-0020-stop-order-v0.1.json",
+      "evidenceCommit": "404a06d5a7eba90ae72690e8870966770b97902a",
+      "authority": "none",
+      "criticalPath": false,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0020-boundary.test.mjs",
+        "node --test tests/exp-0020-browser-harness.test.mjs",
+        "node --test tests/exp-0020-browser-runner.test.mjs",
+        "node --test tests/exp-0020-analysis.test.mjs",
+        "node --test tests/experiment-index.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0020:report:check",
+        "npm run eval:index:check"
+      ],
+      "supersedes": [],
+      "nextDecision": "Pré-registrar um novo experimento para qualificar a captura TTS via CDP com buffers explícitos e retry fail-closed antes de reabrir qualquer campanha física."
+    },
+    {
+      "id": "EXP-0021",
       "status": "active",
-      "decision": "pending-physical-stop-order-equivalence",
+      "decision": "pending-cdp-capture-qualification",
       "canonicalReport": null,
       "authority": "none",
       "criticalPath": true,
       "cleanCloneChecks": [],
       "localReproductionCommands": [],
       "supersedes": [],
-      "nextDecision": "Implementar e congelar o instrumento, commitar a abertura única e então executar 12 STOPs para decidir equivalência, correção física, diversidade insuficiente ou invalidação."
+      "nextDecision": "Qualificar a captura TTS com buffers explícitos e retry fail-closed; somente um passe sob o contrato novo pode autorizar outra campanha física."
     }
   ]
 }

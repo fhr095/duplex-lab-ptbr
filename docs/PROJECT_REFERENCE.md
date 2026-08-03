@@ -2,15 +2,19 @@
 
 Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
-fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019 e
-pré-registro do EXP-0020**
+fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
+invalidação instrumental do EXP-0020 e pré-registro do EXP-0021**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
 permanece imutável no
 [pré-registro congelado](experiments/EXP-0019-causal-audio-context-bridge.md).
-O [EXP-0020](experiments/EXP-0020-physical-stop-order.md) isola a corrida física
-de lifecycle antes de ASR, sem alterar o runtime que a produziu.
+O [EXP-0020](experiments/EXP-0020-physical-stop-order.md) isolou a corrida
+física, mas sua única tentativa foi
+[invalidada pelo coletor CDP](experiments/EXP-0020-closeout.md), sem resultado
+físico. O [EXP-0021](experiments/EXP-0021-cdp-capture-recovery.md) qualifica
+esse boundary antes de outra medição, sem alterar o runtime que produziu a
+corrida.
 
 ## Tese
 
@@ -389,14 +393,15 @@ Esta referência preserva apenas a lógica macro:
    sintético contrabalanceado, sem holdout ou autoridade;
 9. preservar o corte do EXP-0019: o bridge causal foi exato e rápido, mas a
    ordem física `speech.paused`/`render.stopped` não foi determinística;
-   executar o EXP-0020 pré-registrado para distinguir estado/render de mera
-   ordem concorrente antes de ASR;
-10. conceder autoridade somente se houver ganho percebido sem regressão dos
-   guardrails;
-11. manter backbones nativos no ledger até existir um teto local que justifique
-   custo e integração;
-12. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
-   observado, não por ordem fixa.
+10. preservar a invalidação do EXP-0020: corpo TTS vazio no CDP consumiu a
+    tentativa e não permite conclusão física; qualificar o coletor no EXP-0021
+    antes de abrir outro número para STOP;
+11. conceder autoridade somente se houver ganho percebido sem regressão dos
+    guardrails;
+12. manter backbones nativos no ledger até existir um teto local que justifique
+    custo e integração;
+13. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+    observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo
 medido, não por uma fase presumida.

@@ -28,11 +28,14 @@ histórico, esta carteira prevalece.
   streams e 48 probes sem futuro; Node/Chrome tiveram paridade exata e proposta
   p95 de 8,7 ms. O trace físico, porém, alternou a ordem entre
   `speech.paused` e `render.stopped`; 7/9 gates passaram e nada foi promovido.
-- **Agora — EXP-0020, equivalência observável no renderer:** implementar,
-  auditar e congelar o instrumento; depois consumir uma única abertura de 12
-  STOPs em duas navegações. O passe exige duas ocorrências de cada ordem, WAV e
-  fase controlados, mesmo estado/silêncio e latência equivalente por classe.
-  Divergência corrige o happens-before; diversidade insuficiente produz hold.
+- **Concluído/invalidado — EXP-0020:** freeze, abertura e tentativa única foram
+  preservados, mas o primeiro `Network.getResponseBody` devolveu corpo vazio.
+  Nenhuma navegação ou trial foi persistido; a avaliação física é
+  `NOT_EVALUATED`, sem rerun e sem alteração do corte anterior.
+- **Agora — EXP-0021, qualificação da captura CDP:** medir primeiro quatro
+  respostas TTS sem STOP, em duas navegações, comparando SHA-256 calculado no
+  browser e no CDP. Buffers explícitos e retry limitado nunca podem refazer o
+  fetch ou aceitar corpo vazio. Só um passe autoriza outro experimento físico.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -42,8 +45,10 @@ O fechamento anterior, o contrato congelado e o resultado corrente estão no
 [EXP-0017](experiments/EXP-0017-safe-veto-and-semantic-probe.md), no
 [closeout do EXP-0018](experiments/EXP-0018-closeout.md), no
 [pré-registro do EXP-0019](experiments/EXP-0019-causal-audio-context-bridge.md)
-e em seu [closeout](experiments/EXP-0019-closeout.md). O caminho corrente está
-no [pré-registro do EXP-0020](experiments/EXP-0020-physical-stop-order.md).
+e em seu [closeout](experiments/EXP-0019-closeout.md). A tentativa física e sua
+invalidação estão no [EXP-0020](experiments/EXP-0020-physical-stop-order.md) e
+no [closeout](experiments/EXP-0020-closeout.md). O caminho corrente está no
+[pré-registro do EXP-0021](experiments/EXP-0021-cdp-capture-recovery.md).
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar outra prioridade, e o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
@@ -433,18 +438,21 @@ card de dados e splits por família, gerador e pessoa.
 | 14b | EXP-0017-R: probe semântico causal — **cortado antes do fit** | mapa causal físico: 21/30 train; 11 fundos e 10 dirigidas elegíveis | pisos exigiam 12/classe; nenhum fit/limiar/métrica semântica; zero autoridade |
 | 15 | EXP-0018: contexto observável com conteúdo pareado — **`PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN`** | 31/32 em `B1` versus 16/32 em `B0`; 16/16 dirigidas, 15/16 fundos; 15 vitórias líquidas; ganho em 8/8 blocos e 4/4 famílias; 12/12 gates | uma abertura e uma tentativa; screen textual sintético sem holdout, áudio, ASR ou autoridade; claim limitado ao matcher relacional |
 | 16 | EXP-0019: bridge causal em áudio — **`CUT_CAUSAL_AUDIO_BRIDGE`** | 8 cenas/4 pares/12 streams; 48 probes sem inferência; 16/16 paridade Node/Chrome; proposta p95 8,7 ms; STOP p95 56,573 ms; 7/9 gates | ordem `speech.paused`/`render.stopped` variou; trace e lifecycle on/off não determinísticos; zero autoridade/API/GPU; ASR não autorizado |
-| 17 | EXP-0020: equivalência observável da ordem no renderer — **ativo, pré-registrado; instrumento pendente** | implementar/fixar o harness; depois 12 STOPs em duas navegações, com ≥2 por ordem, WAV/fase controlados, horizonte silencioso de 250 ms e equivalência temporal por classe | tentativa única commitada antes do Chrome; sem alteração do runtime; zero ASR/modelo/API/GPU/autoridade |
+| 17 | EXP-0020: equivalência observável da ordem no renderer — **`INVALIDATE_STOP_ORDER_INSTRUMENT`** | freeze + abertura isolados; tentativa única consumida; primeiro payload TTS vazio no CDP; zero trials persistidos | físico `NOT_EVALUATED`; seis gates vacuamente true explicitados; sem rerun, API, GPU ou autoridade |
+| 18 | EXP-0021: qualificação fail-closed da captura TTS — **ativo, pré-registrado; instrumento pendente** | 2 navegações × 2 fetches sem STOP; A/B balanceado; digest browser=CDP; buffers explícitos + até 4 leituras do mesmo requestId | qualifica apenas o boundary de coleta; um passe autoriza novo pré-registro físico, não promove runtime |
 
-O EXP-0019 está terminal e cortado. O EXP-0020 é a frente crítica registrada e
-isola somente a corrida física de lifecycle. Modelos completos continuam no
-ledger como `watch` ou `defer`; pesquisa externa não autoriza download,
-adaptação ou GPU.
+O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
+de produzir evidência física. O EXP-0021 é a frente crítica e qualifica somente
+esse limite Chrome/CDP antes de outra campanha de STOP. Modelos completos
+continuam no ledger como `watch` ou `defer`; pesquisa externa não autoriza
+download, adaptação ou GPU.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
 pela maior falha percebida no relatório, não por ordem fixa. O matcher textual
 já demonstrou valor informacional e sobreviveu causalmente ao áudio-oráculo; o
-gargalo imediato é estabilizar ou interpretar corretamente a ordem física do
-lifecycle antes de gastar com reconhecimento real.
+gargalo imediato é recuperar de modo confiável a evidência do renderer e só
+então interpretar a ordem física do lifecycle, antes de gastar com
+reconhecimento real.
 
 ## Trilha paralela de governança
 

@@ -95,6 +95,8 @@ export const EXP0018_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0018-context-development-v0.1.json";
 export const EXP0019_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0019-causal-audio-v0.1.json";
+export const EXP0020_CANONICAL_REPORT_PATH =
+  "eval/reports/exp-0020-stop-order-v0.1.json";
 
 export function validateExp0018HistoricalOutcome(entry, index, decision) {
   const outcome = EXP0018_CANONICAL_OUTCOMES[decision];
@@ -232,6 +234,41 @@ const CANONICAL_REPORT_CONTRACTS = Object.freeze({
       ["metrics.effectsDispatched", 0],
       ["metrics.paidApiCalls", 0],
       ["metrics.gpuRuns", 0]
+    ]
+  },
+  "EXP-0020": {
+    status: "invalidated",
+    authority: "none",
+    decisionPath: "decision",
+    assertions: [
+      ["schemaVersion", "exp-0020-stop-order-report-v1"],
+      ["analysis.decision", "INVALIDATE_STOP_ORDER_INSTRUMENT"],
+      ["pass", false],
+      ["instrumentValid", false],
+      ["authorityEligible", false],
+      ["claim", null],
+      ["campaign.boundary.attemptVerified", true],
+      ["campaign.boundary.freezeVerified", true],
+      ["campaign.boundary.rerunAllowed", false],
+      ["campaign.failure.code", "CDP_TTS_RESPONSE_BODY_EMPTY"],
+      ["campaign.failure.phase", "navigation-1-trial-1-tts-body-capture"],
+      ["campaign.failure.completedNavigationsPersisted", 0],
+      ["campaign.failure.completedTrialsPersisted", 0],
+      ["campaign.failure.crashConsumedAttempt", true],
+      ["campaign.failure.rerunPerformed", false],
+      ["campaign.failure.interpretationAllowed", false],
+      ["campaign.failure.physicalEvaluation", "NOT_EVALUATED"],
+      ["campaign.failure.physicalGateConclusionSupported", false],
+      ["campaign.failure.failureBlockEmittedByFrozenRunner", false],
+      ["campaign.navigations.length", 0],
+      ["analysis.trials.length", 0],
+      ["analysis.metrics.aggregate.renderStopLatencyMs.count", 0],
+      ["analysis.metrics.aggregate.markerGapMs.count", 0],
+      ["gates.classTemporalEquivalence", null],
+      ["contract.paidApiCalls", 0],
+      ["contract.gpuRuns", 0],
+      ["contract.canProduceNewEffects", false],
+      ["campaign.authority.canProduceNewEffects", false]
     ]
   }
 });
@@ -407,6 +444,12 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0019 canonicalReport precisa usar o output canônico");
     assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
       "EXP-0019 terminal exige evidenceCommit");
+  }
+  if (entry.id === "EXP-0020") {
+    assert(entry.canonicalReport === EXP0020_CANONICAL_REPORT_PATH,
+      "EXP-0020 canonicalReport precisa usar o output canônico");
+    assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
+      "EXP-0020 terminal exige evidenceCommit");
   }
 
   const path = resolveRepositoryPath(
@@ -790,6 +833,29 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0019 canonical report"
     );
   }
+  if (entry.id === "EXP-0020") {
+    const core = structuredClone(report);
+    delete core.reportSha256;
+    assert(
+      report.reportSha256 === `sha256:${canonicalSha256(core)}`,
+      "EXP-0020 reportSha256 diverge do conteúdo canônico"
+    );
+    const headCommit = (await git(projectRoot, "rev-parse", "HEAD"))
+      .toString("utf8").trim();
+    await assertGitAncestor(
+      projectRoot,
+      entry.evidenceCommit,
+      headCommit,
+      "EXP-0020 evidenceCommit→HEAD"
+    );
+    await assertGitFileMatches(
+      projectRoot,
+      entry.evidenceCommit,
+      EXP0020_CANONICAL_REPORT_PATH,
+      await readFile(path),
+      "EXP-0020 canonical report"
+    );
+  }
 }
 
 function validateEntryShape(entry, index) {
@@ -862,6 +928,13 @@ function validateEntryShape(entry, index) {
       entry.evidenceCommit === null ||
         /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),
       "EXP-0019.evidenceCommit precisa ser null ou commit completo"
+    );
+  }
+  if (entry.id === "EXP-0020") {
+    assert(
+      entry.evidenceCommit === null ||
+        /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),
+      "EXP-0020.evidenceCommit precisa ser null ou commit completo"
     );
   }
 }

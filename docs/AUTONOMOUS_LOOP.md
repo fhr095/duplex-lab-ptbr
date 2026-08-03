@@ -103,13 +103,19 @@ Hipótese, resultado e limites permanecem ligados ao
 [pré-registro congelado](experiments/EXP-0019-causal-audio-context-bridge.md) e
 ao [closeout](experiments/EXP-0019-closeout.md).
 
-O EXP-0020 pré-registra o próximo PDCA e isola somente essa corrida. Primeiro o
-instrumento será implementado, auditado, congelado e aberto por commit; só
-então uma campanha fará 12 STOPs em duas navegações. O passe exige ao menos
-duas ocorrências de cada ordem, WAV e fase controlados, o mesmo aceite/estado/
-silêncio e latência equivalente por classe. Diversidade insuficiente produz
-hold, sem repetição oportunista. Trocar ASR, TTS ou backbone não entra até essa
-pergunta fechar.
+O EXP-0020 executou essa regra até a falha: instrumento, freeze e abertura
+foram commitados separadamente; a única tentativa foi consumida e não repetida.
+O primeiro corpo `/api/tts` retornou vazio pelo CDP, então zero trials foram
+persistidos e a decisão é `INVALIDATE_STOP_ORDER_INSTRUMENT`, com físico
+`NOT_EVALUATED`. O [closeout](experiments/EXP-0020-closeout.md) separa essa
+invalidação dos probes exploratórios posteriores.
+
+O EXP-0021 aplica o próximo PDCA ao boundary que efetivamente falhou. Antes de
+qualquer novo STOP, quatro fetches TTS sem renderização precisam coincidir byte
+a byte entre browser e CDP em duas navegações. O retry lê somente o mesmo
+requestId, tem orçamento fechado e nunca converte corpo vazio em sucesso. Um
+passe libera apenas outro pré-registro físico; trocar ASR, TTS ou backbone
+continua fora.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
@@ -117,6 +123,7 @@ O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 node --test tests/exp-0019-contract.test.mjs
 node --test tests/exp-0019-browser-runner.test.mjs
 node --test tests/exp-0019-analysis.test.mjs
+npm run eval:exp:0020:report:check
 npm run eval:index:check
 ```
 
