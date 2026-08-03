@@ -107,7 +107,13 @@ Cada tentativa pertence a exatamente uma classe:
 - `PAUSE_THEN_RENDER`: `assistant.speech.paused` aparece primeiro;
 - `RENDER_THEN_PAUSE`: `assistant.render.stopped` aparece primeiro.
 
-Empate, ausência ou duplicidade de qualquer marcador invalida a tentativa.
+**Emenda pré-execução, registrada antes do freeze e sem observar Chrome real:**
+“aparece primeiro” significa a posição serializada no trace bruto, que é a
+ordem total observada pelo logger. Igualdade numérica de `atMs` não é empate,
+pois a resolução do relógio pode arredondar dois registros sequenciais para o
+mesmo valor; timestamps continuam preservados para as métricas. Impossibilidade
+de estabelecer essa ordem, ausência ou duplicidade de qualquer marcador
+invalida a tentativa.
 
 A projeção de equivalência conserva somente semântica observável:
 
