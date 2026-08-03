@@ -1,0 +1,244 @@
+{
+  "schemaVersion": "exp-0019-instrumentation-freeze-v1",
+  "experimentId": "EXP-0019",
+  "status": "frozen-before-audio-materialization",
+  "runnerSourceCommit": "44e98fe4188fbdffeaf67cd7348740a0dc974c42",
+  "nodeVersion": "v22.22.2",
+  "artifacts": {
+    "preregistration": {
+      "path": "docs/experiments/EXP-0019-causal-audio-context-bridge.md",
+      "fileSha256": "sha256:94cfa2e8b483c6da0f744d19703872326bac69e1aa230706e18ab0ab2259fb53"
+    },
+    "plan": {
+      "path": "eval/experiments/exp-0019-causal-audio-plan-v0.1.json",
+      "fileSha256": "sha256:3f89925478b8176194409ae21d93d42d64064912aa5da9f3477a383c2a1b6a82",
+      "canonicalSha256": "sha256:7a9e32091e583ef3cb6f5b559c97cf914a7436ce71838be095f21648d2479c3d"
+    },
+    "browserCheckpoint": {
+      "path": "web/context-relevance-checkpoint.json",
+      "fileSha256": "sha256:9c5e9b161f6c55ca3b667edbacd3c5975a845dfe0d8ef6681c9a034195b0d2f0",
+      "canonicalSha256": "sha256:42a5f2e422d05cedd210785494a9e83e39b208113566895e0283ccb2e7d3ec0a"
+    },
+    "sourceCheckpoint": {
+      "path": "eval/checkpoints/exp-0018-context-v0.1.json",
+      "fileSha256": "sha256:3f5080b93b406540d601368dbbfd4d0e05257d3a6171b1d876c636864b0807a8",
+      "canonicalSha256": "sha256:2d6d21adc3a27bebd9aa24a635068ce06be2a62b6c8c7545dce57623af3cb87b"
+    }
+  },
+  "tts": {
+    "config": {
+      "engine": "supertonic",
+      "model": "supertonic-3",
+      "sdkVersion": "1.3.1",
+      "language": "pt",
+      "totalSteps": 8,
+      "speed": 1.05,
+      "outputSampleRate": 16000,
+      "assistantSegmentsSynthesizedSeparately": true,
+      "randomness": {
+        "baseSeed": 190019,
+        "strategy": "sha256-stream-segment-numpy-v1",
+        "numpySeededBeforeEachSynthesis": true
+      },
+      "pythonPackages": {
+        "PyYAML": "6.0.3",
+        "anyio": "4.14.2",
+        "certifi": "2026.7.22",
+        "cffi": "2.1.0",
+        "click": "8.4.2",
+        "filelock": "3.32.2",
+        "flatbuffers": "25.12.19",
+        "fsspec": "2026.7.0",
+        "h11": "0.16.0",
+        "hf-xet": "1.5.2",
+        "httpcore": "1.0.9",
+        "httpx": "0.28.1",
+        "huggingface_hub": "1.26.0",
+        "idna": "3.18",
+        "numpy": "2.5.1",
+        "onnxruntime": "1.28.0",
+        "packaging": "26.2",
+        "protobuf": "7.35.1",
+        "pycparser": "3.0",
+        "soundfile": "0.14.0",
+        "supertonic": "1.3.1",
+        "tqdm": "4.70.0",
+        "typing_extensions": "4.16.0"
+      },
+      "voiceStyles": {
+        "assistant": "F4",
+        "nonAssistant": "M4"
+      },
+      "execution": {
+        "networkAllowed": false,
+        "autoDownload": false,
+        "paidApiCalls": 0,
+        "gpuRuns": 0
+      }
+    },
+    "configCanonicalSha256": "sha256:495e12f629cc1c13a57911bf2e4b00d5d6317afdb17ad81e498168473af59362",
+    "modelArtifactBinding": {
+      "files": {
+        "LICENSE": "sha256:0d944a9110fed9a9602d60e0423a272903e7bd21ab060490774efc77c2275e9f",
+        "config.json": "sha256:4099082b107a9d4029849ac76b89eca65e03732660969c2babe5bf308c7357f2",
+        "onnx/duration_predictor.onnx": "sha256:c3eb91414d5ff8a7a239b7fe9e34e7e2bf8a8140d8375ffb14718b1c639325db",
+        "onnx/text_encoder.onnx": "sha256:c7befd5ea8c3119769e8a6c1486c4edc6a3bc8365c67621c881bbb774b9902ff",
+        "onnx/tts.json": "sha256:42078d3aef1cd43ab43021f3c54f47d2d75ceb4e75f627f118890128b06a0d09",
+        "onnx/unicode_indexer.json": "sha256:9bf7346e43883a81f8645c81224f786d43c5b57f3641f6e7671a7d6c493cb24f",
+        "onnx/vector_estimator.onnx": "sha256:883ac868ea0275ef0e991524dc64f16b3c0376efd7c320af6b53f5b780d7c61c",
+        "onnx/vocoder.onnx": "sha256:085de76dd8e8d5836d6ca66826601f615939218f90e519f70ee8a36ed2a4c4ba",
+        "voice_styles/F4.json": "sha256:c2fa764c1225a76dfc3e2c73e8aa4f70d9ee48793860eb34c295fff01c2e032b",
+        "voice_styles/M4.json": "sha256:ca8eefad4fcd989c9379032ff3e50738adc547eeb5e221b82593a6d7b3bac303"
+      },
+      "canonicalSha256": "sha256:e3ebd90e1e069f81ba45349649f613cea5492584facf5243bf531e96d128715e"
+    },
+    "toolchainBinding": {
+      "command": "uvx",
+      "executableSha256": "sha256:dd7b049114909eefa6aa7f523584bdf84547b33f1cea00d2ee88c64bbc17ac5c",
+      "version": "uvx 0.11.18 (x86_64-unknown-linux-gnu)"
+    }
+  },
+  "criticalSources": [
+    {
+      "path": ".gitignore",
+      "fileSha256": "sha256:0d9d490d2f4137b1ff14f09416b1d78686b506d69a95b50385bce344f9330f19"
+    },
+    {
+      "path": "package.json",
+      "fileSha256": "sha256:e794453ad55c8e1240a87663e00138b3a7d07503ac4e809a049ba45ec6a146d1"
+    },
+    {
+      "path": "scripts/build-exp-0019-causal-audio-plan.mjs",
+      "fileSha256": "sha256:b06e49262dc5bed62903bb7b8e8997d053f352c6101df65f329bc692518914bb"
+    },
+    {
+      "path": "scripts/build-exp-0019-web-checkpoint.mjs",
+      "fileSha256": "sha256:30eca187440ab3fe2f8ee32fdfb4ba866ae28ab87a119bf5f8e5aa57646abe51"
+    },
+    {
+      "path": "scripts/freeze-exp-0019-instrumentation.mjs",
+      "fileSha256": "sha256:357dff853c68a1f4f17aff9c97e970d17fc944ce2c349ea49546d5e3fdc634b2"
+    },
+    {
+      "path": "scripts/lib/materialize-exp-0019-supertonic.py",
+      "fileSha256": "sha256:69fc50473e5d70ba79b9cf0ba8932ec9683fa48a032f9dbbb3d321fc42eea28b"
+    },
+    {
+      "path": "scripts/materialize-exp-0019-audio.mjs",
+      "fileSha256": "sha256:9ee3dff3af088f8b503c09ca1dc827e759e00c87e9d121798d18a74a52afdf7c"
+    },
+    {
+      "path": "scripts/report-exp-0019-causal-audio.mjs",
+      "fileSha256": "sha256:1118f39bf0b46152319118ae6fc00d93acd179e3cc107d2c537ce1b0af101878"
+    },
+    {
+      "path": "scripts/run-exp-0019-node-replay.mjs",
+      "fileSha256": "sha256:5c20b0cb5c03aff699d0bc85b95f16d4b4eb41fece240835a85e38fdbeceac15"
+    },
+    {
+      "path": "scripts/smoke-exp-0019-browser.mjs",
+      "fileSha256": "sha256:55ed221521096cf5bc59f7ef69e532b5263646e5e34f3c4c4a714a58b964f63b"
+    },
+    {
+      "path": "src/asr/pcm.mjs",
+      "fileSha256": "sha256:80d727cd7e6f23348b5b89324750b61e8695ea3c97e7b63db7b8dc7a020ed498"
+    },
+    {
+      "path": "src/audio/wav.mjs",
+      "fileSha256": "sha256:81a97ff015322cf1ef909c87cc199b0368f437cac773d1cc9dd16f2ce3a03780"
+    },
+    {
+      "path": "src/cli/serve.mjs",
+      "fileSha256": "sha256:b0a305cdc4cec5ca27c837436c1e27555d17a9f3912fab53c6ef2a9eedad7b29"
+    },
+    {
+      "path": "src/eval/exp-0018-context.mjs",
+      "fileSha256": "sha256:2faf41feb428119009e40f6f662b49de538361d92647c1c2255ca2634e5f9976"
+    },
+    {
+      "path": "src/eval/exp-0018-training.mjs",
+      "fileSha256": "sha256:bcefe96693461f3b7608c7497e50dea59e05ea72868ae45f16f84af398b94b0a"
+    },
+    {
+      "path": "src/eval/exp-0019-analysis.mjs",
+      "fileSha256": "sha256:86b56c031d01421000fd7586f96cf1d6314cb02f3caf56ec892963bed82d0432"
+    },
+    {
+      "path": "src/eval/exp-0019-boundary.mjs",
+      "fileSha256": "sha256:cd6d68d8398a53f28e741d2a9198a98fe46d019bb5149ac9c3eddda1d8c81e4d"
+    },
+    {
+      "path": "src/eval/exp-0019-causal-audio-bridge.mjs",
+      "fileSha256": "sha256:dc0d91860fe0beeffce2cf481c05d18077290de8b4a7b4d2707cba5d86679f28"
+    },
+    {
+      "path": "src/eval/exp-0019-replay.mjs",
+      "fileSha256": "sha256:c023a82d2db42cc103557edff4ba4015592674c2db9d12edec2457e25741fd68"
+    },
+    {
+      "path": "src/eval/factory/canonical-hash.mjs",
+      "fileSha256": "sha256:773d45148e5c8594254a1f91db108f18ff15683ff706044d58251b7fdbc3bac0"
+    },
+    {
+      "path": "src/learning/softmax-classifier.mjs",
+      "fileSha256": "sha256:e8cba992a0d8169b94fd292519bb5336bee2095599cdd147c5c32c80f7b336fc"
+    },
+    {
+      "path": "tests/exp-0019-analysis.test.mjs",
+      "fileSha256": "sha256:fa3b9bb388aa12958e813d607188e3032a3ad3a2bdf9d3f21eadc1e55e6e7dca"
+    },
+    {
+      "path": "tests/exp-0019-audio-materializer.test.mjs",
+      "fileSha256": "sha256:059830428dc1db32b36b2b424c378a868d03836a98eb9cc7b7fb0fbc27507c22"
+    },
+    {
+      "path": "tests/exp-0019-boundary.test.mjs",
+      "fileSha256": "sha256:8e9b6ffd28ff3a90fbcd9c5b3aa7cc37c8f173076a046f8128047ae008dcd289"
+    },
+    {
+      "path": "tests/exp-0019-browser-integration.test.mjs",
+      "fileSha256": "sha256:4bcd21b32cf5c08a337e6b10cf838c0949bc542b1cfad139e5dbc80e50411c4f"
+    },
+    {
+      "path": "tests/exp-0019-browser-runner.test.mjs",
+      "fileSha256": "sha256:1cbf7a345e879992d58a0db2fd42ee8ccb780485c4ec9def3138af3036d23715"
+    },
+    {
+      "path": "tests/exp-0019-browser-shadow.test.mjs",
+      "fileSha256": "sha256:03f98692756201e90656ee4f8a049e26613320bfd0bb250bef299548067abaef"
+    },
+    {
+      "path": "tests/exp-0019-contract.test.mjs",
+      "fileSha256": "sha256:68fdd836bb1b8cc472151d097c5d1c7a59a6a9c81ca411ad9102e875c7e8dc97"
+    },
+    {
+      "path": "tests/exp-0019-replay.test.mjs",
+      "fileSha256": "sha256:851f837cbb979fb17ab07068fc8772afb093dba5a0d7efc8fe99e1c411d59648"
+    },
+    {
+      "path": "web/app.mjs",
+      "fileSha256": "sha256:dc51356b3ec4ddb2e920bdf29c7ff28f4d7fccb66fc29bef145bfb879e304bba"
+    },
+    {
+      "path": "web/context-relevance-shadow.mjs",
+      "fileSha256": "sha256:6502c567fa87ceb1354704b1e8165dd052165e2d70e4f4059bbb668567e27ab6"
+    },
+    {
+      "path": "web/output-interruption-lifecycle.mjs",
+      "fileSha256": "sha256:b2bda7e6dfcc0393f393c683feba1ae460aa5c2d727529542c6deca1c71238bd"
+    }
+  ],
+  "boundary": {
+    "audioMaterializationsBeforeFreeze": 0,
+    "nodeReplaysBeforeFreeze": 0,
+    "browserCampaignsBeforeFreeze": 0,
+    "paidApiCalls": 0,
+    "rawAudioCommitted": false,
+    "canProduceEffects": false
+  },
+  "authority": {
+    "mode": "offline-shadow-only",
+    "canProduceEffects": false
+  },
+  "instrumentationFreezeSha256": "sha256:7c7257ee7b4bad8da9c42a39c63231bc3f518dc322092b4ca2006b9aa0dea24f"
+}
