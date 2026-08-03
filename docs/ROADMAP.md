@@ -40,8 +40,10 @@ histórico, esta carteira prevalece.
 - **Agora — EXP-0022, binding bootstrap + audit health:** repetir a mesma
   campanha TTS 2×2 sem STOP, distinguindo causalmente exatamente um health de
   bootstrap já concluído e um novo health produzido pela sonda explícita. Não
-  basta aceitar dois requests quaisquer. Só um passe autoriza pré-registrar
-  outro experimento físico; executá-lo ainda exigirá freeze e abertura próprios.
+  basta aceitar dois requests quaisquer. O instrumento e seus testes estão
+  implementados sem abrir Chrome/rede e aguardam freeze. Só um passe autoriza
+  pré-registrar outro experimento físico; executá-lo ainda exigirá freeze e
+  abertura próprios.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -449,7 +451,7 @@ card de dados e splits por família, gerador e pessoa.
 | 16 | EXP-0019: bridge causal em áudio — **`CUT_CAUSAL_AUDIO_BRIDGE`** | 8 cenas/4 pares/12 streams; 48 probes sem inferência; 16/16 paridade Node/Chrome; proposta p95 8,7 ms; STOP p95 56,573 ms; 7/9 gates | ordem `speech.paused`/`render.stopped` variou; trace e lifecycle on/off não determinísticos; zero autoridade/API/GPU; ASR não autorizado |
 | 17 | EXP-0020: equivalência observável da ordem no renderer — **`INVALIDATE_STOP_ORDER_INSTRUMENT`** | freeze + abertura isolados; tentativa única consumida; primeiro payload TTS vazio no CDP; zero trials persistidos | físico `NOT_EVALUATED`; seis gates vacuamente true explicitados; sem rerun, API, GPU ou autoridade |
 | 18 | EXP-0021: qualificação fail-closed da captura TTS — **`INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION`** | 4/4 WAVs na primeira leitura; browser=CDP; A1=A2, B1=B2 e A≠B; 9/10 gates | contrato esperava um health por navegação, mas bootstrap + auditor produziram dois; tentativa consumida, fatos apenas diagnósticos, zero autoridade |
-| 19 | EXP-0022: binding bootstrap + audit health — **pré-registrado; instrumento ainda não implementado** | mesma campanha 2×2 sem STOP; um health anterior à sonda + exatamente um novo health causado por ela | repara só cardinalidade e ordem causal; um passe autoriza novo pré-registro físico, não promove runtime |
+| 19 | EXP-0022: binding bootstrap + audit health — **implementado e testado sem Chrome; aguardando freeze** | mesma campanha 2×2 sem STOP; bootstrap completo + audit marcado por navegação, lifecycle 1→1→1, ordinais CDP e TTS somente depois do finish | repara só cardinalidade e ordem causal; um passe autoriza novo pré-registro físico, não promove runtime |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
 de produzir evidência física. O EXP-0021 também está terminal: suas 4/4

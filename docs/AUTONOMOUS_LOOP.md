@@ -129,6 +129,7 @@ node --test tests/exp-0019-browser-runner.test.mjs
 node --test tests/exp-0019-analysis.test.mjs
 npm run eval:exp:0020:report:check
 npm run eval:exp:0021:report:check
+node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
 npm run eval:index:check
 ```
 

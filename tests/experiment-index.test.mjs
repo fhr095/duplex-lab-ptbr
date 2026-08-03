@@ -103,6 +103,13 @@ test("índice canônico real referencia evidências existentes", async () => {
   assert.equal(index.entries.at(-1).canonicalReport, null);
   assert.equal(index.entries.at(-1).authority, "none");
   assert.equal(index.entries.at(-1).criticalPath, true);
+  assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
+    "node --test tests/exp-0021-cdp-capture.test.mjs",
+    "node --test tests/exp-0022-boundary.test.mjs",
+    "node --test tests/exp-0022-supervisor.test.mjs",
+    "node --test tests/exp-0022-worker.test.mjs",
+    "node --test tests/exp-0022-analysis.test.mjs"
+  ]);
   const exp0021 = index.entries.find(({ id }) => id === "EXP-0021");
   assert.equal(exp0021.status, "invalidated");
   assert.equal(

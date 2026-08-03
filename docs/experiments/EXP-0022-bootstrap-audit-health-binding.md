@@ -1,6 +1,7 @@
 # EXP-0022 — binding bootstrap + audit health da captura CDP
 
-Status: **pré-registrado; instrumento ainda não implementado; zero autoridade**
+Status: **pré-registrado; instrumento implementado e testado; aguardando freeze;
+zero autoridade**
 
 ## Decisão que precisa desbloquear
 
@@ -28,26 +29,59 @@ violação sem relaxar cardinalidade, origem ou identidade.
 
 ## Challenger mínimo
 
-Somente supervisor, worker, analisador, boundary e testes do instrumento podem
-mudar. Fontes de produção, servidor, página, TTS, payloads, buffers e retry
-permanecem byte a byte iguais aos congelados no C0 do EXP-0021.
+Fontes de produção, servidor, página, TTS, payloads, buffers e retry permanecem
+byte a byte iguais ao C0 do EXP-0021
+`2fbe5af88931d49c236cc27f241f2a74c545f1d2`. O adaptador de captura
+`scripts/lib/exp-0021-cdp-capture.mjs` e seus testes também são reutilizados sem
+alteração.
+
+O C0 precisa ser filho direto da base de desenvolvimento
+`dbd4204c3961c2950d0c72885253339095f96fcb` e seu diff precisa conter
+exatamente os 18 paths registrados na allowlist — qualquer path extra falha o
+freeze e o supervisor. Em todos os roots de runtime, o diff contra o C0 do
+EXP-0021 também é exato e limitado a quatro paths: `package.json`, boundary e
+analisador EXP-0022, mais `experiment-index`. Além do adaptador/teste de captura,
+`canonical-hash`, `runtime-provenance` e `source-fingerprint` são dependências
+herdadas e precisam
+permanecer byte a byte idênticas ao EXP-0021. O plumbing de freeze/open, docs e
+índice necessários à consolidação fazem parte da allowlist C0; não são tratados
+como mudança produtiva.
 
 Para cada navegação:
 
-1. após `Page.navigate`, ready e rede ociosa, o worker registra os requests
-   vistos até aquele limite;
-2. precisa existir exatamente um `GET /api/health` local de bootstrap;
-3. imediatamente antes da sonda, o worker congela os requestIds já vistos;
-4. a expressão explícita faz um único `GET /api/health`, retorna status, MIME e
-   identidade de runtime, e a rede volta a ficar ociosa;
-5. a diferença precisa conter exatamente um novo health, com requestId
-   distinto e timestamp posterior ao bootstrap;
-6. `bootstrapHealthRequestId` e `auditHealthRequestId` ficam no envelope;
-7. somente então os dois fetches TTS sequenciais da navegação são executados.
+1. após `Page.navigate`, ready e rede ociosa, o worker registra os requests e o
+   ordinal do stream CDP vistos até aquele limite;
+2. precisa existir exatamente um `GET /api/health` local de bootstrap, sem
+   query nem marcador, com cadeia única
+   `requestWillBeSent → responseReceived(200, application/json) →
+   loadingFinished` já concluída;
+3. imediatamente antes da sonda, o worker congela requestIds, pendências e o
+   ordinal do mesmo stream CDP;
+4. a expressão explícita faz um único health marcado: navegação 1 usa
+   `/api/health?exp0022_probe=nav-1`, navegação 2 usa
+   `/api/health?exp0022_probe=nav-2`, e ambas enviam o header fixo
+   `x-duplex-exp-0022-audit: audit-health-v0.1`;
+5. a expressão retorna `probeId`, URL, status, MIME e identidade de runtime; a
+   diferença após seu término precisa conter exatamente esse novo request e
+   nenhuma outra requisição;
+6. o audit também precisa completar a cadeia 1→1→1, sem redirect ou
+   `loadingFailed`, no mesmo frame/loader do bootstrap. Ordinais do stream CDP
+   são normativos e timestamps monotônicos confirmam a ordem;
+7. `bootstrapHealthRequestId`, `auditHealthRequestId`, snapshots antes/depois,
+   delta, lifecycle, frame, loader, ordinais e timestamps ficam no envelope;
+8. somente após `loadingFinished` do audit os dois fetches TTS sequenciais da
+   navegação podem começar.
 
-Não será aceito simplesmente “dois healths em qualquer lugar”. Zero, um, três,
-requestId repetido, ordem invertida, origem diferente ou health novo fora da
-janela explícita invalidam o instrumento.
+Não será aceito simplesmente “dois healths em qualquer lugar”. Conta como
+health qualquer URL local cujo pathname seja `/api/health`, inclusive query
+inesperada. Zero, um, três, marcador ausente, token da outra navegação,
+requestId repetido, ordem invertida, origem/frame/loader diferente, redirect,
+lifecycle incompleto ou health fora da janela invalidam o instrumento.
+`networkRequests` é a evidência normativa enriquecida com request, response,
+finish/failure, status, MIME, frame/loader, timestamps e ordinais. Lifecycle,
+snapshots e delta são reconstruídos dessa lista; os resumos no binding só são
+aceitos se forem projeções idênticas, impedindo request oculto ou resumo
+autodeclarado.
 
 ## Campanha fixa
 
@@ -83,7 +117,8 @@ Todos precisam passar:
 5. health explícito do browser, health Node antes/depois, runId, fingerprint,
    brain, ASR, VAD, TTS, voz e cultura idênticos;
 6. quatro cadeias TTS completas sob requestIds distintos, sem request novo por
-   retry e com postData exato;
+   retry e com postData exato; os quatro IDs TTS e os quatro IDs de health são
+   globalmente únicos e disjuntos;
 7. em 4/4 unidades, comprimento e SHA-256 browser=CDP;
 8. A1=A2, B1=B2, A≠B, WAV íntegro e captura fail-closed limitada;
 9. A1 e B2, primeiros TTS após os dois healths de cada navegação, passam;
@@ -92,6 +127,33 @@ Todos precisam passar:
 
 O exercício real do retry não é exigido. Se todas as capturas ocorrerem na
 primeira leitura, não haverá alegação de recovery transitório.
+
+## Semântica congelada da avaliação
+
+- envelope e campanha 2×2 completos e bem formados produzem
+  `measurementStatus=EVALUATED`, mesmo quando o health causal invalida o
+  instrumento;
+- crash, timeout, signal, órfão, envelope malformado ou campanha incompleta
+  produzem `NOT_EVALUATED`; os cinco gates de captura ficam `null` e nenhuma
+  coleção vazia pode passar;
+- envelope, campaign, navigation, unidade, captura, snapshot e ledger usam
+  schemas exatos e recursivos; chave extra ou campo obrigatório ausente também
+  é campanha malformada e produz `NOT_EVALUATED`;
+- `instrumentValid=true` somente se todos os bindings estruturais forem
+  verdadeiros; health estrutural inválido tem precedência sobre falha TTS;
+- `pass` equivale exatamente à decisão `PASS_CDP_TTS_CAPTURE_AFTER_HEALTH_BINDING`;
+- o claim fica `null` em INVALIDATE/FIX. Somente PASS materializa, literalmente:
+  “Qualificação limitada: neste Chrome, processo e dois textos locais, um
+  health de bootstrap e um health explícito foram distinguidos causalmente em
+  cada navegação; 4/4 respostas TTS foram capturadas pelo CDP com os mesmos
+  bytes observados no browser.”
+
+O relatório não autoatribui checks que só existem depois do commit. Ele nasce
+com `evidenceAcceptance.status=PENDING_POST_COMMIT_CHECK`; binding do relatório,
+hash canônico, topologia e isolamento do commit são calculados pelo checker
+pós-commit. Um checker válido imprime `CHECK PASS` junto da decisão, sem chamar
+uma decisão INVALIDATE de “report PASS”. O núcleo desse checker possui provas
+positiva e negativas para parent, allowlist, blobs, binding e hash.
 
 ## Decisões e próximo movimento
 
@@ -103,6 +165,11 @@ primeira leitura, não haverá alegação de recovery transitório.
 
 A precedência é `INVALIDATE > FIX > PASS`. Todos os ramos proíbem rerun do
 EXP-0022 e execução física. `authorityEligible=false` em qualquer resultado.
+
+O receipt é escrito atomicamente e write-once antes de worker, health, CDP,
+Chrome ou rede. Receipt existente recusa um segundo worker; receipt órfão gera
+INVALIDATE local sem reabrir rede/Chrome. Throw, exit, signal, timeout ou output
+malformado do worker também são persistidos como INVALIDATE.
 
 ## Ordem operacional
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T05:49:33-03:00",
+  "updatedAt": "2026-08-03T06:14:39-03:00",
   "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
@@ -319,8 +319,17 @@
       "canonicalReport": null,
       "authority": "none",
       "criticalPath": true,
-      "cleanCloneChecks": [],
-      "localReproductionCommands": [],
+      "cleanCloneChecks": [
+        "node --test tests/exp-0021-cdp-capture.test.mjs",
+        "node --test tests/exp-0022-boundary.test.mjs",
+        "node --test tests/exp-0022-supervisor.test.mjs",
+        "node --test tests/exp-0022-worker.test.mjs",
+        "node --test tests/exp-0022-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs",
+        "npm run eval:index:check"
+      ],
       "supersedes": [],
       "nextDecision": "Implementar e congelar a distinção entre um health de bootstrap e um health explícito de auditoria por navegação; somente um passe pode autorizar o pré-registro futuro de STOP."
     }
