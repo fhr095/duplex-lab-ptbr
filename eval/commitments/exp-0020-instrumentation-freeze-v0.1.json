@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "exp-0020-instrumentation-freeze-v1",
+  "experimentId": "EXP-0020",
+  "status": "frozen-before-browser-opening",
+  "runnerSourceCommit": "c1d2b62a8d4c58b49ff5a5e46bd5b52d5a45c6c9",
+  "nodeVersion": "v22.22.2",
+  "sourceBaseline": {
+    "experimentId": "EXP-0019",
+    "evidenceCommit": "0127322ad18a5b1d98de53d9e45898249e05888d"
+  },
+  "artifacts": {
+    "preregistration": {
+      "path": "docs/experiments/EXP-0020-physical-stop-order.md",
+      "fileSha256": "sha256:744510fe8ad573f631f749713b243c7288338a574fa2cd9e16ef30962de9c480"
+    },
+    "exp0019Report": {
+      "path": "eval/reports/exp-0019-causal-audio-v0.1.json",
+      "fileSha256": "sha256:6e78ab453b210ae2e5bd3ff7ad28c7a3696c7e581b0bbbb3058ffd3d873439da"
+    }
+  },
+  "config": {
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0020",
+    "navigations": 2,
+    "stopsPerNavigation": 6,
+    "totalStops": 12,
+    "phrase": "Esta fala contínua mede uma única parada física do assistente.",
+    "ttsRate": 1,
+    "triggerAfterRenderActiveMs": 320,
+    "triggerTimerErrorMaxMs": 10,
+    "postStopObservationMs": 250,
+    "renderStopLimitMs": 250,
+    "classMinimumCount": 2,
+    "classLatencyEquivalenceMarginMs": 16.7,
+    "provider": "local",
+    "asrState": "disabled",
+    "vadControlEngine": "adaptive-energy-vad",
+    "vadShadowState": "disabled",
+    "ttsEngine": "windows-system-speech",
+    "paidApiCalls": 0,
+    "gpuRuns": 0,
+    "canProduceNewEffects": false
+  },
+  "configCanonicalSha256": "sha256:c2682312981eca1ff325a62237b0187598e01e47de00eafecf72709cc1fc12c8",
+  "productionSources": [
+    {
+      "path": "src/brain/provider.mjs",
+      "fileSha256": "sha256:9ba71504e91de572f8c7531358ca2140b9c1409868074493da3d1eb9118540bd",
+      "exp0019FileSha256": "sha256:9ba71504e91de572f8c7531358ca2140b9c1409868074493da3d1eb9118540bd"
+    },
+    {
+      "path": "src/cli/serve.mjs",
+      "fileSha256": "sha256:b0a305cdc4cec5ca27c837436c1e27555d17a9f3912fab53c6ef2a9eedad7b29",
+      "exp0019FileSha256": "sha256:b0a305cdc4cec5ca27c837436c1e27555d17a9f3912fab53c6ef2a9eedad7b29"
+    },
+    {
+      "path": "src/tts/windows-system-tts.mjs",
+      "fileSha256": "sha256:9f0d019d48176b3db2f0c461865875b55b67645055a9a5480e3db88d9f665518",
+      "exp0019FileSha256": "sha256:9f0d019d48176b3db2f0c461865875b55b67645055a9a5480e3db88d9f665518"
+    },
+    {
+      "path": "web/app.mjs",
+      "fileSha256": "sha256:dc51356b3ec4ddb2e920bdf29c7ff28f4d7fccb66fc29bef145bfb879e304bba",
+      "exp0019FileSha256": "sha256:dc51356b3ec4ddb2e920bdf29c7ff28f4d7fccb66fc29bef145bfb879e304bba"
+    },
+    {
+      "path": "web/index.html",
+      "fileSha256": "sha256:78c55898656f161c7af20c8990a2bf49a949a2a4a49910fddf2cd24f8daa4a32",
+      "exp0019FileSha256": "sha256:78c55898656f161c7af20c8990a2bf49a949a2a4a49910fddf2cd24f8daa4a32"
+    },
+    {
+      "path": "web/local-audio-reflex.mjs",
+      "fileSha256": "sha256:9230ad7fb96bff6472e2338f520cd9ab2f7306cda3e42ae2cb362a14c759b908",
+      "exp0019FileSha256": "sha256:9230ad7fb96bff6472e2338f520cd9ab2f7306cda3e42ae2cb362a14c759b908"
+    },
+    {
+      "path": "web/output-interruption-lifecycle.mjs",
+      "fileSha256": "sha256:b2bda7e6dfcc0393f393c683feba1ae460aa5c2d727529542c6deca1c71238bd",
+      "exp0019FileSha256": "sha256:b2bda7e6dfcc0393f393c683feba1ae460aa5c2d727529542c6deca1c71238bd"
+    },
+    {
+      "path": "web/pcm-capture.mjs",
+      "fileSha256": "sha256:ead10169f18fd4bd11d0139af6167b5333404b1163d30df9d1e25b14562d0c5b",
+      "exp0019FileSha256": "sha256:ead10169f18fd4bd11d0139af6167b5333404b1163d30df9d1e25b14562d0c5b"
+    },
+    {
+      "path": "web/training-trace-recorder.mjs",
+      "fileSha256": "sha256:1a404f8a0cf8cb8d362a56d661ea603a0a68d58bc9ae6fb7212ded6fcef0fa79",
+      "exp0019FileSha256": "sha256:1a404f8a0cf8cb8d362a56d661ea603a0a68d58bc9ae6fb7212ded6fcef0fa79"
+    },
+    {
+      "path": "web/turn-taking.mjs",
+      "fileSha256": "sha256:d9210e3cc8ae0e2f6dde6ec80ebaaf860eaa453b10fdf243fa14b2f2e9fb11f9",
+      "exp0019FileSha256": "sha256:d9210e3cc8ae0e2f6dde6ec80ebaaf860eaa453b10fdf243fa14b2f2e9fb11f9"
+    }
+  ],
+  "instrumentationSources": [
+    {
+      "path": ".gitignore",
+      "fileSha256": "sha256:fa9e90943c8b3384a353d182e50fcad530ada000023512658899dea77b3239cd"
+    },
+    {
+      "path": "package.json",
+      "fileSha256": "sha256:09272566f62a83772b4f1a3475cf2d40a0359b8ae91db1342124e4b3f61abece"
+    },
+    {
+      "path": "scripts/freeze-exp-0020-instrumentation.mjs",
+      "fileSha256": "sha256:78b84a79aeb42b098b70d6e653549430807134ffe9fb0c1bbc3df96ed98eb6a7"
+    },
+    {
+      "path": "scripts/lib/exp-0020-browser-harness.mjs",
+      "fileSha256": "sha256:f6019d39bcb798d6ad695b0859561937c8c0962e771647b57b788db76c5a4399"
+    },
+    {
+      "path": "scripts/open-exp-0020-browser-attempt.mjs",
+      "fileSha256": "sha256:da8271a66837db2bc868915b5147e334e5539c521c89cb09185efd01f203a77b"
+    },
+    {
+      "path": "scripts/smoke-exp-0020-browser.mjs",
+      "fileSha256": "sha256:e0d7c5fecb3dabbceb63075e77ad5c89e72cccdb0e2d297a1eb1cc3716cd81ad"
+    },
+    {
+      "path": "src/eval/exp-0020-boundary.mjs",
+      "fileSha256": "sha256:4d44aab46db5da0b6ff13e996120a9db188537751a421948f2b9c3d5f8a65d65"
+    },
+    {
+      "path": "src/eval/exp-0020-stop-order.mjs",
+      "fileSha256": "sha256:5a72869b88b257b5286af624f87c1ca982c487dea4aedd5870613bed759777fb"
+    },
+    {
+      "path": "tests/exp-0020-analysis.test.mjs",
+      "fileSha256": "sha256:5bf4c3fc31209e30a090968be75c8a9b502cc11b747b6806b14bd041755bd85a"
+    },
+    {
+      "path": "tests/exp-0020-boundary.test.mjs",
+      "fileSha256": "sha256:3e5dd774a894435013cb240877f600d647c9ca25173b15d345c25917dad52ce2"
+    },
+    {
+      "path": "tests/exp-0020-browser-harness.test.mjs",
+      "fileSha256": "sha256:102366301fc02be83ddb205d3d8b23b5314e61b22f71b75869fb8228ba7669a7"
+    },
+    {
+      "path": "tests/exp-0020-browser-runner.test.mjs",
+      "fileSha256": "sha256:5a7eecefacd0b9895fdee839b7ee42ac1ff160b01e5eb23718d39ee68dd924a2"
+    }
+  ],
+  "boundary": {
+    "browserAttemptsBeforeFreeze": 0,
+    "browserCampaignsBeforeFreeze": 0,
+    "reportAbsent": true,
+    "receiptAbsent": true,
+    "paidApiCalls": 0,
+    "gpuRuns": 0,
+    "canProduceNewEffects": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "instrumentationFreezeSha256": "sha256:a2916424162a1404c7e8c85d152fe1491fa94e5312a346c1d0a7273f1c738d8f"
+}
