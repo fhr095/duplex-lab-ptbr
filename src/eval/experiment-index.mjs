@@ -30,6 +30,14 @@ import {
 } from "./exp-0024-boundary.mjs";
 import { inspectExp0024Journal } from "./exp-0024-journal.mjs";
 import { validateExp0024Report } from "./exp-0024-stop-order.mjs";
+import {
+  EXP0025_C0_CHANGED_PATHS,
+  EXP0025_IMPLEMENTATION_BASE_COMMIT,
+  validateExp0025InstrumentationFreeze,
+  validateExp0025PhysicalStopAttempt
+} from "./exp-0025-boundary.mjs";
+import { inspectExp0025Journal } from "./exp-0025-journal.mjs";
+import { validateExp0025Report } from "./exp-0025-stop-order.mjs";
 import { canonicalSha256 } from "./factory/canonical-hash.mjs";
 
 const execFileAsync = promisify(execFile);
@@ -117,6 +125,10 @@ export const EXP0024_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json";
 export const EXP0024_EVIDENCE_COMMIT =
   "5a65d155787f3875973c280c5ed8d576d69d2853";
+export const EXP0025_CANONICAL_REPORT_PATH =
+  "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json";
+export const EXP0025_EVIDENCE_COMMIT =
+  "65a7b6019ab4b7231d0c79b0bff724373bdf6aea";
 
 const EXP0023_C0_COMMIT =
   "de919470f0b4b59db4f911b7ae5e40fcc9606707";
@@ -144,6 +156,20 @@ const EXP0024_RECEIPT_PATH =
   "eval/generated/exp-0024/physical-stop-attempt-consumed-v0.1.json";
 const EXP0024_JOURNAL_PATH =
   "eval/generated/exp-0024/physical-stop-journal-v0.1.ndjson";
+const EXP0025_C0_COMMIT =
+  "9485eadc5469cad0afb4df983c376b5af5a8cb02";
+const EXP0025_FREEZE_COMMIT =
+  "2b8db80c4d5d33803e0f8593a4cc8458122d05a3";
+const EXP0025_OPENING_COMMIT =
+  "ee549a4a114680db52c09350487159bf14454db4";
+const EXP0025_FREEZE_PATH =
+  "eval/commitments/exp-0025-instrumentation-freeze-v0.1.json";
+const EXP0025_ATTEMPT_PATH =
+  "eval/commitments/exp-0025-causal-render-onset-attempt-v0.1.json";
+const EXP0025_RECEIPT_PATH =
+  "eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json";
+const EXP0025_JOURNAL_PATH =
+  "eval/generated/exp-0025/causal-render-onset-journal-v0.1.ndjson";
 
 const ACTIVE_CRITICAL_PREREGISTRATION_PATHS = Object.freeze({
   "EXP-0025":
@@ -585,6 +611,75 @@ const CANONICAL_REPORT_CONTRACTS = Object.freeze({
       ["contract.canProduceNewEffects", false],
       ["contract.sameExperimentRerunAllowed", false]
     ]
+  },
+  "EXP-0025": {
+    status: "cut",
+    authority: "none",
+    decisionPath: "decision",
+    assertions: [
+      ["schemaVersion",
+        "exp-0025-causal-render-onset-physical-stop-report-v1"],
+      ["physicalMeasurementStatus", "NOT_EVALUATED"],
+      ["browserCdpByteIdentityStatus", "NOT_EVALUATED"],
+      ["browserCdpByteIdentity", null],
+      ["analysis.physicalMeasurementStatus", "NOT_EVALUATED"],
+      ["analysis.decision", "CUT_RENDER_STOP_INSTRUMENT_LINEAGE"],
+      ["pass", false],
+      ["instrumentValid", false],
+      ["authorityEligible", false],
+      ["sameExperimentRerunAllowed", false],
+      ["evidenceAcceptance", "PENDING_POST_COMMIT_CHECK"],
+      ["claim", null],
+      ["campaign.boundary.executionState", "FRESH"],
+      ["campaign.boundary.freezeVerified", true],
+      ["campaign.boundary.openingVerified", true],
+      ["campaign.boundary.receiptVerified", true],
+      ["campaign.boundary.receiptWriteOnce", true],
+      ["campaign.boundary.journalVerified", true],
+      ["campaign.boundary.journalAppendOnly", true],
+      ["campaign.boundary.journalFsyncBeforeAck", true],
+      ["campaign.boundary.sourceBindingsVerified", true],
+      ["campaign.boundary.runtimeBindingsVerified", true],
+      ["campaign.boundary.gitTopologyVerified", true],
+      ["campaign.boundary.recoveryOnly", false],
+      ["campaign.boundary.rerunAllowed", false],
+      ["campaign.journal.status", "VALID"],
+      ["campaign.journal.valid", true],
+      ["campaign.journal.completeFrameCount", 6],
+      ["campaign.journal.errors.length", 0],
+      ["analysis.structural.outerShapeValid", true],
+      ["analysis.structural.journalInspectionValid", true],
+      ["analysis.structural.journalSequenceValid", false],
+      ["analysis.structural.reconstructedTrialCount", 0],
+      ["analysis.structural.diagnosticCount", 1],
+      ["analysis.metrics.renderOnset.resultCount", 0],
+      ["analysis.provenanceDiagnostics.health", "NOT_COLLECTED"],
+      ["analysis.provenanceDiagnostics.networkLedger", "NOT_COLLECTED"],
+      ["analysis.provenanceDiagnostics.wavCapture", "NOT_COLLECTED"],
+      ["analysis.provenanceDiagnostics.workerOutcome", "FAIL"],
+      ["analysis.gates.boundaryReconstructed", true],
+      ["analysis.gates.journalReconstructible", false],
+      ["analysis.gates.campaignCardinality", false],
+      ["analysis.gates.environmentStable", true],
+      ["analysis.gates.typedTrialResults", false],
+      ["analysis.gates.causalRenderOnset", false],
+      ["analysis.gates.traceStructural", false],
+      ["analysis.gates.networkLedgerValid", null],
+      ["analysis.gates.captureQualified", null],
+      ["analysis.gates.browserCdpByteIdentity", null],
+      ["analysis.gates.singleLifecycleAndEffect", null],
+      ["analysis.gates.terminalStopStable", null],
+      ["analysis.gates.orderDiversity", null],
+      ["analysis.gates.classTemporalEquivalence", null],
+      ["analysis.nextMove.action", "CUT_RENDER_STOP_INSTRUMENT_LINEAGE"],
+      ["analysis.nextMove.authorityEligible", false],
+      ["analysis.nextMove.sameExperimentRerunAllowed", false],
+      ["contract.browserCdpByteIdentity", "NOT_EVALUATED"],
+      ["contract.paidApiCalls", 0],
+      ["contract.gpuRuns", 0],
+      ["contract.canProduceNewEffects", false],
+      ["contract.sameExperimentRerunAllowed", false]
+    ]
   }
 });
 
@@ -815,6 +910,14 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0024 terminal exige evidenceCommit");
     assert(entry.evidenceCommit === EXP0024_EVIDENCE_COMMIT,
       "EXP-0024 evidenceCommit precisa ser o fechamento oficial imutável");
+  }
+  if (entry.id === "EXP-0025") {
+    assert(entry.canonicalReport === EXP0025_CANONICAL_REPORT_PATH,
+      "EXP-0025 canonicalReport precisa usar o output canônico");
+    assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
+      "EXP-0025 terminal exige evidenceCommit");
+    assert(entry.evidenceCommit === EXP0025_EVIDENCE_COMMIT,
+      "EXP-0025 evidenceCommit precisa ser o fechamento oficial imutável");
   }
 
   const path = resolveRepositoryPath(
@@ -1772,6 +1875,146 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0024 evidenceCommit→HEAD"
     );
   }
+  if (entry.id === "EXP-0025") {
+    const reportValidation = validateExp0025Report(report);
+    assert(
+      reportValidation.valid,
+      "EXP-0025 report canônico inválido: " +
+        reportValidation.errors.join("; ")
+    );
+    const [freezeArtifact, openingArtifact, receiptArtifact, journalBytes] =
+      await Promise.all([
+        readArtifact(projectRoot, EXP0025_FREEZE_PATH, "EXP-0025 freeze"),
+        readArtifact(projectRoot, EXP0025_ATTEMPT_PATH, "EXP-0025 opening"),
+        readArtifact(projectRoot, EXP0025_RECEIPT_PATH, "EXP-0025 receipt"),
+        readFile(resolveRepositoryPath(
+          projectRoot,
+          EXP0025_JOURNAL_PATH,
+          "EXP-0025 journal"
+        ))
+      ]);
+    const freezeValidation = validateExp0025InstrumentationFreeze(
+      freezeArtifact.value
+    );
+    const openingValidation = validateExp0025PhysicalStopAttempt(
+      openingArtifact.value
+    );
+    assert(
+      freezeValidation.valid,
+      "EXP-0025 freeze inválido: " + freezeValidation.errors.join("; ")
+    );
+    assert(
+      openingValidation.valid,
+      "EXP-0025 opening inválido: " + openingValidation.errors.join("; ")
+    );
+    const journalInspection = inspectExp0025Journal(journalBytes);
+    assert(
+      journalInspection.valid &&
+        isDeepStrictEqual(journalInspection, report.campaign?.journal),
+      "EXP-0025 report não reproduz os bytes reais do journal"
+    );
+    const receipt = receiptArtifact.value;
+    const receiptCore = structuredClone(receipt);
+    delete receiptCore.receiptSha256;
+    assert(
+      receipt?.schemaVersion ===
+        "exp-0025-causal-render-onset-attempt-consumption-v1" &&
+        receipt.experimentId === "EXP-0025" &&
+        receipt.nonce === "exp-0025-official-v0.1" &&
+        receipt.opening?.path === EXP0025_ATTEMPT_PATH &&
+        receipt.opening.fileSha256 === openingArtifact.fileSha256 &&
+        receipt.opening.canonicalSha256 ===
+          openingArtifact.value.physicalStopAttemptSha256 &&
+        receipt.opening.commit === EXP0025_OPENING_COMMIT &&
+        receipt.rerunAllowed === false &&
+        receipt.receiptSha256 ===
+          `sha256:${canonicalSha256(receiptCore)}`,
+      "EXP-0025 receipt diverge do consumo canônico"
+    );
+    assert(
+      freezeArtifact.value.runnerSourceCommit === EXP0025_C0_COMMIT &&
+        openingArtifact.value.openingParentCommit === EXP0025_FREEZE_COMMIT &&
+        openingArtifact.value.freeze.path === EXP0025_FREEZE_PATH &&
+        openingArtifact.value.freeze.fileSha256 === freezeArtifact.fileSha256 &&
+        openingArtifact.value.freeze.runnerSourceCommit === EXP0025_C0_COMMIT &&
+        openingArtifact.value.freeze.freezeCommit === EXP0025_FREEZE_COMMIT,
+      "EXP-0025 freeze e opening não formam a cadeia congelada"
+    );
+    const diagnosticFrames = journalInspection.frames.filter(
+      (frame) => frame.type === "DIAGNOSTIC"
+    );
+    const workerOutcome = journalInspection.frames.at(-1);
+    assert(
+      diagnosticFrames.length === 1 &&
+        diagnosticFrames[0].payload?.code === "WORKER_UNCAUGHT" &&
+        diagnosticFrames[0].payload?.message === "condição CDP não satisfeita" &&
+        workerOutcome?.type === "WORKER_OUTCOME" &&
+        workerOutcome?.payload?.status === "failed" &&
+        workerOutcome?.payload?.code === "WORKER_EXIT_FAILURE" &&
+        workerOutcome?.payload?.exitCode === 1 &&
+        workerOutcome?.payload?.outcome?.protocolError === null,
+      "EXP-0025 precisa preservar a falha terminal exata"
+    );
+    const [receiptCommit, journalCommit, reportCommit, evidenceParent,
+      openingParent, freezeParent, c0Parent, evidencePaths, openingPaths,
+      freezePaths, c0Paths] = await Promise.all([
+      gitText(projectRoot, "log", "-1", "--format=%H", "--",
+        EXP0025_RECEIPT_PATH),
+      gitText(projectRoot, "log", "-1", "--format=%H", "--",
+        EXP0025_JOURNAL_PATH),
+      gitText(projectRoot, "log", "-1", "--format=%H", "--",
+        EXP0025_CANONICAL_REPORT_PATH),
+      gitText(projectRoot, "rev-parse", `${EXP0025_EVIDENCE_COMMIT}^`),
+      gitText(projectRoot, "rev-parse", `${EXP0025_OPENING_COMMIT}^`),
+      gitText(projectRoot, "rev-parse", `${EXP0025_FREEZE_COMMIT}^`),
+      gitText(projectRoot, "rev-parse", `${EXP0025_C0_COMMIT}^`),
+      changedPathsAtCommit(projectRoot, EXP0025_EVIDENCE_COMMIT),
+      changedPathsAtCommit(projectRoot, EXP0025_OPENING_COMMIT),
+      changedPathsAtCommit(projectRoot, EXP0025_FREEZE_COMMIT),
+      changedPathsAtCommit(projectRoot, EXP0025_C0_COMMIT)
+    ]);
+    assert(
+      receiptCommit === EXP0025_EVIDENCE_COMMIT &&
+        journalCommit === EXP0025_EVIDENCE_COMMIT &&
+        reportCommit === EXP0025_EVIDENCE_COMMIT &&
+        evidenceParent === EXP0025_OPENING_COMMIT &&
+        openingParent === EXP0025_FREEZE_COMMIT &&
+        freezeParent === EXP0025_C0_COMMIT &&
+        c0Parent === EXP0025_IMPLEMENTATION_BASE_COMMIT,
+      "EXP-0025 topologia C0→freeze→opening→evidence divergiu"
+    );
+    assert(
+      isDeepStrictEqual(evidencePaths, [
+        EXP0025_JOURNAL_PATH,
+        EXP0025_RECEIPT_PATH,
+        EXP0025_CANONICAL_REPORT_PATH
+      ].toSorted()) &&
+        isDeepStrictEqual(openingPaths, [EXP0025_ATTEMPT_PATH]) &&
+        isDeepStrictEqual(freezePaths, [EXP0025_FREEZE_PATH]) &&
+        isDeepStrictEqual(c0Paths, EXP0025_C0_CHANGED_PATHS),
+      "EXP-0025 commits isolados alteraram paths não autorizados"
+    );
+    await Promise.all([
+      assertGitFileMatches(projectRoot, EXP0025_EVIDENCE_COMMIT,
+        EXP0025_CANONICAL_REPORT_PATH, await readFile(path),
+        "EXP-0025 canonical report"),
+      assertGitFileMatches(projectRoot, EXP0025_EVIDENCE_COMMIT,
+        EXP0025_RECEIPT_PATH, receiptArtifact.bytes, "EXP-0025 receipt"),
+      assertGitFileMatches(projectRoot, EXP0025_EVIDENCE_COMMIT,
+        EXP0025_JOURNAL_PATH, journalBytes, "EXP-0025 journal"),
+      assertGitFileMatches(projectRoot, EXP0025_FREEZE_COMMIT,
+        EXP0025_FREEZE_PATH, freezeArtifact.bytes, "EXP-0025 freeze"),
+      assertGitFileMatches(projectRoot, EXP0025_OPENING_COMMIT,
+        EXP0025_ATTEMPT_PATH, openingArtifact.bytes, "EXP-0025 opening")
+    ]);
+    const headCommit = await gitText(projectRoot, "rev-parse", "HEAD");
+    await assertGitAncestor(
+      projectRoot,
+      entry.evidenceCommit,
+      headCommit,
+      "EXP-0025 evidenceCommit→HEAD"
+    );
+  }
 }
 
 function validateEntryShape(entry, index) {
@@ -1860,7 +2103,7 @@ function validateEntryShape(entry, index) {
       "EXP-0021.evidenceCommit precisa ser null ou commit completo"
     );
   }
-  if (["EXP-0022", "EXP-0023", "EXP-0024"].includes(entry.id)) {
+  if (["EXP-0022", "EXP-0023", "EXP-0024", "EXP-0025"].includes(entry.id)) {
     assert(
       entry.evidenceCommit === null ||
         /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),

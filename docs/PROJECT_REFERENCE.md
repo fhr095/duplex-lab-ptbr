@@ -4,8 +4,8 @@ Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
 invalidações instrumentais dos EXP-0020/0021/0022, passe instrumental do
-EXP-0023, invalidação instrumental do EXP-0024, EXP-0025 terminal
-pré-registrado e headroom A0 confirmado no EXP-0025-R paralelo**
+EXP-0023, invalidação instrumental do EXP-0024, corte terminal do EXP-0025 e
+headroom A0 confirmado no EXP-0025-R paralelo**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -28,11 +28,11 @@ uniu a captura à campanha física, mas sua
 [tentativa única](experiments/EXP-0024-closeout.md) foi invalidada antes do
 primeiro STOP persistido: uma fala natural gerou múltiplos `render.active` e o
 instrumento exigia exatamente um. O físico permanece `NOT_EVALUATED`. O
-[EXP-0025](experiments/EXP-0025-causal-render-onset-physical-stop.md) está
-pré-registrado para selecionar o primeiro marcador por posição causal,
-preservar toda multiplicidade e medir `STOP-R` no grafo Web Audio. Ele não
-mede o último som audível na sala e uma única abertura encerra esta família de
-instrumento. O
+[EXP-0025](experiments/EXP-0025-closeout.md) consumiu sua tentativa terminal:
+o Chrome foi ligado, mas a prontidão herdada exigia um audit removido do
+caminho mínimo. Com seis frames, zero trials e `STOP-R=NOT_EVALUATED`, a
+linhagem do instrumento foi cortada sem rerun. Health, rede e WAV ficaram fora
+dos gates e não causaram a falha. O
 [EXP-0025-R](experiments/EXP-0025-R-duplexcascade-floor-control.md) é uma
 trilha não bloqueante: seu pack D materializado mostrou 8/16 tomadas
 prematuras em `A0-native`, confirmando headroom, enquanto `A0@600` permaneceu
@@ -429,9 +429,9 @@ Esta referência preserva apenas a lógica macro:
 14. preservar a invalidação do EXP-0024: a cardinalidade unitária de
     `render.active` falhou antes de qualquer STOP persistido, logo o resultado
     físico continua desconhecido e a tentativa não será repetida;
-15. executar no EXP-0025 somente a correção causal da âncora e medir `STOP-R`,
-    separando instrumento, renderer e ordem; uma abertura encerra a família e
-    não será chamada de último som audível;
+15. preservar o corte terminal do EXP-0025: a prontidão herdada exigiu um
+    audit removido, nenhum trial ocorreu e `STOP-R` permanece desconhecido;
+    não reparar nem repetir esta linhagem;
 16. preservar o headroom confirmado do EXP-0025-R e executar suas etapas
     candidatas separadamente — checkpoint textual oficial `E` somente após
     autorização explícita e um único controlador local `L` — por fala/sessão,

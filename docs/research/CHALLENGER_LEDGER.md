@@ -49,9 +49,10 @@ não são autoridade da ordem de entrega. O EXP-0023 testou somente a correção
 ordinal e passou 10/10 gates, qualificando a captura sem medir STOP. O EXP-0024
 integrou essa captura à campanha física, mas foi invalidado antes do primeiro
 STOP persistido porque atividade acústica segmentada gerou múltiplos
-`render.active`. O EXP-0025 corrige somente a âncora causal e mede `STOP-R` no
-grafo Web Audio; ele não mede o último som audível na sala e é terminal para
-esta família de instrumento.
+`render.active`. O EXP-0025 também encerrou sem medir `STOP-R`: a prontidão
+herdada ainda exigia um audit retirado do caminho mínimo. Como a tentativa era
+terminal, a linhagem deste instrumento foi cortada; outro reparo não compete
+com o probe de tomada de turno por prioridade.
 
 O rebalanceamento prospectivo abriu o EXP-0025-R sem colocá-lo no caminho
 crítico. Seu pack D materializado confirmou headroom da baseline: 8/16

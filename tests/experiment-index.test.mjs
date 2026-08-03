@@ -95,7 +95,7 @@ async function fixture() {
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
   assert.equal(index.currentCriticalPath, "EXP-0025");
-  assert.equal(index.transitionState, "active");
+  assert.equal(index.transitionState, "terminal-awaiting-next-registration");
   assert.equal(index.currentParallelProbe.id, "EXP-0025-R");
   assert.equal(index.currentParallelProbe.status, "active");
   assert.equal(index.currentParallelProbe.blocking, false);
@@ -104,17 +104,31 @@ test("índice canônico real referencia evidências existentes", async () => {
     "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md"
   );
   assert.equal(index.entries.at(-1).id, "EXP-0025");
-  assert.equal(index.entries.at(-1).status, "active");
+  assert.equal(index.entries.at(-1).status, "cut");
   assert.equal(
     index.entries.at(-1).preRegistration,
     "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md"
   );
-  assert.equal(index.entries.at(-1).canonicalReport, null);
+  assert.equal(
+    index.entries.at(-1).canonicalReport,
+    "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json"
+  );
+  assert.equal(
+    index.entries.at(-1).evidenceCommit,
+    "65a7b6019ab4b7231d0c79b0bff724373bdf6aea"
+  );
   assert.equal(index.entries.at(-1).authority, "none");
   assert.equal(index.entries.at(-1).criticalPath, true);
   assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
     "node --test tests/experiment-index.test.mjs",
-    "node --test tests/exp-0025-preregistration.test.mjs"
+    "node --test tests/exp-0025-preregistration.test.mjs",
+    "node --test tests/exp-0025-boundary.test.mjs",
+    "node --test tests/exp-0025-browser-harness.test.mjs",
+    "node --test tests/exp-0025-browser-trial.test.mjs",
+    "node --test tests/exp-0025-journal.test.mjs",
+    "node --test tests/exp-0025-stop-order.test.mjs",
+    "node --test tests/exp-0025-supervisor.test.mjs",
+    "node --test tests/exp-0025-worker.test.mjs"
   ]);
   const exp0024 = index.entries.find(({ id }) => id === "EXP-0024");
   assert.equal(exp0024.status, "invalidated");

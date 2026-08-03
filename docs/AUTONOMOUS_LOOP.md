@@ -131,12 +131,11 @@ O EXP-0024 integrou esse conjunto sem alterar as fontes de produção, mas sua
 atividade acústica. Nenhum STOP foi persistido, o físico é `NOT_EVALUATED` e a
 tentativa não será repetida.
 
-O EXP-0025 aplica o último PDCA desta família à premissa que falhou: ancora o
-trigger no primeiro `render.active` pós-reset por posição causal, preserva os
-demais e obriga cada trial a persistir `COLLECTED` ou `INSTRUMENT_FAILURE`.
-Separa validade do instrumento, `STOP-R`, exercício da multiplicidade e ordem
-de telemetria. `STOP-R` termina no grafo Web Audio e não prova som audível na
-sala; qualquer folha encerra o experimento sem reparo instrumental automático.
+O EXP-0025 aplicou o último PDCA desta família e encerrou na folha de corte. O
+caminho mínimo removeu health/rede/WAV dos gates, mas reutilizou uma condição
+de prontidão que ainda exigia `__exp0022Audit`, já não instalado. O Chrome foi
+ligado, a primeira navegação começou e nenhum trial ocorreu: `STOP-R` ficou
+`NOT_EVALUATED`. A tentativa terminal não será reparada ou repetida.
 
 O EXP-0025-R avança em paralelo e sem autoridade. O pack D materializado e a
 baseline já confirmaram headroom: 8/16 tomadas prematuras em `A0-native`;
@@ -156,6 +155,7 @@ npm run eval:exp:0021:report:check
 npm run eval:exp:0022:report:check
 npm run eval:exp:0023:report:check
 npm run eval:exp:0024:report:check
+npm run eval:exp:0025:report:check
 npm run eval:exp:0025:r:audio:check
 npm run eval:exp:0025:r:baseline:check
 node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
