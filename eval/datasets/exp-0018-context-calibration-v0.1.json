@@ -1,0 +1,349 @@
+{
+  "schemaVersion": "exp-0018-context-dataset-v1",
+  "datasetId": "exp-0018-context-calibration-v0.1",
+  "experimentId": "EXP-0018",
+  "locale": "pt-BR",
+  "role": "calibration",
+  "fitEligibility": "threshold-only",
+  "classes": [
+    "BACKGROUND_OR_NOT_DIRECTED",
+    "DIRECTED_TO_ASSISTANT"
+  ],
+  "featureVersion": "exp-0018-context-relational-features-v1",
+  "featureNames": [
+    "bias",
+    "targetPresent",
+    "targetCharacterLength",
+    "targetTokenCount",
+    "targetHasQuestion",
+    "targetHasNegation",
+    "targetHasCorrectionMarker",
+    "targetHasContinuationMarker",
+    "assistantSpeaking",
+    "contextMask",
+    "assistantHasQuestion",
+    "inboundHasQuestion",
+    "targetAssistantTokenJaccard",
+    "targetInboundTokenJaccard",
+    "tokenJaccardDelta",
+    "targetAssistantTokenCoverage",
+    "targetInboundTokenCoverage",
+    "tokenCoverageDelta",
+    "targetAssistantCharNgramCosine",
+    "targetInboundCharNgramCosine",
+    "charNgramCosineDelta"
+  ],
+  "provenance": {
+    "catalogSha256": "sha256:1d4c9f92c28eed502c46cd8733dc54709a8c0559de3652cc9d9af3f249619036",
+    "experimentConfigFileSha256": "sha256:937f91602895b00529d0509097039536562eb290401681989c74e4af5a51f99f",
+    "generationMethod": "deterministic-crossed-2x2",
+    "externalModelCalls": 0,
+    "paidApiCalls": 0
+  },
+  "summary": {
+    "crossBlocks": 4,
+    "pairRoots": 8,
+    "examples": 16,
+    "labels": {
+      "BACKGROUND_OR_NOT_DIRECTED": 8,
+      "DIRECTED_TO_ASSISTANT": 8
+    },
+    "families": {
+      "continuation": 4,
+      "correction": 4,
+      "instruction-negation": 4,
+      "short-response": 4
+    }
+  },
+  "examples": [
+    {
+      "exampleId": "e-096c287ab2f5b7781b5b",
+      "pairRootId": "calibration-continuation-safety-migrations-target-calibration-resume-migrations",
+      "crossBlockRootId": "calibration-continuation-safety-migrations",
+      "semanticLineageId": "lineage-calibration-safety-migrations",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-calibration-resume-migrations",
+      "contextSurfaceId": "context-calibration-safety-over-migrations",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Interrompi o guia antes da etapa de segurança; devo continuar?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a leitura no capítulo das migrações; posso retomar dali?"
+        ],
+        "targetText": "retome no capítulo das migrações"
+      }
+    },
+    {
+      "exampleId": "e-12a9940b508f5af8debb",
+      "pairRootId": "calibration-continuation-safety-migrations-target-calibration-continue-safety",
+      "crossBlockRootId": "calibration-continuation-safety-migrations",
+      "semanticLineageId": "lineage-calibration-safety-migrations",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-calibration-continue-safety",
+      "contextSurfaceId": "context-calibration-safety-over-migrations",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Interrompi o guia antes da etapa de segurança; devo continuar?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a leitura no capítulo das migrações; posso retomar dali?"
+        ],
+        "targetText": "continue pela etapa de segurança"
+      }
+    },
+    {
+      "exampleId": "e-26cf51c2bc2eeb062319",
+      "pairRootId": "calibration-instruction-card-gate-target-calibration-lock-gate",
+      "crossBlockRootId": "calibration-instruction-card-gate",
+      "semanticLineageId": "lineage-calibration-card-gate",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-calibration-lock-gate",
+      "contextSurfaceId": "context-calibration-card-over-gate",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Posso cobrar o cartão agora?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O portão dos fundos está aberto; eu devo trancar agora?"
+        ],
+        "targetText": "tranque o portão dos fundos"
+      }
+    },
+    {
+      "exampleId": "e-32f17d9c342a10e48f4e",
+      "pairRootId": "calibration-short-seat-network-target-calibration-aisle-seat",
+      "crossBlockRootId": "calibration-short-seat-network",
+      "semanticLineageId": "lineage-calibration-seat-network",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-calibration-aisle-seat",
+      "contextSurfaceId": "context-calibration-seat-over-network",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "No voo, você prefere o assento da janela ou o assento do corredor?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O celular vai entrar na rede visitante ou na rede interna?"
+        ],
+        "targetText": "assento no corredor"
+      }
+    },
+    {
+      "exampleId": "e-43f21c2c44a2c88d6f92",
+      "pairRootId": "calibration-short-seat-network-target-calibration-aisle-seat",
+      "crossBlockRootId": "calibration-short-seat-network",
+      "semanticLineageId": "lineage-calibration-seat-network",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-calibration-aisle-seat",
+      "contextSurfaceId": "context-calibration-network-over-seat",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Conecto o celular na rede visitante ou na interna?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Para o voo, ficou assento de corredor ou de janela?"
+        ],
+        "targetText": "assento no corredor"
+      }
+    },
+    {
+      "exampleId": "e-4e0978abac3c3ae5b7de",
+      "pairRootId": "calibration-continuation-safety-migrations-target-calibration-continue-safety",
+      "crossBlockRootId": "calibration-continuation-safety-migrations",
+      "semanticLineageId": "lineage-calibration-safety-migrations",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-calibration-continue-safety",
+      "contextSurfaceId": "context-calibration-migrations-over-safety",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "O capítulo das migrações foi o último lido; posso retomar?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei o guia antes da etapa de segurança; devo continuar?"
+        ],
+        "targetText": "continue pela etapa de segurança"
+      }
+    },
+    {
+      "exampleId": "e-551779aec63a36723948",
+      "pairRootId": "calibration-short-seat-network-target-calibration-guest-network",
+      "crossBlockRootId": "calibration-short-seat-network",
+      "semanticLineageId": "lineage-calibration-seat-network",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-calibration-guest-network",
+      "contextSurfaceId": "context-calibration-network-over-seat",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Conecto o celular na rede visitante ou na interna?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Para o voo, ficou assento de corredor ou de janela?"
+        ],
+        "targetText": "na rede visitante"
+      }
+    },
+    {
+      "exampleId": "e-5bf1a4a8b61fba3452ea",
+      "pairRootId": "calibration-continuation-safety-migrations-target-calibration-resume-migrations",
+      "crossBlockRootId": "calibration-continuation-safety-migrations",
+      "semanticLineageId": "lineage-calibration-safety-migrations",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-calibration-resume-migrations",
+      "contextSurfaceId": "context-calibration-migrations-over-safety",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "O capítulo das migrações foi o último lido; posso retomar?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei o guia antes da etapa de segurança; devo continuar?"
+        ],
+        "targetText": "retome no capítulo das migrações"
+      }
+    },
+    {
+      "exampleId": "e-6fe886586831f8e9692c",
+      "pairRootId": "calibration-correction-address-quantity-target-calibration-address-eighty-two",
+      "crossBlockRootId": "calibration-correction-address-quantity",
+      "semanticLineageId": "lineage-calibration-address-quantity",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-calibration-address-eighty-two",
+      "contextSurfaceId": "context-calibration-address-over-quantity",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "No endereço coloco o número vinte e oito?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O lote veio com seis unidades, certo?"
+        ],
+        "targetText": "o número correto é oitenta e dois"
+      }
+    },
+    {
+      "exampleId": "e-7d7c013c0609140dddf7",
+      "pairRootId": "calibration-instruction-card-gate-target-calibration-hold-card",
+      "crossBlockRootId": "calibration-instruction-card-gate",
+      "semanticLineageId": "lineage-calibration-card-gate",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-calibration-hold-card",
+      "contextSurfaceId": "context-calibration-gate-over-card",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quer que eu tranque o portão dos fundos?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O cartão ainda está pendente; então eu não devo cobrar agora?"
+        ],
+        "targetText": "não cobre o cartão agora"
+      }
+    },
+    {
+      "exampleId": "e-b0944bdc8fbf11514329",
+      "pairRootId": "calibration-instruction-card-gate-target-calibration-hold-card",
+      "crossBlockRootId": "calibration-instruction-card-gate",
+      "semanticLineageId": "lineage-calibration-card-gate",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-calibration-hold-card",
+      "contextSurfaceId": "context-calibration-card-over-gate",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Posso cobrar o cartão agora?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O portão dos fundos está aberto; eu devo trancar agora?"
+        ],
+        "targetText": "não cobre o cartão agora"
+      }
+    },
+    {
+      "exampleId": "e-b5bcb85f7344c7496409",
+      "pairRootId": "calibration-correction-address-quantity-target-calibration-address-eighty-two",
+      "crossBlockRootId": "calibration-correction-address-quantity",
+      "semanticLineageId": "lineage-calibration-address-quantity",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-calibration-address-eighty-two",
+      "contextSurfaceId": "context-calibration-quantity-over-address",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Registro seis unidades nesse lote?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O endereço termina no número vinte e oito?"
+        ],
+        "targetText": "o número correto é oitenta e dois"
+      }
+    },
+    {
+      "exampleId": "e-be45e4d5f0a94d758cdd",
+      "pairRootId": "calibration-instruction-card-gate-target-calibration-lock-gate",
+      "crossBlockRootId": "calibration-instruction-card-gate",
+      "semanticLineageId": "lineage-calibration-card-gate",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-calibration-lock-gate",
+      "contextSurfaceId": "context-calibration-gate-over-card",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quer que eu tranque o portão dos fundos?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O cartão ainda está pendente; então eu não devo cobrar agora?"
+        ],
+        "targetText": "tranque o portão dos fundos"
+      }
+    },
+    {
+      "exampleId": "e-dcb79c8f559435fb1af2",
+      "pairRootId": "calibration-short-seat-network-target-calibration-guest-network",
+      "crossBlockRootId": "calibration-short-seat-network",
+      "semanticLineageId": "lineage-calibration-seat-network",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-calibration-guest-network",
+      "contextSurfaceId": "context-calibration-seat-over-network",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "No voo, você prefere o assento da janela ou o assento do corredor?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O celular vai entrar na rede visitante ou na rede interna?"
+        ],
+        "targetText": "na rede visitante"
+      }
+    },
+    {
+      "exampleId": "e-e7592f2f13b27c16e57c",
+      "pairRootId": "calibration-correction-address-quantity-target-calibration-seven-units",
+      "crossBlockRootId": "calibration-correction-address-quantity",
+      "semanticLineageId": "lineage-calibration-address-quantity",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-calibration-seven-units",
+      "contextSurfaceId": "context-calibration-address-over-quantity",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "No endereço coloco o número vinte e oito?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O lote veio com seis unidades, certo?"
+        ],
+        "targetText": "são sete unidades, não seis"
+      }
+    },
+    {
+      "exampleId": "e-e89ea87b4df908d3b0d2",
+      "pairRootId": "calibration-correction-address-quantity-target-calibration-seven-units",
+      "crossBlockRootId": "calibration-correction-address-quantity",
+      "semanticLineageId": "lineage-calibration-address-quantity",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-calibration-seven-units",
+      "contextSurfaceId": "context-calibration-quantity-over-address",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Registro seis unidades nesse lote?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O endereço termina no número vinte e oito?"
+        ],
+        "targetText": "são sete unidades, não seis"
+      }
+    }
+  ],
+  "datasetSha256": "sha256:7e172b4df981962688a8ecd55180689a40a749875b1d1d67aa4633931e79358c"
+}

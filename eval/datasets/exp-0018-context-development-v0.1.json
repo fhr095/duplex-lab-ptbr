@@ -1,0 +1,637 @@
+{
+  "schemaVersion": "exp-0018-context-dataset-v1",
+  "datasetId": "exp-0018-context-development-v0.1",
+  "experimentId": "EXP-0018",
+  "locale": "pt-BR",
+  "role": "development",
+  "fitEligibility": "evaluation-only",
+  "classes": [
+    "BACKGROUND_OR_NOT_DIRECTED",
+    "DIRECTED_TO_ASSISTANT"
+  ],
+  "featureVersion": "exp-0018-context-relational-features-v1",
+  "featureNames": [
+    "bias",
+    "targetPresent",
+    "targetCharacterLength",
+    "targetTokenCount",
+    "targetHasQuestion",
+    "targetHasNegation",
+    "targetHasCorrectionMarker",
+    "targetHasContinuationMarker",
+    "assistantSpeaking",
+    "contextMask",
+    "assistantHasQuestion",
+    "inboundHasQuestion",
+    "targetAssistantTokenJaccard",
+    "targetInboundTokenJaccard",
+    "tokenJaccardDelta",
+    "targetAssistantTokenCoverage",
+    "targetInboundTokenCoverage",
+    "tokenCoverageDelta",
+    "targetAssistantCharNgramCosine",
+    "targetInboundCharNgramCosine",
+    "charNgramCosineDelta"
+  ],
+  "provenance": {
+    "catalogSha256": "sha256:1d4c9f92c28eed502c46cd8733dc54709a8c0559de3652cc9d9af3f249619036",
+    "experimentConfigFileSha256": "sha256:937f91602895b00529d0509097039536562eb290401681989c74e4af5a51f99f",
+    "generationMethod": "deterministic-crossed-2x2",
+    "externalModelCalls": 0,
+    "paidApiCalls": 0
+  },
+  "summary": {
+    "crossBlocks": 8,
+    "pairRoots": 16,
+    "examples": 32,
+    "labels": {
+      "BACKGROUND_OR_NOT_DIRECTED": 16,
+      "DIRECTED_TO_ASSISTANT": 16
+    },
+    "families": {
+      "continuation": 8,
+      "correction": 8,
+      "instruction-negation": 8,
+      "short-response": 8
+    }
+  },
+  "examples": [
+    {
+      "exampleId": "e-04e769f02faa14ae13b2",
+      "pairRootId": "development-continuation-errors-deployment-target-development-continue-deployment",
+      "crossBlockRootId": "development-continuation-errors-deployment",
+      "semanticLineageId": "lineage-development-errors-deployment",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-continue-deployment",
+      "contextSurfaceId": "context-development-errors-over-deployment",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Interrompi a análise antes dos registros de erro; retomo?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a revisão na lista de implantação; posso continuar?"
+        ],
+        "targetText": "continue pela lista de implantação"
+      }
+    },
+    {
+      "exampleId": "e-1d75713ac5273769fa67",
+      "pairRootId": "development-instruction-draft-temperature-target-development-save-draft",
+      "crossBlockRootId": "development-instruction-draft-temperature",
+      "semanticLineageId": "lineage-development-draft-temperature",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-save-draft",
+      "contextSurfaceId": "context-development-temperature-over-draft",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Ajusto o ar-condicionado para vinte graus?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O texto ainda não está pronto; eu salvo apenas como rascunho?"
+        ],
+        "targetText": "salve apenas como rascunho"
+      }
+    },
+    {
+      "exampleId": "e-382e6f1b28758da2ca17",
+      "pairRootId": "development-instruction-post-elevator-target-development-hold-post",
+      "crossBlockRootId": "development-instruction-post-elevator",
+      "semanticLineageId": "lineage-development-post-elevator",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-hold-post",
+      "contextSurfaceId": "context-development-elevator-over-post",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quer que eu chame o técnico do elevador?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A postagem de hoje ainda está incompleta; então eu não devo publicar?"
+        ],
+        "targetText": "não publique a postagem hoje"
+      }
+    },
+    {
+      "exampleId": "e-46d1fce9ebdf80b6e3f5",
+      "pairRootId": "development-continuation-errors-deployment-target-development-resume-errors",
+      "crossBlockRootId": "development-continuation-errors-deployment",
+      "semanticLineageId": "lineage-development-errors-deployment",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-resume-errors",
+      "contextSurfaceId": "context-development-errors-over-deployment",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Interrompi a análise antes dos registros de erro; retomo?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a revisão na lista de implantação; posso continuar?"
+        ],
+        "targetText": "retome pelos registros de erro"
+      }
+    },
+    {
+      "exampleId": "e-4769fb28fd50c23e7ffb",
+      "pairRootId": "development-instruction-post-elevator-target-development-hold-post",
+      "crossBlockRootId": "development-instruction-post-elevator",
+      "semanticLineageId": "lineage-development-post-elevator",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-hold-post",
+      "contextSurfaceId": "context-development-post-over-elevator",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Devo publicar a postagem ainda hoje?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O elevador voltou a falhar; eu devo chamar o técnico?"
+        ],
+        "targetText": "não publique a postagem hoje"
+      }
+    },
+    {
+      "exampleId": "e-4dc995a0da0061e80f2d",
+      "pairRootId": "development-instruction-post-elevator-target-development-call-technician",
+      "crossBlockRootId": "development-instruction-post-elevator",
+      "semanticLineageId": "lineage-development-post-elevator",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-call-technician",
+      "contextSurfaceId": "context-development-elevator-over-post",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quer que eu chame o técnico do elevador?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A postagem de hoje ainda está incompleta; então eu não devo publicar?"
+        ],
+        "targetText": "chame o técnico do elevador"
+      }
+    },
+    {
+      "exampleId": "e-511ef9159567a67ab764",
+      "pairRootId": "development-continuation-chart-interview-target-development-continue-chart",
+      "crossBlockRootId": "development-continuation-chart-interview",
+      "semanticLineageId": "lineage-development-chart-interview",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-continue-chart",
+      "contextSurfaceId": "context-development-chart-over-interview",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei antes de interpretar o gráfico; quer que eu siga?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a entrevista no trecho sobre carreira; posso continuar dali?"
+        ],
+        "targetText": "pode seguir pela interpretação do gráfico"
+      }
+    },
+    {
+      "exampleId": "e-592b84ece1a20d22acdd",
+      "pairRootId": "development-short-bridge-channel-target-development-new-bridge",
+      "crossBlockRootId": "development-short-bridge-channel",
+      "semanticLineageId": "lineage-development-bridge-channel",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-new-bridge",
+      "contextSurfaceId": "context-development-bridge-over-channel",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Para chegar ao depósito, sigo pela ponte nova ou pela avenida velha?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O transmissor deve operar no canal dois ou no canal cinco?"
+        ],
+        "targetText": "pela ponte nova"
+      }
+    },
+    {
+      "exampleId": "e-615c38586db091da6fcf",
+      "pairRootId": "development-correction-version-label-target-development-version-three-two",
+      "crossBlockRootId": "development-correction-version-label",
+      "semanticLineageId": "lineage-development-version-label",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-version-three-two",
+      "contextSurfaceId": "context-development-version-over-label",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Vou instalar a versão três ponto um?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A caixa deve receber a etiqueta amarela?"
+        ],
+        "targetText": "corrigindo, a versão é três ponto dois"
+      }
+    },
+    {
+      "exampleId": "e-672744edc901b546cef2",
+      "pairRootId": "development-correction-weekday-floor-target-development-thursday",
+      "crossBlockRootId": "development-correction-weekday-floor",
+      "semanticLineageId": "lineage-development-weekday-floor",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-thursday",
+      "contextSurfaceId": "context-development-floor-over-weekday",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Confirmo o escritório no oitavo andar?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A manutenção foi marcada para quarta-feira?"
+        ],
+        "targetText": "é quinta-feira, não quarta"
+      }
+    },
+    {
+      "exampleId": "e-6e1f0d3b50f400ee4522",
+      "pairRootId": "development-short-meeting-shirt-target-development-thirty-minutes",
+      "crossBlockRootId": "development-short-meeting-shirt",
+      "semanticLineageId": "lineage-development-meeting-shirt",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-thirty-minutes",
+      "contextSurfaceId": "context-development-shirt-over-meeting",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Qual tamanho registro para a camiseta, médio ou grande?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A reunião ficou com trinta minutos ou uma hora de duração?"
+        ],
+        "targetText": "trinta minutos"
+      }
+    },
+    {
+      "exampleId": "e-7fd1ed65f89c44d019cb",
+      "pairRootId": "development-instruction-post-elevator-target-development-call-technician",
+      "crossBlockRootId": "development-instruction-post-elevator",
+      "semanticLineageId": "lineage-development-post-elevator",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-call-technician",
+      "contextSurfaceId": "context-development-post-over-elevator",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Devo publicar a postagem ainda hoje?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O elevador voltou a falhar; eu devo chamar o técnico?"
+        ],
+        "targetText": "chame o técnico do elevador"
+      }
+    },
+    {
+      "exampleId": "e-9e230df54951a674301b",
+      "pairRootId": "development-correction-version-label-target-development-green-label",
+      "crossBlockRootId": "development-correction-version-label",
+      "semanticLineageId": "lineage-development-version-label",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-green-label",
+      "contextSurfaceId": "context-development-label-over-version",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Uso a etiqueta amarela nessa caixa?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O pacote ainda está na versão três ponto um?"
+        ],
+        "targetText": "na verdade, a etiqueta certa é verde"
+      }
+    },
+    {
+      "exampleId": "e-9fbe0829db7cfffdc8fe",
+      "pairRootId": "development-correction-version-label-target-development-version-three-two",
+      "crossBlockRootId": "development-correction-version-label",
+      "semanticLineageId": "lineage-development-version-label",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-version-three-two",
+      "contextSurfaceId": "context-development-label-over-version",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Uso a etiqueta amarela nessa caixa?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O pacote ainda está na versão três ponto um?"
+        ],
+        "targetText": "corrigindo, a versão é três ponto dois"
+      }
+    },
+    {
+      "exampleId": "e-a5b57510a9e6f76b95c1",
+      "pairRootId": "development-correction-weekday-floor-target-development-ninth-floor",
+      "crossBlockRootId": "development-correction-weekday-floor",
+      "semanticLineageId": "lineage-development-weekday-floor",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-ninth-floor",
+      "contextSurfaceId": "context-development-weekday-over-floor",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Então a manutenção será na quarta-feira?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O escritório novo fica no oitavo andar?"
+        ],
+        "targetText": "fica no nono andar, não no oitavo"
+      }
+    },
+    {
+      "exampleId": "e-a5f3f31efe7b3be368e3",
+      "pairRootId": "development-short-bridge-channel-target-development-channel-two",
+      "crossBlockRootId": "development-short-bridge-channel",
+      "semanticLineageId": "lineage-development-bridge-channel",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-channel-two",
+      "contextSurfaceId": "context-development-channel-over-bridge",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Configuro o transmissor no canal dois ou no cinco?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O caminho do depósito passa pela ponte nova ou pela avenida velha?"
+        ],
+        "targetText": "no canal dois"
+      }
+    },
+    {
+      "exampleId": "e-a7c2146f9ccbb64ca223",
+      "pairRootId": "development-instruction-draft-temperature-target-development-lower-temperature",
+      "crossBlockRootId": "development-instruction-draft-temperature",
+      "semanticLineageId": "lineage-development-draft-temperature",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-lower-temperature",
+      "contextSurfaceId": "context-development-draft-over-temperature",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Publico o texto ou salvo apenas como rascunho?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O ar-condicionado está em vinte e quatro graus; eu ajusto para vinte?"
+        ],
+        "targetText": "ajuste o ar-condicionado para vinte graus"
+      }
+    },
+    {
+      "exampleId": "e-af43f3b71d0194cc167e",
+      "pairRootId": "development-continuation-errors-deployment-target-development-continue-deployment",
+      "crossBlockRootId": "development-continuation-errors-deployment",
+      "semanticLineageId": "lineage-development-errors-deployment",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-continue-deployment",
+      "contextSurfaceId": "context-development-deployment-over-errors",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei na lista de implantação; posso seguir?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei o diagnóstico antes dos registros de erro; devo retomar dali?"
+        ],
+        "targetText": "continue pela lista de implantação"
+      }
+    },
+    {
+      "exampleId": "e-b09f58e4e27b9ea6680e",
+      "pairRootId": "development-correction-version-label-target-development-green-label",
+      "crossBlockRootId": "development-correction-version-label",
+      "semanticLineageId": "lineage-development-version-label",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-green-label",
+      "contextSurfaceId": "context-development-version-over-label",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Vou instalar a versão três ponto um?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A caixa deve receber a etiqueta amarela?"
+        ],
+        "targetText": "na verdade, a etiqueta certa é verde"
+      }
+    },
+    {
+      "exampleId": "e-b19009b5e8525edecd14",
+      "pairRootId": "development-short-meeting-shirt-target-development-medium-size",
+      "crossBlockRootId": "development-short-meeting-shirt",
+      "semanticLineageId": "lineage-development-meeting-shirt",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-medium-size",
+      "contextSurfaceId": "context-development-meeting-over-shirt",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quanto tempo reservo para a reunião, trinta minutos ou uma hora?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A camiseta foi separada em tamanho médio ou grande?"
+        ],
+        "targetText": "tamanho médio"
+      }
+    },
+    {
+      "exampleId": "e-b19fb2ab7aeab31f0fef",
+      "pairRootId": "development-correction-weekday-floor-target-development-thursday",
+      "crossBlockRootId": "development-correction-weekday-floor",
+      "semanticLineageId": "lineage-development-weekday-floor",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-thursday",
+      "contextSurfaceId": "context-development-weekday-over-floor",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Então a manutenção será na quarta-feira?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O escritório novo fica no oitavo andar?"
+        ],
+        "targetText": "é quinta-feira, não quarta"
+      }
+    },
+    {
+      "exampleId": "e-b21e6dabc762dcf0d402",
+      "pairRootId": "development-continuation-chart-interview-target-development-continue-interview",
+      "crossBlockRootId": "development-continuation-chart-interview",
+      "semanticLineageId": "lineage-development-chart-interview",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-continue-interview",
+      "contextSurfaceId": "context-development-interview-over-chart",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "A entrevista parou no trecho sobre carreira; continuo dali?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei antes da interpretação do gráfico; devo seguir?"
+        ],
+        "targetText": "continue a partir do trecho sobre carreira"
+      }
+    },
+    {
+      "exampleId": "e-c2711958775d075da9e0",
+      "pairRootId": "development-short-meeting-shirt-target-development-medium-size",
+      "crossBlockRootId": "development-short-meeting-shirt",
+      "semanticLineageId": "lineage-development-meeting-shirt",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-medium-size",
+      "contextSurfaceId": "context-development-shirt-over-meeting",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Qual tamanho registro para a camiseta, médio ou grande?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A reunião ficou com trinta minutos ou uma hora de duração?"
+        ],
+        "targetText": "tamanho médio"
+      }
+    },
+    {
+      "exampleId": "e-c386f086a84d5db7ca45",
+      "pairRootId": "development-instruction-draft-temperature-target-development-lower-temperature",
+      "crossBlockRootId": "development-instruction-draft-temperature",
+      "semanticLineageId": "lineage-development-draft-temperature",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-lower-temperature",
+      "contextSurfaceId": "context-development-temperature-over-draft",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Ajusto o ar-condicionado para vinte graus?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O texto ainda não está pronto; eu salvo apenas como rascunho?"
+        ],
+        "targetText": "ajuste o ar-condicionado para vinte graus"
+      }
+    },
+    {
+      "exampleId": "e-cc8547e061ac0d6daa2e",
+      "pairRootId": "development-continuation-chart-interview-target-development-continue-chart",
+      "crossBlockRootId": "development-continuation-chart-interview",
+      "semanticLineageId": "lineage-development-chart-interview",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-continue-chart",
+      "contextSurfaceId": "context-development-interview-over-chart",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "A entrevista parou no trecho sobre carreira; continuo dali?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei antes da interpretação do gráfico; devo seguir?"
+        ],
+        "targetText": "pode seguir pela interpretação do gráfico"
+      }
+    },
+    {
+      "exampleId": "e-d36c1a9231c967ede5f5",
+      "pairRootId": "development-short-bridge-channel-target-development-new-bridge",
+      "crossBlockRootId": "development-short-bridge-channel",
+      "semanticLineageId": "lineage-development-bridge-channel",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-new-bridge",
+      "contextSurfaceId": "context-development-channel-over-bridge",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Configuro o transmissor no canal dois ou no cinco?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O caminho do depósito passa pela ponte nova ou pela avenida velha?"
+        ],
+        "targetText": "pela ponte nova"
+      }
+    },
+    {
+      "exampleId": "e-dbf87de12a42a250dbb0",
+      "pairRootId": "development-short-meeting-shirt-target-development-thirty-minutes",
+      "crossBlockRootId": "development-short-meeting-shirt",
+      "semanticLineageId": "lineage-development-meeting-shirt",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-thirty-minutes",
+      "contextSurfaceId": "context-development-meeting-over-shirt",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quanto tempo reservo para a reunião, trinta minutos ou uma hora?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A camiseta foi separada em tamanho médio ou grande?"
+        ],
+        "targetText": "trinta minutos"
+      }
+    },
+    {
+      "exampleId": "e-dc836833dfc0fd4ef2e8",
+      "pairRootId": "development-short-bridge-channel-target-development-channel-two",
+      "crossBlockRootId": "development-short-bridge-channel",
+      "semanticLineageId": "lineage-development-bridge-channel",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-channel-two",
+      "contextSurfaceId": "context-development-bridge-over-channel",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Para chegar ao depósito, sigo pela ponte nova ou pela avenida velha?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O transmissor deve operar no canal dois ou no canal cinco?"
+        ],
+        "targetText": "no canal dois"
+      }
+    },
+    {
+      "exampleId": "e-e08f340eddf9c9685bf3",
+      "pairRootId": "development-correction-weekday-floor-target-development-ninth-floor",
+      "crossBlockRootId": "development-correction-weekday-floor",
+      "semanticLineageId": "lineage-development-weekday-floor",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-ninth-floor",
+      "contextSurfaceId": "context-development-floor-over-weekday",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Confirmo o escritório no oitavo andar?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A manutenção foi marcada para quarta-feira?"
+        ],
+        "targetText": "fica no nono andar, não no oitavo"
+      }
+    },
+    {
+      "exampleId": "e-ea84979f23c0864447e5",
+      "pairRootId": "development-instruction-draft-temperature-target-development-save-draft",
+      "crossBlockRootId": "development-instruction-draft-temperature",
+      "semanticLineageId": "lineage-development-draft-temperature",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-development-save-draft",
+      "contextSurfaceId": "context-development-draft-over-temperature",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Publico o texto ou salvo apenas como rascunho?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O ar-condicionado está em vinte e quatro graus; eu ajusto para vinte?"
+        ],
+        "targetText": "salve apenas como rascunho"
+      }
+    },
+    {
+      "exampleId": "e-ecf7c1758b1b367f3b93",
+      "pairRootId": "development-continuation-chart-interview-target-development-continue-interview",
+      "crossBlockRootId": "development-continuation-chart-interview",
+      "semanticLineageId": "lineage-development-chart-interview",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-continue-interview",
+      "contextSurfaceId": "context-development-chart-over-interview",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei antes de interpretar o gráfico; quer que eu siga?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a entrevista no trecho sobre carreira; posso continuar dali?"
+        ],
+        "targetText": "continue a partir do trecho sobre carreira"
+      }
+    },
+    {
+      "exampleId": "e-f1bbc81884fe55e38c89",
+      "pairRootId": "development-continuation-errors-deployment-target-development-resume-errors",
+      "crossBlockRootId": "development-continuation-errors-deployment",
+      "semanticLineageId": "lineage-development-errors-deployment",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-development-resume-errors",
+      "contextSurfaceId": "context-development-deployment-over-errors",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei na lista de implantação; posso seguir?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei o diagnóstico antes dos registros de erro; devo retomar dali?"
+        ],
+        "targetText": "retome pelos registros de erro"
+      }
+    }
+  ],
+  "datasetSha256": "sha256:3d22f59a9f4c101b09e93fb9c9e55ba3e295a31311eb3bf85ca2acfa3b2d7559"
+}

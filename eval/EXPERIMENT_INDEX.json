@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02T22:00:00.000-03:00",
+  "updatedAt": "2026-08-02T23:10:00.000-03:00",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
     "legacyRange": "EXP-0000..EXP-0006",
@@ -26,7 +26,7 @@
     "status": "planned",
     "blocking": false,
     "authority": "none",
-    "decision": "Medir se contexto recente agrega valor além de um microturno lexicalmente idêntico antes de materializar áudio ou testar ASR parcial."
+    "decision": "Se o screen textual passar, pré-registrar separadamente o menor bridge causal em áudio; não materializar áudio ou ASR antes disso."
   },
   "entries": [
     {
@@ -220,14 +220,19 @@
     {
       "id": "EXP-0018",
       "status": "active",
-      "decision": "preregister-context-observability-screen",
+      "decision": "materialize-context-observability-instrumentation-before-fit",
       "canonicalReport": null,
       "authority": "none",
       "criticalPath": true,
-      "cleanCloneChecks": [],
-      "localReproductionCommands": [],
+      "cleanCloneChecks": [
+        "node --test tests/exp-0018-context-factory.test.mjs",
+        "npm run eval:exp:0018:data:check"
+      ],
+      "localReproductionCommands": [
+        "npm run eval:exp:0018:data:check"
+      ],
       "supersedes": [],
-      "nextDecision": "Construir e auditar a matriz textual pareada; só materializar áudio se target+context vencer target-only sem atalhos."
+      "nextDecision": "Fechar auditorias cegas de plausibilidade, freeze e fronteira física; só então autorizar fit/calibração, ainda sem abrir development."
     }
   ]
 }

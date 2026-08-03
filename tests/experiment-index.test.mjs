@@ -27,6 +27,14 @@ test("índice canônico real referencia evidências existentes", async () => {
   );
   assert.equal(index.entries.at(-1).authority, "none");
   assert.equal(
+    index.entries.at(-1).decision,
+    "materialize-context-observability-instrumentation-before-fit"
+  );
+  assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
+    "node --test tests/exp-0018-context-factory.test.mjs",
+    "npm run eval:exp:0018:data:check"
+  ]);
+  assert.equal(
     index.entries.find(({ id }) => id === "EXP-0017").canonicalReport,
     "eval/reports/exp-0017-summary-v0.1.json"
   );

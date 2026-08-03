@@ -389,10 +389,12 @@ humanas. O EXP-0017 Core preservou todas as falas dirigidas, mas acertou só
 1/60 fundos e foi cortado sem construir holdout; `A0` permanece referência.
 O probe semântico `R` também terminou antes do fit: o mapa causal físico deixou
 11/15 e 10/15 linhagens elegíveis por classe, abaixo das 12 independentes
-exigidas por seus pisos. O caminho crítico agora é o EXP-0018: primeiro cruza o
-mesmo microturno nas duas classes e testa se contexto recente observável agrega
-valor além do alvo isolado; áudio e ASR só entram depois de um passe textual sem
-atalhos. Até esses gates, o
+exigidas por seus pisos. O caminho crítico agora é o EXP-0018: sua fábrica 2x2
+já fixou 24 blocos independentes, 48 pares e 96 casos, fazendo cada alvo e cada
+contexto exatos colidirem nos dois rótulos. Auditorias cegas e fronteiras
+físicas ainda precedem o primeiro fit; o dataset development foi auditado apenas
+estruturalmente, sem predição ou métrica de candidato. Áudio e ASR
+só entram depois de um passe textual sem atalhos. Até esses gates, o
 checkpoint continua observacional e o comando físico rápido permanece
 determinístico no navegador.
 

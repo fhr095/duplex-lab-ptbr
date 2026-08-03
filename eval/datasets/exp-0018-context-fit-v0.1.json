@@ -1,0 +1,925 @@
+{
+  "schemaVersion": "exp-0018-context-dataset-v1",
+  "datasetId": "exp-0018-context-fit-v0.1",
+  "experimentId": "EXP-0018",
+  "locale": "pt-BR",
+  "role": "fit",
+  "fitEligibility": "fit",
+  "classes": [
+    "BACKGROUND_OR_NOT_DIRECTED",
+    "DIRECTED_TO_ASSISTANT"
+  ],
+  "featureVersion": "exp-0018-context-relational-features-v1",
+  "featureNames": [
+    "bias",
+    "targetPresent",
+    "targetCharacterLength",
+    "targetTokenCount",
+    "targetHasQuestion",
+    "targetHasNegation",
+    "targetHasCorrectionMarker",
+    "targetHasContinuationMarker",
+    "assistantSpeaking",
+    "contextMask",
+    "assistantHasQuestion",
+    "inboundHasQuestion",
+    "targetAssistantTokenJaccard",
+    "targetInboundTokenJaccard",
+    "tokenJaccardDelta",
+    "targetAssistantTokenCoverage",
+    "targetInboundTokenCoverage",
+    "tokenCoverageDelta",
+    "targetAssistantCharNgramCosine",
+    "targetInboundCharNgramCosine",
+    "charNgramCosineDelta"
+  ],
+  "provenance": {
+    "catalogSha256": "sha256:1d4c9f92c28eed502c46cd8733dc54709a8c0559de3652cc9d9af3f249619036",
+    "experimentConfigFileSha256": "sha256:937f91602895b00529d0509097039536562eb290401681989c74e4af5a51f99f",
+    "generationMethod": "deterministic-crossed-2x2",
+    "externalModelCalls": 0,
+    "paidApiCalls": 0
+  },
+  "summary": {
+    "crossBlocks": 12,
+    "pairRoots": 24,
+    "examples": 48,
+    "labels": {
+      "BACKGROUND_OR_NOT_DIRECTED": 24,
+      "DIRECTED_TO_ASSISTANT": 24
+    },
+    "families": {
+      "continuation": 12,
+      "correction": 12,
+      "instruction-negation": 12,
+      "short-response": 12
+    }
+  },
+  "examples": [
+    {
+      "exampleId": "e-00f55888cdc2b59b6337",
+      "pairRootId": "fit-correction-boxes-room-target-fit-room-four",
+      "crossBlockRootId": "fit-correction-boxes-room",
+      "semanticLineageId": "lineage-fit-boxes-room",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-room-four",
+      "contextSurfaceId": "context-fit-room-over-boxes",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Então o material será deixado na sala cinco, correto?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Na coleta, eram duas caixas mesmo?"
+        ],
+        "targetText": "corrigindo, é na sala quatro"
+      }
+    },
+    {
+      "exampleId": "e-02fddb1c8f7a0a8f585f",
+      "pairRootId": "fit-instruction-backup-window-target-fit-keep-backup",
+      "crossBlockRootId": "fit-instruction-backup-window",
+      "semanticLineageId": "lineage-fit-backup-window",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-keep-backup",
+      "contextSurfaceId": "context-fit-backup-over-window",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Já posso apagar o backup antigo do servidor?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A janela da cozinha ficou aberta; eu devo fechar agora?"
+        ],
+        "targetText": "não apague o backup antigo"
+      }
+    },
+    {
+      "exampleId": "e-0cc191406ec8cf3e8218",
+      "pairRootId": "fit-continuation-sauce-timeline-target-fit-resume-timeline",
+      "crossBlockRootId": "fit-continuation-sauce-timeline",
+      "semanticLineageId": "lineage-fit-sauce-timeline",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-resume-timeline",
+      "contextSurfaceId": "context-fit-timeline-over-sauce",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei a cronologia no ano de dois mil e vinte e quatro; continuo?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a receita antes do preparo do molho; devo seguir dali?"
+        ],
+        "targetText": "retome na linha do tempo de dois mil e vinte e quatro"
+      }
+    },
+    {
+      "exampleId": "e-0d7b55faf52cc3888c86",
+      "pairRootId": "fit-short-coffee-report-target-fit-no-sugar",
+      "crossBlockRootId": "fit-short-coffee-report",
+      "semanticLineageId": "lineage-fit-coffee-report",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-no-sugar",
+      "contextSurfaceId": "context-fit-coffee-over-report",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "No café, você quer açúcar ou prefere sem açúcar?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O relatório final deve sair em PDF ou em planilha?"
+        ],
+        "targetText": "sem açúcar"
+      }
+    },
+    {
+      "exampleId": "e-0ecaf0a8fe7da9d2e59c",
+      "pairRootId": "fit-continuation-sauce-timeline-target-fit-continue-sauce",
+      "crossBlockRootId": "fit-continuation-sauce-timeline",
+      "semanticLineageId": "lineage-fit-sauce-timeline",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-continue-sauce",
+      "contextSurfaceId": "context-fit-sauce-over-timeline",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "A receita parou antes do preparo do molho; prossigo?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a revisão na linha do tempo de dois mil e vinte e quatro; posso retomar?"
+        ],
+        "targetText": "segue pelo preparo do molho"
+      }
+    },
+    {
+      "exampleId": "e-1198f780fddb51cdba35",
+      "pairRootId": "fit-short-entrance-radio-target-fit-side-entrance",
+      "crossBlockRootId": "fit-short-entrance-radio",
+      "semanticLineageId": "lineage-fit-entrance-radio",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-side-entrance",
+      "contextSurfaceId": "context-fit-entrance-over-radio",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Na chegada, uso a entrada principal ou a entrada lateral?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O rádio deve ficar no volume quatro ou no seis?"
+        ],
+        "targetText": "pela entrada lateral"
+      }
+    },
+    {
+      "exampleId": "e-18432c0d6a28b0fa7d83",
+      "pairRootId": "fit-continuation-sauce-timeline-target-fit-continue-sauce",
+      "crossBlockRootId": "fit-continuation-sauce-timeline",
+      "semanticLineageId": "lineage-fit-sauce-timeline",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-continue-sauce",
+      "contextSurfaceId": "context-fit-timeline-over-sauce",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei a cronologia no ano de dois mil e vinte e quatro; continuo?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a receita antes do preparo do molho; devo seguir dali?"
+        ],
+        "targetText": "segue pelo preparo do molho"
+      }
+    },
+    {
+      "exampleId": "e-1a6639fa6f8ca2356535",
+      "pairRootId": "fit-short-entrance-radio-target-fit-volume-four",
+      "crossBlockRootId": "fit-short-entrance-radio",
+      "semanticLineageId": "lineage-fit-entrance-radio",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-volume-four",
+      "contextSurfaceId": "context-fit-entrance-over-radio",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Na chegada, uso a entrada principal ou a entrada lateral?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O rádio deve ficar no volume quatro ou no seis?"
+        ],
+        "targetText": "no volume quatro"
+      }
+    },
+    {
+      "exampleId": "e-1c6a3fbc2ac2a141b8d1",
+      "pairRootId": "fit-short-coffee-report-target-fit-pdf",
+      "crossBlockRootId": "fit-short-coffee-report",
+      "semanticLineageId": "lineage-fit-coffee-report",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-pdf",
+      "contextSurfaceId": "context-fit-coffee-over-report",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "No café, você quer açúcar ou prefere sem açúcar?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O relatório final deve sair em PDF ou em planilha?"
+        ],
+        "targetText": "em PDF"
+      }
+    },
+    {
+      "exampleId": "e-1c7f01f835a55cf29956",
+      "pairRootId": "fit-instruction-budget-light-target-fit-turn-off-light",
+      "crossBlockRootId": "fit-instruction-budget-light",
+      "semanticLineageId": "lineage-fit-budget-light",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-turn-off-light",
+      "contextSurfaceId": "context-fit-budget-over-light",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Posso enviar o orçamento agora para o cliente?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A luz do corredor ficou acesa; eu devo desligar agora?"
+        ],
+        "targetText": "desligue a luz do corredor"
+      }
+    },
+    {
+      "exampleId": "e-217663ba18ad68efa871",
+      "pairRootId": "fit-continuation-permissions-budget-target-fit-continue-costs",
+      "crossBlockRootId": "fit-continuation-permissions-budget",
+      "semanticLineageId": "lineage-fit-permissions-budget",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-continue-costs",
+      "contextSurfaceId": "context-fit-budget-over-permissions",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "A seção de custos foi onde parei; quer que eu continue?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei o tutorial na configuração das permissões; posso retomar dali?"
+        ],
+        "targetText": "continue na seção de custos"
+      }
+    },
+    {
+      "exampleId": "e-2c5fd051bb99a18b1f30",
+      "pairRootId": "fit-correction-boxes-room-target-fit-room-four",
+      "crossBlockRootId": "fit-correction-boxes-room",
+      "semanticLineageId": "lineage-fit-boxes-room",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-room-four",
+      "contextSurfaceId": "context-fit-boxes-over-room",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Vou registrar duas caixas para a coleta, certo?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Disseram que o material fica na sala cinco; é isso mesmo?"
+        ],
+        "targetText": "corrigindo, é na sala quatro"
+      }
+    },
+    {
+      "exampleId": "e-330ed2f9890c10b78f2a",
+      "pairRootId": "fit-short-visit-key-target-fit-blue-key",
+      "crossBlockRootId": "fit-short-visit-key",
+      "semanticLineageId": "lineage-fit-visit-key",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-blue-key",
+      "contextSurfaceId": "context-fit-key-over-visit",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Qual chave eu anoto como deixada na portaria: azul ou preta?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A visita pode ficar para sábado de manhã ou somente no domingo?"
+        ],
+        "targetText": "a chave azul"
+      }
+    },
+    {
+      "exampleId": "e-394a969a09ba5a777ca3",
+      "pairRootId": "fit-correction-name-date-target-fit-name-luciana",
+      "crossBlockRootId": "fit-correction-name-date",
+      "semanticLineageId": "lineage-fit-name-date",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-name-luciana",
+      "contextSurfaceId": "context-fit-name-over-date",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Na ficha eu escrevo Luciene com e no fim?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O evento foi confirmado para treze de agosto?"
+        ],
+        "targetText": "o nome é Luciana, não Luciene"
+      }
+    },
+    {
+      "exampleId": "e-4000ad64c5ce0c4de522",
+      "pairRootId": "fit-short-visit-key-target-fit-saturday-morning",
+      "crossBlockRootId": "fit-short-visit-key",
+      "semanticLineageId": "lineage-fit-visit-key",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-saturday-morning",
+      "contextSurfaceId": "context-fit-visit-over-key",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Para a visita, você prefere sábado de manhã ou domingo à tarde?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Foi a chave azul ou a preta que ficou na portaria?"
+        ],
+        "targetText": "sábado de manhã"
+      }
+    },
+    {
+      "exampleId": "e-4a35b9254619fdb5e9aa",
+      "pairRootId": "fit-correction-time-total-target-fit-time-fourteen-thirty",
+      "crossBlockRootId": "fit-correction-time-total",
+      "semanticLineageId": "lineage-fit-time-total",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-time-fourteen-thirty",
+      "contextSurfaceId": "context-fit-total-over-time",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Posso registrar o total como oitocentos reais?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A ligação ficou marcada para quinze horas, não foi?"
+        ],
+        "targetText": "o horário certo é quatorze e trinta"
+      }
+    },
+    {
+      "exampleId": "e-4a79ef382aad47c3f827",
+      "pairRootId": "fit-correction-name-date-target-fit-date-august-twelve",
+      "crossBlockRootId": "fit-correction-name-date",
+      "semanticLineageId": "lineage-fit-name-date",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-date-august-twelve",
+      "contextSurfaceId": "context-fit-date-over-name",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Deixo o evento no dia treze de agosto?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Na ficha apareceu Luciene; esse é mesmo o nome correto?"
+        ],
+        "targetText": "a data é doze de agosto, não treze"
+      }
+    },
+    {
+      "exampleId": "e-4ca0767644aa798b2b0e",
+      "pairRootId": "fit-continuation-permissions-budget-target-fit-resume-permissions",
+      "crossBlockRootId": "fit-continuation-permissions-budget",
+      "semanticLineageId": "lineage-fit-permissions-budget",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-resume-permissions",
+      "contextSurfaceId": "context-fit-permissions-over-budget",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei antes de configurar as permissões; posso retomar dali?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a apresentação na seção de custos; devo continuar?"
+        ],
+        "targetText": "retome na configuração das permissões"
+      }
+    },
+    {
+      "exampleId": "e-516181282178ccdfb46e",
+      "pairRootId": "fit-instruction-budget-light-target-fit-hold-budget",
+      "crossBlockRootId": "fit-instruction-budget-light",
+      "semanticLineageId": "lineage-fit-budget-light",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-hold-budget",
+      "contextSurfaceId": "context-fit-budget-over-light",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Posso enviar o orçamento agora para o cliente?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A luz do corredor ficou acesa; eu devo desligar agora?"
+        ],
+        "targetText": "não envie o orçamento ainda"
+      }
+    },
+    {
+      "exampleId": "e-62a62cb516a41d353941",
+      "pairRootId": "fit-correction-time-total-target-fit-time-fourteen-thirty",
+      "crossBlockRootId": "fit-correction-time-total",
+      "semanticLineageId": "lineage-fit-time-total",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-time-fourteen-thirty",
+      "contextSurfaceId": "context-fit-time-over-total",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Confirmo a ligação às quinze horas?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A soma fechou em oitocentos reais, certo?"
+        ],
+        "targetText": "o horário certo é quatorze e trinta"
+      }
+    },
+    {
+      "exampleId": "e-67ce3232741689a12d81",
+      "pairRootId": "fit-continuation-sauce-timeline-target-fit-resume-timeline",
+      "crossBlockRootId": "fit-continuation-sauce-timeline",
+      "semanticLineageId": "lineage-fit-sauce-timeline",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-resume-timeline",
+      "contextSurfaceId": "context-fit-sauce-over-timeline",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "A receita parou antes do preparo do molho; prossigo?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a revisão na linha do tempo de dois mil e vinte e quatro; posso retomar?"
+        ],
+        "targetText": "retome na linha do tempo de dois mil e vinte e quatro"
+      }
+    },
+    {
+      "exampleId": "e-6de96548d287ed61fc65",
+      "pairRootId": "fit-correction-name-date-target-fit-name-luciana",
+      "crossBlockRootId": "fit-correction-name-date",
+      "semanticLineageId": "lineage-fit-name-date",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-name-luciana",
+      "contextSurfaceId": "context-fit-date-over-name",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Deixo o evento no dia treze de agosto?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Na ficha apareceu Luciene; esse é mesmo o nome correto?"
+        ],
+        "targetText": "o nome é Luciana, não Luciene"
+      }
+    },
+    {
+      "exampleId": "e-7033a4e7dcd1060319a4",
+      "pairRootId": "fit-short-visit-key-target-fit-saturday-morning",
+      "crossBlockRootId": "fit-short-visit-key",
+      "semanticLineageId": "lineage-fit-visit-key",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-saturday-morning",
+      "contextSurfaceId": "context-fit-key-over-visit",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Qual chave eu anoto como deixada na portaria: azul ou preta?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A visita pode ficar para sábado de manhã ou somente no domingo?"
+        ],
+        "targetText": "sábado de manhã"
+      }
+    },
+    {
+      "exampleId": "e-74fef3a22ad91aba9857",
+      "pairRootId": "fit-short-coffee-report-target-fit-pdf",
+      "crossBlockRootId": "fit-short-coffee-report",
+      "semanticLineageId": "lineage-fit-coffee-report",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-pdf",
+      "contextSurfaceId": "context-fit-report-over-coffee",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Para o relatório, entrego em PDF ou em planilha?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "No café dela, vai com açúcar ou sem açúcar?"
+        ],
+        "targetText": "em PDF"
+      }
+    },
+    {
+      "exampleId": "e-7546557e3bdef2c0f6b9",
+      "pairRootId": "fit-instruction-appointment-television-target-fit-mute-television",
+      "crossBlockRootId": "fit-instruction-appointment-television",
+      "semanticLineageId": "lineage-fit-appointment-television",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-mute-television",
+      "contextSurfaceId": "context-fit-television-over-appointment",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Posso abaixar o volume da televisão da sala?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A consulta de amanhã ainda está pendente; eu devo confirmar?"
+        ],
+        "targetText": "abaixe o volume da televisão da sala"
+      }
+    },
+    {
+      "exampleId": "e-7ac4c848651a177cc831",
+      "pairRootId": "fit-continuation-permissions-budget-target-fit-resume-permissions",
+      "crossBlockRootId": "fit-continuation-permissions-budget",
+      "semanticLineageId": "lineage-fit-permissions-budget",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-resume-permissions",
+      "contextSurfaceId": "context-fit-budget-over-permissions",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "A seção de custos foi onde parei; quer que eu continue?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei o tutorial na configuração das permissões; posso retomar dali?"
+        ],
+        "targetText": "retome na configuração das permissões"
+      }
+    },
+    {
+      "exampleId": "e-7cf23773bf9e404a46fd",
+      "pairRootId": "fit-short-entrance-radio-target-fit-side-entrance",
+      "crossBlockRootId": "fit-short-entrance-radio",
+      "semanticLineageId": "lineage-fit-entrance-radio",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-side-entrance",
+      "contextSurfaceId": "context-fit-radio-over-entrance",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Em qual volume deixo o rádio, quatro ou seis?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O acesso da equipe será pela entrada lateral ou pela principal?"
+        ],
+        "targetText": "pela entrada lateral"
+      }
+    },
+    {
+      "exampleId": "e-896a3dac536dfb848000",
+      "pairRootId": "fit-correction-boxes-room-target-fit-three-boxes",
+      "crossBlockRootId": "fit-correction-boxes-room",
+      "semanticLineageId": "lineage-fit-boxes-room",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-three-boxes",
+      "contextSurfaceId": "context-fit-room-over-boxes",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Então o material será deixado na sala cinco, correto?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Na coleta, eram duas caixas mesmo?"
+        ],
+        "targetText": "na verdade, são três caixas"
+      }
+    },
+    {
+      "exampleId": "e-8c7e8817f43605370484",
+      "pairRootId": "fit-correction-time-total-target-fit-total-eight-fifty",
+      "crossBlockRootId": "fit-correction-time-total",
+      "semanticLineageId": "lineage-fit-time-total",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-total-eight-fifty",
+      "contextSurfaceId": "context-fit-time-over-total",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Confirmo a ligação às quinze horas?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A soma fechou em oitocentos reais, certo?"
+        ],
+        "targetText": "o total correto é oitocentos e cinquenta"
+      }
+    },
+    {
+      "exampleId": "e-92a65625591d978d7f8e",
+      "pairRootId": "fit-continuation-permissions-budget-target-fit-continue-costs",
+      "crossBlockRootId": "fit-continuation-permissions-budget",
+      "semanticLineageId": "lineage-fit-permissions-budget",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-continue-costs",
+      "contextSurfaceId": "context-fit-permissions-over-budget",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei antes de configurar as permissões; posso retomar dali?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a apresentação na seção de custos; devo continuar?"
+        ],
+        "targetText": "continue na seção de custos"
+      }
+    },
+    {
+      "exampleId": "e-952cdbefa474a60f893c",
+      "pairRootId": "fit-continuation-taxes-contract-target-fit-continue-taxes",
+      "crossBlockRootId": "fit-continuation-taxes-contract",
+      "semanticLineageId": "lineage-fit-taxes-contract",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-continue-taxes",
+      "contextSurfaceId": "context-fit-taxes-over-contract",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei a explicação antes da parte dos impostos; quer que eu continue?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a leitura na cláusula de rescisão; posso continuar dali?"
+        ],
+        "targetText": "pode continuar pela parte dos impostos"
+      }
+    },
+    {
+      "exampleId": "e-97b834bf1324e6c5f773",
+      "pairRootId": "fit-instruction-appointment-television-target-fit-confirm-appointment",
+      "crossBlockRootId": "fit-instruction-appointment-television",
+      "semanticLineageId": "lineage-fit-appointment-television",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-confirm-appointment",
+      "contextSurfaceId": "context-fit-television-over-appointment",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Posso abaixar o volume da televisão da sala?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A consulta de amanhã ainda está pendente; eu devo confirmar?"
+        ],
+        "targetText": "confirme a consulta para amanhã"
+      }
+    },
+    {
+      "exampleId": "e-9ad65cd515979880a636",
+      "pairRootId": "fit-short-visit-key-target-fit-blue-key",
+      "crossBlockRootId": "fit-short-visit-key",
+      "semanticLineageId": "lineage-fit-visit-key",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-blue-key",
+      "contextSurfaceId": "context-fit-visit-over-key",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Para a visita, você prefere sábado de manhã ou domingo à tarde?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Foi a chave azul ou a preta que ficou na portaria?"
+        ],
+        "targetText": "a chave azul"
+      }
+    },
+    {
+      "exampleId": "e-a708e5011ca5070c9d31",
+      "pairRootId": "fit-continuation-taxes-contract-target-fit-continue-taxes",
+      "crossBlockRootId": "fit-continuation-taxes-contract",
+      "semanticLineageId": "lineage-fit-taxes-contract",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-continue-taxes",
+      "contextSurfaceId": "context-fit-contract-over-taxes",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Interrompi a leitura na cláusula de rescisão; devo seguir?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei antes da parte dos impostos; quer que eu continue?"
+        ],
+        "targetText": "pode continuar pela parte dos impostos"
+      }
+    },
+    {
+      "exampleId": "e-aa632820c1954267ff10",
+      "pairRootId": "fit-short-coffee-report-target-fit-no-sugar",
+      "crossBlockRootId": "fit-short-coffee-report",
+      "semanticLineageId": "lineage-fit-coffee-report",
+      "family": "short-response",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-no-sugar",
+      "contextSurfaceId": "context-fit-report-over-coffee",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Para o relatório, entrego em PDF ou em planilha?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "No café dela, vai com açúcar ou sem açúcar?"
+        ],
+        "targetText": "sem açúcar"
+      }
+    },
+    {
+      "exampleId": "e-ac794efa439fac5fbe62",
+      "pairRootId": "fit-continuation-taxes-contract-target-fit-continue-termination",
+      "crossBlockRootId": "fit-continuation-taxes-contract",
+      "semanticLineageId": "lineage-fit-taxes-contract",
+      "family": "continuation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-continue-termination",
+      "contextSurfaceId": "context-fit-contract-over-taxes",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Interrompi a leitura na cláusula de rescisão; devo seguir?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei antes da parte dos impostos; quer que eu continue?"
+        ],
+        "targetText": "continue a partir da cláusula de rescisão"
+      }
+    },
+    {
+      "exampleId": "e-b85ef68ec02ec6402b45",
+      "pairRootId": "fit-correction-boxes-room-target-fit-three-boxes",
+      "crossBlockRootId": "fit-correction-boxes-room",
+      "semanticLineageId": "lineage-fit-boxes-room",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-three-boxes",
+      "contextSurfaceId": "context-fit-boxes-over-room",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Vou registrar duas caixas para a coleta, certo?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Disseram que o material fica na sala cinco; é isso mesmo?"
+        ],
+        "targetText": "na verdade, são três caixas"
+      }
+    },
+    {
+      "exampleId": "e-bd07399bff8937a5b0bf",
+      "pairRootId": "fit-instruction-budget-light-target-fit-hold-budget",
+      "crossBlockRootId": "fit-instruction-budget-light",
+      "semanticLineageId": "lineage-fit-budget-light",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-hold-budget",
+      "contextSurfaceId": "context-fit-light-over-budget",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quer que eu desligue a luz do corredor?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O orçamento ainda está incompleto; você acha melhor não enviar ainda?"
+        ],
+        "targetText": "não envie o orçamento ainda"
+      }
+    },
+    {
+      "exampleId": "e-bd2a671371800d26b269",
+      "pairRootId": "fit-instruction-backup-window-target-fit-close-window",
+      "crossBlockRootId": "fit-instruction-backup-window",
+      "semanticLineageId": "lineage-fit-backup-window",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-close-window",
+      "contextSurfaceId": "context-fit-window-over-backup",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Devo fechar a janela da cozinha agora?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O backup antigo ainda é necessário; então eu não devo apagar?"
+        ],
+        "targetText": "feche a janela da cozinha"
+      }
+    },
+    {
+      "exampleId": "e-bd539e3a9adb04ca02e2",
+      "pairRootId": "fit-continuation-taxes-contract-target-fit-continue-termination",
+      "crossBlockRootId": "fit-continuation-taxes-contract",
+      "semanticLineageId": "lineage-fit-taxes-contract",
+      "family": "continuation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-continue-termination",
+      "contextSurfaceId": "context-fit-taxes-over-contract",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Parei a explicação antes da parte dos impostos; quer que eu continue?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "Parei a leitura na cláusula de rescisão; posso continuar dali?"
+        ],
+        "targetText": "continue a partir da cláusula de rescisão"
+      }
+    },
+    {
+      "exampleId": "e-bfb916f6d180ad7ad52e",
+      "pairRootId": "fit-instruction-budget-light-target-fit-turn-off-light",
+      "crossBlockRootId": "fit-instruction-budget-light",
+      "semanticLineageId": "lineage-fit-budget-light",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-turn-off-light",
+      "contextSurfaceId": "context-fit-light-over-budget",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quer que eu desligue a luz do corredor?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O orçamento ainda está incompleto; você acha melhor não enviar ainda?"
+        ],
+        "targetText": "desligue a luz do corredor"
+      }
+    },
+    {
+      "exampleId": "e-c8f08c8f3063730d2405",
+      "pairRootId": "fit-short-entrance-radio-target-fit-volume-four",
+      "crossBlockRootId": "fit-short-entrance-radio",
+      "semanticLineageId": "lineage-fit-entrance-radio",
+      "family": "short-response",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-volume-four",
+      "contextSurfaceId": "context-fit-radio-over-entrance",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Em qual volume deixo o rádio, quatro ou seis?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O acesso da equipe será pela entrada lateral ou pela principal?"
+        ],
+        "targetText": "no volume quatro"
+      }
+    },
+    {
+      "exampleId": "e-cadd0ff98ca038aad44e",
+      "pairRootId": "fit-instruction-backup-window-target-fit-keep-backup",
+      "crossBlockRootId": "fit-instruction-backup-window",
+      "semanticLineageId": "lineage-fit-backup-window",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-keep-backup",
+      "contextSurfaceId": "context-fit-window-over-backup",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Devo fechar a janela da cozinha agora?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O backup antigo ainda é necessário; então eu não devo apagar?"
+        ],
+        "targetText": "não apague o backup antigo"
+      }
+    },
+    {
+      "exampleId": "e-db79dec3e5e7a7048e7f",
+      "pairRootId": "fit-correction-name-date-target-fit-date-august-twelve",
+      "crossBlockRootId": "fit-correction-name-date",
+      "semanticLineageId": "lineage-fit-name-date",
+      "family": "correction",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-date-august-twelve",
+      "contextSurfaceId": "context-fit-name-over-date",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Na ficha eu escrevo Luciene com e no fim?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "O evento foi confirmado para treze de agosto?"
+        ],
+        "targetText": "a data é doze de agosto, não treze"
+      }
+    },
+    {
+      "exampleId": "e-dc7c9d9bc5e9ec61959e",
+      "pairRootId": "fit-instruction-appointment-television-target-fit-confirm-appointment",
+      "crossBlockRootId": "fit-instruction-appointment-television",
+      "semanticLineageId": "lineage-fit-appointment-television",
+      "family": "instruction-negation",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-confirm-appointment",
+      "contextSurfaceId": "context-fit-appointment-over-television",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quer que eu confirme a consulta para amanhã?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A televisão da sala está alta; eu abaixo o volume?"
+        ],
+        "targetText": "confirme a consulta para amanhã"
+      }
+    },
+    {
+      "exampleId": "e-e5e1efd4a69cae77d6cb",
+      "pairRootId": "fit-instruction-backup-window-target-fit-close-window",
+      "crossBlockRootId": "fit-instruction-backup-window",
+      "semanticLineageId": "lineage-fit-backup-window",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-close-window",
+      "contextSurfaceId": "context-fit-backup-over-window",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Já posso apagar o backup antigo do servidor?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A janela da cozinha ficou aberta; eu devo fechar agora?"
+        ],
+        "targetText": "feche a janela da cozinha"
+      }
+    },
+    {
+      "exampleId": "e-ec08489d2dc9a36f2a2a",
+      "pairRootId": "fit-instruction-appointment-television-target-fit-mute-television",
+      "crossBlockRootId": "fit-instruction-appointment-television",
+      "semanticLineageId": "lineage-fit-appointment-television",
+      "family": "instruction-negation",
+      "label": "BACKGROUND_OR_NOT_DIRECTED",
+      "targetSurfaceId": "target-fit-mute-television",
+      "contextSurfaceId": "context-fit-appointment-over-television",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Quer que eu confirme a consulta para amanhã?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A televisão da sala está alta; eu abaixo o volume?"
+        ],
+        "targetText": "abaixe o volume da televisão da sala"
+      }
+    },
+    {
+      "exampleId": "e-ec55d144a4b34cb41175",
+      "pairRootId": "fit-correction-time-total-target-fit-total-eight-fifty",
+      "crossBlockRootId": "fit-correction-time-total",
+      "semanticLineageId": "lineage-fit-time-total",
+      "family": "correction",
+      "label": "DIRECTED_TO_ASSISTANT",
+      "targetSurfaceId": "target-fit-total-eight-fifty",
+      "contextSurfaceId": "context-fit-total-over-time",
+      "modelInput": {
+        "assistantAudiblePrefixAtDecision": "Posso registrar o total como oitocentos reais?",
+        "assistantSpeaking": true,
+        "recentInbound": [
+          "A ligação ficou marcada para quinze horas, não foi?"
+        ],
+        "targetText": "o total correto é oitocentos e cinquenta"
+      }
+    }
+  ],
+  "datasetSha256": "sha256:f56330f836ffaed639f2d4cf36540cc59831b6f44cacfa1b3eadaa07953679b4"
+}

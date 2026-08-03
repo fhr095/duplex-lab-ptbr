@@ -1,0 +1,637 @@
+{
+  "schemaVersion": "exp-0018-context-pair-catalog-v1",
+  "experimentId": "EXP-0018",
+  "locale": "pt-BR",
+  "provenance": {
+    "generationMethod": "human-authored-controlled-crossed-blocks",
+    "externalModelCalls": 0,
+    "paidApiCalls": 0,
+    "claim": "Cenas sintéticas servem apenas ao screen textual controlado; não representam distribuição humana."
+  },
+  "blocks": [
+    {
+      "crossBlockRootId": "fit-short-visit-key",
+      "semanticLineageId": "lineage-fit-visit-key",
+      "role": "fit",
+      "family": "short-response",
+      "targets": {
+        "a": { "targetId": "target-fit-saturday-morning", "text": "sábado de manhã" },
+        "b": { "targetId": "target-fit-blue-key", "text": "a chave azul" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-visit-over-key",
+          "assistantAudiblePrefixAtDecision": "Para a visita, você prefere sábado de manhã ou domingo à tarde?",
+          "recentInbound": ["Foi a chave azul ou a preta que ficou na portaria?"]
+        },
+        "b": {
+          "contextId": "context-fit-key-over-visit",
+          "assistantAudiblePrefixAtDecision": "Qual chave eu anoto como deixada na portaria: azul ou preta?",
+          "recentInbound": ["A visita pode ficar para sábado de manhã ou somente no domingo?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-saturday-morning", "recentInboundExpectedTargetId": "target-fit-blue-key" },
+        "b": { "assistantExpectedTargetId": "target-fit-blue-key", "recentInboundExpectedTargetId": "target-fit-saturday-morning" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-short-coffee-report",
+      "semanticLineageId": "lineage-fit-coffee-report",
+      "role": "fit",
+      "family": "short-response",
+      "targets": {
+        "a": { "targetId": "target-fit-no-sugar", "text": "sem açúcar" },
+        "b": { "targetId": "target-fit-pdf", "text": "em PDF" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-coffee-over-report",
+          "assistantAudiblePrefixAtDecision": "No café, você quer açúcar ou prefere sem açúcar?",
+          "recentInbound": ["O relatório final deve sair em PDF ou em planilha?"]
+        },
+        "b": {
+          "contextId": "context-fit-report-over-coffee",
+          "assistantAudiblePrefixAtDecision": "Para o relatório, entrego em PDF ou em planilha?",
+          "recentInbound": ["No café dela, vai com açúcar ou sem açúcar?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-no-sugar", "recentInboundExpectedTargetId": "target-fit-pdf" },
+        "b": { "assistantExpectedTargetId": "target-fit-pdf", "recentInboundExpectedTargetId": "target-fit-no-sugar" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-short-entrance-radio",
+      "semanticLineageId": "lineage-fit-entrance-radio",
+      "role": "fit",
+      "family": "short-response",
+      "targets": {
+        "a": { "targetId": "target-fit-side-entrance", "text": "pela entrada lateral" },
+        "b": { "targetId": "target-fit-volume-four", "text": "no volume quatro" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-entrance-over-radio",
+          "assistantAudiblePrefixAtDecision": "Na chegada, uso a entrada principal ou a entrada lateral?",
+          "recentInbound": ["O rádio deve ficar no volume quatro ou no seis?"]
+        },
+        "b": {
+          "contextId": "context-fit-radio-over-entrance",
+          "assistantAudiblePrefixAtDecision": "Em qual volume deixo o rádio, quatro ou seis?",
+          "recentInbound": ["O acesso da equipe será pela entrada lateral ou pela principal?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-side-entrance", "recentInboundExpectedTargetId": "target-fit-volume-four" },
+        "b": { "assistantExpectedTargetId": "target-fit-volume-four", "recentInboundExpectedTargetId": "target-fit-side-entrance" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-correction-boxes-room",
+      "semanticLineageId": "lineage-fit-boxes-room",
+      "role": "fit",
+      "family": "correction",
+      "targets": {
+        "a": { "targetId": "target-fit-three-boxes", "text": "na verdade, são três caixas" },
+        "b": { "targetId": "target-fit-room-four", "text": "corrigindo, é na sala quatro" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-boxes-over-room",
+          "assistantAudiblePrefixAtDecision": "Vou registrar duas caixas para a coleta, certo?",
+          "recentInbound": ["Disseram que o material fica na sala cinco; é isso mesmo?"]
+        },
+        "b": {
+          "contextId": "context-fit-room-over-boxes",
+          "assistantAudiblePrefixAtDecision": "Então o material será deixado na sala cinco, correto?",
+          "recentInbound": ["Na coleta, eram duas caixas mesmo?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-three-boxes", "recentInboundExpectedTargetId": "target-fit-room-four" },
+        "b": { "assistantExpectedTargetId": "target-fit-room-four", "recentInboundExpectedTargetId": "target-fit-three-boxes" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-correction-time-total",
+      "semanticLineageId": "lineage-fit-time-total",
+      "role": "fit",
+      "family": "correction",
+      "targets": {
+        "a": { "targetId": "target-fit-time-fourteen-thirty", "text": "o horário certo é quatorze e trinta" },
+        "b": { "targetId": "target-fit-total-eight-fifty", "text": "o total correto é oitocentos e cinquenta" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-time-over-total",
+          "assistantAudiblePrefixAtDecision": "Confirmo a ligação às quinze horas?",
+          "recentInbound": ["A soma fechou em oitocentos reais, certo?"]
+        },
+        "b": {
+          "contextId": "context-fit-total-over-time",
+          "assistantAudiblePrefixAtDecision": "Posso registrar o total como oitocentos reais?",
+          "recentInbound": ["A ligação ficou marcada para quinze horas, não foi?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-time-fourteen-thirty", "recentInboundExpectedTargetId": "target-fit-total-eight-fifty" },
+        "b": { "assistantExpectedTargetId": "target-fit-total-eight-fifty", "recentInboundExpectedTargetId": "target-fit-time-fourteen-thirty" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-correction-name-date",
+      "semanticLineageId": "lineage-fit-name-date",
+      "role": "fit",
+      "family": "correction",
+      "targets": {
+        "a": { "targetId": "target-fit-name-luciana", "text": "o nome é Luciana, não Luciene" },
+        "b": { "targetId": "target-fit-date-august-twelve", "text": "a data é doze de agosto, não treze" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-name-over-date",
+          "assistantAudiblePrefixAtDecision": "Na ficha eu escrevo Luciene com e no fim?",
+          "recentInbound": ["O evento foi confirmado para treze de agosto?"]
+        },
+        "b": {
+          "contextId": "context-fit-date-over-name",
+          "assistantAudiblePrefixAtDecision": "Deixo o evento no dia treze de agosto?",
+          "recentInbound": ["Na ficha apareceu Luciene; esse é mesmo o nome correto?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-name-luciana", "recentInboundExpectedTargetId": "target-fit-date-august-twelve" },
+        "b": { "assistantExpectedTargetId": "target-fit-date-august-twelve", "recentInboundExpectedTargetId": "target-fit-name-luciana" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-continuation-taxes-contract",
+      "semanticLineageId": "lineage-fit-taxes-contract",
+      "role": "fit",
+      "family": "continuation",
+      "targets": {
+        "a": { "targetId": "target-fit-continue-taxes", "text": "pode continuar pela parte dos impostos" },
+        "b": { "targetId": "target-fit-continue-termination", "text": "continue a partir da cláusula de rescisão" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-taxes-over-contract",
+          "assistantAudiblePrefixAtDecision": "Parei a explicação antes da parte dos impostos; quer que eu continue?",
+          "recentInbound": ["Parei a leitura na cláusula de rescisão; posso continuar dali?"]
+        },
+        "b": {
+          "contextId": "context-fit-contract-over-taxes",
+          "assistantAudiblePrefixAtDecision": "Interrompi a leitura na cláusula de rescisão; devo seguir?",
+          "recentInbound": ["Parei antes da parte dos impostos; quer que eu continue?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-continue-taxes", "recentInboundExpectedTargetId": "target-fit-continue-termination" },
+        "b": { "assistantExpectedTargetId": "target-fit-continue-termination", "recentInboundExpectedTargetId": "target-fit-continue-taxes" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-continuation-permissions-budget",
+      "semanticLineageId": "lineage-fit-permissions-budget",
+      "role": "fit",
+      "family": "continuation",
+      "targets": {
+        "a": { "targetId": "target-fit-resume-permissions", "text": "retome na configuração das permissões" },
+        "b": { "targetId": "target-fit-continue-costs", "text": "continue na seção de custos" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-permissions-over-budget",
+          "assistantAudiblePrefixAtDecision": "Parei antes de configurar as permissões; posso retomar dali?",
+          "recentInbound": ["Parei a apresentação na seção de custos; devo continuar?"]
+        },
+        "b": {
+          "contextId": "context-fit-budget-over-permissions",
+          "assistantAudiblePrefixAtDecision": "A seção de custos foi onde parei; quer que eu continue?",
+          "recentInbound": ["Parei o tutorial na configuração das permissões; posso retomar dali?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-resume-permissions", "recentInboundExpectedTargetId": "target-fit-continue-costs" },
+        "b": { "assistantExpectedTargetId": "target-fit-continue-costs", "recentInboundExpectedTargetId": "target-fit-resume-permissions" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-continuation-sauce-timeline",
+      "semanticLineageId": "lineage-fit-sauce-timeline",
+      "role": "fit",
+      "family": "continuation",
+      "targets": {
+        "a": { "targetId": "target-fit-continue-sauce", "text": "segue pelo preparo do molho" },
+        "b": { "targetId": "target-fit-resume-timeline", "text": "retome na linha do tempo de dois mil e vinte e quatro" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-sauce-over-timeline",
+          "assistantAudiblePrefixAtDecision": "A receita parou antes do preparo do molho; prossigo?",
+          "recentInbound": ["Parei a revisão na linha do tempo de dois mil e vinte e quatro; posso retomar?"]
+        },
+        "b": {
+          "contextId": "context-fit-timeline-over-sauce",
+          "assistantAudiblePrefixAtDecision": "Parei a cronologia no ano de dois mil e vinte e quatro; continuo?",
+          "recentInbound": ["Parei a receita antes do preparo do molho; devo seguir dali?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-continue-sauce", "recentInboundExpectedTargetId": "target-fit-resume-timeline" },
+        "b": { "assistantExpectedTargetId": "target-fit-resume-timeline", "recentInboundExpectedTargetId": "target-fit-continue-sauce" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-instruction-budget-light",
+      "semanticLineageId": "lineage-fit-budget-light",
+      "role": "fit",
+      "family": "instruction-negation",
+      "targets": {
+        "a": { "targetId": "target-fit-hold-budget", "text": "não envie o orçamento ainda" },
+        "b": { "targetId": "target-fit-turn-off-light", "text": "desligue a luz do corredor" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-budget-over-light",
+          "assistantAudiblePrefixAtDecision": "Posso enviar o orçamento agora para o cliente?",
+          "recentInbound": ["A luz do corredor ficou acesa; eu devo desligar agora?"]
+        },
+        "b": {
+          "contextId": "context-fit-light-over-budget",
+          "assistantAudiblePrefixAtDecision": "Quer que eu desligue a luz do corredor?",
+          "recentInbound": ["O orçamento ainda está incompleto; você acha melhor não enviar ainda?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-hold-budget", "recentInboundExpectedTargetId": "target-fit-turn-off-light" },
+        "b": { "assistantExpectedTargetId": "target-fit-turn-off-light", "recentInboundExpectedTargetId": "target-fit-hold-budget" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-instruction-backup-window",
+      "semanticLineageId": "lineage-fit-backup-window",
+      "role": "fit",
+      "family": "instruction-negation",
+      "targets": {
+        "a": { "targetId": "target-fit-keep-backup", "text": "não apague o backup antigo" },
+        "b": { "targetId": "target-fit-close-window", "text": "feche a janela da cozinha" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-backup-over-window",
+          "assistantAudiblePrefixAtDecision": "Já posso apagar o backup antigo do servidor?",
+          "recentInbound": ["A janela da cozinha ficou aberta; eu devo fechar agora?"]
+        },
+        "b": {
+          "contextId": "context-fit-window-over-backup",
+          "assistantAudiblePrefixAtDecision": "Devo fechar a janela da cozinha agora?",
+          "recentInbound": ["O backup antigo ainda é necessário; então eu não devo apagar?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-keep-backup", "recentInboundExpectedTargetId": "target-fit-close-window" },
+        "b": { "assistantExpectedTargetId": "target-fit-close-window", "recentInboundExpectedTargetId": "target-fit-keep-backup" }
+      }
+    },
+    {
+      "crossBlockRootId": "fit-instruction-appointment-television",
+      "semanticLineageId": "lineage-fit-appointment-television",
+      "role": "fit",
+      "family": "instruction-negation",
+      "targets": {
+        "a": { "targetId": "target-fit-confirm-appointment", "text": "confirme a consulta para amanhã" },
+        "b": { "targetId": "target-fit-mute-television", "text": "abaixe o volume da televisão da sala" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-fit-appointment-over-television",
+          "assistantAudiblePrefixAtDecision": "Quer que eu confirme a consulta para amanhã?",
+          "recentInbound": ["A televisão da sala está alta; eu abaixo o volume?"]
+        },
+        "b": {
+          "contextId": "context-fit-television-over-appointment",
+          "assistantAudiblePrefixAtDecision": "Posso abaixar o volume da televisão da sala?",
+          "recentInbound": ["A consulta de amanhã ainda está pendente; eu devo confirmar?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-fit-confirm-appointment", "recentInboundExpectedTargetId": "target-fit-mute-television" },
+        "b": { "assistantExpectedTargetId": "target-fit-mute-television", "recentInboundExpectedTargetId": "target-fit-confirm-appointment" }
+      }
+    },
+    {
+      "crossBlockRootId": "calibration-short-seat-network",
+      "semanticLineageId": "lineage-calibration-seat-network",
+      "role": "calibration",
+      "family": "short-response",
+      "targets": {
+        "a": { "targetId": "target-calibration-aisle-seat", "text": "assento no corredor" },
+        "b": { "targetId": "target-calibration-guest-network", "text": "na rede visitante" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-calibration-seat-over-network",
+          "assistantAudiblePrefixAtDecision": "No voo, você prefere o assento da janela ou o assento do corredor?",
+          "recentInbound": ["O celular vai entrar na rede visitante ou na rede interna?"]
+        },
+        "b": {
+          "contextId": "context-calibration-network-over-seat",
+          "assistantAudiblePrefixAtDecision": "Conecto o celular na rede visitante ou na interna?",
+          "recentInbound": ["Para o voo, ficou assento de corredor ou de janela?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-calibration-aisle-seat", "recentInboundExpectedTargetId": "target-calibration-guest-network" },
+        "b": { "assistantExpectedTargetId": "target-calibration-guest-network", "recentInboundExpectedTargetId": "target-calibration-aisle-seat" }
+      }
+    },
+    {
+      "crossBlockRootId": "calibration-correction-address-quantity",
+      "semanticLineageId": "lineage-calibration-address-quantity",
+      "role": "calibration",
+      "family": "correction",
+      "targets": {
+        "a": { "targetId": "target-calibration-address-eighty-two", "text": "o número correto é oitenta e dois" },
+        "b": { "targetId": "target-calibration-seven-units", "text": "são sete unidades, não seis" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-calibration-address-over-quantity",
+          "assistantAudiblePrefixAtDecision": "No endereço coloco o número vinte e oito?",
+          "recentInbound": ["O lote veio com seis unidades, certo?"]
+        },
+        "b": {
+          "contextId": "context-calibration-quantity-over-address",
+          "assistantAudiblePrefixAtDecision": "Registro seis unidades nesse lote?",
+          "recentInbound": ["O endereço termina no número vinte e oito?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-calibration-address-eighty-two", "recentInboundExpectedTargetId": "target-calibration-seven-units" },
+        "b": { "assistantExpectedTargetId": "target-calibration-seven-units", "recentInboundExpectedTargetId": "target-calibration-address-eighty-two" }
+      }
+    },
+    {
+      "crossBlockRootId": "calibration-continuation-safety-migrations",
+      "semanticLineageId": "lineage-calibration-safety-migrations",
+      "role": "calibration",
+      "family": "continuation",
+      "targets": {
+        "a": { "targetId": "target-calibration-continue-safety", "text": "continue pela etapa de segurança" },
+        "b": { "targetId": "target-calibration-resume-migrations", "text": "retome no capítulo das migrações" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-calibration-safety-over-migrations",
+          "assistantAudiblePrefixAtDecision": "Interrompi o guia antes da etapa de segurança; devo continuar?",
+          "recentInbound": ["Parei a leitura no capítulo das migrações; posso retomar dali?"]
+        },
+        "b": {
+          "contextId": "context-calibration-migrations-over-safety",
+          "assistantAudiblePrefixAtDecision": "O capítulo das migrações foi o último lido; posso retomar?",
+          "recentInbound": ["Parei o guia antes da etapa de segurança; devo continuar?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-calibration-continue-safety", "recentInboundExpectedTargetId": "target-calibration-resume-migrations" },
+        "b": { "assistantExpectedTargetId": "target-calibration-resume-migrations", "recentInboundExpectedTargetId": "target-calibration-continue-safety" }
+      }
+    },
+    {
+      "crossBlockRootId": "calibration-instruction-card-gate",
+      "semanticLineageId": "lineage-calibration-card-gate",
+      "role": "calibration",
+      "family": "instruction-negation",
+      "targets": {
+        "a": { "targetId": "target-calibration-hold-card", "text": "não cobre o cartão agora" },
+        "b": { "targetId": "target-calibration-lock-gate", "text": "tranque o portão dos fundos" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-calibration-card-over-gate",
+          "assistantAudiblePrefixAtDecision": "Posso cobrar o cartão agora?",
+          "recentInbound": ["O portão dos fundos está aberto; eu devo trancar agora?"]
+        },
+        "b": {
+          "contextId": "context-calibration-gate-over-card",
+          "assistantAudiblePrefixAtDecision": "Quer que eu tranque o portão dos fundos?",
+          "recentInbound": ["O cartão ainda está pendente; então eu não devo cobrar agora?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-calibration-hold-card", "recentInboundExpectedTargetId": "target-calibration-lock-gate" },
+        "b": { "assistantExpectedTargetId": "target-calibration-lock-gate", "recentInboundExpectedTargetId": "target-calibration-hold-card" }
+      }
+    },
+    {
+      "crossBlockRootId": "development-short-meeting-shirt",
+      "semanticLineageId": "lineage-development-meeting-shirt",
+      "role": "development",
+      "family": "short-response",
+      "targets": {
+        "a": { "targetId": "target-development-thirty-minutes", "text": "trinta minutos" },
+        "b": { "targetId": "target-development-medium-size", "text": "tamanho médio" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-development-meeting-over-shirt",
+          "assistantAudiblePrefixAtDecision": "Quanto tempo reservo para a reunião, trinta minutos ou uma hora?",
+          "recentInbound": ["A camiseta foi separada em tamanho médio ou grande?"]
+        },
+        "b": {
+          "contextId": "context-development-shirt-over-meeting",
+          "assistantAudiblePrefixAtDecision": "Qual tamanho registro para a camiseta, médio ou grande?",
+          "recentInbound": ["A reunião ficou com trinta minutos ou uma hora de duração?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-development-thirty-minutes", "recentInboundExpectedTargetId": "target-development-medium-size" },
+        "b": { "assistantExpectedTargetId": "target-development-medium-size", "recentInboundExpectedTargetId": "target-development-thirty-minutes" }
+      }
+    },
+    {
+      "crossBlockRootId": "development-short-bridge-channel",
+      "semanticLineageId": "lineage-development-bridge-channel",
+      "role": "development",
+      "family": "short-response",
+      "targets": {
+        "a": { "targetId": "target-development-new-bridge", "text": "pela ponte nova" },
+        "b": { "targetId": "target-development-channel-two", "text": "no canal dois" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-development-bridge-over-channel",
+          "assistantAudiblePrefixAtDecision": "Para chegar ao depósito, sigo pela ponte nova ou pela avenida velha?",
+          "recentInbound": ["O transmissor deve operar no canal dois ou no canal cinco?"]
+        },
+        "b": {
+          "contextId": "context-development-channel-over-bridge",
+          "assistantAudiblePrefixAtDecision": "Configuro o transmissor no canal dois ou no cinco?",
+          "recentInbound": ["O caminho do depósito passa pela ponte nova ou pela avenida velha?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-development-new-bridge", "recentInboundExpectedTargetId": "target-development-channel-two" },
+        "b": { "assistantExpectedTargetId": "target-development-channel-two", "recentInboundExpectedTargetId": "target-development-new-bridge" }
+      }
+    },
+    {
+      "crossBlockRootId": "development-correction-weekday-floor",
+      "semanticLineageId": "lineage-development-weekday-floor",
+      "role": "development",
+      "family": "correction",
+      "targets": {
+        "a": { "targetId": "target-development-thursday", "text": "é quinta-feira, não quarta" },
+        "b": { "targetId": "target-development-ninth-floor", "text": "fica no nono andar, não no oitavo" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-development-weekday-over-floor",
+          "assistantAudiblePrefixAtDecision": "Então a manutenção será na quarta-feira?",
+          "recentInbound": ["O escritório novo fica no oitavo andar?"]
+        },
+        "b": {
+          "contextId": "context-development-floor-over-weekday",
+          "assistantAudiblePrefixAtDecision": "Confirmo o escritório no oitavo andar?",
+          "recentInbound": ["A manutenção foi marcada para quarta-feira?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-development-thursday", "recentInboundExpectedTargetId": "target-development-ninth-floor" },
+        "b": { "assistantExpectedTargetId": "target-development-ninth-floor", "recentInboundExpectedTargetId": "target-development-thursday" }
+      }
+    },
+    {
+      "crossBlockRootId": "development-correction-version-label",
+      "semanticLineageId": "lineage-development-version-label",
+      "role": "development",
+      "family": "correction",
+      "targets": {
+        "a": { "targetId": "target-development-version-three-two", "text": "corrigindo, a versão é três ponto dois" },
+        "b": { "targetId": "target-development-green-label", "text": "na verdade, a etiqueta certa é verde" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-development-version-over-label",
+          "assistantAudiblePrefixAtDecision": "Vou instalar a versão três ponto um?",
+          "recentInbound": ["A caixa deve receber a etiqueta amarela?"]
+        },
+        "b": {
+          "contextId": "context-development-label-over-version",
+          "assistantAudiblePrefixAtDecision": "Uso a etiqueta amarela nessa caixa?",
+          "recentInbound": ["O pacote ainda está na versão três ponto um?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-development-version-three-two", "recentInboundExpectedTargetId": "target-development-green-label" },
+        "b": { "assistantExpectedTargetId": "target-development-green-label", "recentInboundExpectedTargetId": "target-development-version-three-two" }
+      }
+    },
+    {
+      "crossBlockRootId": "development-continuation-chart-interview",
+      "semanticLineageId": "lineage-development-chart-interview",
+      "role": "development",
+      "family": "continuation",
+      "targets": {
+        "a": { "targetId": "target-development-continue-chart", "text": "pode seguir pela interpretação do gráfico" },
+        "b": { "targetId": "target-development-continue-interview", "text": "continue a partir do trecho sobre carreira" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-development-chart-over-interview",
+          "assistantAudiblePrefixAtDecision": "Parei antes de interpretar o gráfico; quer que eu siga?",
+          "recentInbound": ["Parei a entrevista no trecho sobre carreira; posso continuar dali?"]
+        },
+        "b": {
+          "contextId": "context-development-interview-over-chart",
+          "assistantAudiblePrefixAtDecision": "A entrevista parou no trecho sobre carreira; continuo dali?",
+          "recentInbound": ["Parei antes da interpretação do gráfico; devo seguir?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-development-continue-chart", "recentInboundExpectedTargetId": "target-development-continue-interview" },
+        "b": { "assistantExpectedTargetId": "target-development-continue-interview", "recentInboundExpectedTargetId": "target-development-continue-chart" }
+      }
+    },
+    {
+      "crossBlockRootId": "development-continuation-errors-deployment",
+      "semanticLineageId": "lineage-development-errors-deployment",
+      "role": "development",
+      "family": "continuation",
+      "targets": {
+        "a": { "targetId": "target-development-resume-errors", "text": "retome pelos registros de erro" },
+        "b": { "targetId": "target-development-continue-deployment", "text": "continue pela lista de implantação" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-development-errors-over-deployment",
+          "assistantAudiblePrefixAtDecision": "Interrompi a análise antes dos registros de erro; retomo?",
+          "recentInbound": ["Parei a revisão na lista de implantação; posso continuar?"]
+        },
+        "b": {
+          "contextId": "context-development-deployment-over-errors",
+          "assistantAudiblePrefixAtDecision": "Parei na lista de implantação; posso seguir?",
+          "recentInbound": ["Parei o diagnóstico antes dos registros de erro; devo retomar dali?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-development-resume-errors", "recentInboundExpectedTargetId": "target-development-continue-deployment" },
+        "b": { "assistantExpectedTargetId": "target-development-continue-deployment", "recentInboundExpectedTargetId": "target-development-resume-errors" }
+      }
+    },
+    {
+      "crossBlockRootId": "development-instruction-draft-temperature",
+      "semanticLineageId": "lineage-development-draft-temperature",
+      "role": "development",
+      "family": "instruction-negation",
+      "targets": {
+        "a": { "targetId": "target-development-save-draft", "text": "salve apenas como rascunho" },
+        "b": { "targetId": "target-development-lower-temperature", "text": "ajuste o ar-condicionado para vinte graus" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-development-draft-over-temperature",
+          "assistantAudiblePrefixAtDecision": "Publico o texto ou salvo apenas como rascunho?",
+          "recentInbound": ["O ar-condicionado está em vinte e quatro graus; eu ajusto para vinte?"]
+        },
+        "b": {
+          "contextId": "context-development-temperature-over-draft",
+          "assistantAudiblePrefixAtDecision": "Ajusto o ar-condicionado para vinte graus?",
+          "recentInbound": ["O texto ainda não está pronto; eu salvo apenas como rascunho?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-development-save-draft", "recentInboundExpectedTargetId": "target-development-lower-temperature" },
+        "b": { "assistantExpectedTargetId": "target-development-lower-temperature", "recentInboundExpectedTargetId": "target-development-save-draft" }
+      }
+    },
+    {
+      "crossBlockRootId": "development-instruction-post-elevator",
+      "semanticLineageId": "lineage-development-post-elevator",
+      "role": "development",
+      "family": "instruction-negation",
+      "targets": {
+        "a": { "targetId": "target-development-hold-post", "text": "não publique a postagem hoje" },
+        "b": { "targetId": "target-development-call-technician", "text": "chame o técnico do elevador" }
+      },
+      "contexts": {
+        "a": {
+          "contextId": "context-development-post-over-elevator",
+          "assistantAudiblePrefixAtDecision": "Devo publicar a postagem ainda hoje?",
+          "recentInbound": ["O elevador voltou a falhar; eu devo chamar o técnico?"]
+        },
+        "b": {
+          "contextId": "context-development-elevator-over-post",
+          "assistantAudiblePrefixAtDecision": "Quer que eu chame o técnico do elevador?",
+          "recentInbound": ["A postagem de hoje ainda está incompleta; então eu não devo publicar?"]
+        }
+      },
+      "oracle": {
+        "a": { "assistantExpectedTargetId": "target-development-hold-post", "recentInboundExpectedTargetId": "target-development-call-technician" },
+        "b": { "assistantExpectedTargetId": "target-development-call-technician", "recentInboundExpectedTargetId": "target-development-hold-post" }
+      }
+    }
+  ]
+}

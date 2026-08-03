@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "exp-0018-context-observability-config-v1",
+  "id": "exp-0018-context-observability-v0.1",
+  "experimentId": "EXP-0018",
+  "locale": "pt-BR",
+  "status": "instrumentation-only-prefit-audit-required",
+  "executionAllowed": false,
+  "preRegistration": "docs/experiments/EXP-0018-context-observability-screen.md",
+  "question": "Um matcher lexical relacional local usa contexto textual causal para escolher entre dois antecedentes melhor que o mesmo microturno isolado em blocos sintéticos 2x2?",
+  "constructScope": "lexical-antecedent-selection-under-controlled-explicit-anchors",
+  "independentUnit": "crossBlockRootId",
+  "descriptivePairedUnit": "pairRootId",
+  "matrix": {
+    "fit": { "crossBlocks": 12, "pairRoots": 24, "examples": 48 },
+    "calibration": { "crossBlocks": 4, "pairRoots": 8, "examples": 16 },
+    "development": { "crossBlocks": 8, "pairRoots": 16, "examples": 32 },
+    "families": [
+      "short-response",
+      "correction",
+      "continuation",
+      "instruction-negation"
+    ],
+    "checkerboard": {
+      "casesPerCrossBlock": 4,
+      "pairRootsPerCrossBlock": 2,
+      "labelsPerCrossBlock": {
+        "BACKGROUND_OR_NOT_DIRECTED": 2,
+        "DIRECTED_TO_ASSISTANT": 2
+      }
+    }
+  },
+  "causalObservation": {
+    "assistantSpeaking": true,
+    "assistantField": "assistantAudiblePrefixAtDecision",
+    "assistantTextAvailability": "fully-audible-system-output-only-through-decision",
+    "recentInboundSlots": 1,
+    "recentInboundAvailability": "complete-text-known-before-target-onset",
+    "targetAvailability": "complete-oracle-text-through-text-screen-decision",
+    "futureTextAllowed": false,
+    "humanIdentityAvailable": false,
+    "modelInputKeys": [
+      "assistantAudiblePrefixAtDecision",
+      "assistantSpeaking",
+      "recentInbound",
+      "targetText"
+    ],
+    "forbiddenModelInput": [
+      "label",
+      "intendedContext",
+      "pairRole",
+      "speakerId",
+      "humanIdentity",
+      "family",
+      "crossBlockRootId",
+      "pairRootId",
+      "targetSurfaceId",
+      "contextSurfaceId",
+      "oracle"
+    ]
+  },
+  "features": {
+    "version": "exp-0018-context-relational-features-v1",
+    "names": [
+      "bias",
+      "targetPresent",
+      "targetCharacterLength",
+      "targetTokenCount",
+      "targetHasQuestion",
+      "targetHasNegation",
+      "targetHasCorrectionMarker",
+      "targetHasContinuationMarker",
+      "assistantSpeaking",
+      "contextMask",
+      "assistantHasQuestion",
+      "inboundHasQuestion",
+      "targetAssistantTokenJaccard",
+      "targetInboundTokenJaccard",
+      "tokenJaccardDelta",
+      "targetAssistantTokenCoverage",
+      "targetInboundTokenCoverage",
+      "tokenCoverageDelta",
+      "targetAssistantCharNgramCosine",
+      "targetInboundCharNgramCosine",
+      "charNgramCosineDelta"
+    ],
+    "normalization": "NFKD-strip-marks-lower-pt-BR-alnum-space-v1",
+    "charNgrams": { "minimum": 3, "maximum": 5 },
+    "interactionMechanism": "explicit-target-to-assistant-versus-target-to-inbound-similarity-and-deltas",
+    "contextOnlyLexicalBins": 0,
+    "targetOnlyContextSlots": "all-zero-with-contextMask-zero"
+  },
+  "arms": {
+    "D0": {
+      "kind": "deterministic-baseline",
+      "prediction": "DIRECTED_TO_ASSISTANT"
+    },
+    "C0": {
+      "kind": "static-negative-control",
+      "input": "context-only",
+      "expectedEmpiricalCeiling": 0.5,
+      "trainedChallenger": false
+    },
+    "B0": {
+      "kind": "target-only-control",
+      "contextEnabled": false,
+      "modelInputKeys": [
+        "assistantSpeaking",
+        "targetText"
+      ],
+      "sameFeatureDimensionAsB1": true
+    },
+    "B1": {
+      "kind": "target-plus-context-challenger",
+      "contextEnabled": true,
+      "modelInputKeys": [
+        "assistantAudiblePrefixAtDecision",
+        "assistantSpeaking",
+        "recentInbound",
+        "targetText"
+      ],
+      "sameFeatureDimensionAsB0": true
+    }
+  },
+  "integrity": {
+    "nearDuplicateThreshold": 0.85,
+    "nearDuplicateSignals": [
+      "content-token-jaccard",
+      "character-3-to-5-gram-jaccard",
+      "normalized-edit-similarity"
+    ],
+    "nearDuplicateScope": "targets-combined-contexts-and-separate-antecedent-channels-within-and-across-roles-except-expected-same-cross-block-relations",
+    "blindSemanticCriticsRequired": 2,
+    "blindProjectionExcludesOracle": true,
+    "ambiguousBothOrNeitherAllowed": 0
+  },
+  "trainer": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "modelFamiliesAllowed": 1,
+    "epochs": 3000,
+    "learningRate": 0.25,
+    "l2": 0.001,
+    "initialization": "all-zero",
+    "ordering": "input-order/full-batch",
+    "repeatedFits": 2,
+    "fitRole": "fit",
+    "calibrationUsedForWeights": false,
+    "developmentUsedForWeights": false
+  },
+  "calibration": {
+    "role": "calibration",
+    "backgroundDecision": "probability-greater-than-or-equal-to-threshold",
+    "candidateThresholds": "unique-observed-background-probabilities-in-[0.5,1]-plus-1",
+    "constraint": "DIRECTED_TO_ASSISTANT-recall-equals-1",
+    "objective": "maximize-BACKGROUND_OR_NOT_DIRECTED-recall",
+    "tieBreak": "highest-threshold",
+    "noFeasibleThresholdAction": "cut-before-development"
+  },
+  "development": {
+    "openingsAllowed": 1,
+    "holdoutOpenings": 0,
+    "confirmatoryClaimAllowed": false,
+    "predictionRuns": 1,
+    "structuralLabelsMayBeReadBeforeFreeze": true,
+    "candidatePredictionsBeforeFreezeAllowed": false,
+    "canonicalCheckpointRequired": true
+  },
+  "metrics": {
+    "pairOutcome": "compare-number-of-correct-descendants-within-pairRootId",
+    "crossBlockNetPositive": "B1-correct-cases-minus-B0-correct-cases-greater-than-zero",
+    "primaryIndependentGate": "positive-cross-blocks-and-family-breadth",
+    "latency": {
+      "datasetRole": "calibration",
+      "operation": "feature-extraction-plus-softmax-prediction",
+      "warmupsPerArmPerExample": 20,
+      "measuredRepetitionsPerArmPerExample": 200,
+      "schedule": "interleaved-B0-then-B1-with-order-reversed-on-alternating-repetition",
+      "percentile": "nearest-rank-p95-of-B1-minus-B0-per-interleaved-pair",
+      "maximumDeltaMs": 50,
+      "interpretation": "local-only-not-end-to-end"
+    }
+  },
+  "gates": {
+    "pairIntegrity": 1,
+    "targetAndContextMarginalCeiling": 0.5,
+    "b0PairInputAndPredictionIdentity": 1,
+    "b1DirectedRecall": 1,
+    "minimumB1BackgroundRecall": 0.75,
+    "minimumCompletePairShare": 0.75,
+    "minimumNetPairWinsOverB0": 4,
+    "minimumPositiveCrossBlocks": 6,
+    "minimumFamiliesWithPositiveCrossBlock": 4,
+    "maximumLocalContextDeltaP95Ms": 50,
+    "deterministicWeightsAndPredictions": true,
+    "canProduceEffects": false
+  },
+  "budget": {
+    "externalModelCalls": 0,
+    "paidApiCalls": 0,
+    "paidGpuRuns": 0,
+    "asrRuns": 0,
+    "audioMaterializations": 0,
+    "developmentStructuralAuditRuns": 1,
+    "developmentCandidateMetricRuns": 0
+  },
+  "paths": {
+    "catalog": "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+    "fitDataset": "eval/datasets/exp-0018-context-fit-v0.1.json",
+    "calibrationDataset": "eval/datasets/exp-0018-context-calibration-v0.1.json",
+    "developmentDataset": "eval/datasets/exp-0018-context-development-v0.1.json",
+    "instrumentationAudit": "eval/commitments/exp-0018-instrumentation-audit-v0.1.json",
+    "blindSemanticReview": "eval/commitments/exp-0018-blind-semantic-review-v0.1.json",
+    "prefitFreeze": "eval/commitments/exp-0018-prefit-freeze-v0.1.json",
+    "trainAttestation": "eval/commitments/exp-0018-train-attestation-v0.1.json",
+    "checkpoint": "eval/checkpoints/exp-0018-context-v0.1.json",
+    "developmentReport": "eval/reports/exp-0018-context-development-v0.1.json"
+  },
+  "authority": {
+    "mode": "offline-shadow-only",
+    "canProduceEffects": false
+  },
+  "maximumClaim": "Em cenas textuais sintéticas 2x2 com âncoras lexicais explícitas, o matcher relacional local seleciona entre o antecedente audível do assistente e o inbound recente melhor que o alvo isolado.",
+  "excludedClaims": [
+    "destinatário identificado em áudio real",
+    "semântica ampla compreendida",
+    "paráfrases ou conflitos lexicais resolvidos",
+    "ASR causal disponível",
+    "diarização resolvida",
+    "latência percebida aprovada",
+    "generalização humana",
+    "segurança de veto em produção"
+  ]
+}

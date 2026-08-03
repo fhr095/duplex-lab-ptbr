@@ -18,9 +18,12 @@ histórico, esta carteira prevalece.
   linhagens de fundo e 10/15 dirigidas em train, abaixo das 12 independentes
   exigidas por classe. Nenhum fit, limiar ou métrica semântica foi executado;
   os pisos não foram reduzidos.
-- **Agora — EXP-0018:** construir primeiro uma matriz textual em que alvo e
-  léxico de contexto sejam cruzados entre classes, comparando `target-only`
-  com `target+context`. Só materializar áudio se contexto ganhar sem atalho.
+- **Agora — EXP-0018:** a matriz textual 2x2 já materializa 24 blocos
+  independentes, 48 pares e 96 casos; alvo/contexto isolados têm teto exato de
+  50%. Fechar críticos cegos e fronteira física antes de fit/calibração;
+  development já foi auditado estruturalmente, mas continua sem qualquer
+  predição/métrica de candidato. Só materializar áudio se contexto ganhar sem
+  atalho.
 - **Depois, condicional:** testar disponibilidade causal em áudio do mesmo
   checkpoint congelado. ASR parcial continua fora até esse teto informacional
   e a integração shadow qualificarem.
@@ -419,7 +422,7 @@ card de dados e splits por família, gerador e pessoa.
 | 13 | EXP-0016: relevância acústica M4b — **`promote-m4b-speaker-relevance-shadow-candidate`** | 108 exemplos/36 clips; holdout bruto 77,8% vs 50%; humano conservador 7/9 vs 5/9; 4 probes Chrome com paridade | veto conservador ainda falha no holdout; uma só faixa de gênero; zero autoridade |
 | 14a | EXP-0017 Core: calibração segura do veto — **`retain-a0-and-cut-acoustic-core`** | 240 exemplos train/dev; `A` 50,8%, 60/60 dirigidas e 1/60 fundos; empate pareado por exemplo com `A0` | nenhum holdout; `A0` vira `A-ref`; família acústica compacta cortada nesta rodada |
 | 14b | EXP-0017-R: probe semântico causal — **cortado antes do fit** | mapa causal físico: 21/30 train; 11 fundos e 10 dirigidas elegíveis | pisos exigiam 12/classe; nenhum fit/limiar/métrica semântica; zero autoridade |
-| 15 | EXP-0018: contexto observável com conteúdo pareado — **agora, pré-registrado** | `D0` all-directed, `B0` target-only e `B1` target+context em blocos lexicais cruzados | texto primeiro; áudio só após passe; sem ASR, GPU/API paga ou autoridade |
+| 15 | EXP-0018: contexto observável com conteúdo pareado — **agora, instrumentação pré-fit** | 24 blocos 2x2/96 casos; `D0`, controle `C0`, `B0` target-only e `B1` relacional; auditorias cegas e fronteira física antes do fit | `n` independente 12/4/8 por papel; development só com auditoria estrutural, zero métrica de candidato; áudio só após passe; sem ASR, GPU/API paga ou autoridade |
 
 O EXP-0018 é a única frente de challenger ativa. Modelos completos continuam
 no ledger como `watch` ou `defer`; pesquisa externa não autoriza download,

@@ -1,7 +1,7 @@
 # EXP-0018 — contexto observável com conteúdo lexical pareado
 
-Status: **pré-registrado; instrumentação ainda não materializada; zero
-autoridade**
+Status: **instrumentação e crítica cega materializadas; fronteira física/freeze
+pré-fit pendentes; fit ainda não autorizado; zero autoridade**
 
 ## Decisão que este experimento precisa desbloquear
 
@@ -17,14 +17,16 @@ sem reduzir piso, trocar backbone ou testar ASR real prematuramente.
 
 ## Hipótese e mecanismo mínimo
 
-Em pares com o mesmo texto do microturno, acrescentar uma janela curta de
-contexto — último turno conhecido do assistente e fala ambiente imediatamente
-anterior, sem identidade do humano, rótulo ou `intendedContext` — melhora a
-decisão shadow de relevância em relação ao mesmo controlador que recebe apenas
-o microturno.
+Em pares com o mesmo texto do microturno, um matcher lexical relacional que
+compara o alvo com o prefixo audível do assistente e com a fala inbound
+imediatamente anterior — sem identidade humana, rótulo ou `intendedContext` —
+melhora a decisão shadow em relação ao mesmo controlador que recebe apenas o
+microturno.
 
-O mecanismo testado é **coerência contextual de microturno**, não identificação
-de voz, prosódia, diarização, ASR, naturalidade ou full-duplex completo.
+O mecanismo testado é **seleção lexical entre dois antecedentes com âncoras
+explícitas**, não compreensão semântica ampla, paráfrase adversarial,
+identificação de voz, prosódia, diarização, ASR, naturalidade ou full-duplex
+completo.
 
 ## Valor da informação e ordem de custo
 
@@ -41,7 +43,16 @@ demonstrou valor informacional.
 
 ## Unidade experimental e matriz mínima
 
-A unidade decisiva é `pairRootId`. Cada raiz contém exatamente dois casos com:
+A unidade independente é `crossBlockRootId`; `pairRootId` é apenas a unidade
+pareada descritiva. Cada bloco cruzado contém dois alvos (`T0`, `T1`), dois
+contextos canônicos (`C0`, `C1`) e o produto cartesiano completo:
+
+- `T0+C0` e `T1+C1` respondem ao prefixo audível do assistente;
+- `T0+C1` e `T1+C0` respondem à fala inbound recente;
+- cada alvo exato e cada contexto exato reaparecem uma vez por rótulo;
+- cada bloco contém dois `pairRootId`, um por alvo, e quatro casos.
+
+Cada raiz pareada contém exatamente dois casos com:
 
 - o mesmo `targetText` normalizado e os mesmos atributos planejados de voz;
 - rótulos opostos;
@@ -49,54 +60,71 @@ A unidade decisiva é `pairRootId`. Cada raiz contém exatamente dois casos com:
 - contextos diferentes, mas ambos plausíveis;
 - templates, alvos e linhagens que não atravessam train/calibração/development.
 
-Os pares são agrupados também em blocos cruzados: cada template/contexto de
-superfície e cada família lexical contextual precisa aparecer nas duas classes
-dentro do mesmo papel experimental. Alvo e contexto isolados ficam
-contrabalanceados; o sinal pretendido é a **relação de coerência entre eles**.
-Um saco de palavras do contexto não pode obter o rótulo apenas por termos que
-só aparecem de um lado.
+O bloco 2x2 — e não uma coleção solta de pares — é a construção que garante o
+contrabalanceamento. Alvo e contexto isolados têm teto empírico exato de 50%;
+o sinal pretendido é a **relação de coerência entre eles**. Um saco de palavras
+do contexto ou do alvo não pode obter o rótulo apenas por termos que aparecem
+de um lado.
 
-O candidato recebe somente:
+`B1` recebe somente:
 
-- `assistantLastTurn`, produzido pelo próprio sistema e portanto conhecido;
-- zero ou mais falas inbound recentes, sem identidade humana;
+- `assistantAudiblePrefixAtDecision`, produzido pelo sistema e integralmente
+  audível até a decisão, sem texto futuro do output;
+- exatamente uma fala inbound recente, sem identidade humana;
 - `targetText` causal;
 - estado mínimo `assistantSpeaking=true`, igual nos dois braços.
 
+Nesta rodada há exatamente um slot inbound completo anterior ao onset do alvo
+e um prefixo audível do assistente em todo caso. Cardinalidade, padding, máscara
+e ordem não podem revelar classe.
+
 Ele não recebe `label`, `intendedContext`, nome da condição, ação esperada,
 `pairRole`, falante humano verdadeiro nem texto posterior à decisão.
+`B0` recebe uma projeção ainda menor, somente `targetText` e
+`assistantSpeaking`; o extrator target-only não lê, normaliza nem temporiza os
+campos contextuais.
 
-A primeira matriz deve conter, no mínimo:
+A primeira matriz contém:
 
-- 24 pares de fit;
-- 8 pares de calibração;
-- 16 pares de development;
+- 12 blocos independentes / 24 pares de fit;
+- 4 blocos independentes / 8 pares de calibração;
+- 8 blocos independentes / 16 pares de development;
 - pelo menos quatro famílias: resposta curta, correção, pedido de continuidade
   e instrução/negação;
 - pelo menos oito alvos lexicais distintos em development;
 - nenhum ancestral semântico compartilhado entre os três papéis.
 
-Se a fábrica não conseguir esses pisos sem duplicata/quase-duplicata, a rodada
-é cortada antes do fit.
+Isso preserva o custo originalmente previsto de 96 casos, mas torna explícito
+que o `n` independente é 12/4/8, não 24/8/16. É um screen barato de mecanismo,
+não uma estimativa estável de generalização. Se a fábrica não conseguir esses
+pisos sem duplicata/quase-duplicata cruzando papéis, a rodada é cortada antes
+do fit.
 
 ## Braços
 
 - `D0 — ALL_DIRECTED`: baseline determinística que nunca propõe ignorar a
   fala; não é o checkpoint acústico `A0` do EXP-0017.
+- `C0 — context-only`: controle negativo estático; cada contexto canônico
+  precisa colidir em rótulos opostos e ter teto empírico de 50%. Não vira
+  challenger treinado.
 - `B0 — target-only`: controlador local mínimo que recebe apenas o microturno;
   dentro de cada par sua entrada e sua saída devem ser idênticas. Usa a mesma
   dimensão de `B1`, com slots contextuais zerados e máscara explícita desligada.
 - `B1 — target+context`: mesmo algoritmo, dimensão e regra de calibração de
-  `B0`, acrescentando somente a janela contextual permitida e ligando a máscara
-  correspondente.
+  `B0`, acrescentando somente relações explícitas alvo↔prefixo do assistente e
+  alvo↔inbound (Jaccard de tokens, cobertura e cosseno de n-gramas de caracteres,
+  com deltas) e ligando a máscara correspondente.
 
 `B0` é o controle de atalho lexical. Como o alvo é idêntico no par, qualquer
-diferença de sua saída entre descendentes invalida a instrumentação. `B1` é o
-único challenger.
+diferença de sua entrada ou saída entre descendentes invalida a instrumentação.
+`B1` é o único challenger. A interação relacional é necessária: features
+meramente aditivas de alvo e contexto não separariam o checkerboard. Uma prova
+toy com superfícies não vistas precisa passar antes do fit experimental.
 
 ## Partição, treino e congelamento
 
-- separação pela maior linhagem (`pairRootId`, template semântico e alvo);
+- separação pela maior linhagem (`crossBlockRootId`, ancestral semântico,
+  template, alvo e contexto);
 - templates e lexemas de contexto contrabalanceados entre classes dentro de
   cada papel, com blocos cruzados mantidos na mesma partição;
 - pesos ajustados apenas em `train-fit`;
@@ -109,20 +137,30 @@ diferença de sua saída entre descendentes invalida a instrumentação. `B1` é
 - development e qualquer futuro áudio ficam fora da allowlist física de fit;
 - zero holdout e zero alegação confirmatória.
 
+O oracle estrutural (`qual alvo responde a qual antecedente`) vive somente no
+catálogo de construção. O dataset entrega ao extrator uma projeção allowlisted
+sem oracle, IDs, família, papel, condição ou rótulo. Dois críticos de IA em
+contextos isolados leem uma projeção efêmera sem oracle e rejeitam antes do
+freeze cenas compatíveis com ambos ou com nenhum antecedente; isso não equivale
+a validação humana independente.
+
 ## Gates do screen textual
 
 Todos precisam passar:
 
-1. integridade pareada de 100% e zero alvo/linhagem cruzando papéis;
+1. integridade 2x2 e pareada de 100%, zero linhagem cruzando papéis e teto
+   target-only/context-only/metadados marginais de exatamente 50%;
 2. `B0` com entrada e predição idênticas nos dois lados de todo par;
 3. recall de `DIRECTED_TO_ASSISTANT` de `B1` igual a 100%;
 4. recall de `BACKGROUND_OR_NOT_DIRECTED` de pelo menos 75%;
 5. pelo menos 75% dos pares com os dois descendentes corretos;
-6. ganho líquido pareado por raiz de pelo menos 4 contra `B0` e positivo contra
-   `D0`;
-7. p95 local do delta contextual menor ou igual a 50 ms, explicitamente sem
-   interpretação ponta a ponta;
-8. duas execuções com pesos e predições idênticos;
+6. saldo de vitórias pareadas de pelo menos 4 contra `B0`, ganho positivo em
+   pelo menos 6 dos 8 blocos independentes e em todas as quatro famílias;
+7. p95 nearest-rank do delta local `B1-B0` menor ou igual a 50 ms, após 20
+   warm-ups e 200 repetições intercaladas por caso de calibração, explicitamente
+   sem interpretação ponta a ponta;
+8. dois fits e calibrações pré-development com pesos, limiares e predições
+   idênticos; depois, uma única passagem pelo development;
 9. `canProduceEffects=false`, zero autoridade, zero API/GPU paga.
 
 Com 16 pares de development, esses gates são apenas um screen de viabilidade;
@@ -134,8 +172,11 @@ não estimam risco de produção.
   interpretar qualidade;
 - contexto/template/lexema que aparece em apenas uma classe dentro do papel:
   invalidar a fábrica antes do fit;
+- cena que crítico sem oracle julga compatível com ambos/nenhum antecedente:
+  corrigir antes do freeze ou cortar; depois do freeze não se repara cena;
 - nenhum limiar train-only com recall dirigido perfeito: cortar `B1`;
-- `B1` sem ganho pareado suficiente: cortar contexto semântico neste desenho;
+- `B1` sem ganho pareado suficiente: cortar o matcher lexical contextual neste
+  desenho, sem alegar que contexto semanticamente mais forte falhou;
 - passe textual: congelar `B1` e escrever uma emenda separada antes de gerar
   áudio; não testar ASR ainda;
 - necessidade de identidade humana/oráculo de diarização para passar: registrar
@@ -144,21 +185,29 @@ não estimam risco de produção.
 
 ## Alegação máxima
 
-Um passe permite afirmar somente que **contexto textual recente, quando
-disponível e sob pares sintéticos controlados, contém sinal incremental além do
-microturno isolado**. Ele autoriza o menor screen causal em áudio do mesmo
-checkpoint.
+Um passe permite afirmar somente que **em cenas sintéticas 2x2 com âncoras
+lexicais explícitas, este matcher relacional selecionou entre o antecedente do
+assistente e o inbound recente melhor que o alvo isolado**. Ele autoriza o
+menor screen causal em áudio do mesmo checkpoint.
 
-Não prova destinatário em áudio real, disponibilidade de ASR, diarização,
-naturalidade, segurança, latência percebida, generalização humana ou permissão
-para o runtime ignorar fala.
+Não prova paráfrases ou conflitos lexicais, destinatário em áudio real,
+disponibilidade de ASR, diarização, naturalidade, segurança, latência percebida,
+generalização humana ou permissão para o runtime ignorar fala.
 
-## Artefatos esperados antes do primeiro fit
+## Artefatos antes do primeiro fit
 
-- plano de pares e card de proveniência;
-- auditor de igualdade lexical, duplicatas e linhagens;
+- plano 2x2 e card de proveniência;
+- auditor de igualdade lexical, duplicatas, linhagens e controles negativos;
 - datasets separados de fit, calibração e development;
+- prova toy da capacidade relacional;
+- duas auditorias cegas de compatibilidade dos antecedentes;
 - attestation train-only e freeze-manifest;
 - testes adversariais de label/context leakage;
 - runner de fit sem acesso físico a development;
 - registro explícito de corte se qualquer piso for inviável.
+
+Plano, auditor estrutural, datasets, prova toy, duas leituras cegas e testes
+adversariais já estão materializados. A primeira leitura encontrou 12 cenas
+ambíguas, elas foram reparadas e a reauditoria terminou 24/24 sem bloqueio. A
+fronteira física, attestation e freeze continuam sendo o gate corrente; nenhuma
+predição ou métrica de candidato foi calculada em development.

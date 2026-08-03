@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "exp-0018-blind-semantic-review-v1",
+  "experimentId": "EXP-0018",
+  "status": "passed-for-prefit-freeze",
+  "catalog": {
+    "path": "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+    "fileSha256": "sha256:ef7f25626182964479d22be7a19028faaba40fae365b08ea5c354538d6b26898",
+    "canonicalSha256": "sha256:1d4c9f92c28eed502c46cd8733dc54709a8c0559de3652cc9d9af3f249619036"
+  },
+  "blindProjection": {
+    "schemaVersion": "exp-0018-blind-semantic-projection-v1",
+    "canonicalSha256": "sha256:82e6de35614461f522feeb3c6d444727da5ffedaef2c2680a9fb6ae2c958ed1c",
+    "includedFields": [
+      "crossBlockRootId",
+      "role",
+      "family",
+      "targets",
+      "contexts"
+    ],
+    "excludedFields": [
+      "oracle",
+      "labels",
+      "model predictions",
+      "candidate metrics"
+    ],
+    "persisted": false
+  },
+  "chronology": {
+    "initialCatalog": {
+      "fileSha256": "sha256:d453bfd5e9f8108eb8c8e1ad606551afdceaa44f4b3c4244fd8674da55a068f4",
+      "canonicalSha256": "sha256:e0b0253ddbc19fe9f0260a7ff7169c01153d0f783c2dd4353ae7c5f6a535072f",
+      "criticA": {
+        "blocksReviewed": 24,
+        "blockers": 0,
+        "polishSuggestions": 9
+      },
+      "criticB": {
+        "blocksReviewed": 24,
+        "blockers": 12,
+        "reason": "inbound declarativo deixava alvos imperativos plausíveis como novas ordens ao assistente"
+      },
+      "decision": "repair-before-freeze"
+    },
+    "repair": {
+      "blocksChangedForAddresseeClarity": 12,
+      "additionalSurfacePolishes": 4,
+      "principle": "assistant e inbound precisam apresentar atos conversacionais equivalentes; nenhum target pode depender de intenção autoral escondida"
+    },
+    "finalCatalog": {
+      "criticA": {
+        "relevantBlocksReviewed": 13,
+        "passed": 13,
+        "bothAntecedentsPlausible": 0,
+        "neitherAntecedentPlausible": 0,
+        "blockers": 0
+      },
+      "criticB": {
+        "blocksReviewed": 24,
+        "passed": 24,
+        "bothAntecedentsPlausible": 0,
+        "neitherAntecedentPlausible": 0,
+        "blockers": 0
+      },
+      "decision": "semantic-construct-sufficient-for-prefit-freeze"
+    }
+  },
+  "reviewers": {
+    "count": 2,
+    "kind": "isolated-ai-subagent-critics",
+    "humanReviewers": 0,
+    "independenceLimit": "As leituras usaram contextos isolados, mas podem compartilhar família de sistema/modelo; não equivalem a validação humana independente."
+  },
+  "limitations": [
+    "cenas deliberadamente roteirizadas e com tópicos distantes",
+    "alto eco lexical torna este um screen de seleção lexical entre antecedentes",
+    "não mede destinatário em áudio, identidade humana ou semântica ampla",
+    "aprovação semântica não autoriza fit sem freeze e fronteira física"
+  ],
+  "boundary": {
+    "modelFitPerformed": false,
+    "developmentCandidatePredictionsRead": false,
+    "developmentCandidateMetricsRead": false,
+    "fitAuthorized": false,
+    "canProduceEffects": false
+  },
+  "reviewSha256": "sha256:0576a8bbae16d08906d29717b7c1714d111acea0260bff09d3bad257ca036293"
+}

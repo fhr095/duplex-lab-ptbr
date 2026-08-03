@@ -376,8 +376,9 @@ Esta referência preserva apenas a lógica macro:
    sem confundir seu rótulo bruto com uma decisão segura;
 7. preservar o fechamento do EXP-0017: Core sem ganho e `R` inviável antes do
    fit sob pisos causais independentes;
-8. executar o EXP-0018 textual pareado: alvo e contexto isolados
-   contrabalanceados, testando se a relação contextual agrega valor;
+8. executar o EXP-0018 textual em blocos 2x2: alvo e contexto isolados têm
+   teto de 50%, a relação é a única feature discriminativa e a unidade
+   independente governa split e gate;
 9. materializar áudio do mesmo challenger somente após passe textual; ASR real
    continua posterior à prova de disponibilidade causal;
 10. conceder autoridade somente se houver ganho percebido sem regressão dos

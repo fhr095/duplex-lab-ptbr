@@ -88,11 +88,15 @@ em `hold`.
 
 O EXP-0017 foi fechado: o Core não ganhou de `A0`, e o probe `R` foi cortado
 antes do fit porque o mapa causal não atingiu os pisos independentes de fit e
-calibração. O ciclo corrente é o EXP-0018. Ele começa por pares textuais cujo
-microturno e léxico contextual aparecem nas duas classes, comparando alvo
-isolado com alvo mais contexto recente. Áudio só é materializado se esse teto
-informacional ganhar sem atalho; ASR parcial permanece posterior. Nenhuma
-variante recebe autoridade ou muda o STOP físico. Hipóteses e gates estão no
+calibração. O ciclo corrente é o EXP-0018. A fábrica já materializou blocos
+textuais 2x2: cada alvo e cada contexto exatos aparecem nos dois rótulos, e a
+unidade independente é o bloco, não cada par descendente. O gate corrente é
+crítica cega de plausibilidade mais fronteira física fit/calibração/development;
+nenhum fit, predição ou métrica de candidato em development foi executado.
+Áudio só é materializado
+se esse teto informacional ganhar sem atalho; ASR parcial permanece posterior.
+Nenhuma variante recebe autoridade ou muda o STOP físico. Hipóteses e gates
+estão no
 [pré-registro](experiments/EXP-0018-context-observability-screen.md).
 
 O ciclo é reproduzido por:
@@ -123,6 +127,11 @@ No EXP-0018, o loop autônomo valida primeiro integridade pareada,
 contrabalanceamento de lexemas/templates e separação de linhagens. Fit e
 development continuam fisicamente separados; qualquer inviabilidade de piso
 corta a rodada sem emenda oportunista.
+
+```bash
+npm run eval:exp:0018:data:check
+node --test tests/exp-0018-context-factory.test.mjs
+```
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O
