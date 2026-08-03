@@ -1,8 +1,8 @@
 # EXP-0025-R — referência DuplexCascade e controle local de tomada de turno
 
 Status: **trilha local concluída e cortada; sentinelas oficiais de `E` 4/4;
-`D=NOT_EVALUATED`; uma única alocação final `D`-only autorizada e ainda não
-executada; nenhum holdout autorizado; não bloqueante; zero autoridade**
+`D=NOT_EVALUATED`; quarta alocação encerrada antes de download/inferência por
+falha de import remoto; nenhum retry, holdout ou autoridade autorizado**
 
 Evidência corrente: o pack D e o headroom permanecem versionados; o resultado
 one-shot de `L` está em
@@ -36,6 +36,22 @@ operacional da autorização está congelada em
 
 Essa emenda excepciona somente a marca terminal da terceira alocação. Os três
 consumos anteriores e o diagnóstico PEFT continuam contando integralmente.
+
+### Resultado da quarta alocação
+
+A alocação foi encerrada após 93,807 segundos, antes de baixar o checkpoint ou
+gerar qualquer token: a invocação `python scripts/...` no Pod não incluía a
+raiz do projeto no caminho de módulos e falhou ao importar `scripts`. O Pod foi
+removido e a consulta posterior confirmou zero Pods ativos. O custo estimado
+da tentativa foi US$ 0,0753; o cumulativo passou a US$ 1,0334 e 1.287,297
+segundos de GPU, ainda dentro dos limites. `D` permanece `NOT_EVALUATED`.
+
+O recibo está em
+`eval/evidence/exp-0025-r-external-runpod-allocation-v0.4.json`. Como a emenda
+proibia quinto Pod e retry automático, nenhuma nova alocação pode ocorrer sem
+autorização explícita prospectiva. A correção mínima é somente tornar o import
+independente do diretório de invocação; candidato, dados e mecanismo não
+mudam.
 
 ## Emenda prospectiva antes de E
 

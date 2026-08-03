@@ -295,7 +295,7 @@ test("evidência D-only exige mesmo candidato, zero H e 32 trajetórias", () => 
 
 test("quarta alocação é D-only, final e não transfere H ou sentinelas", async () => {
   const validation = await validateExp0025RDOnlyAuthorization({
-    preflight: true
+    preflight: false
   });
   assert.deepEqual(validation.errors, []);
   assert.equal(validation.valid, true);
@@ -319,6 +319,23 @@ test("quarta alocação é D-only, final e não transfere H ou sentinelas", asyn
   assert.doesNotMatch(providerSource, /external-sentinels-v0\.1/iu);
   assert.match(providerSource, /INFRASTRUCTURE_ATTEMPT = 4/u);
   assert.match(providerSource, /MAX_DOWNLOAD_BYTES = 70 \* 1024 \*\* 3/u);
+});
+
+test("entrypoint corretivo altera somente a resolução do import remoto", async () => {
+  const wrapperSource = await readFile(
+    "scripts/run_exp_0025_r_external_d_only_v2.py",
+    "utf8"
+  );
+  assert.match(
+    wrapperSource,
+    /PROJECT_ROOT = Path\(__file__\)\.resolve\(\)\.parents\[1\]/u
+  );
+  assert.match(wrapperSource, /sys\.path\.insert\(0, str\(PROJECT_ROOT\)\)/u);
+  assert.match(
+    wrapperSource,
+    /from scripts\.run_exp_0025_r_external_d_only import main/u
+  );
+  assert.doesNotMatch(wrapperSource, /from_pretrained|run_development|run_sentinels/u);
 });
 
 test("autorização prospectiva vincula D e torna H-L inelegível para E", async () => {
