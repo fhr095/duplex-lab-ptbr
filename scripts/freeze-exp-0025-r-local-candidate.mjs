@@ -5,6 +5,7 @@ import { cpus } from "node:os";
 import { resolve } from "node:path";
 import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
+import { isDeepStrictEqual } from "node:util";
 
 import {
   EXP0025_R_LOCAL_CANDIDATE_ID,
@@ -149,8 +150,7 @@ async function verifyFreezeBindings(freeze) {
   invariant(validateExp0025RLocalFreeze(freeze), "commitmento malformado");
   const sourceBindings = await bindingsAt(freeze.runnerSourceCommit);
   invariant(
-    JSON.stringify(sourceBindings.entries) ===
-      JSON.stringify(freeze.sourceBindings),
+    isDeepStrictEqual(sourceBindings.entries, freeze.sourceBindings),
     "fontes congeladas divergiram"
   );
   const [packBytes, reportBytes] = await Promise.all([
