@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "exp-0025-r-external-d-only-retry-authorization-v1",
+  "experimentId": "EXP-0025-R",
+  "stage": "FIFTH_ALLOCATION_PATH_ONLY_RETRY_AUTHORIZED",
+  "authorizedAt": "2026-08-03T18:06:46-03:00",
+  "authorizationSourceCommit": "40f01e3b2dc5a9379da61b6176f6d7e7fd4d3f1d",
+  "authorizationBasis": {
+    "userStatement": "Tranquilo. ta autorizado",
+    "constrainedInterpretation": "ONE_FIFTH_AND_FINAL_PATH_ONLY_D_RETRY",
+    "scientificProtocolChanged": false,
+    "doesNotBroadenOriginalExperiment": true
+  },
+  "candidate": {
+    "id": "E-official-duplexcascade-v0.1",
+    "role": "OFFICIAL_EXTERNAL_TEXTUAL_MICROTURN_POLICY",
+    "officialCodeCommit": "42893024ca90c8de8ac3ed624467ebc123512ff8",
+    "externalSnapshotCommit": "dca21cb1309bb533d80f5aa5600c7b0cc2c470e3",
+    "baseSnapshotCommit": "f2826a00ceef68f0f2b946d945ecc0477ce4450c",
+    "scientificAuthorizationPath": "eval/commitments/exp-0025-r-external-d-only-authorization-v0.1.json",
+    "scientificAuthorizationFileSha256": "a4a81c30f56ac45571927cc2002712afe8c565cc9641ecc0731bd50fdaa9c1d2",
+    "configurationChanged": false
+  },
+  "authorizedStages": [
+    "DEVELOPMENT_D_SINGLE_PASS_COMPLETION_AFTER_PATH_FIX"
+  ],
+  "scope": {
+    "sentinelRerunAuthorized": false,
+    "developmentPassOrdinal": 1,
+    "fifthAllocationAuthorized": true,
+    "sixthAllocationAuthorized": false,
+    "automaticRetryAuthorized": false,
+    "checkpointSwapAuthorized": false,
+    "mappingSweepAuthorized": false,
+    "localReproductionAuthorized": false,
+    "holdoutAuthorized": false,
+    "additionalApiAuthorized": false,
+    "asrOrTtsAuthorized": false,
+    "runtimeChangeAuthorized": false
+  },
+  "explicitlyNotAuthorized": [
+    "SENTINEL_RERUN",
+    "ANY_HOLDOUT_INFERENCE",
+    "SIXTH_ALLOCATION_OR_AUTOMATIC_RETRY",
+    "CHECKPOINT_OR_MODEL_SWAP",
+    "SWEEP_OR_FAVORABLE_SEED_RERUN",
+    "MAPPING_CHANGE_AFTER_D",
+    "L2_OR_ANY_LOCAL_REPRODUCTION",
+    "ADDITIONAL_API",
+    "ASR_OR_TTS",
+    "RUNTIME_AUTHORITY"
+  ],
+  "priorAttemptFailure": {
+    "infrastructureAttempt": 4,
+    "classification": "PRE_INFERENCE_IMPORT_PATH_FAILURE",
+    "modelDownloaded": false,
+    "modelInferenceStarted": false,
+    "developmentUtterancesGenerated": 0,
+    "terminationConfirmed": true,
+    "receiptPath": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.4.json",
+    "receiptFileSha256": "0cd74ba2ef97d8a452bab4e504d1b91940ed8ca42f7a3dd239d5ead6ccef0442",
+    "logPath": "eval/evidence/exp-0025-r-external-development-d-only-runpod-v0.1.log",
+    "logFileSha256": "0d8eee965826457f5eefdfe9bda6bb4e2c8c9acef2fda1e40205e6d850da88f2"
+  },
+  "inputBindings": {
+    "development": {
+      "path": "eval/datasets/exp-0025-r-development-v0.1.json",
+      "fileSha256": "c49b69623bcfccbc836674487bd49ce97f80616a0072e0dc7d7aee76887008b2"
+    },
+    "priorSentinels": {
+      "path": "eval/reports/exp-0025-r-external-development-v0.1.json",
+      "fileSha256": "653f4086772c9b3804e96768de543c5c07808439e0fd383240ab64c5cf167d54"
+    },
+    "scientificAuthorization": {
+      "path": "eval/commitments/exp-0025-r-external-d-only-authorization-v0.1.json",
+      "fileSha256": "a4a81c30f56ac45571927cc2002712afe8c565cc9641ecc0731bd50fdaa9c1d2"
+    },
+    "attempt4Receipt": {
+      "path": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.4.json",
+      "fileSha256": "0cd74ba2ef97d8a452bab4e504d1b91940ed8ca42f7a3dd239d5ead6ccef0442"
+    },
+    "attempt4Log": {
+      "path": "eval/evidence/exp-0025-r-external-development-d-only-runpod-v0.1.log",
+      "fileSha256": "0d8eee965826457f5eefdfe9bda6bb4e2c8c9acef2fda1e40205e6d850da88f2"
+    }
+  },
+  "sourceBindings": [
+    {
+      "path": "scripts/run-exp-0025-r-runpod-d-only-retry.mjs",
+      "byteLength": 24171,
+      "sha256": "a92118ffb2c4fb2a10e7d93f692979859f36e5a4199cb861b5a50189c37f8a66"
+    },
+    {
+      "path": "scripts/check-exp-0025-r-external-d-only-retry-authorization.mjs",
+      "byteLength": 9775,
+      "sha256": "14e7762f3e3727ffc1a19cf31403e0f2c807154c244c86bdb7e1080c1c50a682"
+    },
+    {
+      "path": "scripts/run_exp_0025_r_external_d_only_v2.py",
+      "byteLength": 636,
+      "sha256": "534397af1280a18034bbe8a9ca6d5d6ee2e3ce5fc37f7bb477170e0dc4322f80"
+    },
+    {
+      "path": "scripts/run_exp_0025_r_external_d_only.py",
+      "byteLength": 18108,
+      "sha256": "2a626c5ee20a8ca2096a8db8ba08b6ce0a14f849a3a391f30cb5f7a804593bf9"
+    },
+    {
+      "path": "scripts/run_exp_0025_r_external.py",
+      "byteLength": 22864,
+      "sha256": "e6102a886af69e2bced944d804efca59b82d8825993ea445266609a93507589e"
+    },
+    {
+      "path": "src/eval/exp-0025-r-external.mjs",
+      "byteLength": 12312,
+      "sha256": "5b2e6920a9f600170a94876199c53cd3f85b66445067600a6a48b69b665b31d1"
+    },
+    {
+      "path": "src/eval/exp-0025-r-external-d-only.mjs",
+      "byteLength": 13641,
+      "sha256": "b858b12a075739865a232dbc796ad9631523007ffdbffe1d875116e19a2c8315"
+    },
+    {
+      "path": "src/eval/exp-0025-r-official-runtime-semantics.mjs",
+      "byteLength": 2204,
+      "sha256": "2a84e05ed037bc246d0f4bb416b6350a07b179716519029601857a8e25ea462d"
+    }
+  ],
+  "cumulativeBudget": {
+    "priorCumulativeTransferBytesUpperBound": 37706974907,
+    "rehydrationTransferBytesUpperBound": 32666833251,
+    "projectedCumulativeTransferBytes": 70373808158,
+    "maximumDownloadGiB": 70,
+    "priorCumulativeGpuSeconds": 1287.297000169754,
+    "maximumGpuHours": 2,
+    "priorCumulativeEstimatedCostUsd": 1.0334134251362748,
+    "maximumExternalCostUsd": 12,
+    "firstLimitReachedStopsExecution": true,
+    "gpuOrCostIncreaseAuthorized": false,
+    "rawAdapterPriorBudgetIsHistoricallyFrozen": true,
+    "providerReceiptV05IsCumulativeBudgetAuthority": true
+  },
+  "providerExecution": {
+    "provider": "runpod",
+    "infrastructureAttempt": 5,
+    "finalAdditionalAllocation": true,
+    "supersedesAttempt4TerminalFlagOnly": true,
+    "automaticRetryAllowed": false,
+    "cloudType": "SECURE",
+    "gpuTypeId": "NVIDIA H100 PCIe",
+    "gpuCount": 1,
+    "gpuFallbackAllowed": false,
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "containerDiskInGb": 30,
+    "volumeInGb": 60,
+    "volumeMountPath": "/workspace",
+    "minimumRamPerGpuGb": 64,
+    "minimumVcpuPerGpu": 8,
+    "interruptible": false,
+    "maximumAcceptedHourlyUsd": 6,
+    "remoteRunTimeoutSeconds": 5700,
+    "terminationRequiredInFinally": true,
+    "pathOnlyEntrypoint": "scripts/run_exp_0025_r_external_d_only_v2.py",
+    "frozenScientificAdapter": "scripts/run_exp_0025_r_external_d_only.py",
+    "packagePins": {
+      "transformers": "4.46.3",
+      "peft": "0.13.2",
+      "huggingface-hub": "0.26.2",
+      "safetensors": "0.4.5",
+      "hf-transfer": "0.1.9"
+    },
+    "dataBoundary": {
+      "transferredInputs": [
+        "scripts/run_exp_0025_r_external_d_only_v2.py",
+        "scripts/run_exp_0025_r_external_d_only.py",
+        "scripts/run_exp_0025_r_external.py",
+        "eval/datasets/exp-0025-r-development-v0.1.json",
+        "eval/reports/exp-0025-r-external-development-v0.1.json",
+        "eval/commitments/exp-0025-r-external-d-only-authorization-v0.1.json",
+        "eval/commitments/exp-0025-r-external-d-only-retry-authorization-v0.1.json"
+      ],
+      "holdoutTransferred": false,
+      "environmentFileTransferred": false,
+      "accountApiKeyTransferred": false,
+      "openAiApiKeyTransferred": false
+    }
+  },
+  "protocol": {
+    "sentinelGenerationCount": 0,
+    "developmentUtterances": 32,
+    "developmentPairs": 16,
+    "developmentSessions": 8,
+    "modelInferenceAttempt": 2,
+    "developmentPass": 1,
+    "rawEvidencePath": "eval/evidence/exp-0025-r-external-development-d-only-raw-v0.1.json",
+    "journalPath": "eval/evidence/exp-0025-r-external-development-d-only-raw-v0.1.journal.ndjson",
+    "providerReceiptPath": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5.json",
+    "providerLogPath": "eval/evidence/exp-0025-r-external-development-d-only-runpod-v0.2.log",
+    "aggregateReportPath": "eval/reports/exp-0025-r-external-development-complete-v0.1.json",
+    "preserveRawTokensAndTrajectories": true,
+    "sameResidualGateAgainstA0At600": true
+  },
+  "oldHoldout": {
+    "id": "H-L-exp-0025-r-v0.1",
+    "executionAuthorized": false,
+    "statusForExternalCandidate": "INELIGIBLE_FOR_CONFIRMATION"
+  },
+  "freshExternalHoldout": {
+    "id": null,
+    "exists": false,
+    "creationAuthorized": false,
+    "executionAuthorized": false
+  },
+  "automaticFollowups": {
+    "anotherAllocation": false,
+    "secondLocalReproduction": false,
+    "runtimeChange": false,
+    "checkpointChange": false,
+    "anotherModel": false
+  },
+  "authorityEligible": false,
+  "authorizationSha256": "sha256:cb5268b69de0085d49f17f2c7aafb63600330459db0086ba2e3480a1474ea228"
+}

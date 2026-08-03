@@ -31,6 +31,8 @@ import { validateExp0025RExternalAuthorization } from
   "../scripts/check-exp-0025-r-external-authorization.mjs";
 import { validateExp0025RDOnlyAuthorization } from
   "../scripts/check-exp-0025-r-external-d-only-authorization.mjs";
+import { validateExp0025RDOnlyRetryAuthorization } from
+  "../scripts/check-exp-0025-r-external-d-only-retry-authorization.mjs";
 
 const validSentinels = [
   { id: "english-user-talking", output: EXP0025_R_TOKENS.userTalking },
@@ -336,6 +338,33 @@ test("entrypoint corretivo altera somente a resolução do import remoto", async
     /from scripts\.run_exp_0025_r_external_d_only import main/u
   );
   assert.doesNotMatch(wrapperSource, /from_pretrained|run_development|run_sentinels/u);
+});
+
+test("quinta alocação repete só D via correção de caminho e termina a linhagem", async () => {
+  const validation = await validateExp0025RDOnlyRetryAuthorization({
+    preflight: false
+  });
+  assert.deepEqual(validation.errors, []);
+  assert.equal(validation.valid, true);
+  assert.equal(validation.authorization.providerExecution.infrastructureAttempt,
+    5);
+  assert.equal(validation.authorization.scope.fifthAllocationAuthorized, true);
+  assert.equal(validation.authorization.scope.sixthAllocationAuthorized, false);
+  assert.equal(validation.authorization.scope.sentinelRerunAuthorized, false);
+  assert.equal(validation.authorization.scope.holdoutAuthorized, false);
+  assert.equal(validation.authorization.cumulativeBudget.maximumDownloadGiB,
+    70);
+
+  const providerSource = await readFile(
+    "scripts/run-exp-0025-r-runpod-d-only-retry.mjs",
+    "utf8"
+  );
+  assert.match(providerSource, /INFRASTRUCTURE_ATTEMPT = 5/u);
+  assert.match(providerSource,
+    /run_exp_0025_r_external_d_only_v2\.py/u);
+  assert.doesNotMatch(providerSource, /exp-0025-r-holdout/iu);
+  assert.doesNotMatch(providerSource, /run_sentinels\(/u);
+  assert.match(providerSource, /automaticRetryAuthorized: false/u);
 });
 
 test("autorização prospectiva vincula D e torna H-L inelegível para E", async () => {

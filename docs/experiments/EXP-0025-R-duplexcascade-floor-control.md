@@ -2,7 +2,8 @@
 
 Status: **trilha local concluída e cortada; sentinelas oficiais de `E` 4/4;
 `D=NOT_EVALUATED`; quarta alocação encerrada antes de download/inferência por
-falha de import remoto; nenhum retry, holdout ou autoridade autorizado**
+falha de import remoto; uma quinta alocação corretiva autorizada e ainda não
+executada; nenhum holdout ou autoridade autorizado**
 
 Evidência corrente: o pack D e o headroom permanecem versionados; o resultado
 one-shot de `L` está em
@@ -52,6 +53,25 @@ proibia quinto Pod e retry automático, nenhuma nova alocação pode ocorrer sem
 autorização explícita prospectiva. A correção mínima é somente tornar o import
 independente do diretório de invocação; candidato, dados e mecanismo não
 mudam.
+
+### Emenda corretiva da quinta alocação
+
+Depois de receber o diagnóstico leigo da finalidade do teste, o responsável
+respondeu em 03/08/2026: “Tranquilo. ta autorizado”. A interpretação
+prospectiva e limitada está congelada em
+`eval/commitments/exp-0025-r-external-d-only-retry-authorization-v0.1.json`:
+
+- uma quinta e última alocação, sem sexto Pod ou retry automático;
+- correção exclusiva do caminho de import por um wrapper de 636 bytes;
+- adaptador científico, checkpoint, dados, seed, cadência e gate inalterados;
+- somente as mesmas 32 falas de `D`, sem regenerar sentinelas ou ler `H`;
+- mesmos tetos cumulativos de 70 GiB, duas GPU-horas e US$ 12;
+- desligamento obrigatório do Pod em sucesso ou falha.
+
+O adaptador científico original permanece byte a byte congelado. Como seu
+bloco de orçamento interno conserva o acumulado anterior à quarta tentativa,
+o recibo de provedor `v0.5` será a fonte autoritativa para o consumo cumulativo;
+isso não altera geração, trajetórias ou comparação do candidato.
 
 ## Emenda prospectiva antes de E
 
