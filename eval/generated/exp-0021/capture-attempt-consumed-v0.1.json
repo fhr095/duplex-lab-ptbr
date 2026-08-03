@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "exp-0021-capture-attempt-consumption-v1",
+  "experimentId": "EXP-0021",
+  "status": "capture-attempt-consumed",
+  "startedAt": "2026-08-03T08:45:46.581Z",
+  "processId": 1936119,
+  "executionCommit": "b334f4d1de3b2b0092b567d69ff5abdc15fa7215",
+  "attemptPath": "eval/commitments/exp-0021-capture-attempt-v0.1.json",
+  "attemptFileSha256": "sha256:a03cf9e6b4c7eac5e5364d790d5a8cabbb41ac1d8b176d2a3f1e17c0d142a3ac",
+  "attemptCanonicalSha256": "sha256:11b9af411d663f5b4fde841562e7c192d3a8703f93edd8a6b8b599aff5f38b55",
+  "nonce": "exp-0021-official-v0.1",
+  "command": "node scripts/run-exp-0021-supervisor.mjs",
+  "targetUrl": "http://localhost:4173/?automation=1&experiment=0021",
+  "reportPath": "eval/reports/exp-0021-cdp-capture-qualification-v0.1.json",
+  "rerunAllowed": false,
+  "receiptSha256": "sha256:443b25320467f97f02d2e51a8317bc626397d91f6dabff932d436de2f2fc7b7e"
+}

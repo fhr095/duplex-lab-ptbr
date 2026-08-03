@@ -1,0 +1,1380 @@
+{
+  "schemaVersion": "exp-0021-cdp-tts-capture-qualification-report-v1",
+  "experimentId": "EXP-0021",
+  "startedAt": "2026-08-03T08:45:46.581Z",
+  "completedAt": "2026-08-03T08:45:52.135Z",
+  "contract": {
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0021",
+    "ttsUrl": "http://localhost:4173/api/tts",
+    "navigationCount": 2,
+    "unitsPerNavigation": 2,
+    "totalUnits": 4,
+    "ttsRate": 1,
+    "payloadOrder": [
+      "A1",
+      "B1",
+      "B2",
+      "A2"
+    ],
+    "networkEnable": {
+      "maxTotalBufferSize": 16777216,
+      "maxResourceBufferSize": 2097152,
+      "maxPostDataSize": 65536,
+      "enableDurableMessages": false
+    },
+    "capture": {
+      "delayBeforeReadMs": [
+        0,
+        8,
+        24,
+        64
+      ],
+      "maxReads": 4,
+      "maximumAccumulatedDelayMs": 96,
+      "minimumWavBytesExclusive": 44,
+      "maximumWavBytesExclusive": 2097152
+    },
+    "provider": "local",
+    "cdp": {
+      "protocol": "http:",
+      "port": "9223",
+      "hostPolicy": "wsl-default-gateway",
+      "initialTarget": "about:blank",
+      "webSocketPathPrefix": "/devtools/page/"
+    },
+    "asrState": "disabled",
+    "vadControlEngine": "adaptive-energy-vad",
+    "vadShadowState": "disabled",
+    "ttsEngine": "windows-system-speech",
+    "negativeBudget": {
+      "ttsRequests": 4,
+      "localTtsSyntheses": 4,
+      "audioConstructors": {
+        "Audio": 0,
+        "AudioContext": 0,
+        "webkitAudioContext": 0
+      },
+      "calls": {
+        "htmlMediaElementPlay": 0,
+        "speechSynthesisSpeak": 0
+      },
+      "lifecycle": {
+        "bargeIn": 0,
+        "stop": 0,
+        "transitions": 0
+      },
+      "trainingTrace": {
+        "decisions": 0,
+        "effects": 0
+      },
+      "inputActivations": 0,
+      "externalRequests": 0,
+      "usageDelta": {
+        "requests": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0
+      },
+      "gpuRuns": 0,
+      "challengerRuns": 0,
+      "backboneRuns": 0,
+      "canProduceNewEffects": false
+    }
+  },
+  "campaign": {
+    "boundary": {
+      "freezePath": "eval/commitments/exp-0021-instrumentation-freeze-v0.1.json",
+      "attemptPath": "eval/commitments/exp-0021-capture-attempt-v0.1.json",
+      "receiptPath": "eval/generated/exp-0021/capture-attempt-consumed-v0.1.json",
+      "freezeVerified": true,
+      "attemptVerified": true,
+      "receiptVerified": true,
+      "receiptWriteOnce": true,
+      "receiptBeforeNetwork": true,
+      "rerunAllowed": false,
+      "freezeCanonicalSha256": "sha256:8e58012a2c9d8ecafe590f57b18a4fdad06ccf093c3137bb96e4f6dff3693c0b",
+      "freezeFileSha256": "sha256:dac99cce711723c26b89646b9765c4bd89932a31c3550d1361f97cb95694b8dc",
+      "attemptCanonicalSha256": "sha256:11b9af411d663f5b4fde841562e7c192d3a8703f93edd8a6b8b599aff5f38b55",
+      "attemptFileSha256": "sha256:a03cf9e6b4c7eac5e5364d790d5a8cabbb41ac1d8b176d2a3f1e17c0d142a3ac",
+      "receiptFileSha256": "sha256:50043c2d8f1d9b75db32eeed267ae62af55002eac5edf2213957574fa3b0bb35",
+      "expectedRuntimeFingerprintSha256": "sha256:62ef14d727297f3ff465f44ed0e649ef4e81cdfbaa177a7c5029b06b1aaf4c33"
+    },
+    "workerEnvelope": {
+      "schemaVersion": "exp-0021-worker-envelope-v1",
+      "status": "completed",
+      "startedAt": "2026-08-03T08:45:46.581Z",
+      "completedAt": "2026-08-03T08:45:52.135Z",
+      "campaign": {
+        "health": {
+          "before": {
+            "status": "ok",
+            "process": {
+              "runId": "dbd19814-2f24-44f2-add3-d0d9a7359086",
+              "startedAt": "2026-08-03T08:45:02.117Z",
+              "runtimeFingerprint": {
+                "algorithm": "sha256-source-tree-v1",
+                "sha256": "62ef14d727297f3ff465f44ed0e649ef4e81cdfbaa177a7c5029b06b1aaf4c33",
+                "fileCount": 115,
+                "roots": [
+                  "src",
+                  "web",
+                  "package.json",
+                  "package-lock.json",
+                  "requirements-asr.txt"
+                ]
+              }
+            },
+            "brain": "local",
+            "models": {
+              "interaction": "deterministic-mock",
+              "task": "deterministic-mock"
+            },
+            "usage": {
+              "requests": 0,
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "totalTokens": 0,
+              "requestLimit": null
+            },
+            "asr": {
+              "state": "disabled",
+              "model": null
+            },
+            "vadControl": {
+              "state": "ready",
+              "engine": "adaptive-energy-vad"
+            },
+            "vadShadow": {
+              "state": "disabled",
+              "mode": "disabled"
+            },
+            "interaction": {
+              "authority": "backend-interaction-runtime",
+              "kernelVersion": "interaction-kernel-v0.1",
+              "activeKernelSessions": 0,
+              "audioPipelineMaxFrames": 16,
+              "endpoint": {
+                "completeSilenceMs": 520,
+                "incompleteSilenceMs": 1050,
+                "noTranscriptSilenceMs": 900
+              },
+              "effectfulFinalCommitGraceMs": 650,
+              "criticalFinalCommitGraceMs": 1100,
+              "finalCommitGraceMs": 220,
+              "mergeWindowMs": 1400,
+              "prefinalPolicy": "linguistic-complete",
+              "vad": {
+                "minimumOnThreshold": 0.025,
+                "onMultiplier": 4,
+                "onsetFrames": 4,
+                "pauseFrames": 10
+              }
+            },
+            "tts": {
+              "state": "ready",
+              "engine": "windows-system-speech",
+              "voice": "Microsoft Maria Desktop",
+              "culture": "pt-BR",
+              "primed": true
+            }
+          },
+          "after": {
+            "status": "ok",
+            "process": {
+              "runId": "dbd19814-2f24-44f2-add3-d0d9a7359086",
+              "startedAt": "2026-08-03T08:45:02.117Z",
+              "runtimeFingerprint": {
+                "algorithm": "sha256-source-tree-v1",
+                "sha256": "62ef14d727297f3ff465f44ed0e649ef4e81cdfbaa177a7c5029b06b1aaf4c33",
+                "fileCount": 115,
+                "roots": [
+                  "src",
+                  "web",
+                  "package.json",
+                  "package-lock.json",
+                  "requirements-asr.txt"
+                ]
+              }
+            },
+            "brain": "local",
+            "models": {
+              "interaction": "deterministic-mock",
+              "task": "deterministic-mock"
+            },
+            "usage": {
+              "requests": 0,
+              "inputTokens": 0,
+              "outputTokens": 0,
+              "totalTokens": 0,
+              "requestLimit": null
+            },
+            "asr": {
+              "state": "disabled",
+              "model": null
+            },
+            "vadControl": {
+              "state": "ready",
+              "engine": "adaptive-energy-vad"
+            },
+            "vadShadow": {
+              "state": "disabled",
+              "mode": "disabled"
+            },
+            "interaction": {
+              "authority": "backend-interaction-runtime",
+              "kernelVersion": "interaction-kernel-v0.1",
+              "activeKernelSessions": 0,
+              "audioPipelineMaxFrames": 16,
+              "endpoint": {
+                "completeSilenceMs": 520,
+                "incompleteSilenceMs": 1050,
+                "noTranscriptSilenceMs": 900
+              },
+              "effectfulFinalCommitGraceMs": 650,
+              "criticalFinalCommitGraceMs": 1100,
+              "finalCommitGraceMs": 220,
+              "mergeWindowMs": 1400,
+              "prefinalPolicy": "linguistic-complete",
+              "vad": {
+                "minimumOnThreshold": 0.025,
+                "onMultiplier": 4,
+                "onsetFrames": 4,
+                "pauseFrames": 10
+              }
+            },
+            "tts": {
+              "state": "ready",
+              "engine": "windows-system-speech",
+              "voice": "Microsoft Maria Desktop",
+              "culture": "pt-BR",
+              "primed": true
+            }
+          }
+        },
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/150.0.7871.187",
+          "revision": "@30f6543ae91e6a860e73b76e3216b663b050f4e5",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+          "jsVersion": "15.0.245.21",
+          "cdpBinding": {
+            "endpoint": "http://172.24.240.1:9223/",
+            "hostPolicy": "wsl-default-gateway",
+            "initialTarget": "about:blank",
+            "targetId": "B647F48D85063574DF4F35F291BA32F0",
+            "webSocketPath": "/devtools/page/B647F48D85063574DF4F35F291BA32F0"
+          }
+        },
+        "navigations": [
+          {
+            "index": 1,
+            "targetUrl": "http://localhost:4173/?automation=1&experiment=0021",
+            "browserHealth": {
+              "url": "http://localhost:4173/api/health",
+              "status": 200,
+              "mimeType": "application/json",
+              "health": {
+                "status": "ok",
+                "process": {
+                  "runId": "dbd19814-2f24-44f2-add3-d0d9a7359086",
+                  "startedAt": "2026-08-03T08:45:02.117Z",
+                  "runtimeFingerprint": {
+                    "algorithm": "sha256-source-tree-v1",
+                    "sha256": "62ef14d727297f3ff465f44ed0e649ef4e81cdfbaa177a7c5029b06b1aaf4c33",
+                    "fileCount": 115,
+                    "roots": [
+                      "src",
+                      "web",
+                      "package.json",
+                      "package-lock.json",
+                      "requirements-asr.txt"
+                    ]
+                  }
+                },
+                "brain": "local",
+                "models": {
+                  "interaction": "deterministic-mock",
+                  "task": "deterministic-mock"
+                },
+                "usage": {
+                  "requests": 0,
+                  "inputTokens": 0,
+                  "outputTokens": 0,
+                  "totalTokens": 0,
+                  "requestLimit": null
+                },
+                "asr": {
+                  "state": "disabled",
+                  "model": null
+                },
+                "vadControl": {
+                  "state": "ready",
+                  "engine": "adaptive-energy-vad"
+                },
+                "vadShadow": {
+                  "state": "disabled",
+                  "mode": "disabled"
+                },
+                "interaction": {
+                  "authority": "backend-interaction-runtime",
+                  "kernelVersion": "interaction-kernel-v0.1",
+                  "activeKernelSessions": 0,
+                  "audioPipelineMaxFrames": 16,
+                  "endpoint": {
+                    "completeSilenceMs": 520,
+                    "incompleteSilenceMs": 1050,
+                    "noTranscriptSilenceMs": 900
+                  },
+                  "effectfulFinalCommitGraceMs": 650,
+                  "criticalFinalCommitGraceMs": 1100,
+                  "finalCommitGraceMs": 220,
+                  "mergeWindowMs": 1400,
+                  "prefinalPolicy": "linguistic-complete",
+                  "vad": {
+                    "minimumOnThreshold": 0.025,
+                    "onMultiplier": 4,
+                    "onsetFrames": 4,
+                    "pauseFrames": 10
+                  }
+                },
+                "tts": {
+                  "state": "ready",
+                  "engine": "windows-system-speech",
+                  "voice": "Microsoft Maria Desktop",
+                  "culture": "pt-BR",
+                  "primed": true
+                }
+              }
+            },
+            "units": [
+              {
+                "navigationIndex": 1,
+                "unitIndex": 1,
+                "sequence": 1,
+                "trialId": "A1",
+                "payloadId": "A",
+                "text": "Esta fala contínua mede uma única parada física do assistente.",
+                "browser": {
+                  "url": "http://localhost:4173/api/tts",
+                  "status": 200,
+                  "mimeType": "audio/wav",
+                  "byteLength": 237232,
+                  "sha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b"
+                },
+                "cdp": {
+                  "observedRequestIds": [
+                    "12996.21"
+                  ],
+                  "requestId": "12996.21",
+                  "requestWillBeSentCount": 1,
+                  "responseReceivedCount": 1,
+                  "loadingFinishedCount": 1,
+                  "url": "http://localhost:4173/api/tts",
+                  "method": "POST",
+                  "postData": {
+                    "text": "Esta fala contínua mede uma única parada física do assistente."
+                  },
+                  "status": 200,
+                  "mimeType": "audio/wav",
+                  "encodedDataLength": 237409,
+                  "capture": {
+                    "status": "success",
+                    "code": null,
+                    "readCount": 1,
+                    "emptyReadsBeforeSuccess": 0,
+                    "attempts": [
+                      {
+                        "index": 1,
+                        "delayBeforeMs": 0,
+                        "requestId": "12996.21",
+                        "startedAtMs": 4877.53828,
+                        "completedAtMs": 4893.100362,
+                        "outcome": "success"
+                      }
+                    ],
+                    "base64Encoded": true,
+                    "byteLength": 237232,
+                    "sha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b",
+                    "wavValid": true
+                  }
+                }
+              },
+              {
+                "navigationIndex": 1,
+                "unitIndex": 2,
+                "sequence": 2,
+                "trialId": "B1",
+                "payloadId": "B",
+                "text": "Esta resposta diferente verifica o vínculo correto da captura local.",
+                "browser": {
+                  "url": "http://localhost:4173/api/tts",
+                  "status": 200,
+                  "mimeType": "audio/wav",
+                  "byteLength": 248918,
+                  "sha256": "sha256:c9fb2836513fb65f6211b0fda22a6c63da4a1c5b94453f78954353a514817279"
+                },
+                "cdp": {
+                  "observedRequestIds": [
+                    "12996.22"
+                  ],
+                  "requestId": "12996.22",
+                  "requestWillBeSentCount": 1,
+                  "responseReceivedCount": 1,
+                  "loadingFinishedCount": 1,
+                  "url": "http://localhost:4173/api/tts",
+                  "method": "POST",
+                  "postData": {
+                    "text": "Esta resposta diferente verifica o vínculo correto da captura local."
+                  },
+                  "status": 200,
+                  "mimeType": "audio/wav",
+                  "encodedDataLength": 249095,
+                  "capture": {
+                    "status": "success",
+                    "code": null,
+                    "readCount": 1,
+                    "emptyReadsBeforeSuccess": 0,
+                    "attempts": [
+                      {
+                        "index": 1,
+                        "delayBeforeMs": 0,
+                        "requestId": "12996.22",
+                        "startedAtMs": 5015.277006,
+                        "completedAtMs": 5029.932972,
+                        "outcome": "success"
+                      }
+                    ],
+                    "base64Encoded": true,
+                    "byteLength": 248918,
+                    "sha256": "sha256:c9fb2836513fb65f6211b0fda22a6c63da4a1c5b94453f78954353a514817279",
+                    "wavValid": true
+                  }
+                }
+              }
+            ],
+            "audit": {
+              "schemaVersion": "exp-0021-browser-negative-budget-v1",
+              "audioConstructors": {
+                "Audio": 0,
+                "AudioContext": 0,
+                "webkitAudioContext": 0
+              },
+              "calls": {
+                "htmlMediaElementPlay": 0,
+                "speechSynthesisSpeak": 0
+              },
+              "installedAtMs": 322.30000001192093,
+              "singleTtsInFlight": true,
+              "retryIssuedRequest": false,
+              "firstUnitTrialId": "A1",
+              "instrumentationInstalled": true
+            },
+            "snapshot": {
+              "state": {
+                "active": false,
+                "assistantPreparing": false,
+                "assistantSpeaking": false,
+                "audioQueueLength": 0,
+                "activeTaskId": null,
+                "pendingTaskResults": 0,
+                "responseActive": false,
+                "responseGeneration": 0,
+                "inputMode": null,
+                "userSpeaking": false,
+                "potentialBargeIn": null
+              },
+              "traceEventTypes": [
+                "automation.ready",
+                "acoustic-reflex-shadow.ready",
+                "speaker-relevance-shadow.ready",
+                "brain.connected",
+                "asr.health"
+              ],
+              "trainingTrace": {
+                "decisions": 0,
+                "effects": 0
+              },
+              "reflexTrainingTrace": {
+                "decisions": 0,
+                "effects": 0
+              },
+              "audio": {
+                "capture": null,
+                "transport": {
+                  "disconnectCount": 0,
+                  "reconnectCount": 0,
+                  "reconnecting": false,
+                  "recoveryPacing": false,
+                  "socketReadyState": null
+                },
+                "vadControl": {
+                  "state": "ready",
+                  "engine": "adaptive-energy-vad",
+                  "telemetry": null
+                },
+                "vadShadow": {
+                  "health": {
+                    "state": "disabled",
+                    "mode": "disabled"
+                  },
+                  "windowCount": 0,
+                  "starts": [],
+                  "ends": 0,
+                  "resets": 0,
+                  "errors": 0,
+                  "observedSampleGaps": 0,
+                  "lastSampleEnd": null,
+                  "lastWindow": null,
+                  "maximumQueueDepth": 0,
+                  "inferenceMs": {
+                    "n": 0,
+                    "p50": null,
+                    "p95": null,
+                    "p99": null,
+                    "max": null
+                  },
+                  "queueDelayMs": {
+                    "n": 0,
+                    "p50": null,
+                    "p95": null,
+                    "p99": null,
+                    "max": null
+                  }
+                },
+                "outputInterruptionLifecycle": {
+                  "schemaVersion": 1,
+                  "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                  "version": 0,
+                  "phase": "idle",
+                  "turnId": null,
+                  "outputEpoch": null,
+                  "pauseKind": null,
+                  "resumeAttempt": 0
+                }
+              }
+            },
+            "networkRequests": [
+              {
+                "requestId": "B203BE692536BE9FDA69E60F987C96B4",
+                "url": "http://localhost:4173/?automation=1&experiment=0021",
+                "method": "GET",
+                "type": "Document",
+                "timestamp": 454459.785409
+              },
+              {
+                "requestId": "12996.2",
+                "url": "http://localhost:4173/styles.css",
+                "method": "GET",
+                "type": "Stylesheet",
+                "timestamp": 454460.104239
+              },
+              {
+                "requestId": "12996.3",
+                "url": "http://localhost:4173/app.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.104556
+              },
+              {
+                "requestId": "12996.6",
+                "url": "http://localhost:4173/stream-utils.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.162524
+              },
+              {
+                "requestId": "12996.7",
+                "url": "http://localhost:4173/pcm-capture.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.162622
+              },
+              {
+                "requestId": "12996.8",
+                "url": "http://localhost:4173/pcm-wire.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.162671
+              },
+              {
+                "requestId": "12996.9",
+                "url": "http://localhost:4173/critical-conflict.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.162732
+              },
+              {
+                "requestId": "12996.10",
+                "url": "http://localhost:4173/interaction-browser-adapter.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.162803
+              },
+              {
+                "requestId": "12996.11",
+                "url": "http://localhost:4173/local-audio-reflex.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.162857
+              },
+              {
+                "requestId": "12996.12",
+                "url": "http://localhost:4173/acoustic-reflex-shadow.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.162939
+              },
+              {
+                "requestId": "12996.13",
+                "url": "http://localhost:4173/speaker-relevance-shadow.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.163005
+              },
+              {
+                "requestId": "12996.14",
+                "url": "http://localhost:4173/output-interruption-lifecycle.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.163085
+              },
+              {
+                "requestId": "12996.15",
+                "url": "http://localhost:4173/training-trace-recorder.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.163141
+              },
+              {
+                "requestId": "12996.16",
+                "url": "http://localhost:4173/turn-taking.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.163219
+              },
+              {
+                "requestId": "12996.17",
+                "url": "http://localhost:4173/acoustic-reflex-checkpoint.json",
+                "method": "GET",
+                "type": "Fetch",
+                "timestamp": 454460.189289
+              },
+              {
+                "requestId": "12996.18",
+                "url": "http://localhost:4173/speaker-relevance-checkpoint.json",
+                "method": "GET",
+                "type": "Fetch",
+                "timestamp": 454460.189526
+              },
+              {
+                "requestId": "12996.19",
+                "url": "http://localhost:4173/api/health",
+                "method": "GET",
+                "type": "Fetch",
+                "timestamp": 454460.199089
+              },
+              {
+                "requestId": "12996.20",
+                "url": "http://localhost:4173/api/health",
+                "method": "GET",
+                "type": "Fetch",
+                "timestamp": 454460.280602
+              },
+              {
+                "requestId": "12996.21",
+                "url": "http://localhost:4173/api/tts",
+                "method": "POST",
+                "type": "Fetch",
+                "timestamp": 454460.354271
+              },
+              {
+                "requestId": "12996.22",
+                "url": "http://localhost:4173/api/tts",
+                "method": "POST",
+                "type": "Fetch",
+                "timestamp": 454460.516591
+              }
+            ],
+            "diagnostics": {
+              "structuralErrors": [],
+              "networkViolations": [],
+              "httpErrors": [],
+              "consoleErrors": [],
+              "runtimeErrors": []
+            }
+          },
+          {
+            "index": 2,
+            "targetUrl": "http://localhost:4173/?automation=1&experiment=0021",
+            "browserHealth": {
+              "url": "http://localhost:4173/api/health",
+              "status": 200,
+              "mimeType": "application/json",
+              "health": {
+                "status": "ok",
+                "process": {
+                  "runId": "dbd19814-2f24-44f2-add3-d0d9a7359086",
+                  "startedAt": "2026-08-03T08:45:02.117Z",
+                  "runtimeFingerprint": {
+                    "algorithm": "sha256-source-tree-v1",
+                    "sha256": "62ef14d727297f3ff465f44ed0e649ef4e81cdfbaa177a7c5029b06b1aaf4c33",
+                    "fileCount": 115,
+                    "roots": [
+                      "src",
+                      "web",
+                      "package.json",
+                      "package-lock.json",
+                      "requirements-asr.txt"
+                    ]
+                  }
+                },
+                "brain": "local",
+                "models": {
+                  "interaction": "deterministic-mock",
+                  "task": "deterministic-mock"
+                },
+                "usage": {
+                  "requests": 0,
+                  "inputTokens": 0,
+                  "outputTokens": 0,
+                  "totalTokens": 0,
+                  "requestLimit": null
+                },
+                "asr": {
+                  "state": "disabled",
+                  "model": null
+                },
+                "vadControl": {
+                  "state": "ready",
+                  "engine": "adaptive-energy-vad"
+                },
+                "vadShadow": {
+                  "state": "disabled",
+                  "mode": "disabled"
+                },
+                "interaction": {
+                  "authority": "backend-interaction-runtime",
+                  "kernelVersion": "interaction-kernel-v0.1",
+                  "activeKernelSessions": 0,
+                  "audioPipelineMaxFrames": 16,
+                  "endpoint": {
+                    "completeSilenceMs": 520,
+                    "incompleteSilenceMs": 1050,
+                    "noTranscriptSilenceMs": 900
+                  },
+                  "effectfulFinalCommitGraceMs": 650,
+                  "criticalFinalCommitGraceMs": 1100,
+                  "finalCommitGraceMs": 220,
+                  "mergeWindowMs": 1400,
+                  "prefinalPolicy": "linguistic-complete",
+                  "vad": {
+                    "minimumOnThreshold": 0.025,
+                    "onMultiplier": 4,
+                    "onsetFrames": 4,
+                    "pauseFrames": 10
+                  }
+                },
+                "tts": {
+                  "state": "ready",
+                  "engine": "windows-system-speech",
+                  "voice": "Microsoft Maria Desktop",
+                  "culture": "pt-BR",
+                  "primed": true
+                }
+              }
+            },
+            "units": [
+              {
+                "navigationIndex": 2,
+                "unitIndex": 1,
+                "sequence": 3,
+                "trialId": "B2",
+                "payloadId": "B",
+                "text": "Esta resposta diferente verifica o vínculo correto da captura local.",
+                "browser": {
+                  "url": "http://localhost:4173/api/tts",
+                  "status": 200,
+                  "mimeType": "audio/wav",
+                  "byteLength": 248918,
+                  "sha256": "sha256:c9fb2836513fb65f6211b0fda22a6c63da4a1c5b94453f78954353a514817279"
+                },
+                "cdp": {
+                  "observedRequestIds": [
+                    "12996.43"
+                  ],
+                  "requestId": "12996.43",
+                  "requestWillBeSentCount": 1,
+                  "responseReceivedCount": 1,
+                  "loadingFinishedCount": 1,
+                  "url": "http://localhost:4173/api/tts",
+                  "method": "POST",
+                  "postData": {
+                    "text": "Esta resposta diferente verifica o vínculo correto da captura local."
+                  },
+                  "status": 200,
+                  "mimeType": "audio/wav",
+                  "encodedDataLength": 249095,
+                  "capture": {
+                    "status": "success",
+                    "code": null,
+                    "readCount": 1,
+                    "emptyReadsBeforeSuccess": 0,
+                    "attempts": [
+                      {
+                        "index": 1,
+                        "delayBeforeMs": 0,
+                        "requestId": "12996.43",
+                        "startedAtMs": 5372.238926,
+                        "completedAtMs": 5385.364103,
+                        "outcome": "success"
+                      }
+                    ],
+                    "base64Encoded": true,
+                    "byteLength": 248918,
+                    "sha256": "sha256:c9fb2836513fb65f6211b0fda22a6c63da4a1c5b94453f78954353a514817279",
+                    "wavValid": true
+                  }
+                }
+              },
+              {
+                "navigationIndex": 2,
+                "unitIndex": 2,
+                "sequence": 4,
+                "trialId": "A2",
+                "payloadId": "A",
+                "text": "Esta fala contínua mede uma única parada física do assistente.",
+                "browser": {
+                  "url": "http://localhost:4173/api/tts",
+                  "status": 200,
+                  "mimeType": "audio/wav",
+                  "byteLength": 237232,
+                  "sha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b"
+                },
+                "cdp": {
+                  "observedRequestIds": [
+                    "12996.44"
+                  ],
+                  "requestId": "12996.44",
+                  "requestWillBeSentCount": 1,
+                  "responseReceivedCount": 1,
+                  "loadingFinishedCount": 1,
+                  "url": "http://localhost:4173/api/tts",
+                  "method": "POST",
+                  "postData": {
+                    "text": "Esta fala contínua mede uma única parada física do assistente."
+                  },
+                  "status": 200,
+                  "mimeType": "audio/wav",
+                  "encodedDataLength": 237409,
+                  "capture": {
+                    "status": "success",
+                    "code": null,
+                    "readCount": 1,
+                    "emptyReadsBeforeSuccess": 0,
+                    "attempts": [
+                      {
+                        "index": 1,
+                        "delayBeforeMs": 0,
+                        "requestId": "12996.44",
+                        "startedAtMs": 5490.04351,
+                        "completedAtMs": 5503.083465,
+                        "outcome": "success"
+                      }
+                    ],
+                    "base64Encoded": true,
+                    "byteLength": 237232,
+                    "sha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b",
+                    "wavValid": true
+                  }
+                }
+              }
+            ],
+            "audit": {
+              "schemaVersion": "exp-0021-browser-negative-budget-v1",
+              "audioConstructors": {
+                "Audio": 0,
+                "AudioContext": 0,
+                "webkitAudioContext": 0
+              },
+              "calls": {
+                "htmlMediaElementPlay": 0,
+                "speechSynthesisSpeak": 0
+              },
+              "installedAtMs": 10.399999976158142,
+              "singleTtsInFlight": true,
+              "retryIssuedRequest": false,
+              "firstUnitTrialId": "B2",
+              "instrumentationInstalled": true
+            },
+            "snapshot": {
+              "state": {
+                "active": false,
+                "assistantPreparing": false,
+                "assistantSpeaking": false,
+                "audioQueueLength": 0,
+                "activeTaskId": null,
+                "pendingTaskResults": 0,
+                "responseActive": false,
+                "responseGeneration": 0,
+                "inputMode": null,
+                "userSpeaking": false,
+                "potentialBargeIn": null
+              },
+              "traceEventTypes": [
+                "automation.ready",
+                "acoustic-reflex-shadow.ready",
+                "speaker-relevance-shadow.ready",
+                "brain.connected",
+                "asr.health"
+              ],
+              "trainingTrace": {
+                "decisions": 0,
+                "effects": 0
+              },
+              "reflexTrainingTrace": {
+                "decisions": 0,
+                "effects": 0
+              },
+              "audio": {
+                "capture": null,
+                "transport": {
+                  "disconnectCount": 0,
+                  "reconnectCount": 0,
+                  "reconnecting": false,
+                  "recoveryPacing": false,
+                  "socketReadyState": null
+                },
+                "vadControl": {
+                  "state": "ready",
+                  "engine": "adaptive-energy-vad",
+                  "telemetry": null
+                },
+                "vadShadow": {
+                  "health": {
+                    "state": "disabled",
+                    "mode": "disabled"
+                  },
+                  "windowCount": 0,
+                  "starts": [],
+                  "ends": 0,
+                  "resets": 0,
+                  "errors": 0,
+                  "observedSampleGaps": 0,
+                  "lastSampleEnd": null,
+                  "lastWindow": null,
+                  "maximumQueueDepth": 0,
+                  "inferenceMs": {
+                    "n": 0,
+                    "p50": null,
+                    "p95": null,
+                    "p99": null,
+                    "max": null
+                  },
+                  "queueDelayMs": {
+                    "n": 0,
+                    "p50": null,
+                    "p95": null,
+                    "p99": null,
+                    "max": null
+                  }
+                },
+                "outputInterruptionLifecycle": {
+                  "schemaVersion": 1,
+                  "lifecycleVersion": "output-interruption-lifecycle-v0.1",
+                  "version": 0,
+                  "phase": "idle",
+                  "turnId": null,
+                  "outputEpoch": null,
+                  "pauseKind": null,
+                  "resumeAttempt": 0
+                }
+              }
+            },
+            "networkRequests": [
+              {
+                "requestId": "A944A427831F39527715B186364B037D",
+                "url": "http://localhost:4173/?automation=1&experiment=0021",
+                "method": "GET",
+                "type": "Document",
+                "timestamp": 454460.685874
+              },
+              {
+                "requestId": "12996.24",
+                "url": "http://localhost:4173/styles.css",
+                "method": "GET",
+                "type": "Stylesheet",
+                "timestamp": 454460.694113
+              },
+              {
+                "requestId": "12996.25",
+                "url": "http://localhost:4173/app.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.694296
+              },
+              {
+                "requestId": "12996.28",
+                "url": "http://localhost:4173/stream-utils.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.699591
+              },
+              {
+                "requestId": "12996.29",
+                "url": "http://localhost:4173/pcm-capture.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.699673
+              },
+              {
+                "requestId": "12996.30",
+                "url": "http://localhost:4173/pcm-wire.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.69975
+              },
+              {
+                "requestId": "12996.31",
+                "url": "http://localhost:4173/critical-conflict.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.699809
+              },
+              {
+                "requestId": "12996.32",
+                "url": "http://localhost:4173/interaction-browser-adapter.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.699863
+              },
+              {
+                "requestId": "12996.33",
+                "url": "http://localhost:4173/local-audio-reflex.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.699917
+              },
+              {
+                "requestId": "12996.34",
+                "url": "http://localhost:4173/acoustic-reflex-shadow.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.699975
+              },
+              {
+                "requestId": "12996.35",
+                "url": "http://localhost:4173/speaker-relevance-shadow.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.700036
+              },
+              {
+                "requestId": "12996.36",
+                "url": "http://localhost:4173/output-interruption-lifecycle.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.700101
+              },
+              {
+                "requestId": "12996.37",
+                "url": "http://localhost:4173/training-trace-recorder.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.700164
+              },
+              {
+                "requestId": "12996.38",
+                "url": "http://localhost:4173/turn-taking.mjs",
+                "method": "GET",
+                "type": "Script",
+                "timestamp": 454460.700224
+              },
+              {
+                "requestId": "12996.39",
+                "url": "http://localhost:4173/acoustic-reflex-checkpoint.json",
+                "method": "GET",
+                "type": "Fetch",
+                "timestamp": 454460.715584
+              },
+              {
+                "requestId": "12996.40",
+                "url": "http://localhost:4173/speaker-relevance-checkpoint.json",
+                "method": "GET",
+                "type": "Fetch",
+                "timestamp": 454460.715727
+              },
+              {
+                "requestId": "12996.41",
+                "url": "http://localhost:4173/api/health",
+                "method": "GET",
+                "type": "Fetch",
+                "timestamp": 454460.722027
+              },
+              {
+                "requestId": "12996.42",
+                "url": "http://localhost:4173/api/health",
+                "method": "GET",
+                "type": "Fetch",
+                "timestamp": 454460.808334
+              },
+              {
+                "requestId": "12996.43",
+                "url": "http://localhost:4173/api/tts",
+                "method": "POST",
+                "type": "Fetch",
+                "timestamp": 454460.881964
+              },
+              {
+                "requestId": "12996.44",
+                "url": "http://localhost:4173/api/tts",
+                "method": "POST",
+                "type": "Fetch",
+                "timestamp": 454460.997535
+              }
+            ],
+            "diagnostics": {
+              "structuralErrors": [],
+              "networkViolations": [],
+              "httpErrors": [],
+              "consoleErrors": [],
+              "runtimeErrors": []
+            }
+          }
+        ],
+        "diagnostics": {
+          "structuralErrors": [],
+          "networkViolations": [],
+          "httpErrors": [],
+          "consoleErrors": [],
+          "runtimeErrors": []
+        },
+        "budget": {
+          "ttsRequests": 4,
+          "localTtsSyntheses": 4,
+          "audioConstructors": {
+            "Audio": 0,
+            "AudioContext": 0,
+            "webkitAudioContext": 0
+          },
+          "calls": {
+            "htmlMediaElementPlay": 0,
+            "speechSynthesisSpeak": 0
+          },
+          "lifecycle": {
+            "bargeIn": 0,
+            "stop": 0,
+            "transitions": 0
+          },
+          "trainingTrace": {
+            "decisions": 0,
+            "effects": 0
+          },
+          "inputActivations": 0,
+          "externalRequests": 0,
+          "usageDelta": {
+            "requests": 0,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "totalTokens": 0
+          },
+          "gpuRuns": 0,
+          "challengerRuns": 0,
+          "backboneRuns": 0,
+          "canProduceNewEffects": false
+        }
+      },
+      "failure": null
+    },
+    "audits": {
+      "instrumentationFreezeValid": true,
+      "openingValid": true,
+      "receiptValid": true,
+      "receiptWriteOnce": true,
+      "receiptBeforeNetwork": true,
+      "supervisorFrozen": true,
+      "workerFrozen": true,
+      "adapterFrozen": true,
+      "analyzerFrozen": true,
+      "sourceBindingsValid": true,
+      "reportBindingValid": true,
+      "canonicalHashValid": true,
+      "gitTopologyValid": true,
+      "rerunRefused": true
+    }
+  },
+  "analysis": {
+    "measurementStatus": "EVALUATED",
+    "units": [
+      {
+        "navigationIndex": 1,
+        "unitIndex": 1,
+        "sequence": 1,
+        "trialId": "A1",
+        "payloadId": "A",
+        "requestId": "12996.21",
+        "captureStatus": "success",
+        "captureCode": null,
+        "readCount": 1,
+        "emptyReadsBeforeSuccess": 0,
+        "browserSha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b",
+        "browserByteLength": 237232,
+        "cdpSha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b",
+        "cdpByteLength": 237232,
+        "bindingValid": true,
+        "attemptBindingValid": true,
+        "metadataValid": true,
+        "byteIdentity": true,
+        "captureQualified": true,
+        "transientRecoveryObserved": false
+      },
+      {
+        "navigationIndex": 1,
+        "unitIndex": 2,
+        "sequence": 2,
+        "trialId": "B1",
+        "payloadId": "B",
+        "requestId": "12996.22",
+        "captureStatus": "success",
+        "captureCode": null,
+        "readCount": 1,
+        "emptyReadsBeforeSuccess": 0,
+        "browserSha256": "sha256:c9fb2836513fb65f6211b0fda22a6c63da4a1c5b94453f78954353a514817279",
+        "browserByteLength": 248918,
+        "cdpSha256": "sha256:c9fb2836513fb65f6211b0fda22a6c63da4a1c5b94453f78954353a514817279",
+        "cdpByteLength": 248918,
+        "bindingValid": true,
+        "attemptBindingValid": true,
+        "metadataValid": true,
+        "byteIdentity": true,
+        "captureQualified": true,
+        "transientRecoveryObserved": false
+      },
+      {
+        "navigationIndex": 2,
+        "unitIndex": 1,
+        "sequence": 3,
+        "trialId": "B2",
+        "payloadId": "B",
+        "requestId": "12996.43",
+        "captureStatus": "success",
+        "captureCode": null,
+        "readCount": 1,
+        "emptyReadsBeforeSuccess": 0,
+        "browserSha256": "sha256:c9fb2836513fb65f6211b0fda22a6c63da4a1c5b94453f78954353a514817279",
+        "browserByteLength": 248918,
+        "cdpSha256": "sha256:c9fb2836513fb65f6211b0fda22a6c63da4a1c5b94453f78954353a514817279",
+        "cdpByteLength": 248918,
+        "bindingValid": true,
+        "attemptBindingValid": true,
+        "metadataValid": true,
+        "byteIdentity": true,
+        "captureQualified": true,
+        "transientRecoveryObserved": false
+      },
+      {
+        "navigationIndex": 2,
+        "unitIndex": 2,
+        "sequence": 4,
+        "trialId": "A2",
+        "payloadId": "A",
+        "requestId": "12996.44",
+        "captureStatus": "success",
+        "captureCode": null,
+        "readCount": 1,
+        "emptyReadsBeforeSuccess": 0,
+        "browserSha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b",
+        "browserByteLength": 237232,
+        "cdpSha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b",
+        "cdpByteLength": 237232,
+        "bindingValid": true,
+        "attemptBindingValid": true,
+        "metadataValid": true,
+        "byteIdentity": true,
+        "captureQualified": true,
+        "transientRecoveryObserved": false
+      }
+    ],
+    "metrics": {
+      "navigationCount": 2,
+      "unitCount": 4,
+      "successfulCaptures": 4,
+      "totalReads": 4,
+      "transientRecoveries": 0,
+      "usageDelta": {
+        "requests": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0,
+        "paidApiCalls": 0,
+        "externalLlmUsed": false
+      }
+    },
+    "structural": {
+      "boundaryValid": true,
+      "workerEnvelopeValid": true,
+      "fixedCampaign": true,
+      "requestBindingsValid": true,
+      "attemptBindingsValid": true,
+      "environmentStable": true,
+      "negativeBudgetExact": true,
+      "auditsValid": true,
+      "diagnosticsValid": true,
+      "navigationAuditValid": false,
+      "noEmbeddedPayload": true
+    },
+    "gates": {
+      "boundaryAndSupervisor": true,
+      "fixedCampaign": true,
+      "cdpChainAndResponse": true,
+      "browserCdpByteIdentity": true,
+      "payloadStabilityAndDistinction": true,
+      "boundedFailClosedCapture": true,
+      "firstResponsePerNavigation": true,
+      "environmentStable": true,
+      "negativeBudgetExact": true,
+      "diagnosticsNetworkAndBindings": false
+    },
+    "decision": "INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION",
+    "nextMove": {
+      "action": "REPAIR_REAUDIT_AND_PREREGISTER_NEW_CAPTURE_INSTRUMENT",
+      "physicalStopPreregistrationAllowed": false,
+      "physicalStopExecutionAllowed": false,
+      "sameExperimentRerunAllowed": false
+    },
+    "pass": false,
+    "instrumentValid": false,
+    "transientRecoveryObserved": false
+  },
+  "measurementStatus": "EVALUATED",
+  "gates": {
+    "boundaryAndSupervisor": true,
+    "fixedCampaign": true,
+    "cdpChainAndResponse": true,
+    "browserCdpByteIdentity": true,
+    "payloadStabilityAndDistinction": true,
+    "boundedFailClosedCapture": true,
+    "firstResponsePerNavigation": true,
+    "environmentStable": true,
+    "negativeBudgetExact": true,
+    "diagnosticsNetworkAndBindings": false
+  },
+  "decision": "INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION",
+  "nextMove": {
+    "action": "REPAIR_REAUDIT_AND_PREREGISTER_NEW_CAPTURE_INSTRUMENT",
+    "physicalStopPreregistrationAllowed": false,
+    "physicalStopExecutionAllowed": false,
+    "sameExperimentRerunAllowed": false
+  },
+  "pass": false,
+  "instrumentValid": false,
+  "authorityEligible": false,
+  "transientRecoveryObserved": false,
+  "claim": null,
+  "limitations": [
+    "qualifica somente a captura TTS local pelo CDP neste processo e Chrome",
+    "não mede recovery transitório quando nenhum vazio precede um sucesso",
+    "não mede renderização, STOP, ASR, acústica, conversa ou percepção humana",
+    "não autoriza repetir o EXP-0020 nem promover runtime ou modelo"
+  ],
+  "reportSha256": "sha256:180aa4309f75332c8c843b99f5c36d1542140a5ca046e056f2e60535b8e10ed8"
+}
