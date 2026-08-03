@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "exp-0018-context-fit-candidate-v1",
+  "experimentId": "EXP-0018",
+  "featureVersion": "exp-0018-context-relational-features-v1",
+  "featureNames": [
+    "bias",
+    "targetPresent",
+    "targetCharacterLength",
+    "targetTokenCount",
+    "targetHasQuestion",
+    "targetHasNegation",
+    "targetHasCorrectionMarker",
+    "targetHasContinuationMarker",
+    "assistantSpeaking",
+    "contextMask",
+    "assistantHasQuestion",
+    "inboundHasQuestion",
+    "targetAssistantTokenJaccard",
+    "targetInboundTokenJaccard",
+    "tokenJaccardDelta",
+    "targetAssistantTokenCoverage",
+    "targetInboundTokenCoverage",
+    "tokenCoverageDelta",
+    "targetAssistantCharNgramCosine",
+    "targetInboundCharNgramCosine",
+    "charNgramCosineDelta"
+  ],
+  "classes": [
+    "BACKGROUND_OR_NOT_DIRECTED",
+    "DIRECTED_TO_ASSISTANT"
+  ],
+  "bindings": {
+    "prefitFreezeSha256": "sha256:97cac1c7e6d4fc63276e44e2a1462907754a048cbe0e5168af8934a69b32b01e",
+    "configFileSha256": "sha256:9686dc6827b14070be199bb6dc967e19e6dfaec937606e2d90f75a780560e207",
+    "configCanonicalSha256": "sha256:ed74eec86ae0f800bdaf4ea6a961fedf2e2101c22c2c1ebf5071c86a20e94d5f",
+    "fitDatasetFileSha256": "sha256:03176c02e0a823e60ff16ee81e2176366502c089b6432a88d34fb396bf3ffcc4",
+    "fitDatasetCanonicalSha256": "sha256:ac68d6604e84887e5c76947158206d636f8fc6ffba9d1eb4b89d6c46bec7e94c",
+    "fitExecutionCommit": "7aa41c953efbd752d017a4d71054d3b9209e50f7"
+  },
+  "trainer": {
+    "algorithm": "full-batch-multinomial-logistic-regression-v1",
+    "epochs": 3000,
+    "learningRate": 0.25,
+    "l2": 0.001,
+    "initialization": "all-zero",
+    "ordering": "input-order/full-batch",
+    "examples": 48,
+    "repeatedFits": 2
+  },
+  "arms": {
+    "B0": {
+      "contextEnabled": false,
+      "modelSha256": "sha256:71ce673efe957d4c3ca782f125f32fc29175f77751bf83a2384ada0ca413b792",
+      "model": {
+        "algorithm": "full-batch-multinomial-logistic-regression-v1",
+        "classNames": [
+          "BACKGROUND_OR_NOT_DIRECTED",
+          "DIRECTED_TO_ASSISTANT"
+        ],
+        "featureCount": 21,
+        "weights": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "training": {
+          "epochs": 3000,
+          "learningRate": 0.25,
+          "l2": 0.001,
+          "classCounts": {
+            "BACKGROUND_OR_NOT_DIRECTED": 24,
+            "DIRECTED_TO_ASSISTANT": 24
+          },
+          "classWeights": {
+            "BACKGROUND_OR_NOT_DIRECTED": 1,
+            "DIRECTED_TO_ASSISTANT": 1
+          },
+          "finalLoss": 0.69314718056,
+          "ordering": "input-order/full-batch",
+          "initialization": "all-zero"
+        }
+      },
+      "repeatedFitEqual": true,
+      "fitPredictionSha256": "sha256:306167caea1feb05efff8d45aa99add2bfcae15c6d1face61c26690a3cfb6016"
+    },
+    "B1": {
+      "contextEnabled": true,
+      "modelSha256": "sha256:cc87305b86576fb140ad72f5df9f19be2708cc436c03a261bd05bae7ec5c8d86",
+      "model": {
+        "algorithm": "full-batch-multinomial-logistic-regression-v1",
+        "classNames": [
+          "BACKGROUND_OR_NOT_DIRECTED",
+          "DIRECTED_TO_ASSISTANT"
+        ],
+        "featureCount": 21,
+        "weights": [
+          [
+            -0.042043331263,
+            -0.022499339623,
+            0.005995165785,
+            -0.029583464139,
+            0,
+            0.050594844472,
+            0.217091345541,
+            -0.157359999993,
+            -0.022499339623,
+            -0.022499339623,
+            -0.022499339623,
+            -0.022499339623,
+            -0.474002062241,
+            0.001543080159,
+            -0.4755451424,
+            -1.046076544158,
+            0.229429881507,
+            -1.275506425665,
+            -1.29081563739,
+            1.325145825364,
+            -2.615961462754
+          ],
+          [
+            0.042043331263,
+            0.022499339623,
+            -0.005995165785,
+            0.029583464139,
+            0,
+            -0.050594844472,
+            -0.217091345541,
+            0.157359999993,
+            0.022499339623,
+            0.022499339623,
+            0.022499339623,
+            0.022499339623,
+            0.474002062241,
+            -0.001543080159,
+            0.4755451424,
+            1.046076544158,
+            -0.229429881507,
+            1.275506425665,
+            1.29081563739,
+            -1.325145825364,
+            2.615961462754
+          ]
+        ],
+        "training": {
+          "epochs": 3000,
+          "learningRate": 0.25,
+          "l2": 0.001,
+          "classCounts": {
+            "BACKGROUND_OR_NOT_DIRECTED": 24,
+            "DIRECTED_TO_ASSISTANT": 24
+          },
+          "classWeights": {
+            "BACKGROUND_OR_NOT_DIRECTED": 1,
+            "DIRECTED_TO_ASSISTANT": 1
+          },
+          "finalLoss": 0.048018452647,
+          "ordering": "input-order/full-batch",
+          "initialization": "all-zero"
+        }
+      },
+      "repeatedFitEqual": true,
+      "fitPredictionSha256": "sha256:81f992b9e26cbb24a539dd25c4e8e4b2325efc0c3500dda46019ec0ed41f485b"
+    }
+  },
+  "boundary": {
+    "calibrationRead": false,
+    "developmentRead": false,
+    "thresholdSelected": false,
+    "canProduceEffects": false
+  },
+  "authority": {
+    "mode": "offline-shadow-only",
+    "canProduceEffects": false
+  },
+  "fitCandidateSha256": "sha256:5726984b81e90ae091aee90d0d32b71fbb4df1df16cf2da0fed29b0bfd19a0cb"
+}
