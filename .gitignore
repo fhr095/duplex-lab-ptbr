@@ -21,6 +21,10 @@ eval/generated/exp-0022/*
 !eval/generated/exp-0023/
 eval/generated/exp-0023/*
 !eval/generated/exp-0023/capture-attempt-consumed-v0.1.json
+!eval/generated/exp-0024/
+eval/generated/exp-0024/*
+!eval/generated/exp-0024/physical-stop-attempt-consumed-v0.1.json
+!eval/generated/exp-0024/physical-stop-journal-v0.1.ndjson
 # Resultados brutos podem ser grandes e conter caminhos específicos da máquina.
 # O agregado canônico pequeno permanece versionado como evidência de referência.
 eval/reports/*
@@ -45,5 +49,6 @@ eval/reports/*
 !eval/reports/exp-0021-cdp-capture-qualification-v0.1.json
 !eval/reports/exp-0022-bootstrap-audit-health-binding-v0.1.json
 !eval/reports/exp-0023-cdp-ordinal-timestamp-semantics-v0.1.json
+!eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json
 coverage/
 tmp/
