@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "exp-0022-capture-attempt-v1",
+  "experimentId": "EXP-0022",
+  "status": "opened-single-capture-attempt",
+  "openingSourceCommit": "ba3f8824bbcadda88b68700bd6d706649e955bf4",
+  "openedAt": "2026-08-03T09:48:39.152Z",
+  "freeze": {
+    "path": "eval/commitments/exp-0022-instrumentation-freeze-v0.1.json",
+    "fileSha256": "sha256:e0dde0f38c570906de24101c45ccb8e9b7d5f448a31cc373c3d80ab7b350c1f7",
+    "instrumentationFreezeSha256": "sha256:b48ca5387226d4400e2f0e01609867b8010307879e580870562e05b0719ddd53",
+    "runnerSourceCommit": "29b589a956e4aab487e71673d4c92b141d3c0511",
+    "freezeCommit": "ba3f8824bbcadda88b68700bd6d706649e955bf4"
+  },
+  "campaign": {
+    "nonce": "exp-0022-official-v0.1",
+    "command": "node scripts/run-exp-0022-supervisor.mjs",
+    "configCanonicalSha256": "sha256:1eb9db8381696b5631569dab2daa4eefacdd11aca462ba88b2829bfa0ac038ad",
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0022",
+    "navigations": 2,
+    "requestsPerNavigation": 2,
+    "totalRequests": 4,
+    "trialOrder": [
+      {
+        "navigation": 1,
+        "position": 1,
+        "trialId": "A1",
+        "payloadId": "A"
+      },
+      {
+        "navigation": 1,
+        "position": 2,
+        "trialId": "B1",
+        "payloadId": "B"
+      },
+      {
+        "navigation": 2,
+        "position": 1,
+        "trialId": "B2",
+        "payloadId": "B"
+      },
+      {
+        "navigation": 2,
+        "position": 2,
+        "trialId": "A2",
+        "payloadId": "A"
+      }
+    ],
+    "reportPath": "eval/reports/exp-0022-bootstrap-audit-health-binding-v0.1.json",
+    "receiptPath": "eval/generated/exp-0022/capture-attempt-consumed-v0.1.json"
+  },
+  "gitTopology": {
+    "order": [
+      "C0_INSTRUMENT",
+      "FREEZE",
+      "OPENING",
+      "EVIDENCE"
+    ],
+    "freezeDirectParent": "C0_INSTRUMENT",
+    "openingDirectParent": "FREEZE",
+    "evidenceDirectParent": "OPENING",
+    "evidenceAllowedPaths": [
+      "eval/generated/exp-0022/capture-attempt-consumed-v0.1.json",
+      "eval/reports/exp-0022-bootstrap-audit-health-binding-v0.1.json"
+    ]
+  },
+  "boundary": {
+    "captureCampaignsBeforeOpening": 0,
+    "reportAbsent": true,
+    "receiptAbsent": true,
+    "rerunAllowed": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "captureAttemptSha256": "sha256:a1c5ef7169f29455c77581a7488a22864c15466390e481db7c9a88a440c31b29"
+}
