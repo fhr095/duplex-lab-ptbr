@@ -5,7 +5,8 @@ contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
 invalidações instrumentais dos EXP-0020/0021/0022, passe instrumental do
 EXP-0023, invalidação instrumental do EXP-0024, corte terminal do EXP-0025 e
-corte do challenger local no holdout EXP-0025-R**
+corte do challenger local no holdout EXP-0025-R, seguido de 4/4 sentinelas
+externas oficiais com `D` ainda não avaliado**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -38,8 +39,15 @@ trilha não bloqueante. Depois de confirmar headroom em D, um único `L` foi
 congelado e executado uma vez em H: reduziu tomadas prematuras de 9/24 para
 4/24, sem introduções, mas falhou o gate p95 com 1.200 ms e foi equivalente a
 `A0@600`. O [closeout local](experiments/EXP-0025-R-local-closeout.md) preserva
-`KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`. `E` não foi executado e continua
-dependente de autorização externa; não há autoridade.
+`KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`. Na execução externa, as quatro
+saídas passaram sob a semântica do servidor oficial e o carregamento foi
+validado por equivalência byte a byte de 112/112 tensores base. O adaptador
+fail-closed parou antes de `D`, então não existe placar pt-BR nem justificativa
+para holdout. O
+[fechamento externo](experiments/EXP-0025-R-external-sentinel-closeout.md)
+preserva esse limite; uma única quarta alocação `D`-only depende de autorização
+explícita, assim como elevar o teto cumulativo de download a 70 GiB. Não há
+autoridade.
 
 ## Tese
 
@@ -436,8 +444,10 @@ Esta referência preserva apenas a lógica macro:
     não reparar nem repetir esta linhagem;
 16. preservar o resultado local do EXP-0025-R: `L` corrigiu cinco tomadas sem
     introduções, mas falhou p95 e foi cortado como equivalente a `A0@600`;
-    não abrir `L2`; executar `E` somente com autorização explícita e budget
-    congelado, sem ASR/TTS na política, bloqueio ou autoridade;
+    não abrir `L2`; preservar também 4/4 sentinelas oficiais de `E` sem alegar
+    resultado em `D`; reidratar o mesmo checkpoint somente em uma quarta e
+    última alocação explicitamente autorizada, sob 70 GiB cumulativos, sem
+    sentinela nova, H, ASR/TTS na política, bloqueio ou autoridade;
 17. conceder autoridade somente se houver ganho percebido sem regressão dos
     guardrails;
 18. manter backbones nativos end-to-end no ledger até existir um teto local que

@@ -388,6 +388,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0025 — fechamento e corte terminal do instrumento](docs/experiments/EXP-0025-closeout.md)
 - [EXP-0025-R — referência DuplexCascade e controle local de tomada de turno](docs/experiments/EXP-0025-R-duplexcascade-floor-control.md)
 - [EXP-0025-R — fechamento da trilha local de microturnos](docs/experiments/EXP-0025-R-local-closeout.md)
+- [EXP-0025-R — fechamento das sentinelas externas](docs/experiments/EXP-0025-R-external-sentinel-closeout.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -439,5 +440,8 @@ controlador local congelado no holdout selado. `L` reduziu tomadas prematuras
 de 9/24 para 4/24, corrigiu cinco falas sem introduções e melhorou duas
 sessões, mas falhou o gate de atraso: p95 de 1.200 ms contra 800 ms. Como foi
 equivalente a `A0@600`, mantemos `A0` e cortamos `L` sem segunda hipótese. O
-checkpoint oficial permanece `NOT_EVALUATED` e depende de autorização externa
-separada; a trilha não bloqueia o STOP nem concede autoridade.
+checkpoint oficial passou 4/4 sentinelas sob a semântica do runtime publicado,
+com tokens brutos preservados e carregamento validado. O adaptador parou antes
+de `D`, portanto não há comparação pt-BR: uma passagem `D`-only depende de uma
+única quarta alocação autorizada e de elevar o teto cumulativo de download a
+70 GiB. Nenhum holdout, troca de modelo ou autoridade foi aberto.

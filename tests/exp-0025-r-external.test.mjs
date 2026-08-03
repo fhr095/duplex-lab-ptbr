@@ -11,6 +11,10 @@ import {
   validateExp0025RExternalRawEvidence
 } from "../src/eval/exp-0025-r-external.mjs";
 import {
+  evaluateDuplexCascadeOfficialRuntimeSentinels,
+  interpretDuplexCascadeOfficialRuntime
+} from "../src/eval/exp-0025-r-official-runtime-semantics.mjs";
+import {
   EXP0025_R_TOKENS,
   replayAdaptiveEndpoint
 } from "../src/eval/exp-0025-r-floor-control.mjs";
@@ -174,9 +178,27 @@ test("adaptador acrescenta cada delta textual uma única vez por microturno", as
   assert.equal(encodeDeltaCalls.length, 1);
 });
 
+test("semântica oficial faz user talking ceder piso durante fala assistente", () => {
+  assert.equal(interpretDuplexCascadeOfficialRuntime({
+    assistantSpeaking: true,
+    output: EXP0025_R_TOKENS.userTalking
+  }).action, "YIELD_FLOOR");
+  assert.equal(interpretDuplexCascadeOfficialRuntime({
+    assistantSpeaking: false,
+    output: EXP0025_R_TOKENS.userTalking
+  }).action, "CONTINUE_LISTENING");
+  const observations = structuredClone(validSentinels);
+  observations.find((item) => item.id === "english-user-interruption").output =
+    EXP0025_R_TOKENS.userTalking;
+  assert.equal(
+    evaluateDuplexCascadeOfficialRuntimeSentinels(observations).status,
+    "PASS"
+  );
+});
+
 test("autorização prospectiva vincula D e torna H-L inelegível para E", async () => {
   const validation = await validateExp0025RExternalAuthorization({
-    preflight: true
+    preflight: false
   });
   assert.deepEqual(validation.errors, []);
   assert.equal(validation.valid, true);

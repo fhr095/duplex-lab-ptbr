@@ -1,8 +1,8 @@
 # EXP-0025-R — referência DuplexCascade e controle local de tomada de turno
 
-Status: **trilha local concluída e cortada; `E` autorizado somente para quatro
-sentinelas inglesas + `D`; nenhum holdout autorizado; não bloqueante; zero
-autoridade**
+Status: **trilha local concluída e cortada; sentinelas oficiais de `E` 4/4;
+`D=NOT_EVALUATED`; aguardando decisão explícita sobre teto cumulativo de
+download; nenhum holdout autorizado; não bloqueante; zero autoridade**
 
 Evidência corrente: o pack D e o headroom permanecem versionados; o resultado
 one-shot de `L` está em
@@ -11,8 +11,13 @@ one-shot de `L` está em
 pós-final foi 1.200 ms, acima do gate de 800 ms, e foi equivalente a
 `A0@600`. Em 03/08/2026, o responsável autorizou a inferência externa `E`
 somente nas quatro sentinelas e no desenvolvimento, dentro dos limites já
-congelados. Essa autorização não alcança nenhum holdout, outro checkpoint,
-sweep, mapeamento, `L2`, API ou modelo.
+congelados. As saídas das sentinelas foram preservadas e passam 4/4 sob a
+semântica do servidor oficial, mas o adaptador congelado parou fail-closed
+antes de `D` por uma interpretação contextual incompleta. O
+[fechamento das sentinelas](EXP-0025-R-external-sentinel-closeout.md) registra
+a correção, a validade do carregamento e o orçamento. A autorização não
+alcança nenhum holdout, outro checkpoint, sweep, `L2`, API ou modelo; nova
+alocação aguarda uma decisão explícita sobre o teto de download.
 
 ## Emenda prospectiva antes de E
 
@@ -23,7 +28,7 @@ de `E` congelado. Seu estado para E é `INELIGIBLE_FOR_CONFIRMATION`: uma
 leitura futura nesse conjunto seria classificada somente como **exploratória**.
 Ela está explicitamente proibida nesta rodada.
 
-A sequência agora é terminal e curta:
+A sequência autorizada era terminal e curta:
 
 1. congelar adaptador, sentinelas, entradas, orçamento e critérios de `D`;
 2. executar 4/4 sentinelas inglesas; qualquer falha corta `E` antes de `D`;
@@ -33,6 +38,13 @@ A sequência agora é terminal e curta:
 5. cortar a frente, ou apenas **justificar o pré-registro** de um holdout
    externo fresco sob novo ID. Nem a criação nem a abertura desse novo holdout
    estão autorizadas por esta emenda.
+
+Na execução, 4/4 saídas passaram sob a semântica oficial, mas o adaptador
+congelado classificou a quarta como falha e encerrou corretamente antes de
+`D`. Essa divergência do instrumento foi corrigida apenas na camada de
+interpretação pós-run, vinculada ao `server.py` já fixado; tokens e código
+executado foram preservados. Portanto `E_PROTOCOL_FAILURE` não é sustentado
+como comportamento do checkpoint, mas `D` continua `NOT_EVALUATED`.
 
 O contrato versionado desta autorização fica em
 `eval/commitments/exp-0025-r-external-development-authorization-v0.1.json`.
@@ -271,6 +283,14 @@ Como foi exatamente equivalente a `A0@600`, a decisão foi
 `KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`, sem `L2` ou autoridade. `E`
 permaneceu `NOT_EVALUATED_NO_AUTHORIZATION` até a emenda prospectiva acima.
 
+Resultado externo posterior: o checkpoint carregou, as quatro gerações foram
+preservadas e a leitura vinculada ao runtime oficial passou 4/4 sentinelas. O
+executor fail-closed não iniciou `D`; por isso não existe comparação pt-BR nem
+decisão de ganho residual. A auditoria de carregamento encontrou 112/112
+tensores base idênticos byte a byte e descartou a diferença de nomeação PEFT
+como alteração efetiva dos pesos. O detalhe está no
+[fechamento externo](EXP-0025-R-external-sentinel-closeout.md).
+
 ### Gate residual de E em D
 
 `D` é desenvolvimento e não produz alegação confirmatória. Depois de 4/4
@@ -337,6 +357,14 @@ local de referência, artefato total ≤50 MiB e zero rede em execução.
   `docs/COST_POLICY.md`; qualquer `H-E` exige autorização explícita separada;
 - zero sweep, quantização não oficial, troca de modelo ou rerun para escolher
   seed favorável.
+
+Consumo observado: 1.193,49 segundos de GPU, US$ 0,9581 e limite superior de
+35,12 GiB cumulativos transferidos. Todas as três alocações foram encerradas.
+Como o volume foi removido, os 4,88 GiB restantes sob o teto de 40 GiB não
+comportam a reidratação de 30,42 GiB. Uma passagem `D`-only exige autorização
+prospectiva para uma única quarta alocação — excepcionando somente a marca
+terminal da terceira — e para elevar o teto cumulativo de download a 70 GiB;
+os limites de GPU e custo não precisam mudar.
 
 O `H-L` consumiu sua única abertura local. Nenhum crash ou resultado de `D`
 permite abri-lo para `E`; prefixos não serão selecionados.

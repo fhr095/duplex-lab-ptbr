@@ -13,6 +13,8 @@ import {
   EXP0023_EVIDENCE_COMMIT,
   EXP0024_CANONICAL_REPORT_PATH,
   EXP0024_EVIDENCE_COMMIT,
+  EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH,
+  EXP0025_R_EXTERNAL_EVIDENCE_COMMIT,
   EXP0025_R_LOCAL_CANONICAL_REPORT_PATH,
   EXP0025_R_LOCAL_EVIDENCE_COMMIT,
   readExperimentIndex,
@@ -113,6 +115,24 @@ test("índice canônico real referencia evidências existentes", async () => {
     index.currentParallelProbe.evidenceCommit,
     EXP0025_R_LOCAL_EVIDENCE_COMMIT
   );
+  assert.equal(
+    index.currentParallelProbe.externalSentinelResult.canonicalReport,
+    EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH
+  );
+  assert.equal(
+    index.currentParallelProbe.externalSentinelResult.evidenceCommit,
+    EXP0025_R_EXTERNAL_EVIDENCE_COMMIT
+  );
+  assert.equal(
+    index.currentParallelProbe.externalSentinelResult.officialSentinelsPassed,
+    4
+  );
+  assert.equal(
+    index.currentParallelProbe.externalSentinelResult.developmentEvaluated,
+    false
+  );
+  assert.equal(index.currentParallelProbe.externalSentinelResult.holdoutRead,
+    false);
   assert.match(index.currentParallelProbe.decision, /1\.200 ms > 800 ms/u);
   assert.match(index.currentParallelProbe.nextDecision, /Autorizar/u);
   assert.equal(index.entries.at(-1).id, "EXP-0025");

@@ -142,9 +142,13 @@ O EXP-0025-R avançou em paralelo e sem autoridade. Depois do headroom em D, o
 tomadas prematuras de 9/24 para 4/24, corrigiu cinco falas sem introduções e
 melhorou duas sessões. Ainda assim, foi cortado porque seu p95 pós-final de
 1.200 ms excedeu 800 ms e foi idêntico a `A0@600`; não haverá `L2`. O
-checkpoint oficial DuplexCascade continua `NOT_EVALUATED` e só pode rodar com
-budget e autorização próprios. ASR/TTS não entram na política e backbones
-end-to-end continuam fora.
+checkpoint oficial DuplexCascade passou 4/4 sentinelas sob a semântica do
+runtime publicado, mas o adaptador fail-closed encerrou antes de `D`; logo não
+há ganho pt-BR medido. Todos os Pods foram encerrados, custo e GPU ficaram
+dentro do budget, e uma passagem `D`-only aguarda autorização para uma única
+quarta alocação e para elevar o teto cumulativo de download de 40 para 70 GiB.
+ASR/TTS não entram na política, H permanece proibido e backbones end-to-end
+continuam fora.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
@@ -165,6 +169,7 @@ npm run eval:exp:0025:r:local:freeze:check
 npm run eval:exp:0025:r:holdout:audio:check
 npm run eval:exp:0025:r:holdout:seal:check
 npm run eval:exp:0025:r:holdout:report:check
+npm run eval:exp:0025:r:external:report:check
 node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
 node --test tests/exp-0023-*.test.mjs
 node --test tests/exp-0024-*.test.mjs

@@ -133,6 +133,19 @@ export const EXP0025_R_LOCAL_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0025-r-local-holdout-v0.1.json";
 export const EXP0025_R_LOCAL_EVIDENCE_COMMIT =
   "0b3fda7bda09e46b3f212d34c5c9d4fe8895dae0";
+export const EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH =
+  "eval/reports/exp-0025-r-external-development-v0.1.json";
+export const EXP0025_R_EXTERNAL_EVIDENCE_COMMIT =
+  "67dc6aa364d02209cf7fe7f7e21e5fc854e89dfa";
+
+const EXP0025_R_EXTERNAL_EVIDENCE_PATHS = Object.freeze([
+  "eval/evidence/exp-0025-r-external-development-raw-v0.1.journal.ndjson",
+  "eval/evidence/exp-0025-r-external-development-raw-v0.1.json",
+  "eval/evidence/exp-0025-r-external-development-runpod-v0.1.log",
+  "eval/evidence/exp-0025-r-external-peft-base-equivalence-v0.1.json",
+  "eval/evidence/exp-0025-r-external-runpod-allocation-v0.3.json",
+  EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH
+]);
 
 const EXP0023_C0_COMMIT =
   "de919470f0b4b59db4f911b7ae5e40fcc9606707";
@@ -977,6 +990,121 @@ async function assertExp0025RLocalEvidence(index, projectRoot) {
       "EXP-0025-R receipt H"),
     assertGitAncestor(projectRoot, EXP0025_R_LOCAL_EVIDENCE_COMMIT,
       headCommit, "EXP-0025-R evidenceCommit→HEAD")
+  ]);
+}
+
+async function assertExp0025RExternalSentinelEvidence(index, projectRoot) {
+  const probe = index.currentParallelProbe;
+  const summary = probe.externalSentinelResult;
+  assert(
+    summary?.status === "sentinels-passed-development-not-evaluated" &&
+      summary.canonicalReport ===
+        EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH &&
+      summary.evidenceCommit === EXP0025_R_EXTERNAL_EVIDENCE_COMMIT &&
+      summary.decision === "DO_NOT_CUT_E_DO_NOT_CLAIM_D_GAIN" &&
+      summary.officialSentinelsPassed === 4 &&
+      summary.developmentEvaluated === false &&
+      summary.holdoutRead === false,
+    "EXP-0025-R resumo externo perdeu resultado ou limite congelado"
+  );
+
+  const [reportArtifact, ...evidenceBytes] = await Promise.all([
+    readArtifact(projectRoot, EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH,
+      "EXP-0025-R report externo"),
+    ...EXP0025_R_EXTERNAL_EVIDENCE_PATHS.slice(0, -1).map(async (path) => ({
+      path,
+      bytes: await readFile(resolveRepositoryPath(
+        projectRoot, path, "EXP-0025-R evidência externa"
+      ))
+    }))
+  ]);
+  const report = reportArtifact.value;
+  const reportCore = structuredClone(report);
+  delete reportCore.reportSha256;
+  assert(
+    report.schemaVersion ===
+        "exp-0025-r-external-development-report-v1" &&
+      report.experimentId === "EXP-0025-R" &&
+      report.stage ===
+        "EXTERNAL_SENTINELS_COMPLETE_DEVELOPMENT_NOT_EVALUATED" &&
+      report.reportSha256 === `sha256:${canonicalSha256(reportCore)}` &&
+      report.sentinels?.frozenAdapterClassification?.passed === 3 &&
+      report.sentinels?.officialRuntimeClassification?.status === "PASS" &&
+      report.sentinels.officialRuntimeClassification.passed === 4 &&
+      report.sentinels?.correction?.type ===
+        "POST_RUN_CONSTRUCT_INTERPRETATION_CORRECTION" &&
+      report.sentinels.correction.modelOutputChanged === false &&
+      report.sentinels.correction.rerunUsed === false &&
+      report.validity?.modelLoadEquivalent === true &&
+      report.validity?.holdoutRead === false &&
+      report.development?.evaluated === false &&
+      report.development?.utteranceCount === 0 &&
+      report.decision?.id === "DO_NOT_CUT_E_DO_NOT_CLAIM_D_GAIN" &&
+      report.decision?.freshHoldoutAuthorized === false &&
+      report.decision?.localReproductionAuthorized === false &&
+      report.decision?.requiredNewAuthority
+        ?.recommendedMaximumCumulativeDownloadGiB === 70 &&
+      report.budget?.cumulativeDownloadBytesUpperBound === 37_706_974_907 &&
+      report.budget?.minimumCapForRehydratedD === 70_373_808_158 &&
+      report.budget?.cumulativeEstimatedCostUsd < 1 &&
+      report.evidence?.peftBaseEquivalence?.tensorCount === 112 &&
+      report.evidence?.peftBaseEquivalence?.allEqual === true &&
+      report.evidence?.providerReceipts?.length === 3 &&
+      report.evidence.providerReceipts.every((item) =>
+        item.terminationConfirmed === true),
+    "EXP-0025-R report externo perdeu validade, budget ou decisão congelada"
+  );
+
+  const raw = evidenceBytes.find((item) => item.path.endsWith(
+    "external-development-raw-v0.1.json"
+  ));
+  const diagnostic = evidenceBytes.find((item) => item.path.endsWith(
+    "external-peft-base-equivalence-v0.1.json"
+  ));
+  const receipt = evidenceBytes.find((item) => item.path.endsWith(
+    "external-runpod-allocation-v0.3.json"
+  ));
+  assert(
+    report.evidence.raw.fileSha256 === sha256Bytes(raw.bytes).slice(7) &&
+      report.evidence.peftBaseEquivalence.fileSha256 ===
+        sha256Bytes(diagnostic.bytes).slice(7) &&
+      report.evidence.providerReceipts.at(-1).fileSha256 ===
+        sha256Bytes(receipt.bytes).slice(7),
+    "EXP-0025-R hashes externos não fecham os artefatos versionados"
+  );
+
+  const [committedPaths, headCommit] = await Promise.all([
+    changedPathsAtCommit(projectRoot, EXP0025_R_EXTERNAL_EVIDENCE_COMMIT),
+    gitText(projectRoot, "rev-parse", "HEAD")
+  ]);
+  assert(
+    isDeepStrictEqual(
+      committedPaths,
+      [...EXP0025_R_EXTERNAL_EVIDENCE_PATHS].toSorted()
+    ),
+    "EXP-0025-R commit de evidência externa perdeu isolamento"
+  );
+  await Promise.all([
+    assertGitFileMatches(
+      projectRoot,
+      EXP0025_R_EXTERNAL_EVIDENCE_COMMIT,
+      EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH,
+      reportArtifact.bytes,
+      "EXP-0025-R report externo"
+    ),
+    ...evidenceBytes.map((item) => assertGitFileMatches(
+      projectRoot,
+      EXP0025_R_EXTERNAL_EVIDENCE_COMMIT,
+      item.path,
+      item.bytes,
+      "EXP-0025-R evidência externa"
+    )),
+    assertGitAncestor(
+      projectRoot,
+      EXP0025_R_EXTERNAL_EVIDENCE_COMMIT,
+      headCommit,
+      "EXP-0025-R externalEvidenceCommit→HEAD"
+    )
   ]);
 }
 
@@ -2421,6 +2549,7 @@ export async function validateExperimentIndex(index, options = {}) {
     "currentParallelProbe.decision must be a non-empty string"
   );
   await assertExp0025RLocalEvidence(index, projectRoot);
+  await assertExp0025RExternalSentinelEvidence(index, projectRoot);
   assert(Array.isArray(index.entries), "entries must be an array");
   assert(index.entries.length > 0, "entries must not be empty");
 
