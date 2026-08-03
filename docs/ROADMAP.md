@@ -24,14 +24,14 @@ histórico, esta carteira prevalece.
   Os 12 gates passaram; o delta local p95 foi 0,127 ms. Isso valida apenas o
   matcher relacional nas cenas textuais sintéticas contrabalanceadas, sem
   autoridade, holdout, áudio real ou alegação de compreensão ampla.
-- **Agora — EXP-0019, bridge causal em áudio:** materializar o menor teste que
-  reproduz o mesmo checkpoint e as mesmas relações em uma timeline de áudio,
-  provando que somente conteúdo já audível chega ao matcher. Hipótese, duas
-  unidades 2x2, orçamento e gates estão pré-registrados; áudio ainda não foi
-  gerado.
-- **Depois, condicional:** se o teto com texto-oráculo causal sobreviver ao
-  áudio, medir disponibilidade via ASR em um experimento separado. ASR não
-  deve ser confundido com a qualidade já isolada do matcher.
+- **Concluído/cortado — EXP-0019:** a única materialização fechou 8 cenas, 12
+  streams e 48 probes sem futuro; Node/Chrome tiveram paridade exata e proposta
+  p95 de 8,7 ms. O trace físico, porém, alternou a ordem entre
+  `speech.paused` e `render.stopped`; 7/9 gates passaram e nada foi promovido.
+- **Agora — registrar o probe mínimo de lifecycle:** distinguir uma corrida de
+  estado/áudio fisicamente observável de mero reordenamento concorrente. Se
+  for estado real, corrigir o happens-before; se for equivalência observável,
+  pré-registrar a normalização causal. ASR continua fora em ambos os casos.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -39,8 +39,9 @@ histórico, esta carteira prevalece.
 
 O fechamento anterior, o contrato congelado e o resultado corrente estão no
 [EXP-0017](experiments/EXP-0017-safe-veto-and-semantic-probe.md), no
-[pré-registro do EXP-0018](experiments/EXP-0018-context-observability-screen.md)
-e em seu [closeout](experiments/EXP-0018-closeout.md).
+[closeout do EXP-0018](experiments/EXP-0018-closeout.md), no
+[pré-registro do EXP-0019](experiments/EXP-0019-causal-audio-context-bridge.md)
+e em seu [closeout](experiments/EXP-0019-closeout.md).
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar outra prioridade, e o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
@@ -429,17 +430,18 @@ card de dados e splits por família, gerador e pessoa.
 | 14a | EXP-0017 Core: calibração segura do veto — **`retain-a0-and-cut-acoustic-core`** | 240 exemplos train/dev; `A` 50,8%, 60/60 dirigidas e 1/60 fundos; empate pareado por exemplo com `A0` | nenhum holdout; `A0` vira `A-ref`; família acústica compacta cortada nesta rodada |
 | 14b | EXP-0017-R: probe semântico causal — **cortado antes do fit** | mapa causal físico: 21/30 train; 11 fundos e 10 dirigidas elegíveis | pisos exigiam 12/classe; nenhum fit/limiar/métrica semântica; zero autoridade |
 | 15 | EXP-0018: contexto observável com conteúdo pareado — **`PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN`** | 31/32 em `B1` versus 16/32 em `B0`; 16/16 dirigidas, 15/16 fundos; 15 vitórias líquidas; ganho em 8/8 blocos e 4/4 famílias; 12/12 gates | uma abertura e uma tentativa; screen textual sintético sem holdout, áudio, ASR ou autoridade; claim limitado ao matcher relacional |
-| 16 | EXP-0019: bridge causal em áudio — **pré-registrado; instrumentação pendente** | dois blocos 2x2/8 cenas; mesmo checkpoint; 12 streams locais; texto-oráculo liberado somente após o fim amostral; paridade Node/Chrome e lifecycle inalterado | não reabrir development textual; sem ASR, treino, GPU/API paga ou autoridade; cortar antes de ASR se o teto causal não sobreviver |
+| 16 | EXP-0019: bridge causal em áudio — **`CUT_CAUSAL_AUDIO_BRIDGE`** | 8 cenas/4 pares/12 streams; 48 probes sem inferência; 16/16 paridade Node/Chrome; proposta p95 8,7 ms; STOP p95 56,573 ms; 7/9 gates | ordem `speech.paused`/`render.stopped` variou; trace e lifecycle on/off não determinísticos; zero autoridade/API/GPU; ASR não autorizado |
 
-O EXP-0018 está terminal; sua ponte planejada foi registrada como EXP-0019 e é
-a única frente crítica ativa. Modelos completos continuam no ledger como
-`watch` ou `defer`; pesquisa externa não autoriza download, adaptação ou GPU.
+O EXP-0019 está terminal e cortado. A próxima frente crítica ainda precisa ser
+pré-registrada e deve isolar somente a corrida física de lifecycle. Modelos
+completos continuam no ledger como `watch` ou `defer`; pesquisa externa não
+autoriza download, adaptação ou GPU.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
 pela maior falha percebida no relatório, não por ordem fixa. O matcher textual
-já demonstrou valor informacional; o gargalo imediato passou a ser provar que
-seus três textos podem ser expostos em uma timeline de áudio sem futuro antes
-de gastar com reconhecimento real.
+já demonstrou valor informacional e sobreviveu causalmente ao áudio-oráculo; o
+gargalo imediato é estabilizar ou interpretar corretamente a ordem física do
+lifecycle antes de gastar com reconhecimento real.
 
 ## Trilha paralela de governança
 

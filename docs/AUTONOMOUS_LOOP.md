@@ -94,17 +94,30 @@ uma única abertura selada. `B1` acertou 31/32 casos contra 16/32 de `B0`, vence
 com zero autoridade. Esse resultado é um screen de mecanismo sintético, sem
 holdout, áudio ou compreensão semântica ampla.
 
-O índice avançou para o EXP-0019, que materializa a ponte antes planejada como
-EXP-0018-R: provar, com o mesmo checkpoint, que o conteúdo textual necessário
-pode ser liberado sem futuro em uma timeline de áudio reproduzível. O primeiro
-teto usa oito cenas e texto-oráculo causal; ASR, novo treino e autoridade ficam
-fora para que uma falha de integração não seja confundida com reconhecimento.
-Hipótese, limites e evidência textual permanecem ligados ao
-[pré-registro congelado](experiments/EXP-0018-context-observability-screen.md)
-e ao [closeout](experiments/EXP-0018-closeout.md), que aponta para o relatório
-canônico.
+O EXP-0019 materializou a ponte antes planejada como EXP-0018-R. Nas oito
+cenas, o conteúdo foi liberado sem futuro, a paridade Node/Chrome foi 16/16 e
+a proposta Chrome ficou em p95 de 8,7 ms. O experimento foi cortado porque a
+ordem física entre `assistant.speech.paused` e `assistant.render.stopped`
+variou: 7/9 gates passaram, zero efeito foi despachado e ASR continua fora.
+Hipótese, resultado e limites permanecem ligados ao
+[pré-registro congelado](experiments/EXP-0019-causal-audio-context-bridge.md) e
+ao [closeout](experiments/EXP-0019-closeout.md).
 
-O ciclo é reproduzido por:
+O próximo PDCA deve isolar somente essa corrida. Ele precisa decidir se existe
+diferença de estado/áudio fisicamente observável ou apenas telemetria
+concorrente equivalente; trocar ASR, TTS ou backbone não entra até essa
+pergunta fechar.
+
+O fechamento corrente e seus contratos verificáveis em clone limpo usam:
+
+```bash
+node --test tests/exp-0019-contract.test.mjs
+node --test tests/exp-0019-browser-runner.test.mjs
+node --test tests/exp-0019-analysis.test.mjs
+npm run eval:index:check
+```
+
+Os blocos seguintes preservam reprodução histórica. O ciclo do EXP-0015 é:
 
 ```bash
 npm run eval:exp:0015:check

@@ -373,6 +373,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0018 — contexto observável com conteúdo pareado](docs/experiments/EXP-0018-context-observability-screen.md)
 - [EXP-0018 — fechamento do screen textual](docs/experiments/EXP-0018-closeout.md)
 - [EXP-0019 — bridge causal de contexto em áudio](docs/experiments/EXP-0019-causal-audio-context-bridge.md)
+- [EXP-0019 — fechamento do bridge causal](docs/experiments/EXP-0019-closeout.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -395,12 +396,12 @@ exigidas por seus pisos. O EXP-0018 então isolou o constructo em 24 blocos 2x2,
 48 pares e 96 casos. Após freeze, fit e calibração separados por commits, sua
 única tentativa de development terminou com 31/32 acertos em `B1` contra 16/32
 em `B0`, 15 vitórias líquidas, ganho nos 8/8 blocos e 4/4 famílias e os 12
-gates aprovados. O resultado permite afirmar apenas que o matcher relacional
-venceu o alvo isolado nessas cenas textuais sintéticas. O EXP-0019 pré-registra
-agora o menor bridge causal em áudio do mesmo checkpoint: oito cenas,
-texto-oráculo e zero ASR; reconhecimento real só entra se esse teto sobreviver.
-Até lá, o checkpoint continua observacional e o comando físico rápido
-permanece determinístico no navegador.
+gates aprovados. O EXP-0019 levou esse matcher a oito cenas de áudio-oráculo:
+48 probes não usaram futuro, a paridade Node/Chrome foi exata, a proposta ficou
+em p95 de 8,7 ms e o STOP em 56,573 ms. Mesmo assim, o experimento foi cortado
+porque a ordem entre `speech.paused` e `render.stopped` variou entre controle,
+shadow e repetição; 7/9 gates passaram e nenhuma capacidade ganhou autoridade.
+O próximo teste deve isolar essa corrida física antes de qualquer ASR real.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

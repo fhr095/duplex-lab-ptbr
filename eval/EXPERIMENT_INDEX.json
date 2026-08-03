@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T00:41:38-03:00",
-  "transitionState": "active",
+  "updatedAt": "2026-08-03T02:31:10-03:00",
+  "transitionState": "terminal-awaiting-next-registration",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
     "legacyRange": "EXP-0000..EXP-0006",
@@ -24,10 +24,10 @@
     "id": "EXP-0019-R",
     "parent": "EXP-0019",
     "preRegistration": "docs/experiments/EXP-0019-causal-audio-context-bridge.md",
-    "status": "planned",
+    "status": "cut",
     "blocking": false,
     "authority": "none",
-    "decision": "Comparar tokens explícitos e microturnos do DuplexCascade somente se o bridge local revelar uma lacuna causal; nenhuma execução de modelo agora."
+    "decision": "EXP-0019 isolou a falha no ordenamento físico do lifecycle; executar um backbone maior não resolve esse gate e permanece deferido."
   },
   "entries": [
     {
@@ -245,17 +245,27 @@
     },
     {
       "id": "EXP-0019",
-      "status": "active",
-      "decision": "materialize-minimal-causal-audio-context-bridge",
-      "canonicalReport": null,
+      "status": "cut",
+      "decision": "CUT_CAUSAL_AUDIO_BRIDGE",
+      "canonicalReport": "eval/reports/exp-0019-causal-audio-v0.1.json",
+      "evidenceCommit": "0127322ad18a5b1d98de53d9e45898249e05888d",
       "authority": "none",
       "criticalPath": true,
-      "cleanCloneChecks": [],
+      "cleanCloneChecks": [
+        "node --test tests/exp-0019-contract.test.mjs",
+        "node --test tests/exp-0019-audio-materializer.test.mjs",
+        "node --test tests/exp-0019-replay.test.mjs",
+        "node --test tests/exp-0019-browser-runner.test.mjs",
+        "node --test tests/exp-0019-analysis.test.mjs",
+        "node --test tests/experiment-index.test.mjs"
+      ],
       "localReproductionCommands": [
+        "npm run eval:exp:0019:plan:check",
+        "npm run eval:exp:0019:web:check",
         "npm run eval:index:check"
       ],
       "supersedes": [],
-      "nextDecision": "Materializar e auditar o pack de 12 streams e 8 schedules; congelar adapter e plano antes de qualquer campanha Node ou Chrome."
+      "nextDecision": "Pré-registrar o menor probe que distingue corrida observável de mero reordenamento de telemetria no STOP físico; ASR continua fora."
     }
   ]
 }

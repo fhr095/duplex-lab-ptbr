@@ -2,12 +2,13 @@
 
 Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
-fechamento do EXP-0017 e passe textual estrito do EXP-0018**
+fechamento do EXP-0017, passe textual do EXP-0018 e corte físico do EXP-0019**
 
 O resultado e seus limites estão resumidos no
-[closeout do EXP-0018](experiments/EXP-0018-closeout.md); o plano original
-permanece imutável no pré-registro congelado. O caminho crítico seguinte está
-no [pré-registro do EXP-0019](experiments/EXP-0019-causal-audio-context-bridge.md).
+[closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
+permanece imutável no
+[pré-registro congelado](experiments/EXP-0019-causal-audio-context-bridge.md).
+O próximo registro deve isolar a corrida física de lifecycle antes de ASR.
 
 ## Tese
 
@@ -384,9 +385,9 @@ Esta referência preserva apenas a lógica macro:
 8. preservar o passe estreito do EXP-0018: `B1` fez 31/32 contra 16/32 de
    `B0`, com 15 vitórias líquidas e ganho nos 8 blocos, mas somente em texto
    sintético contrabalanceado, sem holdout ou autoridade;
-9. pré-registrar e executar o menor bridge causal em áudio do mesmo checkpoint,
-   liberando texto-oráculo apenas quando os bytes correspondentes já estiverem
-   audíveis; ASR real continua posterior a esse teto;
+9. preservar o corte do EXP-0019: o bridge causal foi exato e rápido, mas a
+   ordem física `speech.paused`/`render.stopped` não foi determinística;
+   isolar essa corrida antes de ASR;
 10. conceder autoridade somente se houver ganho percebido sem regressão dos
    guardrails;
 11. manter backbones nativos no ledger até existir um teto local que justifique

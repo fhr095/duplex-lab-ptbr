@@ -93,6 +93,8 @@ export const EXP0018_CANONICAL_OUTCOMES = Object.freeze({
 
 export const EXP0018_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0018-context-development-v0.1.json";
+export const EXP0019_CANONICAL_REPORT_PATH =
+  "eval/reports/exp-0019-causal-audio-v0.1.json";
 
 export function validateExp0018HistoricalOutcome(entry, index, decision) {
   const outcome = EXP0018_CANONICAL_OUTCOMES[decision];
@@ -212,6 +214,24 @@ const CANONICAL_REPORT_CONTRACTS = Object.freeze({
       ["protocol.developmentAttemptsUsed", 1],
       ["protocol.confirmatoryClaimAllowed", false],
       ["authority.canProduceEffects", false]
+    ]
+  },
+  "EXP-0019": {
+    status: "cut",
+    authority: "none",
+    decisionPath: "decision",
+    assertions: [
+      ["instrumentValid", true],
+      ["pass", false],
+      ["authorityEligible", false],
+      ["gates.cardinalityAndDeterminism", false],
+      ["gates.lifecycleAndPhysicalStopIsolated", false],
+      ["gates.completeCausalBundle", true],
+      ["gates.zeroFutureEvidence", true],
+      ["gates.nodeChromeParity", true],
+      ["metrics.effectsDispatched", 0],
+      ["metrics.paidApiCalls", 0],
+      ["metrics.gpuRuns", 0]
     ]
   }
 });
@@ -381,6 +401,12 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0018 canonicalReport precisa usar o output único do runner");
     assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
       "EXP-0018 terminal exige evidenceCommit");
+  }
+  if (entry.id === "EXP-0019") {
+    assert(entry.canonicalReport === EXP0019_CANONICAL_REPORT_PATH,
+      "EXP-0019 canonicalReport precisa usar o output canônico");
+    assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
+      "EXP-0019 terminal exige evidenceCommit");
   }
 
   const path = resolveRepositoryPath(
@@ -741,6 +767,29 @@ async function assertCanonicalReport(entry, projectRoot, index) {
     await assertGitFileMatches(projectRoot, entry.evidenceCommit,
       paths.report, artifacts.report.bytes, "development report");
   }
+  if (entry.id === "EXP-0019") {
+    const core = structuredClone(report);
+    delete core.reportSha256;
+    assert(
+      report.reportSha256 === `sha256:${canonicalSha256(core)}`,
+      "EXP-0019 reportSha256 diverge do conteúdo canônico"
+    );
+    const headCommit = (await git(projectRoot, "rev-parse", "HEAD"))
+      .toString("utf8").trim();
+    await assertGitAncestor(
+      projectRoot,
+      entry.evidenceCommit,
+      headCommit,
+      "EXP-0019 evidenceCommit→HEAD"
+    );
+    await assertGitFileMatches(
+      projectRoot,
+      entry.evidenceCommit,
+      EXP0019_CANONICAL_REPORT_PATH,
+      await readFile(path),
+      "EXP-0019 canonical report"
+    );
+  }
 }
 
 function validateEntryShape(entry, index) {
@@ -806,6 +855,13 @@ function validateEntryShape(entry, index) {
           typeof entry.parallelProbeOutcome.decision === "string" &&
           entry.parallelProbeOutcome.decision.length > 0),
       "EXP-0018.parallelProbeOutcome é inválido"
+    );
+  }
+  if (entry.id === "EXP-0019") {
+    assert(
+      entry.evidenceCommit === null ||
+        /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),
+      "EXP-0019.evidenceCommit precisa ser null ou commit completo"
     );
   }
 }
