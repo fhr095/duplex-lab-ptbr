@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "exp-0019-audio-materialization-attempt-v1",
+  "experimentId": "EXP-0019",
+  "status": "OPENED_FOR_SINGLE_MATERIALIZATION",
+  "openedAt": "2026-08-03T05:25:44.367Z",
+  "executionHeadCommit": "7e972ac75f2febfc21c3d161f0f5abd5d846a896",
+  "instrumentationFreeze": {
+    "path": "eval/commitments/exp-0019-instrumentation-freeze-v0.1.json",
+    "fileSha256": "sha256:3afac4a608f13c918429958956dcadc408b92bc45cdb4a1552b3c206ee001509",
+    "canonicalSha256": "sha256:7c7257ee7b4bad8da9c42a39c63231bc3f518dc322092b4ca2006b9aa0dea24f",
+    "runnerSourceCommit": "44e98fe4188fbdffeaf67cd7348740a0dc974c42"
+  },
+  "plan": {
+    "path": "eval/experiments/exp-0019-causal-audio-plan-v0.1.json",
+    "fileSha256": "sha256:3f89925478b8176194409ae21d93d42d64064912aa5da9f3477a383c2a1b6a82",
+    "canonicalSha256": "sha256:7a9e32091e583ef3cb6f5b559c97cf914a7436ce71838be095f21648d2479c3d"
+  },
+  "modelArtifactBindingSha256": "sha256:e3ebd90e1e069f81ba45349649f613cea5492584facf5243bf531e96d128715e",
+  "outputs": {
+    "rawAudioRoot": "eval/generated/exp-0019/audio",
+    "manifest": "eval/sources/exp-0019-causal-audio-v0.1.json"
+  },
+  "allowedSyntheses": {
+    "streams": 12,
+    "targets": 4,
+    "inbounds": 4,
+    "assistantPrefixes": 4,
+    "assistantTails": 4,
+    "rerunAllowed": false
+  },
+  "authority": {
+    "mode": "offline-shadow-only",
+    "canProduceEffects": false
+  },
+  "attemptSha256": "sha256:bd11979cf259eeef6e8e0b763fb342b88ca98c8af5e435c25c9ea6977fc1bf8a"
+}
