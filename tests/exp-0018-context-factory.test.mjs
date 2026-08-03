@@ -6,6 +6,7 @@ import test from "node:test";
 import {
   EXP0018_CLASSES,
   EXP0018_FEATURE_NAMES,
+  EXP0018_PREFIT_CONFIG_CANONICAL_SHA256,
   EXP0018_ROLE_CONTRACT,
   auditExp0018Catalog,
   blindExp0018CatalogProjection,
@@ -23,7 +24,6 @@ import {
   trainSoftmaxClassifier
 } from "../src/learning/softmax-classifier.mjs";
 import {
-  EXP0018_PREFIT_CONFIG_CANONICAL_SHA256,
   buildExp0018ContextDatasets,
   validateExp0018InstrumentationConfig
 } from

@@ -6,6 +6,8 @@ export const EXP0018_DATASET_VERSION =
   "exp-0018-context-dataset-v1";
 export const EXP0018_FEATURE_VERSION =
   "exp-0018-context-relational-features-v1";
+export const EXP0018_PREFIT_CONFIG_CANONICAL_SHA256 =
+  "sha256:ed74eec86ae0f800bdaf4ea6a961fedf2e2101c22c2c1ebf5071c86a20e94d5f";
 
 export const EXP0018_CLASSES = Object.freeze([
   "BACKGROUND_OR_NOT_DIRECTED",

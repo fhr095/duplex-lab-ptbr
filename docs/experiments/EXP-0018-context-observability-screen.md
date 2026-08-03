@@ -1,7 +1,7 @@
 # EXP-0018 — contexto observável com conteúdo lexical pareado
 
-Status: **instrumentação e crítica cega materializadas; fronteira física/freeze
-pré-fit pendentes; fit ainda não autorizado; zero autoridade**
+Status: **instrumentação, crítica cega e fronteira física materializadas e
+testadas; freeze pré-fit pendente; fit ainda não autorizado; zero autoridade**
 
 ## Decisão que este experimento precisa desbloquear
 
@@ -130,8 +130,33 @@ toy com superfícies não vistas precisa passar antes do fit experimental.
 - pesos ajustados apenas em `train-fit`;
 - limiar escolhido apenas em `train-calibration` para maximizar cobertura de
   fundo sob recall dirigido de 100%;
-- código, features, partição, limiar e checkpoint commitados antes de uma única
-  passagem por development;
+- código, features, partição e este pré-registro entram no mesmo commit de
+  fontes críticas antes do freeze;
+- o freeze compromete config, catálogo, três datasets, auditorias, read-set de
+  fit, fontes críticas e contratos de permissão; ele próprio precisa ser
+  commitado antes do fit;
+- fit selado lê apenas config, fit e freeze, produz candidate + attestation e
+  ambos precisam ser commitados antes da calibração;
+- calibração selada lê apenas config, calibração, freeze, candidate e
+  attestation, produz o checkpoint e ele precisa ser commitado antes da
+  ativação;
+- ativação relê somente a calibração congelada para provar que limiar e tabela
+  derivam das predições do checkpoint; ela não recebe development. O consumo
+  da abertura não recebe fit, calibração nem development, e cada recibo precisa
+  ser commitado em ordem antes do estágio seguinte;
+- só então o runner de development recebe o dataset, executa uma única rodada
+  de predições `B0`/`B1`, grava features e probabilidades auditáveis contra os
+  pesos congelados e emite o relatório canônico;
+- antes de conceder essa permissão, o launcher cria com exclusividade (`wx`) um
+  recibo de tentativa ligado ao opening; crash, concorrência ou cancelamento
+  consomem a tentativa e não autorizam retry silencioso;
+- se a tentativa terminar sem relatório, o receipt é commitado e um runner sem
+  acesso a development emite `INVALIDATED_SINGLE_DEVELOPMENT_ATTEMPT`: esse
+  fechamento técnico tem gates e claim nulos, não decide PASS/CUT e exige novo
+  experimento para qualquer nova abertura;
+- cada estágio exige worktree limpa, inputs rastreados/commitados, arquivos
+  regulares e cadeia de pais sem symlink, fontes iguais ao freeze, ambiente
+  sanitizado e allowlists de arquivo exatas pelo Node Permission Model;
 - uma attestation train-only compromete integralmente os exemplos lidos pelo
   trainer;
 - development e qualquer futuro áudio ficam fora da allowlist física de fit;
@@ -159,8 +184,9 @@ Todos precisam passar:
 7. p95 nearest-rank do delta local `B1-B0` menor ou igual a 50 ms, após 20
    warm-ups e 200 repetições intercaladas por caso de calibração, explicitamente
    sem interpretação ponta a ponta;
-8. dois fits e calibrações pré-development com pesos, limiares e predições
-   idênticos; depois, uma única passagem pelo development;
+8. dois fits e duas computações de calibração pré-development com pesos,
+   limiares e predições idênticos; depois, uma única rodada de predições em
+   development, com trace verificável sem nova decisão do modelo;
 9. `canProduceEffects=false`, zero autoridade, zero API/GPU paga.
 
 Com 16 pares de development, esses gates são apenas um screen de viabilidade;
@@ -182,6 +208,8 @@ não estimam risco de produção.
 - necessidade de identidade humana/oráculo de diarização para passar: registrar
   essa dependência e cortar o mecanismo disponível ao runtime atual;
 - qualquer tentativa de baixar pisos após cobertura exige novo experimento.
+- crash/cancelamento após consumir o receipt: invalidar sem interpretar
+  qualidade; nunca apagar o receipt ou repetir sob o mesmo EXP-0018.
 
 ## Alegação máxima
 
@@ -206,8 +234,11 @@ generalização humana ou permissão para o runtime ignorar fala.
 - runner de fit sem acesso físico a development;
 - registro explícito de corte se qualquer piso for inviável.
 
-Plano, auditor estrutural, datasets, prova toy, duas leituras cegas e testes
-adversariais já estão materializados. A primeira leitura encontrou 12 cenas
-ambíguas, elas foram reparadas e a reauditoria terminou 24/24 sem bloqueio. A
-fronteira física, attestation e freeze continuam sendo o gate corrente; nenhuma
-predição ou métrica de candidato foi calculada em development.
+Plano, auditor estrutural, datasets, prova toy, duas leituras cegas, runners
+selados e testes adversariais já estão materializados. A primeira leitura
+encontrou 12 cenas ambíguas, elas foram reparadas e a reauditoria terminou
+24/24 sem bloqueio. A fronteira física separa freeze, fit, calibração, ativação,
+consumo da abertura e development por permissões exatas, barreiras de commit e
+um receipt single-attempt anterior à leitura de development.
+O freeze continua sendo o gate corrente; nenhuma predição ou métrica de
+candidato foi calculada em development.

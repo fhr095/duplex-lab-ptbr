@@ -392,8 +392,9 @@ O probe semântico `R` também terminou antes do fit: o mapa causal físico deix
 exigidas por seus pisos. O caminho crítico agora é o EXP-0018: sua fábrica 2x2
 já fixou 24 blocos independentes, 48 pares e 96 casos, fazendo cada alvo e cada
 contexto exatos colidirem nos dois rótulos. As duas críticas cegas passaram
-24/24 após reparar 12 ambiguidades; freeze, attestation e fronteiras físicas
-ainda precedem o primeiro fit. O dataset development foi auditado apenas
+24/24 após reparar 12 ambiguidades. A fronteira selada de cinco estágios já
+está implementada e testada; o freeze ainda precede o primeiro fit, e cada
+saída posterior exige commit antes da próxima abertura. O dataset development foi auditado apenas
 estruturalmente, sem predição ou métrica de candidato. Áudio e ASR
 só entram depois de um passe textual sem atalhos. Até esses gates, o
 checkpoint continua observacional e o comando físico rápido permanece

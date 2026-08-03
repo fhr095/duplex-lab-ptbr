@@ -5,9 +5,78 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import {
+  EXP0018_CANONICAL_OUTCOMES,
   readExperimentIndex,
+  validateExp0018HistoricalOutcome,
   validateExperimentIndex
 } from "../src/eval/experiment-index.mjs";
+
+test("contrato EXP-0018 fixa outcomes qualitativos e invalidação técnica", () => {
+  assert.deepEqual(EXP0018_CANONICAL_OUTCOMES, {
+    PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN: {
+      status: "completed",
+      authority: "none",
+      reportStatus: "passed-textual-mechanism-screen",
+      allGatesPassed: true,
+      claimRequired: true,
+      nextDecision:
+        "Pré-registrar uma emenda e executar o menor screen causal em áudio do mesmo checkpoint; ASR continua fora até provar disponibilidade.",
+      parallelProbeStatus: "planned",
+      parallelProbeDecision:
+        "Pré-registrar separadamente o menor bridge causal em áudio do checkpoint aprovado; ASR permanece fora até evidência de disponibilidade."
+    },
+    CUT_CONTEXT_MATCHER_IN_THIS_DESIGN: {
+      status: "cut",
+      authority: "none",
+      reportStatus: "cut-textual-mechanism-screen",
+      allGatesPassed: false,
+      claimRequired: false,
+      nextDecision:
+        "Não levar este matcher a áudio; selecionar o próximo maior gargalo percebido sob novo pré-registro.",
+      parallelProbeStatus: "cut",
+      parallelProbeDecision:
+        "Bridge causal em áudio cancelado porque o matcher textual não venceu seus gates; selecionar outro mecanismo."
+    },
+    INVALIDATED_SINGLE_DEVELOPMENT_ATTEMPT: {
+      status: "invalidated",
+      authority: "none",
+      reportStatus: "invalidated-development-attempt",
+      allGatesPassed: null,
+      claimRequired: false,
+      nextDecision:
+        "Registrar um novo experimento antes de qualquer nova abertura; esta tentativa não produz conclusão de qualidade.",
+      parallelProbeStatus: "planned",
+      parallelProbeDecision:
+        "Nenhum bridge em áudio foi autorizado; repetir a hipótese somente sob novo experimento e nova abertura."
+    }
+  });
+});
+
+test("outcome histórico EXP-0018 sobrevive ao próximo caminho crítico", () => {
+  const outcome = EXP0018_CANONICAL_OUTCOMES
+    .PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN;
+  const entry = {
+    nextDecision: outcome.nextDecision,
+    parallelProbeOutcome: {
+      status: outcome.parallelProbeStatus,
+      decision: outcome.parallelProbeDecision
+    }
+  };
+  assert.doesNotThrow(() => validateExp0018HistoricalOutcome(entry, {
+    currentCriticalPath: "EXP-0019",
+    currentParallelProbe: {
+      status: "planned",
+      decision: "probe novo e independente"
+    }
+  }, "PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN"));
+  assert.throws(() => validateExp0018HistoricalOutcome({
+    ...entry,
+    parallelProbeOutcome: { ...entry.parallelProbeOutcome, status: "cut" }
+  }, {
+    currentCriticalPath: "EXP-0019",
+    currentParallelProbe: { status: "planned", decision: "novo" }
+  }, "PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN"), /histórico contradiz/u);
+});
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const indexPath = resolve(projectRoot, "eval/EXPERIMENT_INDEX.json");
@@ -19,6 +88,7 @@ async function fixture() {
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
   assert.equal(index.currentCriticalPath, "EXP-0018");
+  assert.equal(index.transitionState, "active");
   assert.equal(index.currentParallelProbe.id, "EXP-0018-R");
   assert.equal(index.currentParallelProbe.blocking, false);
   assert.equal(
@@ -26,13 +96,17 @@ test("índice canônico real referencia evidências existentes", async () => {
     null
   );
   assert.equal(index.entries.at(-1).authority, "none");
+  assert.equal(index.entries.at(-1).evidenceCommit, null);
+  assert.equal(index.entries.at(-1).parallelProbeOutcome, null);
   assert.equal(
     index.entries.at(-1).decision,
     "materialize-context-observability-instrumentation-before-fit"
   );
   assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
     "node --test tests/exp-0018-context-factory.test.mjs",
-    "npm run eval:exp:0018:data:check"
+    "node --test tests/exp-0018-boundary.test.mjs",
+    "node --test tests/exp-0018-training.test.mjs",
+    "node --test tests/experiment-index.test.mjs"
   ]);
   assert.equal(
     index.entries.find(({ id }) => id === "EXP-0017").canonicalReport,
@@ -80,6 +154,17 @@ test("rejeita mais de um caminho crítico", async () => {
   await assert.rejects(
     validateExperimentIndex(index, { projectRoot }),
     /exactly one critical path is required; found 2/u
+  );
+});
+
+test("não permite abandonar experimento anterior ainda aberto", async () => {
+  const index = await fixture();
+  const previous = index.entries.at(-2);
+  previous.status = "active";
+  previous.canonicalReport = null;
+  await assert.rejects(
+    validateExperimentIndex(index, { projectRoot }),
+    /não pode permanecer aberto fora do caminho crítico/u
   );
 });
 

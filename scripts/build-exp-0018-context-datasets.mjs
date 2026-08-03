@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import {
   EXP0018_FEATURE_NAMES,
   EXP0018_FEATURE_VERSION,
+  EXP0018_PREFIT_CONFIG_CANONICAL_SHA256,
   EXP0018_ROLE_CONTRACT,
   buildExp0018Datasets,
   validateExp0018Dataset
@@ -22,9 +23,6 @@ const DEFAULTS = Object.freeze({
   development: "eval/datasets/exp-0018-context-development-v0.1.json",
   audit: "eval/commitments/exp-0018-instrumentation-audit-v0.1.json"
 });
-
-export const EXP0018_PREFIT_CONFIG_CANONICAL_SHA256 =
-  "sha256:ed74eec86ae0f800bdaf4ea6a961fedf2e2101c22c2c1ebf5071c86a20e94d5f";
 
 function parseArgs(args) {
   const options = { ...DEFAULTS, check: false };

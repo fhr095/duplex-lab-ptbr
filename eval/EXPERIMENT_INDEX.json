@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-08-02T23:10:00.000-03:00",
+  "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
     "legacyRange": "EXP-0000..EXP-0006",
@@ -222,17 +223,22 @@
       "status": "active",
       "decision": "materialize-context-observability-instrumentation-before-fit",
       "canonicalReport": null,
+      "evidenceCommit": null,
+      "parallelProbeOutcome": null,
       "authority": "none",
       "criticalPath": true,
       "cleanCloneChecks": [
         "node --test tests/exp-0018-context-factory.test.mjs",
-        "npm run eval:exp:0018:data:check"
+        "node --test tests/exp-0018-boundary.test.mjs",
+        "node --test tests/exp-0018-training.test.mjs",
+        "node --test tests/experiment-index.test.mjs"
       ],
       "localReproductionCommands": [
-        "npm run eval:exp:0018:data:check"
+        "npm run eval:exp:0018:data:check",
+        "npm run eval:index:check"
       ],
       "supersedes": [],
-      "nextDecision": "Com críticas cegas 24/24 concluídas, fechar freeze, attestation e fronteira física; só então autorizar fit/calibração, sem avaliação de candidato em development."
+      "nextDecision": "Com críticas cegas 24/24 e fronteira física testada, commitar as fontes e o freeze; depois executar fit, calibração, ativação, abertura e development com uma barreira de commit entre estágios."
     }
   ]
 }

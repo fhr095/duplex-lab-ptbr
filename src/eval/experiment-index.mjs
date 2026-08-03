@@ -1,6 +1,30 @@
+import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
 import { access, readFile } from "node:fs/promises";
 import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
+import { promisify } from "node:util";
+
+import {
+  validateExp0018CheckpointChain,
+  validateExp0018DevelopmentActivation,
+  validateExp0018DevelopmentAttempt,
+  validateExp0018DevelopmentOpening,
+  validateExp0018PrefitFreeze,
+  validateExp0018TrainAttestation
+} from "./exp-0018-boundary.mjs";
+import {
+  createExp0018FitCandidate,
+  validateExp0018Checkpoint,
+  validateExp0018CheckpointAgainstCalibration,
+  validateExp0018DevelopmentInvalidation,
+  validateExp0018DevelopmentReport,
+  validateExp0018FitCandidate
+} from
+  "./exp-0018-training.mjs";
+import { canonicalSha256 } from "./factory/canonical-hash.mjs";
+
+const execFileAsync = promisify(execFile);
 
 export const EXPERIMENT_INDEX_SCHEMA_VERSION = 1;
 
@@ -9,6 +33,7 @@ export const EXPERIMENT_STATUSES = Object.freeze([
   "completed",
   "cut",
   "held",
+  "invalidated",
   "planned",
   "promoted",
   "rejected"
@@ -26,6 +51,70 @@ const AUTHORITY_SET = new Set(EXPERIMENT_AUTHORITIES);
 const EXPERIMENT_ID_PATTERN = /^EXP-\d{4}$/u;
 const EXPERIMENT_TRACK_ID_PATTERN = /^EXP-\d{4}-[A-Z]$/u;
 const EXPERIMENT_RANGE_PATTERN = /^(EXP-\d{4})\.\.(EXP-\d{4})$/u;
+
+export const EXP0018_CANONICAL_OUTCOMES = Object.freeze({
+  PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN: Object.freeze({
+    status: "completed",
+    authority: "none",
+    reportStatus: "passed-textual-mechanism-screen",
+    allGatesPassed: true,
+    claimRequired: true,
+    nextDecision:
+      "Pré-registrar uma emenda e executar o menor screen causal em áudio do mesmo checkpoint; ASR continua fora até provar disponibilidade.",
+    parallelProbeStatus: "planned",
+    parallelProbeDecision:
+      "Pré-registrar separadamente o menor bridge causal em áudio do checkpoint aprovado; ASR permanece fora até evidência de disponibilidade."
+  }),
+  CUT_CONTEXT_MATCHER_IN_THIS_DESIGN: Object.freeze({
+    status: "cut",
+    authority: "none",
+    reportStatus: "cut-textual-mechanism-screen",
+    allGatesPassed: false,
+    claimRequired: false,
+    nextDecision:
+      "Não levar este matcher a áudio; selecionar o próximo maior gargalo percebido sob novo pré-registro.",
+    parallelProbeStatus: "cut",
+    parallelProbeDecision:
+      "Bridge causal em áudio cancelado porque o matcher textual não venceu seus gates; selecionar outro mecanismo."
+  }),
+  INVALIDATED_SINGLE_DEVELOPMENT_ATTEMPT: Object.freeze({
+    status: "invalidated",
+    authority: "none",
+    reportStatus: "invalidated-development-attempt",
+    allGatesPassed: null,
+    claimRequired: false,
+    nextDecision:
+      "Registrar um novo experimento antes de qualquer nova abertura; esta tentativa não produz conclusão de qualidade.",
+    parallelProbeStatus: "planned",
+    parallelProbeDecision:
+      "Nenhum bridge em áudio foi autorizado; repetir a hipótese somente sob novo experimento e nova abertura."
+  })
+});
+
+export const EXP0018_CANONICAL_REPORT_PATH =
+  "eval/reports/exp-0018-context-development-v0.1.json";
+
+export function validateExp0018HistoricalOutcome(entry, index, decision) {
+  const outcome = EXP0018_CANONICAL_OUTCOMES[decision];
+  assert(outcome, "EXP-0018 outcome histórico não registrado");
+  assert(entry.nextDecision === outcome.nextDecision,
+    "EXP-0018 nextDecision contradiz o outcome congelado");
+  assert(
+    entry.parallelProbeOutcome?.status === outcome.parallelProbeStatus &&
+    entry.parallelProbeOutcome?.decision === outcome.parallelProbeDecision,
+    "EXP-0018 probe paralelo histórico contradiz o outcome congelado"
+  );
+  if (index.currentCriticalPath === "EXP-0018") {
+    assert(
+      index.currentParallelProbe.status ===
+        entry.parallelProbeOutcome.status &&
+      index.currentParallelProbe.decision ===
+        entry.parallelProbeOutcome.decision,
+      "probe corrente EXP-0018 contradiz seu fechamento histórico"
+    );
+  }
+  return outcome;
+}
 
 // Deliberately separate from the editable index: changing one JSON file must
 // not be enough to rewrite a historical decision or grant authority.
@@ -114,6 +203,16 @@ const CANONICAL_REPORT_CONTRACTS = Object.freeze({
       ["claims.semanticTextFailed", null],
       ["authority.canProduceEffects", false]
     ]
+  },
+  "EXP-0018": {
+    decisionPath: "decision",
+    outcomes: EXP0018_CANONICAL_OUTCOMES,
+    assertions: [
+      ["protocol.developmentOpeningsUsed", 1],
+      ["protocol.developmentAttemptsUsed", 1],
+      ["protocol.confirmatoryClaimAllowed", false],
+      ["authority.canProduceEffects", false]
+    ]
   }
 });
 
@@ -177,7 +276,75 @@ async function assertFileExists(path, label) {
   }
 }
 
-async function assertCanonicalReport(entry, projectRoot) {
+function sha256Bytes(bytes) {
+  return `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
+}
+
+async function readArtifact(projectRoot, repositoryPath, label) {
+  const path = resolveRepositoryPath(projectRoot, repositoryPath, label);
+  const bytes = await readFile(path);
+  return {
+    path: repositoryPath,
+    bytes,
+    fileSha256: sha256Bytes(bytes),
+    value: JSON.parse(bytes.toString("utf8"))
+  };
+}
+
+async function git(projectRoot, ...args) {
+  const result = await execFileAsync("git", args, {
+    cwd: projectRoot,
+    encoding: "buffer",
+    maxBuffer: 20 * 1024 * 1024
+  });
+  return Buffer.isBuffer(result.stdout)
+    ? result.stdout
+    : Buffer.from(result.stdout);
+}
+
+async function gitFileAt(projectRoot, commit, repositoryPath) {
+  try {
+    return await git(projectRoot, "show", `${commit}:${repositoryPath}`);
+  } catch (error) {
+    if (error?.code === 128) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+async function assertGitFileMatches(
+  projectRoot,
+  commit,
+  repositoryPath,
+  expectedBytes,
+  label
+) {
+  const bytes = await gitFileAt(projectRoot, commit, repositoryPath);
+  assert(bytes !== null, `${label} não existia no commit declarado`);
+  assert(bytes.equals(expectedBytes),
+    `${label} diverge dos bytes no commit declarado`);
+}
+
+async function assertGitFileAbsent(
+  projectRoot,
+  commit,
+  repositoryPath,
+  label
+) {
+  assert(await gitFileAt(projectRoot, commit, repositoryPath) === null,
+    `${label} já existia antes da abertura autorizada`);
+}
+
+async function assertGitAncestor(projectRoot, ancestor, descendant, label) {
+  try {
+    await git(projectRoot, "merge-base", "--is-ancestor", ancestor, descendant);
+  } catch {
+    assert(false, `${label} rompe a cronologia de commits`);
+  }
+}
+
+async function assertCanonicalReport(entry, projectRoot, index) {
   if (entry.canonicalReport === null) {
     assert(
       entry.status === "active" || entry.status === "planned",
@@ -187,7 +354,33 @@ async function assertCanonicalReport(entry, projectRoot) {
       entry.authority === "none",
       `${entry.id} cannot have authority before a canonical report`
     );
+    if (entry.id === "EXP-0018") {
+      assert(entry.evidenceCommit === null,
+        "EXP-0018 ativo não pode declarar commit de resultado");
+      assert(entry.parallelProbeOutcome === null,
+        "EXP-0018 ativo não pode declarar desfecho do probe paralelo");
+      const reportPath = resolveRepositoryPath(
+        projectRoot,
+        EXP0018_CANONICAL_REPORT_PATH,
+        "EXP-0018 canonical output"
+      );
+      let reportExists = true;
+      try {
+        await access(reportPath);
+      } catch {
+        reportExists = false;
+      }
+      assert(!reportExists,
+        "EXP-0018 report existe mas ainda está órfão do índice");
+    }
     return;
+  }
+
+  if (entry.id === "EXP-0018") {
+    assert(entry.canonicalReport === EXP0018_CANONICAL_REPORT_PATH,
+      "EXP-0018 canonicalReport precisa usar o output único do runner");
+    assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
+      "EXP-0018 terminal exige evidenceCommit");
   }
 
   const path = resolveRepositoryPath(
@@ -214,12 +407,18 @@ async function assertCanonicalReport(entry, projectRoot) {
 
   const contract = CANONICAL_REPORT_CONTRACTS[entry.id];
   assert(contract, `${entry.id} has no canonical report contract`);
+  let resolvedContract = contract;
+  if (contract.outcomes) {
+    resolvedContract = contract.outcomes[report?.decision];
+    assert(resolvedContract,
+      `${entry.id}.canonicalReport has an unregistered outcome`);
+  }
   assert(
-    entry.status === contract.status,
+    entry.status === resolvedContract.status,
     `${entry.id}.status contradicts its canonical report contract`
   );
   assert(
-    entry.authority === contract.authority,
+    entry.authority === resolvedContract.authority,
     `${entry.id}.authority contradicts its canonical report contract`
   );
   assert(
@@ -231,6 +430,316 @@ async function assertCanonicalReport(entry, projectRoot) {
       valueAtPath(report, assertionPath) === expected,
       `${entry.id}.canonicalReport violates ${assertionPath}`
     );
+  }
+  if (entry.id === "EXP-0018") {
+    const invalidated = report.decision ===
+      "INVALIDATED_SINGLE_DEVELOPMENT_ATTEMPT";
+    assert(report.status === resolvedContract.reportStatus,
+      "EXP-0018 report status contradicts its outcome");
+    assert(report.allGatesPassed === resolvedContract.allGatesPassed,
+      "EXP-0018 gate aggregate contradicts its outcome");
+    assert(
+      resolvedContract.claimRequired
+        ? typeof report.claim === "string" && report.claim.length > 0
+        : report.claim === null,
+      "EXP-0018 claim contradicts its outcome"
+    );
+    assert(
+      invalidated
+        ? report.protocol?.canonicalPredictionReportProduced === false &&
+          report.protocol?.qualityOutcomeAvailable === false &&
+          report.protocol?.retryAuthorized === false &&
+          report.protocol?.developmentDatasetReadByInvalidator === false
+        : report.protocol?.predictionRuns === 1 &&
+          report.protocol?.repeatedDevelopmentPredictionRunPerformed === false,
+      "EXP-0018 protocolo contradiz o tipo de fechamento"
+    );
+    validateExp0018HistoricalOutcome(entry, index, report.decision);
+    const paths = {
+      config: "eval/experiments/exp-0018-context-observability-v0.1.json",
+      catalog: "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+      fit: "eval/datasets/exp-0018-context-fit-v0.1.json",
+      calibration:
+        "eval/datasets/exp-0018-context-calibration-v0.1.json",
+      development:
+        "eval/datasets/exp-0018-context-development-v0.1.json",
+      freeze: "eval/commitments/exp-0018-prefit-freeze-v0.1.json",
+      instrumentationAudit:
+        "eval/commitments/exp-0018-instrumentation-audit-v0.1.json",
+      blindSemanticReview:
+        "eval/commitments/exp-0018-blind-semantic-review-v0.1.json",
+      candidate: "eval/checkpoints/exp-0018-fit-candidate-v0.1.json",
+      attestation:
+        "eval/commitments/exp-0018-train-attestation-v0.1.json",
+      checkpoint: "eval/checkpoints/exp-0018-context-v0.1.json",
+      activation:
+        "eval/commitments/exp-0018-development-activation-v0.1.json",
+      opening:
+        "eval/commitments/exp-0018-development-opening-v0.1.json",
+      attempt:
+        "eval/commitments/exp-0018-development-attempt-v0.1.json",
+      report: EXP0018_CANONICAL_REPORT_PATH
+    };
+    const artifacts = Object.fromEntries(await Promise.all(
+      Object.entries(paths).map(async ([name, repositoryPath]) => [
+        name,
+        await readArtifact(projectRoot, repositoryPath, `EXP-0018.${name}`)
+      ]))
+    );
+    const freeze = artifacts.freeze.value;
+    const candidate = artifacts.candidate.value;
+    const attestation = artifacts.attestation.value;
+    const checkpoint = artifacts.checkpoint.value;
+    const activation = artifacts.activation.value;
+    const opening = artifacts.opening.value;
+    const attempt = artifacts.attempt.value;
+    const validations = [
+      ["freeze", validateExp0018PrefitFreeze(freeze)],
+      ["candidate", validateExp0018FitCandidate(candidate)],
+      ["attestation", validateExp0018TrainAttestation(attestation)],
+      ["checkpoint", validateExp0018Checkpoint(checkpoint)],
+      ["checkpoint calibration", validateExp0018CheckpointAgainstCalibration(
+        checkpoint,
+        {
+          config: artifacts.config.value,
+          calibrationDataset: artifacts.calibration.value
+        }
+      )],
+      ["checkpoint chain", validateExp0018CheckpointChain({
+        freeze,
+        config: artifacts.config.value,
+        attestation,
+        checkpoint
+      })],
+      ["activation", validateExp0018DevelopmentActivation(activation)],
+      ["opening", validateExp0018DevelopmentOpening(opening)],
+      ["attempt", validateExp0018DevelopmentAttempt(attempt)]
+    ];
+    for (const [name, validation] of validations) {
+      assert(validation.valid,
+        `EXP-0018 ${name} inválido: ${validation.errors.join("; ")}`);
+    }
+    const authoritativeCandidate = createExp0018FitCandidate({
+      config: artifacts.config.value,
+      fitDataset: artifacts.fit.value,
+      prefitFreezeSha256: freeze.prefitFreezeSha256,
+      configFileSha256: artifacts.config.fileSha256,
+      fitDatasetFileSha256: artifacts.fit.fileSha256,
+      fitExecutionCommit: attestation.bindings.fitExecutionCommit
+    });
+    assert(
+      authoritativeCandidate.fitCandidateSha256 ===
+        candidate.fitCandidateSha256,
+      "EXP-0018 candidate diverge do refit autoritativo"
+    );
+    assert(
+      artifacts.config.fileSha256 === freeze.artifacts.config.fileSha256 &&
+      `sha256:${canonicalSha256(artifacts.config.value)}` ===
+        freeze.artifacts.config.canonicalSha256 &&
+      artifacts.catalog.fileSha256 ===
+        freeze.artifacts.catalog.fileSha256 &&
+      `sha256:${canonicalSha256(artifacts.catalog.value)}` ===
+        freeze.artifacts.catalog.canonicalSha256 &&
+      artifacts.fit.fileSha256 === freeze.artifacts.fitDataset.fileSha256 &&
+      artifacts.fit.value.datasetSha256 ===
+        freeze.artifacts.fitDataset.canonicalSha256 &&
+      artifacts.calibration.fileSha256 ===
+        freeze.artifacts.calibrationDataset.fileSha256 &&
+      artifacts.calibration.value.datasetSha256 ===
+        freeze.artifacts.calibrationDataset.canonicalSha256 &&
+      artifacts.development.fileSha256 ===
+        freeze.artifacts.developmentDataset.fileSha256 &&
+      artifacts.development.value.datasetSha256 ===
+        freeze.artifacts.developmentDataset.canonicalSha256 &&
+      artifacts.instrumentationAudit.fileSha256 ===
+        freeze.artifacts.instrumentationAudit.fileSha256 &&
+      artifacts.instrumentationAudit.value.instrumentationAuditSha256 ===
+        freeze.artifacts.instrumentationAudit.canonicalSha256 &&
+      artifacts.blindSemanticReview.fileSha256 ===
+        freeze.artifacts.blindSemanticReview.fileSha256 &&
+      artifacts.blindSemanticReview.value.reviewSha256 ===
+        freeze.artifacts.blindSemanticReview.canonicalSha256,
+      "EXP-0018 artefatos prefit divergem do freeze"
+    );
+    assert(
+      attestation.bindings.fitCandidateSha256 ===
+        candidate.fitCandidateSha256 &&
+      attestation.outputs.modelSha256.B0 === candidate.arms.B0.modelSha256 &&
+      attestation.outputs.modelSha256.B1 === candidate.arms.B1.modelSha256 &&
+      activation.bindings.prefitFreezeFileSha256 ===
+        artifacts.freeze.fileSha256 &&
+      activation.bindings.prefitFreezeSha256 === freeze.prefitFreezeSha256 &&
+      activation.bindings.trainAttestationFileSha256 ===
+        artifacts.attestation.fileSha256 &&
+      activation.bindings.trainAttestationSha256 ===
+        attestation.trainAttestationSha256 &&
+      activation.bindings.checkpointFileSha256 ===
+        artifacts.checkpoint.fileSha256 &&
+      activation.bindings.checkpointSha256 === checkpoint.checkpointSha256 &&
+      activation.bindings.configFileSha256 === artifacts.config.fileSha256 &&
+      opening.bindings.developmentActivationSha256 ===
+        activation.developmentActivationSha256 &&
+      opening.bindings.checkpointSha256 === checkpoint.checkpointSha256 &&
+      opening.bindings.developmentDatasetFileSha256 ===
+        artifacts.development.fileSha256 &&
+      opening.bindings.developmentDatasetCanonicalSha256 ===
+        artifacts.development.value.datasetSha256 &&
+      attempt.bindings.developmentOpeningFileSha256 ===
+        artifacts.opening.fileSha256 &&
+      attempt.bindings.developmentOpeningSha256 ===
+        opening.developmentOpeningSha256 &&
+      attempt.bindings.checkpointSha256 === checkpoint.checkpointSha256 &&
+      (invalidated || attempt.attempt.preflightCommit ===
+        report.bindings.developmentExecutionCommit),
+      "EXP-0018 cadeia de artefatos divergiu"
+    );
+    const commonReportInput = {
+      config: artifacts.config.value,
+      prefitFreezeSha256: freeze.prefitFreezeSha256,
+      developmentActivationFileSha256: artifacts.activation.fileSha256,
+      developmentActivationSha256:
+        activation.developmentActivationSha256,
+      developmentOpeningFileSha256: artifacts.opening.fileSha256,
+      developmentOpeningSha256: opening.developmentOpeningSha256,
+      developmentAttemptFileSha256: artifacts.attempt.fileSha256,
+      developmentAttemptSha256: attempt.developmentAttemptSha256,
+      configFileSha256: artifacts.config.fileSha256,
+      developmentDatasetFileSha256: artifacts.development.fileSha256,
+      filesystemBoundary: report.filesystemBoundary
+    };
+    const validation = invalidated
+      ? validateExp0018DevelopmentInvalidation(report, {
+        ...commonReportInput,
+        checkpointSha256: checkpoint.checkpointSha256,
+        developmentDatasetCanonicalSha256:
+          artifacts.development.value.datasetSha256,
+        invalidationExecutionCommit:
+          report.bindings.invalidationExecutionCommit
+      })
+      : validateExp0018DevelopmentReport(report, {
+        ...commonReportInput,
+        checkpoint,
+        developmentDataset: artifacts.development.value,
+        developmentExecutionCommit:
+          report.bindings.developmentExecutionCommit
+      });
+    assert(validation.valid,
+      `EXP-0018 canonical report failed validation: ` +
+      validation.errors.join("; "));
+    for (const source of freeze.criticalSources) {
+      const sourceBytes = await gitFileAt(
+        projectRoot,
+        freeze.runnerSourceCommit,
+        source.path
+      );
+      assert(
+        sourceBytes !== null && sha256Bytes(sourceBytes) === source.fileSha256,
+        `EXP-0018 fonte congelada não corresponde ao commit: ${source.path}`
+      );
+    }
+    const commits = [
+      freeze.runnerSourceCommit,
+      attestation.bindings.fitExecutionCommit,
+      checkpoint.bindings.calibrationExecutionCommit,
+      activation.checkpointSourceCommit,
+      opening.opening.openingExecutionCommit,
+      attempt.attempt.preflightCommit,
+      ...(invalidated
+        ? [report.bindings.invalidationExecutionCommit]
+        : []),
+      entry.evidenceCommit
+    ];
+    for (let position = 1; position < commits.length; position += 1) {
+      await assertGitAncestor(
+        projectRoot,
+        commits[position - 1],
+        commits[position],
+        `EXP-0018 commit ${position}`
+      );
+    }
+    const headCommit = (await git(projectRoot, "rev-parse", "HEAD"))
+      .toString("utf8").trim();
+    await assertGitAncestor(
+      projectRoot,
+      entry.evidenceCommit,
+      headCommit,
+      "EXP-0018 evidenceCommit→HEAD"
+    );
+    await assertGitFileAbsent(projectRoot, freeze.runnerSourceCommit,
+      paths.freeze, "freeze");
+    for (const name of [
+      "config",
+      "catalog",
+      "fit",
+      "calibration",
+      "development",
+      "instrumentationAudit",
+      "blindSemanticReview"
+    ]) {
+      await assertGitFileMatches(
+        projectRoot,
+        freeze.runnerSourceCommit,
+        paths[name],
+        artifacts[name].bytes,
+        `prefit ${name}`
+      );
+    }
+    await assertGitFileMatches(projectRoot,
+      attestation.bindings.fitExecutionCommit,
+      paths.freeze, artifacts.freeze.bytes, "freeze");
+    await assertGitFileAbsent(projectRoot,
+      attestation.bindings.fitExecutionCommit,
+      paths.candidate, "candidate");
+    await assertGitFileAbsent(projectRoot,
+      attestation.bindings.fitExecutionCommit,
+      paths.attestation, "attestation");
+    await assertGitFileMatches(projectRoot,
+      checkpoint.bindings.calibrationExecutionCommit,
+      paths.candidate, artifacts.candidate.bytes, "candidate");
+    await assertGitFileMatches(projectRoot,
+      checkpoint.bindings.calibrationExecutionCommit,
+      paths.attestation, artifacts.attestation.bytes, "attestation");
+    await assertGitFileAbsent(projectRoot,
+      checkpoint.bindings.calibrationExecutionCommit,
+      paths.checkpoint, "checkpoint");
+    await assertGitFileMatches(projectRoot, activation.checkpointSourceCommit,
+      paths.checkpoint, artifacts.checkpoint.bytes, "checkpoint");
+    await assertGitFileAbsent(projectRoot, activation.checkpointSourceCommit,
+      paths.activation, "activation");
+    await assertGitFileMatches(projectRoot,
+      opening.opening.openingExecutionCommit,
+      paths.activation, artifacts.activation.bytes, "activation");
+    await assertGitFileAbsent(projectRoot,
+      opening.opening.openingExecutionCommit,
+      paths.opening, "opening");
+    await assertGitFileMatches(projectRoot,
+      attempt.attempt.preflightCommit,
+      paths.opening, artifacts.opening.bytes, "opening");
+    await assertGitFileAbsent(projectRoot,
+      attempt.attempt.preflightCommit,
+      paths.attempt, "development attempt");
+    await assertGitFileAbsent(projectRoot,
+      attempt.attempt.preflightCommit,
+      paths.report, "development report");
+    if (invalidated) {
+      await assertGitFileMatches(
+        projectRoot,
+        report.bindings.invalidationExecutionCommit,
+        paths.attempt,
+        artifacts.attempt.bytes,
+        "committed invalidated attempt"
+      );
+      await assertGitFileAbsent(
+        projectRoot,
+        report.bindings.invalidationExecutionCommit,
+        paths.report,
+        "invalidation report"
+      );
+    }
+    await assertGitFileMatches(projectRoot, entry.evidenceCommit,
+      paths.attempt, artifacts.attempt.bytes, "development attempt");
+    await assertGitFileMatches(projectRoot, entry.evidenceCommit,
+      paths.report, artifacts.report.bytes, "development report");
   }
 }
 
@@ -283,6 +792,22 @@ function validateEntryShape(entry, index) {
     typeof entry.nextDecision === "string" && entry.nextDecision.length > 0,
     `${entry.id}.nextDecision must be a non-empty string`
   );
+  if (entry.id === "EXP-0018") {
+    assert(
+      entry.evidenceCommit === null ||
+        /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),
+      "EXP-0018.evidenceCommit precisa ser null ou commit completo"
+    );
+    assert(
+      entry.parallelProbeOutcome === null ||
+        (typeof entry.parallelProbeOutcome === "object" &&
+          !Array.isArray(entry.parallelProbeOutcome) &&
+          typeof entry.parallelProbeOutcome.status === "string" &&
+          typeof entry.parallelProbeOutcome.decision === "string" &&
+          entry.parallelProbeOutcome.decision.length > 0),
+      "EXP-0018.parallelProbeOutcome é inválido"
+    );
+  }
 }
 
 export async function validateExperimentIndex(index, options = {}) {
@@ -296,6 +821,11 @@ export async function validateExperimentIndex(index, options = {}) {
     typeof index.updatedAt === "string" &&
       Number.isFinite(Date.parse(index.updatedAt)),
     "updatedAt must be an ISO-compatible timestamp"
+  );
+  assert(
+    index.transitionState === "active" ||
+      index.transitionState === "terminal-awaiting-next-registration",
+    "transitionState is invalid"
   );
 
   assertObject(index.coverage, "coverage");
@@ -398,8 +928,9 @@ export async function validateExperimentIndex(index, options = {}) {
   );
   assert(
     index.currentParallelProbe.status === "active" ||
-      index.currentParallelProbe.status === "planned",
-    "currentParallelProbe.status must be active or planned"
+      index.currentParallelProbe.status === "planned" ||
+      index.currentParallelProbe.status === "cut",
+    "currentParallelProbe.status must be active, planned or cut"
   );
   assert(
     index.currentParallelProbe.blocking === false,
@@ -452,12 +983,38 @@ export async function validateExperimentIndex(index, options = {}) {
   );
   assert(
     criticalEntries[0].status === "active" ||
-      criticalEntries[0].status === "planned",
-    "currentCriticalPath must be active or planned"
+      criticalEntries[0].status === "planned" ||
+      (criticalEntries[0].canonicalReport !== null &&
+        (criticalEntries[0].status === "completed" ||
+          criticalEntries[0].status === "cut" ||
+          criticalEntries[0].status === "invalidated")),
+    "currentCriticalPath must be active/planned or just terminally reported"
+  );
+  const criticalIsTerminal =
+    criticalEntries[0].canonicalReport !== null &&
+    (criticalEntries[0].status === "completed" ||
+      criticalEntries[0].status === "cut" ||
+      criticalEntries[0].status === "invalidated");
+  assert(
+    index.transitionState === (criticalIsTerminal
+      ? "terminal-awaiting-next-registration"
+      : "active"),
+    "transitionState contradicts currentCriticalPath"
+  );
+  assert(
+    index.currentParallelProbe.status !== "cut" || criticalIsTerminal,
+    "parallel probe may be cut only after terminal evidence"
   );
 
   const knownIds = new Set(ids);
   for (const entry of index.entries) {
+    if (entry.id !== index.currentCriticalPath) {
+      assert(
+        entry.status !== "active" && entry.status !== "planned" &&
+          entry.canonicalReport !== null,
+        `${entry.id} não pode permanecer aberto fora do caminho crítico`
+      );
+    }
     assert(
       !entry.supersedes.includes(entry.id),
       `${entry.id} cannot supersede itself`
@@ -489,7 +1046,7 @@ export async function validateExperimentIndex(index, options = {}) {
         await assertFileExists(testPath, `${entry.id}.cleanCloneChecks`);
       }
     }
-    await assertCanonicalReport(entry, projectRoot);
+    await assertCanonicalReport(entry, projectRoot, index);
   }
 
   return index;
