@@ -29,6 +29,9 @@ eval/generated/exp-0024/*
 eval/generated/exp-0025/*
 !eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json
 !eval/generated/exp-0025/causal-render-onset-journal-v0.1.ndjson
+!eval/generated/exp-0025-r/
+eval/generated/exp-0025-r/*
+!eval/generated/exp-0025-r/holdout-attempt-consumed-v0.1.json
 # Resultados brutos podem ser grandes e conter caminhos específicos da máquina.
 # O agregado canônico pequeno permanece versionado como evidência de referência.
 eval/reports/*
@@ -56,6 +59,7 @@ eval/reports/*
 !eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json
 !eval/reports/exp-0025-r-baseline-headroom-v0.1.json
 !eval/reports/exp-0025-r-local-development-v0.1.json
+!eval/reports/exp-0025-r-local-holdout-v0.1.json
 !eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json
 coverage/
 tmp/
