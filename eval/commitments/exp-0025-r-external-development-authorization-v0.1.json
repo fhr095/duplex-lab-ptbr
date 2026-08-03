@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "exp-0025-r-external-development-authorization-v1",
+  "experimentId": "EXP-0025-R",
+  "stage": "EXTERNAL_SENTINELS_AND_DEVELOPMENT_AUTHORIZED_BEFORE_INFERENCE",
+  "authorizedAt": "2026-08-03T14:32:57-03:00",
+  "authorizationSourceCommit": "dad7e6d0bbccd88f6cfd301b8c2b06e2bfc22977",
+  "candidate": {
+    "id": "E-official-duplexcascade-v0.1",
+    "role": "OFFICIAL_EXTERNAL_TEXTUAL_MICROTURN_POLICY",
+    "officialCodeCommit": "42893024ca90c8de8ac3ed624467ebc123512ff8",
+    "externalRepository": "sbintuitions/DuplexCascade",
+    "externalSnapshotCommit": "dca21cb1309bb533d80f5aa5600c7b0cc2c470e3",
+    "baseRepository": "Qwen/Qwen2-7B-Instruct",
+    "baseSnapshotCommit": "f2826a00ceef68f0f2b946d945ecc0477ce4450c",
+    "modelState": {
+      "byteLength": 17419657672,
+      "sha256": "603070a3251613328859105fa66fe0711e101099a7b0885da41617f575bed5e9"
+    },
+    "tokenizerJson": {
+      "byteLength": 11419443,
+      "sha256": "f84571b782afc4b884e8ad68ce5a02c3cdd236a8d81cae46f5c676165fa5fd40"
+    },
+    "configuration": {
+      "overlapWindowSeconds": 0.6,
+      "maxNewTokens": 64,
+      "doSample": false,
+      "infraSeed": 25025,
+      "freePromptAdded": false,
+      "quantizationAllowed": false,
+      "checkpointSwapAllowed": false,
+      "mappingChangeAllowed": false
+    }
+  },
+  "authorizedStages": [
+    "FOUR_ENGLISH_SENTINELS",
+    "DEVELOPMENT_D_SINGLE_PASS"
+  ],
+  "explicitlyNotAuthorized": [
+    "ANY_HOLDOUT_INFERENCE",
+    "CHECKPOINT_OR_MODEL_SWAP",
+    "SWEEP_OR_FAVORABLE_SEED_RERUN",
+    "MAPPING_CHANGE",
+    "L2_OR_ANY_LOCAL_REPRODUCTION",
+    "ADDITIONAL_API",
+    "ASR_OR_TTS",
+    "RUNTIME_AUTHORITY"
+  ],
+  "inputBindings": {
+    "development": {
+      "path": "eval/datasets/exp-0025-r-development-v0.1.json",
+      "fileSha256": "c49b69623bcfccbc836674487bd49ce97f80616a0072e0dc7d7aee76887008b2",
+      "packSha256": "sha256:e074c3ff6aa32ab399d6b00d15c96fabceb72afc163905f5a33a93fb6d135b0d",
+      "pairs": 16,
+      "utterances": 32,
+      "sessions": 8
+    },
+    "sentinels": {
+      "path": "eval/scenarios/exp-0025-r-external-sentinels-v0.1.json",
+      "fileSha256": "4a1ff37504bb1eb1f19a2cc3cfea7374ac14aff11eb0b49e92929c1adba55110",
+      "locale": "en",
+      "count": 4,
+      "requiredPasses": 4
+    },
+    "baselineHeadroom": {
+      "path": "eval/reports/exp-0025-r-baseline-headroom-v0.1.json",
+      "fileSha256": "35cb8354c7c32e2bb2da9e03d9a83127481eda24f559d0a4df4e34a6ee1f2285",
+      "reportSha256": "sha256:b5a27b620f5f107d9486c47f92822c66f2fdbc9ada4c44c8d91db28c146bba52",
+      "decision": "BASELINE_HEADROOM_CONFIRMED"
+    }
+  },
+  "sourceBindings": [
+    {
+      "path": "scripts/run_exp_0025_r_external.py",
+      "byteLength": 22864,
+      "sha256": "e6102a886af69e2bced944d804efca59b82d8825993ea445266609a93507589e"
+    },
+    {
+      "path": "src/eval/exp-0025-r-external.mjs",
+      "byteLength": 12312,
+      "sha256": "5b2e6920a9f600170a94876199c53cd3f85b66445067600a6a48b69b665b31d1"
+    },
+    {
+      "path": "src/eval/exp-0025-r-floor-control.mjs",
+      "byteLength": 26058,
+      "sha256": "441e50a52ee80f75e0e982e33ca14a3ee6e904db858d0ba9c7e13a32f7dc8dbf"
+    }
+  ],
+  "officialSourceBindings": [
+    {
+      "path": "model.py",
+      "sha256": "ba4fd852966b67acc909827c55cb436385f01534aa425cce7d72c623829dc077"
+    },
+    {
+      "path": "server.py",
+      "sha256": "404a1b6f51e87c012e1111cc21a712ed8895e9a5ee99328bd1245a7c6a654037"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "a7198f886702944bc58c39add0b83906eb2cdf655e11143fb5c75d30aa99eb41"
+    }
+  ],
+  "artifactBudget": {
+    "frozenModelArtifactBytesLowerBound": 32662348987,
+    "frozenModelArtifactGiBLowerBound": 30.419182951562107,
+    "maximumDownloadGiB": 40,
+    "maximumGpuHours": 2,
+    "maximumExternalCostUsd": 12,
+    "firstLimitReachedStopsExecution": true
+  },
+  "protocol": {
+    "sentinelFailureDecision": "CUT_E_PROTOCOL_FAILURE",
+    "sentinelFailureAllowsDevelopment": false,
+    "developmentUnit": "PREFIX_PAIR_WITH_UTTERANCE_METRICS_AND_SESSION_CLUSTER",
+    "comparators": [
+      "A0_NATIVE_DECISION_REFERENCE",
+      "A0_AT_600_CADENCE_DIAGNOSTIC"
+    ],
+    "rawEvidence": {
+      "path": "eval/evidence/exp-0025-r-external-development-raw-v0.1.json",
+      "journalPath": "eval/evidence/exp-0025-r-external-development-raw-v0.1.journal.ndjson",
+      "preserveInputTokenIds": true,
+      "preserveGeneratedTokenIds": true,
+      "preserveGeneratedTokenPieces": true,
+      "preserveDecodedRaw": true,
+      "preserveTrajectory": true,
+      "preserveGenerationLatency": true
+    },
+    "aggregateReportPath": "eval/reports/exp-0025-r-external-development-v0.1.json"
+  },
+  "residualDevelopmentGateAgainstA0At600": {
+    "completeUtterances": 32,
+    "completePairs": 16,
+    "minimumCorrectedPrematureTakeovers": 1,
+    "minimumNetPrematureTakeoverImprovement": 1,
+    "maximumIntroducedPrematureTakeovers": 0,
+    "minimumSessionsImproved": 1,
+    "maximumSafeSessionRegressions": 0,
+    "maximumMissedTakeoverDelta": 0,
+    "maximumPreFinalTakeovers": 0,
+    "postFinalP95MustNotExceedA0At600": true,
+    "maximumPostFinalDelayMs": 1200,
+    "maximumProtocolFailures": 0,
+    "passDecision": "JUSTIFY_FRESH_EXTERNAL_HOLDOUT_PREREGISTRATION",
+    "failDecision": "CUT_EXTERNAL_MICROTURN_FRONT"
+  },
+  "oldHoldout": {
+    "id": "H-L-exp-0025-r-v0.1",
+    "openingPath": "eval/commitments/exp-0025-r-holdout-opening-v0.1.json",
+    "openingFileSha256": "54031b1d849c8e0b0a89be11267bd4c7a1b54620d67842ac8618d93ff03f6833",
+    "openingSha256": "sha256:615172303fa7fb35831b952297c103981192e99af2b1d9e7b816d074128ca3e7",
+    "authorizedCandidateId": "L-article-inspired-thinking-state-v0.1",
+    "externalExecutionAuthorizedAtOpening": false,
+    "statusForExternalCandidate": "INELIGIBLE_FOR_CONFIRMATION",
+    "maximumPermittedInterpretationIfEverRead": "EXPLORATORY_ONLY",
+    "executionAuthorizedThisRound": false
+  },
+  "freshExternalHoldout": {
+    "id": null,
+    "exists": false,
+    "creationAuthorized": false,
+    "openingAuthorized": false,
+    "requiresResidualDevelopmentGate": true,
+    "requiresAdapterAndEnvironmentFreezeAfterDevelopment": true,
+    "requiresFreshContentUnderNewExperimentId": true,
+    "requiresSeparateAuthorization": true
+  },
+  "automaticFollowups": {
+    "secondLocalReproduction": false,
+    "runtimeChange": false,
+    "checkpointChange": false,
+    "anotherModel": false
+  },
+  "authorityEligible": false,
+  "authorizationSha256": "sha256:db6bb1b661a0ccee64b7bf1a3a7c8feec6903ffb9177892980fb643c367e85cc"
+}

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "exp-0025-r-external-sentinels-v1",
+  "experimentId": "EXP-0025-R",
+  "locale": "en",
+  "role": "PROTOCOL_PREFLIGHT_NOT_QUALITY_METRIC",
+  "sentinels": [
+    {
+      "id": "english-user-talking",
+      "assistantSpeaking": false,
+      "expectedAction": "CONTINUE_LISTENING",
+      "history": [],
+      "currentUserMicroturn": "Could you explain how"
+    },
+    {
+      "id": "english-user-finished",
+      "assistantSpeaking": false,
+      "expectedAction": "TAKE_FLOOR",
+      "history": [],
+      "currentUserMicroturn": "What is the capital of France?"
+    },
+    {
+      "id": "english-user-backchannel",
+      "assistantSpeaking": true,
+      "expectedAction": "KEEP_ASSISTANT_FLOOR",
+      "history": [
+        {
+          "role": "user",
+          "content": "Why does the sky look blue?"
+        },
+        {
+          "role": "assistant",
+          "content": "<|user finish talking|>The sky looks blue because sunlight interacts with the atmosphere"
+        }
+      ],
+      "currentUserMicroturn": "yes"
+    },
+    {
+      "id": "english-user-interruption",
+      "assistantSpeaking": true,
+      "expectedAction": "YIELD_FLOOR",
+      "history": [
+        {
+          "role": "user",
+          "content": "Tell me why the sky looks blue."
+        },
+        {
+          "role": "assistant",
+          "content": "<|user finish talking|>The sky appears blue because shorter wavelengths of sunlight"
+        }
+      ],
+      "currentUserMicroturn": "Wait, I meant the Moon instead."
+    }
+  ]
+}

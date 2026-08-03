@@ -1,14 +1,44 @@
 # EXP-0025-R — referência DuplexCascade e controle local de tomada de turno
 
-Status: **trilha local concluída e cortada; `E` não executado e aguardando
-autorização explícita; não bloqueante; zero autoridade**
+Status: **trilha local concluída e cortada; `E` autorizado somente para quatro
+sentinelas inglesas + `D`; nenhum holdout autorizado; não bloqueante; zero
+autoridade**
 
 Evidência corrente: o pack D e o headroom permanecem versionados; o resultado
 one-shot de `L` está em
 `eval/reports/exp-0025-r-local-holdout-v0.1.json` e no
 [closeout local](EXP-0025-R-local-closeout.md). `L` não venceu porque seu p95
 pós-final foi 1.200 ms, acima do gate de 800 ms, e foi equivalente a
-`A0@600`. A inferência externa continua sem autorização.
+`A0@600`. Em 03/08/2026, o responsável autorizou a inferência externa `E`
+somente nas quatro sentinelas e no desenvolvimento, dentro dos limites já
+congelados. Essa autorização não alcança nenhum holdout, outro checkpoint,
+sweep, mapeamento, `L2`, API ou modelo.
+
+## Emenda prospectiva antes de E
+
+O `H` existente não é confirmação cega válida para `E`: ele foi selado e
+aberto para uma única inferência de `L`, com `authorizedCandidateId=L` e
+`externalExecutionAuthorized=false`, antes de existir um adaptador executável
+de `E` congelado. Seu estado para E é `INELIGIBLE_FOR_CONFIRMATION`: uma
+leitura futura nesse conjunto seria classificada somente como **exploratória**.
+Ela está explicitamente proibida nesta rodada.
+
+A sequência agora é terminal e curta:
+
+1. congelar adaptador, sentinelas, entradas, orçamento e critérios de `D`;
+2. executar 4/4 sentinelas inglesas; qualquer falha corta `E` antes de `D`;
+3. executar uma única passagem de `E` nas 32 falas de `D`, preservando IDs e
+   peças de tokens, texto bruto, prompts tokenizados, trajetória e latência;
+4. comparar `E` com `A0-native` e `A0@600` por fala e sessão;
+5. cortar a frente, ou apenas **justificar o pré-registro** de um holdout
+   externo fresco sob novo ID. Nem a criação nem a abertura desse novo holdout
+   estão autorizadas por esta emenda.
+
+O contrato versionado desta autorização fica em
+`eval/commitments/exp-0025-r-external-development-authorization-v0.1.json`.
+Os textos exatos das sentinelas ficam em
+`eval/scenarios/exp-0025-r-external-sentinels-v0.1.json`; não serão adaptados
+depois de uma saída do modelo.
 
 ## Pergunta decisória
 
@@ -65,9 +95,10 @@ reprodução comportamental.
 
 ### L — reprodução local mínima
 
-Depois de observar `E` somente no conjunto de desenvolvimento, será permitido
-construir **um** candidato local `L`, congelado antes de abrir o holdout. Ele
-reproduzirá o contrato mínimo de microturnos:
+O desenho original permitia construir **um** candidato local `L` depois de
+observar `E` somente no desenvolvimento. Como `E` ainda não estava autorizado,
+essa exceção foi exercida como probe inspirado no artigo: `L` foi congelado,
+avaliado e cortado, sem `L2`. Seu contrato mínimo foi:
 
 - janela causal de até quatro microturnos de 600 ms;
 - delta textual corrente ou `NO_VOICE`, transcrição acumulada, duração de fala,
@@ -151,16 +182,20 @@ derivado dele. Isso garante as mesmas falas e isola a política, mas não conta
 como teste acústico.
 
 - **desenvolvimento `D`:** 32 falas, 16 pares, oito sessões de quatro;
-- **holdout `H`:** 48 falas, 24 pares, oito sessões de seis, gerado/selado antes da
-  inferência e não aberto ao implementar `L`;
+- **holdout local histórico `H-L`:** 48 falas, 24 pares, oito sessões de seis,
+  gerado/selado antes da inferência de `L` e depois aberto uma vez somente para
+  `L`; é inelegível para confirmar `E`;
+- **holdout externo futuro `H-E`:** não existe e não possui ID; só poderá ser
+  pré-registrado e materializado depois de um ganho residual qualificado em
+  `D`, com conteúdo fresco e autorização separada;
 - quatro famílias balanceadas entre pares: hesitação/filler, continuação
   sintática, correção/recomeço e fechamento lexicalmente ambíguo;
 - cada `CONTINUES` contém uma pausa não terminal; cada `ENDS` contém exatamente
   um final verdadeiro na fronteira pareada;
 - o assistente está silencioso na fronteira crítica de todas as falas de
-  `D/H`; backchannel/interrupção enquanto o assistente fala pertencem somente
+  `D/H-L`; backchannel/interrupção enquanto o assistente fala pertencem somente
   às sentinelas de protocolo;
-- superfícies, nomes e conteúdos não se repetem entre `D` e `H`.
+- superfícies, nomes e conteúdos não se repetem entre `D` e `H-L`.
 
 As métricas são calculadas por **fala**, mas a unidade estatística primária é o
 **par de prefixo** (`n=24` no holdout), porque suas duas integrantes não são
@@ -195,6 +230,11 @@ O diagnóstico de cadência reportará, por fala e agregado,
 O resíduo `E − A0@600` descreve desempenho sob a mesma oportunidade de decisão,
 mas não substitui a regra de vitória contra `A0-native`.
 
+Uma tomada de piso de `E` anterior ao final verdadeiro de uma integrante
+`ENDS` é registrada separadamente como `preFinalTakeover`, não como latência
+pós-final negativa. Ela conta como falha e não pode melhorar artificialmente o
+p95.
+
 As atribuições são fechadas: falha em qualquer sentinela produz
 `E_PROTOCOL_FAILURE` e impede interpretar `D`; sentinelas 4/4 válidas seguidas
 de falha pt-BR produzem `PT_BR_TRANSFER_OR_CONTENT_SHIFT`, não “mecanismo
@@ -219,7 +259,8 @@ Resultado de 03/08/2026: o pack materializado contém 16 pares/32 falas e
 prefixo PCM idêntico dentro de cada par. `A0-native` teve 8/16 tomadas
 prematuras, zero miss e p95 pós-final de 1.060 ms; `A0@600`, apenas
 diagnóstico, teve 4/16, zero miss e p95 de 1.200 ms. O gate produziu
-`BASELINE_HEADROOM_CONFIRMED`; `E` segue não autorizado e `H` não foi aberto.
+`BASELINE_HEADROOM_CONFIRMED`; naquele momento `E` não estava autorizado e
+`H-L` ainda não havia sido aberto.
 
 Resultado local posterior, sem reescrever o pré-registro: um único `L`
 article-inspired foi congelado antes de gerar `H` e executado uma vez. Em 24
@@ -228,9 +269,29 @@ correções, zero introduções, duas sessões melhoradas, zero miss e zero falh
 de protocolo. `L` falhou somente o gate p95 absoluto: 1.200 ms contra 800 ms.
 Como foi exatamente equivalente a `A0@600`, a decisão foi
 `KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`, sem `L2` ou autoridade. `E`
-permanece `NOT_EVALUATED_NO_AUTHORIZATION`.
+permaneceu `NOT_EVALUATED_NO_AUTHORIZATION` até a emenda prospectiva acima.
 
-## Regra de vitória no holdout
+### Gate residual de E em D
+
+`D` é desenvolvimento e não produz alegação confirmatória. Depois de 4/4
+sentinelas válidas, um holdout externo fresco só será **recomendado** se todos
+os itens abaixo passarem contra `A0@600`:
+
+1. 32/32 falas e 16/16 pares completos;
+2. ao menos uma tomada prematura corrigida e ganho líquido positivo;
+3. zero tomada prematura introduzida;
+4. ao menos uma sessão deixa de falhar e nenhuma sessão segura regride;
+5. zero regressão em `missedTakeover` e zero `preFinalTakeover`;
+6. p95 pós-final não pior que `A0@600` e máximo ≤1.200 ms;
+7. zero `protocolFailure`.
+
+Passar produz somente
+`JUSTIFY_FRESH_EXTERNAL_HOLDOUT_PREREGISTRATION`; falhar produz
+`CUT_EXTERNAL_MICROTURN_FRONT`. Falha das sentinelas produz
+`CUT_E_PROTOCOL_FAILURE` sem ler `D`. Nenhuma folha autoriza `H-E`, altera o
+runtime ou abre uma segunda reprodução local.
+
+## Regra histórica de vitória no holdout local e referência para um futuro H-E
 
 Cada candidato (`E` e `L`) vence `A0` somente se **todos** os itens passarem:
 
@@ -268,17 +329,17 @@ local de referência, artefato total ≤50 MiB e zero rede em execução.
 ### Checkpoint externo
 
 - no máximo 40 GiB de download total;
-- um checkpoint, uma base, uma configuração, um preflight de quatro sentinelas,
-  uma passagem em `D` e uma passagem em `H`;
+- um checkpoint, uma base, uma configuração, um preflight de quatro sentinelas
+  e uma passagem em `D`; nenhum `H` nesta autorização;
 - no máximo **2 GPU-horas** e **US$ 12** de custo externo, valendo o primeiro
   limite atingido;
-- gasto continua **não autorizado** por este pré-registro: exige autorização
-  explícita separada conforme `docs/COST_POLICY.md`;
+- gasto foi autorizado em 03/08/2026 somente para sentinelas + `D`, conforme
+  `docs/COST_POLICY.md`; qualquer `H-E` exige autorização explícita separada;
 - zero sweep, quantização não oficial, troca de modelo ou rerun para escolher
   seed favorável.
 
-O holdout tem uma única abertura. Crash ou artefato incompleto depois da
-abertura invalida a trilha; prefixos não serão selecionados.
+O `H-L` consumiu sua única abertura local. Nenhum crash ou resultado de `D`
+permite abri-lo para `E`; prefixos não serão selecionados.
 
 ## Kill criteria
 
@@ -290,11 +351,12 @@ A trilha é cortada sem substituição automática quando ocorrer o primeiro:
   fazer o challenger caber;
 - checkpoint oficial não carrega ou não produz protocolo válido dentro de
   40 GiB, 2 GPU-horas e US$ 12;
-- ausência de autorização explícita para GPU mantém `E=NOT_EVALUATED`, sem
-  trocar silenciosamente por outro modelo;
+- ausência de ambiente GPU fiel dentro do budget mantém
+  `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`, sem trocar silenciosamente por outro
+  modelo ou usar o `H-L`;
 - `L` exige segundo candidato, modelo grande, rede em runtime, mais de 50 MiB
   ou excede o timebox;
-- vazamento, mutação ou segunda abertura do holdout;
+- vazamento, mutação ou segunda abertura do `H-L`;
 - nenhum candidato satisfaz a regra de vitória.
 
 Falha de `E` não autoriza afrouxar o mapeamento de tokens. Falha de `L` não
@@ -303,7 +365,12 @@ fila automática desta rodada.
 
 ## Árvore de decisão posterior
 
-Depois de uma avaliação válida em `H`:
+A tabela abaixo preserva a árvore original para auditabilidade do resultado de
+`L`; ela não autoriza reutilizar `H-L` nem reabrir reprodução local. Para a
+rodada corrente, a árvore vigente é apenas o gate de `D` acima: cortar E ou
+justificar um pré-registro fresco somente de E.
+
+Depois de uma avaliação válida no desenho original de `H`:
 
 | E vence A0 | L vence A0 | decisão terminal | próximo movimento permitido |
 | --- | --- | --- | --- |
