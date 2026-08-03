@@ -194,8 +194,8 @@
     "canProduceEffects": false
   },
   "budget": {
-    "externalModelCalls": 0,
-    "paidApiCalls": 0,
+    "experimentRuntimeExternalModelCalls": 0,
+    "experimentRuntimePaidApiCalls": 0,
     "paidGpuRuns": 0,
     "asrRuns": 0,
     "audioMaterializations": 0,

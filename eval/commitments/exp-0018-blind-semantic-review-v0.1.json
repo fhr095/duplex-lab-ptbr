@@ -4,8 +4,8 @@
   "status": "passed-for-prefit-freeze",
   "catalog": {
     "path": "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
-    "fileSha256": "sha256:ef7f25626182964479d22be7a19028faaba40fae365b08ea5c354538d6b26898",
-    "canonicalSha256": "sha256:1d4c9f92c28eed502c46cd8733dc54709a8c0559de3652cc9d9af3f249619036"
+    "fileSha256": "sha256:168356dc8cc0df76dce04e7c7ade5d30da6366bd4f31201cd02250b27bb41474",
+    "canonicalSha256": "sha256:aa0bf11a8bdd14974f1df5540e9f85b7f17b3f4a45a9674b0ed78d12620c6c9c"
   },
   "blindProjection": {
     "schemaVersion": "exp-0018-blind-semantic-projection-v1",
@@ -83,5 +83,5 @@
     "fitAuthorized": false,
     "canProduceEffects": false
   },
-  "reviewSha256": "sha256:0576a8bbae16d08906d29717b7c1714d111acea0260bff09d3bad257ca036293"
+  "reviewSha256": "sha256:b7f199e7cfc72901f83fd6f22b0b9ba74f95611303c459cb572de42abff5c489"
 }

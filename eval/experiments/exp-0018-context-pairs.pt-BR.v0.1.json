@@ -3,9 +3,11 @@
   "experimentId": "EXP-0018",
   "locale": "pt-BR",
   "provenance": {
-    "generationMethod": "human-authored-controlled-crossed-blocks",
-    "externalModelCalls": 0,
-    "paidApiCalls": 0,
+    "generationMethod": "coding-agent-authored-controlled-crossed-blocks",
+    "authoringAssistance": "interactive-coding-agent-with-human-project-direction",
+    "aiCriticsUsed": 2,
+    "externalProjectApiCallsDuringMaterialization": 0,
+    "paidApiCallsDuringMaterialization": 0,
     "claim": "Cenas sintéticas servem apenas ao screen textual controlado; não representam distribuição humana."
   },
   "blocks": [

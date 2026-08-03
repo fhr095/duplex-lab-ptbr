@@ -509,9 +509,12 @@ export function auditExp0018Catalog(catalog) {
   }
   if (
     catalog?.provenance?.generationMethod !==
-      "human-authored-controlled-crossed-blocks" ||
-    catalog?.provenance?.externalModelCalls !== 0 ||
-    catalog?.provenance?.paidApiCalls !== 0
+      "coding-agent-authored-controlled-crossed-blocks" ||
+    catalog?.provenance?.authoringAssistance !==
+      "interactive-coding-agent-with-human-project-direction" ||
+    catalog?.provenance?.aiCriticsUsed !== 2 ||
+    catalog?.provenance?.externalProjectApiCallsDuringMaterialization !== 0 ||
+    catalog?.provenance?.paidApiCallsDuringMaterialization !== 0
   ) {
     errors.push("proveniência do catálogo incompatível");
   }
@@ -880,8 +883,9 @@ export function buildExp0018Datasets(catalog, provenance = {}) {
         experimentConfigFileSha256:
           provenance.experimentConfigFileSha256 ?? null,
         generationMethod: "deterministic-crossed-2x2",
-        externalModelCalls: 0,
-        paidApiCalls: 0
+        sourceAuthoring: "coding-agent-assisted",
+        externalProjectApiCallsDuringMaterialization: 0,
+        paidApiCallsDuringMaterialization: 0
       },
       summary: {
         crossBlocks: roleBlockIds.size,
@@ -947,12 +951,13 @@ export function validateExp0018Dataset(dataset, options = {}) {
   }
   if (
     dataset?.provenance?.generationMethod !== "deterministic-crossed-2x2" ||
+    dataset?.provenance?.sourceAuthoring !== "coding-agent-assisted" ||
     !/^sha256:[a-f0-9]{64}$/u.test(dataset?.provenance?.catalogSha256 ?? "") ||
     !/^sha256:[a-f0-9]{64}$/u.test(
       dataset?.provenance?.experimentConfigFileSha256 ?? ""
     ) ||
-    dataset?.provenance?.externalModelCalls !== 0 ||
-    dataset?.provenance?.paidApiCalls !== 0
+    dataset?.provenance?.externalProjectApiCallsDuringMaterialization !== 0 ||
+    dataset?.provenance?.paidApiCallsDuringMaterialization !== 0
   ) {
     errors.push("proveniência do dataset incompatível");
   }

@@ -232,7 +232,7 @@
         "npm run eval:exp:0018:data:check"
       ],
       "supersedes": [],
-      "nextDecision": "Fechar auditorias cegas de plausibilidade, freeze e fronteira física; só então autorizar fit/calibração, ainda sem abrir development."
+      "nextDecision": "Com críticas cegas 24/24 concluídas, fechar freeze, attestation e fronteira física; só então autorizar fit/calibração, sem avaliação de candidato em development."
     }
   ]
 }

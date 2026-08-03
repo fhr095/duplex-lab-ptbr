@@ -85,6 +85,15 @@ test("catálogo congela 24 blocos 2x2 e a maior unidade independente", async () 
   const audit = auditExp0018Catalog(catalog);
 
   assert.equal(audit.valid, true, audit.errors.join("; "));
+  assert.equal(
+    catalog.provenance.generationMethod,
+    "coding-agent-authored-controlled-crossed-blocks"
+  );
+  assert.equal(catalog.provenance.aiCriticsUsed, 2);
+  assert.equal(
+    catalog.provenance.externalProjectApiCallsDuringMaterialization,
+    0
+  );
   assert.equal(audit.counts.crossBlocks, 24);
   assert.equal(audit.counts.pairRoots, 48);
   assert.equal(audit.counts.examples, 96);
@@ -222,6 +231,8 @@ test("datasets materializados fecham hashes, papéis e config prefit", async () 
   assert.equal(config.independentUnit, "crossBlockRootId");
   assert.equal(config.budget.developmentStructuralAuditRuns, 1);
   assert.equal(config.budget.developmentCandidateMetricRuns, 0);
+  assert.equal(config.budget.experimentRuntimeExternalModelCalls, 0);
+  assert.equal(config.budget.experimentRuntimePaidApiCalls, 0);
   assert.equal(config.authority.canProduceEffects, false);
   assert.deepEqual(config.features.names, EXP0018_FEATURE_NAMES);
   assert.equal(

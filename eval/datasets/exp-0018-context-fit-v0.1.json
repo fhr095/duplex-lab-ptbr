@@ -34,11 +34,12 @@
     "charNgramCosineDelta"
   ],
   "provenance": {
-    "catalogSha256": "sha256:1d4c9f92c28eed502c46cd8733dc54709a8c0559de3652cc9d9af3f249619036",
-    "experimentConfigFileSha256": "sha256:937f91602895b00529d0509097039536562eb290401681989c74e4af5a51f99f",
+    "catalogSha256": "sha256:aa0bf11a8bdd14974f1df5540e9f85b7f17b3f4a45a9674b0ed78d12620c6c9c",
+    "experimentConfigFileSha256": "sha256:9686dc6827b14070be199bb6dc967e19e6dfaec937606e2d90f75a780560e207",
     "generationMethod": "deterministic-crossed-2x2",
-    "externalModelCalls": 0,
-    "paidApiCalls": 0
+    "sourceAuthoring": "coding-agent-assisted",
+    "externalProjectApiCallsDuringMaterialization": 0,
+    "paidApiCallsDuringMaterialization": 0
   },
   "summary": {
     "crossBlocks": 12,
@@ -921,5 +922,5 @@
       }
     }
   ],
-  "datasetSha256": "sha256:f56330f836ffaed639f2d4cf36540cc59831b6f44cacfa1b3eadaa07953679b4"
+  "datasetSha256": "sha256:ac68d6604e84887e5c76947158206d636f8fc6ffba9d1eb4b89d6c46bec7e94c"
 }

@@ -20,8 +20,9 @@ histórico, esta carteira prevalece.
   os pisos não foram reduzidos.
 - **Agora — EXP-0018:** a matriz textual 2x2 já materializa 24 blocos
   independentes, 48 pares e 96 casos; alvo/contexto isolados têm teto exato de
-  50%. Fechar críticos cegos e fronteira física antes de fit/calibração;
-  development já foi auditado estruturalmente, mas continua sem qualquer
+  50%. As críticas cegas passaram 24/24 após reparar 12 ambiguidades; fechar
+  freeze, attestation e fronteira física antes de fit/calibração. Development
+  já foi auditado estruturalmente, mas continua sem qualquer
   predição/métrica de candidato. Só materializar áudio se contexto ganhar sem
   atalho.
 - **Depois, condicional:** testar disponibilidade causal em áudio do mesmo

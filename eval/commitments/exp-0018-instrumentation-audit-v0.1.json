@@ -5,12 +5,12 @@
   "inputs": {
     "config": {
       "path": "eval/experiments/exp-0018-context-observability-v0.1.json",
-      "fileSha256": "sha256:937f91602895b00529d0509097039536562eb290401681989c74e4af5a51f99f"
+      "fileSha256": "sha256:9686dc6827b14070be199bb6dc967e19e6dfaec937606e2d90f75a780560e207"
     },
     "catalog": {
       "path": "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
-      "fileSha256": "sha256:ef7f25626182964479d22be7a19028faaba40fae365b08ea5c354538d6b26898",
-      "canonicalSha256": "sha256:1d4c9f92c28eed502c46cd8733dc54709a8c0559de3652cc9d9af3f249619036"
+      "fileSha256": "sha256:168356dc8cc0df76dce04e7c7ade5d30da6366bd4f31201cd02250b27bb41474",
+      "canonicalSha256": "sha256:aa0bf11a8bdd14974f1df5540e9f85b7f17b3f4a45a9674b0ed78d12620c6c9c"
     }
   },
   "catalogAudit": {
@@ -70,8 +70,8 @@
   "datasets": {
     "fit": {
       "path": "eval/datasets/exp-0018-context-fit-v0.1.json",
-      "fileSha256": "sha256:04f1a7471cfd9edf9dfe6af6cf418b13ce4d30a383dbfc67d7d069a89000c9bc",
-      "canonicalSha256": "sha256:f56330f836ffaed639f2d4cf36540cc59831b6f44cacfa1b3eadaa07953679b4",
+      "fileSha256": "sha256:03176c02e0a823e60ff16ee81e2176366502c089b6432a88d34fb396bf3ffcc4",
+      "canonicalSha256": "sha256:ac68d6604e84887e5c76947158206d636f8fc6ffba9d1eb4b89d6c46bec7e94c",
       "crossBlocks": 12,
       "pairRoots": 24,
       "examples": 48,
@@ -119,8 +119,8 @@
     },
     "calibration": {
       "path": "eval/datasets/exp-0018-context-calibration-v0.1.json",
-      "fileSha256": "sha256:62e95dbddb4a16539fef2639dfe6b61564dd1b2dea3c1a805113709f1612c957",
-      "canonicalSha256": "sha256:7e172b4df981962688a8ecd55180689a40a749875b1d1d67aa4633931e79358c",
+      "fileSha256": "sha256:65b3beab7c68f9e908b0cde23df955a6d5c02f35e2258b8c28daa7e4bedf2e79",
+      "canonicalSha256": "sha256:1add8d233e81131f5f943cab94c436cb6f690361527da9f0ad30b018235104c8",
       "crossBlocks": 4,
       "pairRoots": 8,
       "examples": 16,
@@ -168,8 +168,8 @@
     },
     "development": {
       "path": "eval/datasets/exp-0018-context-development-v0.1.json",
-      "fileSha256": "sha256:dd56356f3f06f3a6178afd8c36a9799795004dc4697c4c906ad37eb942e745bf",
-      "canonicalSha256": "sha256:3d22f59a9f4c101b09e93fb9c9e55ba3e295a31311eb3bf85ca2acfa3b2d7559",
+      "fileSha256": "sha256:903f808361048aa027000f2d8434afdb58c763e8913f764223aa3a488dd265f8",
+      "canonicalSha256": "sha256:50873802ab4f4c56a00d890e26913f203463eff4f8d664e40b7bf106c2f1bdb5",
       "crossBlocks": 8,
       "pairRoots": 16,
       "examples": 32,
@@ -236,13 +236,13 @@
     "canProduceEffects": false
   },
   "budget": {
-    "externalModelCalls": 0,
-    "paidApiCalls": 0,
+    "experimentRuntimeExternalModelCalls": 0,
+    "experimentRuntimePaidApiCalls": 0,
     "paidGpuRuns": 0,
     "asrRuns": 0,
     "audioMaterializations": 0,
     "developmentStructuralAuditRuns": 1,
     "developmentCandidateMetricRuns": 0
   },
-  "instrumentationAuditSha256": "sha256:1fe581a7d25a46d2ce53235d6a2f76a9f6af8ec1bf7e57fbe89e4074d942eb69"
+  "instrumentationAuditSha256": "sha256:33b2e46b0e7aac517af320f4465f1e8073dd20019cd6194590f674d3062dc059"
 }

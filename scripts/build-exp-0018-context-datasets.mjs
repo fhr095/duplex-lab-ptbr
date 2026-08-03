@@ -24,7 +24,7 @@ const DEFAULTS = Object.freeze({
 });
 
 export const EXP0018_PREFIT_CONFIG_CANONICAL_SHA256 =
-  "sha256:91847d530e0d19280e5fb9db423616134f5a40c68924828fb383c90628ca9055";
+  "sha256:ed74eec86ae0f800bdaf4ea6a961fedf2e2101c22c2c1ebf5071c86a20e94d5f";
 
 function parseArgs(args) {
   const options = { ...DEFAULTS, check: false };
@@ -117,8 +117,8 @@ export function validateExp0018InstrumentationConfig(
     }
   }
   if (
-    config?.budget?.externalModelCalls !== 0 ||
-    config?.budget?.paidApiCalls !== 0 ||
+    config?.budget?.experimentRuntimeExternalModelCalls !== 0 ||
+    config?.budget?.experimentRuntimePaidApiCalls !== 0 ||
     config?.budget?.paidGpuRuns !== 0 ||
     config?.budget?.developmentStructuralAuditRuns !== 1 ||
     config?.budget?.developmentCandidateMetricRuns !== 0 ||
@@ -288,8 +288,8 @@ export async function buildExp0018ContextDatasets(options = {}) {
       canProduceEffects: false
     },
     budget: {
-      externalModelCalls: 0,
-      paidApiCalls: 0,
+      experimentRuntimeExternalModelCalls: 0,
+      experimentRuntimePaidApiCalls: 0,
       paidGpuRuns: 0,
       asrRuns: 0,
       audioMaterializations: 0,
