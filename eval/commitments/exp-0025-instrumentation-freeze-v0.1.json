@@ -1,0 +1,307 @@
+{
+  "schemaVersion": "exp-0025-instrumentation-freeze-v1",
+  "experimentId": "EXP-0025",
+  "status": "frozen-before-causal-render-onset-opening",
+  "runnerSourceCommit": "9485eadc5469cad0afb4df983c376b5af5a8cb02",
+  "nodeVersion": "v22.22.2",
+  "sourceBaseline": {
+    "physicalRuntime": {
+      "experimentId": "EXP-0019",
+      "evidenceCommit": "0127322ad18a5b1d98de53d9e45898249e05888d"
+    },
+    "captureQualification": {
+      "experimentId": "EXP-0023",
+      "evidenceCommit": "ee0d5864aac4a984b33c9bdb86273ca9e7283b38"
+    },
+    "renderOnsetFailure": {
+      "experimentId": "EXP-0024",
+      "evidenceCommit": "5a65d155787f3875973c280c5ed8d576d69d2853"
+    }
+  },
+  "implementationBoundary": {
+    "baseCommit": "e0883a6c1958a66268dd74df09bf66c255652b09",
+    "c0ChangedPaths": [
+      ".gitignore",
+      "package.json",
+      "scripts/freeze-exp-0025-instrumentation.mjs",
+      "scripts/lib/exp-0025-browser-harness.mjs",
+      "scripts/lib/exp-0025-browser-trial.mjs",
+      "scripts/open-exp-0025-causal-render-onset-attempt.mjs",
+      "scripts/run-exp-0025-supervisor.mjs",
+      "scripts/run-exp-0025-worker.mjs",
+      "src/eval/exp-0025-boundary.mjs",
+      "src/eval/exp-0025-journal.mjs",
+      "src/eval/exp-0025-stop-order.mjs",
+      "tests/exp-0025-boundary.test.mjs",
+      "tests/exp-0025-browser-harness.test.mjs",
+      "tests/exp-0025-browser-trial.test.mjs",
+      "tests/exp-0025-journal.test.mjs",
+      "tests/exp-0025-stop-order.test.mjs",
+      "tests/exp-0025-supervisor.test.mjs",
+      "tests/exp-0025-worker.test.mjs"
+    ],
+    "runtimeBaselineCommit": "e0883a6c1958a66268dd74df09bf66c255652b09",
+    "runtimeChangedPaths": [
+      "package.json",
+      "src/eval/exp-0025-boundary.mjs",
+      "src/eval/exp-0025-journal.mjs",
+      "src/eval/exp-0025-stop-order.mjs"
+    ]
+  },
+  "runtimeBinding": {
+    "algorithm": "sha256-source-tree-v1",
+    "sha256": "45a77736ad233a87cb7d039dfd6c72b553b82055dac9722fbfb15dc39022f49a",
+    "fileCount": 126,
+    "roots": [
+      "src",
+      "web",
+      "package.json",
+      "package-lock.json",
+      "requirements-asr.txt"
+    ]
+  },
+  "artifacts": {
+    "preregistration": {
+      "path": "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md",
+      "fileSha256": "sha256:0e9c3227d1621676e31f367ce11bb59a9c96a2beb91657f44ac61aef5aee214a"
+    },
+    "exp0019Report": {
+      "path": "eval/reports/exp-0019-causal-audio-v0.1.json",
+      "fileSha256": "sha256:6e78ab453b210ae2e5bd3ff7ad28c7a3696c7e581b0bbbb3058ffd3d873439da"
+    },
+    "exp0019Closeout": {
+      "path": "docs/experiments/EXP-0019-closeout.md",
+      "fileSha256": "sha256:09350ad19e335a0ad1893b0d6131251b30d98b4ff966d63e5bcd3a900b597b1d"
+    },
+    "exp0023Report": {
+      "path": "eval/reports/exp-0023-cdp-ordinal-timestamp-semantics-v0.1.json",
+      "fileSha256": "sha256:7cd5098a456a94e8102811fc9cdc36358aa75848b700d92783b0e8c0bc20a29e"
+    },
+    "exp0023Closeout": {
+      "path": "docs/experiments/EXP-0023-closeout.md",
+      "fileSha256": "sha256:c43e56f9a36eb819b189ee1aa4a5c1a6b23b2d158ee3d7051a97175e3c445707"
+    },
+    "exp0024Report": {
+      "path": "eval/reports/exp-0024-physical-stop-after-capture-qualification-v0.1.json",
+      "fileSha256": "sha256:53496a8d9978fea008507c4791023c486e913514d75b21acff64ec32333fce1a"
+    },
+    "exp0024Closeout": {
+      "path": "docs/experiments/EXP-0024-closeout.md",
+      "fileSha256": "sha256:6c32a599fad220db36067a60b3f1b73012eb232b6b4e64eb68b7ad406fd9db60"
+    }
+  },
+  "config": {
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0025",
+    "navigations": 2,
+    "stopsPerNavigation": 6,
+    "totalStops": 12,
+    "phrase": "Esta fala contínua mede uma única parada física do assistente.",
+    "ttsRate": 1,
+    "expectedWavSha256": "sha256:ca2f579e7942db94c2f50029525b2057d94964e91cfe79244bd706eb6f50cd4b",
+    "expectedWavByteLength": 237232,
+    "triggerAfterRenderActiveMs": 320,
+    "triggerTimerErrorMaxMs": 10,
+    "postStopObservationMs": 250,
+    "renderStopLimitMs": 250,
+    "classMinimumCount": 2,
+    "classLatencyEquivalenceMarginMs": 16.7,
+    "responseBodyRetryDelaysMs": [
+      0,
+      8,
+      24,
+      64
+    ],
+    "networkEnable": {
+      "maxTotalBufferSize": 16777216,
+      "maxResourceBufferSize": 2097152,
+      "maxPostDataSize": 65536,
+      "enableDurableMessages": false
+    },
+    "browserCdpByteIdentity": "NOT_EVALUATED",
+    "nodeVersion": "v22.22.2",
+    "chrome": {
+      "product": "Chrome/150.0.7871.187",
+      "protocolVersion": "1.3"
+    },
+    "provider": "local",
+    "asrState": "disabled",
+    "vadControlEngine": "adaptive-energy-vad",
+    "vadShadowState": "disabled",
+    "ttsEngine": "windows-system-speech",
+    "attemptDeadlineMs": 600000,
+    "paidApiCalls": 0,
+    "gpuRuns": 0,
+    "canProduceNewEffects": false,
+    "sameExperimentRerunAllowed": false
+  },
+  "configCanonicalSha256": "sha256:b861ccf43a259c598142826300d4445105e9ffaf6665721fe603af1f783a4dd5",
+  "productionSources": [
+    {
+      "path": "src/brain/provider.mjs",
+      "fileSha256": "sha256:9ba71504e91de572f8c7531358ca2140b9c1409868074493da3d1eb9118540bd",
+      "exp0019FileSha256": "sha256:9ba71504e91de572f8c7531358ca2140b9c1409868074493da3d1eb9118540bd"
+    },
+    {
+      "path": "src/cli/serve.mjs",
+      "fileSha256": "sha256:b0a305cdc4cec5ca27c837436c1e27555d17a9f3912fab53c6ef2a9eedad7b29",
+      "exp0019FileSha256": "sha256:b0a305cdc4cec5ca27c837436c1e27555d17a9f3912fab53c6ef2a9eedad7b29"
+    },
+    {
+      "path": "src/tts/windows-system-tts.mjs",
+      "fileSha256": "sha256:9f0d019d48176b3db2f0c461865875b55b67645055a9a5480e3db88d9f665518",
+      "exp0019FileSha256": "sha256:9f0d019d48176b3db2f0c461865875b55b67645055a9a5480e3db88d9f665518"
+    },
+    {
+      "path": "web/app.mjs",
+      "fileSha256": "sha256:dc51356b3ec4ddb2e920bdf29c7ff28f4d7fccb66fc29bef145bfb879e304bba",
+      "exp0019FileSha256": "sha256:dc51356b3ec4ddb2e920bdf29c7ff28f4d7fccb66fc29bef145bfb879e304bba"
+    },
+    {
+      "path": "web/index.html",
+      "fileSha256": "sha256:78c55898656f161c7af20c8990a2bf49a949a2a4a49910fddf2cd24f8daa4a32",
+      "exp0019FileSha256": "sha256:78c55898656f161c7af20c8990a2bf49a949a2a4a49910fddf2cd24f8daa4a32"
+    },
+    {
+      "path": "web/local-audio-reflex.mjs",
+      "fileSha256": "sha256:9230ad7fb96bff6472e2338f520cd9ab2f7306cda3e42ae2cb362a14c759b908",
+      "exp0019FileSha256": "sha256:9230ad7fb96bff6472e2338f520cd9ab2f7306cda3e42ae2cb362a14c759b908"
+    },
+    {
+      "path": "web/output-interruption-lifecycle.mjs",
+      "fileSha256": "sha256:b2bda7e6dfcc0393f393c683feba1ae460aa5c2d727529542c6deca1c71238bd",
+      "exp0019FileSha256": "sha256:b2bda7e6dfcc0393f393c683feba1ae460aa5c2d727529542c6deca1c71238bd"
+    },
+    {
+      "path": "web/pcm-capture.mjs",
+      "fileSha256": "sha256:ead10169f18fd4bd11d0139af6167b5333404b1163d30df9d1e25b14562d0c5b",
+      "exp0019FileSha256": "sha256:ead10169f18fd4bd11d0139af6167b5333404b1163d30df9d1e25b14562d0c5b"
+    },
+    {
+      "path": "web/training-trace-recorder.mjs",
+      "fileSha256": "sha256:1a404f8a0cf8cb8d362a56d661ea603a0a68d58bc9ae6fb7212ded6fcef0fa79",
+      "exp0019FileSha256": "sha256:1a404f8a0cf8cb8d362a56d661ea603a0a68d58bc9ae6fb7212ded6fcef0fa79"
+    },
+    {
+      "path": "web/turn-taking.mjs",
+      "fileSha256": "sha256:d9210e3cc8ae0e2f6dde6ec80ebaaf860eaa453b10fdf243fa14b2f2e9fb11f9",
+      "exp0019FileSha256": "sha256:d9210e3cc8ae0e2f6dde6ec80ebaaf860eaa453b10fdf243fa14b2f2e9fb11f9"
+    }
+  ],
+  "instrumentationSources": [
+    {
+      "path": ".gitignore",
+      "fileSha256": "sha256:b6468d84ad4fe5514e37e7c99cfc9f38671a4d63ec1d612e9295010c22de79a3"
+    },
+    {
+      "path": "package.json",
+      "fileSha256": "sha256:a6edbe7ec58ee989b259354deda673b69b9d2e8966e84609a3e5555a8b8fb59e"
+    },
+    {
+      "path": "scripts/freeze-exp-0025-instrumentation.mjs",
+      "fileSha256": "sha256:a381ec2b7e7f7d966242fb7e7655844056bc7db7912f653a7ee85bd88ceb9c4f"
+    },
+    {
+      "path": "scripts/lib/exp-0025-browser-harness.mjs",
+      "fileSha256": "sha256:e689f96af6ad16574822540b92d7a0d221daa845f4540482f2b8212da8472e4a"
+    },
+    {
+      "path": "scripts/lib/exp-0025-browser-trial.mjs",
+      "fileSha256": "sha256:2509e71e58d438c774c7100fbd7909c1262d10b2717b5480220b4c3c0b95c020"
+    },
+    {
+      "path": "scripts/open-exp-0025-causal-render-onset-attempt.mjs",
+      "fileSha256": "sha256:f1abb5b626be505d95735bf73050a130b2d0d404cf63c6dc3075e3392e5043fc"
+    },
+    {
+      "path": "scripts/run-exp-0025-supervisor.mjs",
+      "fileSha256": "sha256:99ee299e35ff7159fa6c638858f5b1da6354f6b3c68452e29904aa51f1fabe58"
+    },
+    {
+      "path": "scripts/run-exp-0025-worker.mjs",
+      "fileSha256": "sha256:9e4ebd94e6e0a8dfd7db69d92d6a742d7a6bb86ce9f763c1bc9e03f96106a3c9"
+    },
+    {
+      "path": "src/eval/exp-0025-boundary.mjs",
+      "fileSha256": "sha256:d98990014fa0c56f4ffebb6f78b4d86614be6ddfec633bb8f537bfbc0d45ec73"
+    },
+    {
+      "path": "src/eval/exp-0025-journal.mjs",
+      "fileSha256": "sha256:424baa84669ebb77027b8be0d56c650e7b3f446b1cadb4f0bfe3411973bedc68"
+    },
+    {
+      "path": "src/eval/exp-0025-stop-order.mjs",
+      "fileSha256": "sha256:4f7b876dde0d10b31b59f73a4fe98489d05c963de456d842cae662984d0393cb"
+    },
+    {
+      "path": "tests/exp-0025-boundary.test.mjs",
+      "fileSha256": "sha256:630a64c3daf9aa09a8bca986397dfa07224c94f7f67f340c3d5104ca8430b5c9"
+    },
+    {
+      "path": "tests/exp-0025-browser-harness.test.mjs",
+      "fileSha256": "sha256:69ab7b90030772bfac27ea9e8eddbcea4af935c48f00edf4b6d91e34b4500ab2"
+    },
+    {
+      "path": "tests/exp-0025-browser-trial.test.mjs",
+      "fileSha256": "sha256:caea7bbe40bb0f75e66e0cdb3c04a4b0346bd53ccb0653c6933df7b8acf4d188"
+    },
+    {
+      "path": "tests/exp-0025-journal.test.mjs",
+      "fileSha256": "sha256:6b7ffcaf1fc0bf92189c3f6f4c1b975852317398e34e88730bb634f005f76e17"
+    },
+    {
+      "path": "tests/exp-0025-stop-order.test.mjs",
+      "fileSha256": "sha256:4861109ab2521b627f5ddf95c925f8f8ad387df5fa39b3c1c3c887018430cdb6"
+    },
+    {
+      "path": "tests/exp-0025-supervisor.test.mjs",
+      "fileSha256": "sha256:a4e0447bc046f16ca926a85f80c5f224464e0562b1a813b61c99fc4e2327e4c0"
+    },
+    {
+      "path": "tests/exp-0025-worker.test.mjs",
+      "fileSha256": "sha256:236e0ab1a0fd02742d6ad320fb3a33f5c66e440b3f781ed05387145fe0fb812e"
+    }
+  ],
+  "gitTopology": {
+    "order": [
+      "C0_INSTRUMENT",
+      "FREEZE",
+      "OPENING",
+      "EVIDENCE"
+    ],
+    "freezeDirectParent": "C0_INSTRUMENT",
+    "freezeAllowedPaths": [
+      "eval/commitments/exp-0025-instrumentation-freeze-v0.1.json"
+    ],
+    "openingDirectParent": "FREEZE",
+    "openingAllowedPaths": [
+      "eval/commitments/exp-0025-causal-render-onset-attempt-v0.1.json"
+    ],
+    "evidenceDirectParent": "OPENING",
+    "normalEvidenceAllowedPaths": [
+      "eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json",
+      "eval/generated/exp-0025/causal-render-onset-journal-v0.1.ndjson",
+      "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json"
+    ],
+    "recoveryBeforeJournalAllowedPaths": [
+      "eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json",
+      "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json"
+    ]
+  },
+  "boundary": {
+    "physicalStopCampaignsBeforeFreeze": 0,
+    "freezeAbsentBeforeWrite": true,
+    "openingAbsent": true,
+    "receiptAbsent": true,
+    "journalAbsent": true,
+    "reportAbsent": true,
+    "lockAbsent": true,
+    "paidApiCalls": 0,
+    "gpuRuns": 0,
+    "canProduceNewEffects": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "instrumentationFreezeSha256": "sha256:fcb80332bd7d0c70a2a6a93248b7a04d7e03e22fcd4e68bcb3e4bf298cf3d51c"
+}
