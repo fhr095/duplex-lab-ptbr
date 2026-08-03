@@ -235,6 +235,12 @@ causalidade de eco.
   preferência por cena, consenso ≥2/3, cobertura resolvida ≥60% e atenção
   externa agregada ≥80%. Um conjunto consensual resolve a calibração, mas não
   cria rótulo singular nem fit direto; participante interno e dúvida não contam.
+- Screen formativo EXP-0026: 1 dry-run interno excluído e 6 participantes
+  externos únicos. Categoria/severidade/comentário são coletados por cena, mas
+  cada pessoa sela seu top-2 uma única vez. Uma família só é dominante com
+  top-2 em ≥4/6, severidade material e falha técnica reproduzida; sem 4/6 o
+  resultado obrigatório é `NO_DOMINANT_BOTTLENECK`. A referência comercial é
+  calibração descritiva separada e nunca entra no ranking ou no treino.
 - Toda comparação registra hardware, região, rede, versão, seed e configuração.
 
 ## Dados

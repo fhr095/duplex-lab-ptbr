@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 1,
-  "updatedAt": "2026-08-03T18:26:35-03:00",
-  "transitionState": "terminal-awaiting-next-registration",
+  "schemaVersion": 2,
+  "updatedAt": "2026-08-03T19:58:03-03:00",
+  "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
     "legacyRange": "EXP-0000..EXP-0006",
@@ -19,8 +19,10 @@
     "id": "runtime-baseline-ptbr-v0.3",
     "manifest": "eval/baselines/runtime-baseline-v0.3.json"
   },
-  "currentCriticalPath": "EXP-0025",
-  "currentParallelProbe": {
+  "currentCriticalPath": "EXP-0026",
+  "currentParallelProbe": null,
+  "parallelProbeHistory": [
+    {
     "id": "EXP-0025-R",
     "parent": "EXP-0025",
     "preRegistration": "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md",
@@ -70,8 +72,15 @@
       "npm run eval:exp:0025:r:external:d-only:retry:authorization:check",
       "npm run eval:index:check"
     ],
-    "nextDecision": "Não repetir EXP-0025-R nem trocar silenciosamente de provider ou modelo. Registrar o próximo caminho crítico somente para o maior gargalo percebido da vertical completa, com hipótese e gate novos."
-  },
+      "technicalQuestion": {
+        "status": "UNRESOLVED",
+        "priorityDisposition": "DEFERRED_BY_PRODUCT_PRIORITY",
+        "hypothesisRefuted": false,
+        "reactivationRule": "Somente sob novo ID se EXP-0026 encontrar gestão de piso dominante e tecnicamente reproduzida."
+      },
+      "nextDecision": "Não repetir EXP-0025-R nem trocar silenciosamente de provider ou modelo. A pergunta técnica permanece UNRESOLVED e deferida enquanto o EXP-0026 mede o maior gargalo percebido da vertical completa."
+    }
+  ],
   "entries": [
     {
       "id": "EXP-0007",
@@ -433,7 +442,7 @@
       "canonicalReport": "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json",
       "evidenceCommit": "65a7b6019ab4b7231d0c79b0bff724373bdf6aea",
       "authority": "none",
-      "criticalPath": true,
+      "criticalPath": false,
       "cleanCloneChecks": [
         "node --test tests/experiment-index.test.mjs",
         "node --test tests/exp-0025-preregistration.test.mjs",
@@ -451,7 +460,28 @@
         "npm run eval:index:check"
       ],
       "supersedes": [],
-      "nextDecision": "Encerrar a linhagem deste instrumento sem rerun: STOP-R permanece desconhecido. O EXP-0025-R pode avançar sem custo externo; uma nova frente crítica só será registrada para uma capacidade percebida diferente, não para reparar este renderer novamente."
+      "nextDecision": "Encerrar a linhagem deste instrumento sem rerun: STOP-R permanece desconhecido. O próximo caminho crítico deve medir a experiência completa, não reparar este renderer novamente."
+    },
+    {
+      "id": "EXP-0026",
+      "status": "planned",
+      "decision": "PENDING_END_TO_END_BOTTLENECK_DIAGNOSIS",
+      "preRegistration": "docs/experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md",
+      "canonicalReport": null,
+      "evidenceCommit": null,
+      "authority": "none",
+      "criticalPath": true,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0026-preregistration.test.mjs",
+        "node --test tests/experiment-index.test.mjs",
+        "node --test tests/documentation-consistency.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "node --test tests/exp-0026-preregistration.test.mjs",
+        "npm run eval:index:check"
+      ],
+      "supersedes": [],
+      "nextDecision": "Implementar somente o instrumento, executar um dry-run interno excluído, congelar a sessão e então coletar seis participantes externos para escolher no máximo um próximo experimento."
     }
   ]
 }

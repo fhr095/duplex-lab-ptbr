@@ -14,7 +14,10 @@ harness PT-BR conta como **evidência local** e pode mudar o runtime.
   atual.
 - `watch`: mecanismo plausível para um gargalo futuro; acompanhar, sem executar.
 - `defer`: dependência, custo ou caso de uso ainda ausente; não investir agora.
-- `cut`: hipótese local falsificada ou sem relação com uma decisão relevante.
+- `cut`: hipótese local falsificada ou execução terminal sem pergunta técnica
+  remanescente. Quando a execução termina sem observar o estimando, mas a
+  pergunta deixa de ser prioridade, a execução fica histórica e a pergunta
+  usa `defer`.
 - Nenhum challenger recebe autoridade diretamente: primeiro qualifica em
   desenvolvimento/replay, passa por shadow e paridade e, quando aplicável,
   enfrenta um holdout próprio congelado. Autoridade exige outro gate.
@@ -63,16 +66,18 @@ introduzir falhas, mas teve p95 de 1.200 ms e foi exatamente igual a `A0@600`;
 ela foi cortada sem `L2`. A política textual oficial do DuplexCascade passou
 4/4 sentinelas sob a semântica do servidor oficial, mas as tentativas terminais
 destinadas a `D` falharam antes do download e da inferência. Assim, o protocolo
-está validado, a transferência pt-BR continua desconhecida e a frente foi
-cortada como `NOT_EVALUATED_ENVIRONMENT_BLOCKED`. Não há challenger em `test`
-até um novo gargalo percebido justificar outro pré-registro; ASR continua
-desconhecido e deferido.
+está validado, a transferência pt-BR continua desconhecida e a execução foi
+cortada como `NOT_EVALUATED_ENVIRONMENT_BLOCKED`. A pergunta técnica não foi
+refutada: ela está `UNRESOLVED — DEFERRED BY PRODUCT PRIORITY`. O
+[EXP-0026](../experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md)
+é agora o único caminho crítico e decidirá se gestão de piso merece um novo
+ID. Não há challenger em `test` enquanto esse diagnóstico não fechar.
 
 ## Fila atual
 
 | Challenger / mecanismo | Evidência disponível | Decisão afetada | Menor teste e dependências | Gate | Stop rule | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| **DuplexCascade — tomada de turno por microturnos** | `L` fez 9→4 tomadas prematuras, mas falhou p95 e foi equivalente a `A0@600`. `E` passou 4/4 sentinelas; duas alocações `D`-only falharam antes de download/inferência, com zero observações PT-BR. | Se `E` possuía vantagem residual; a rodada não produziu dado para responder. | Nenhuma nova execução nesta rodada. O freeze terminal proíbe sexta alocação, troca de provider/modelo, H ou `L2`. | Resultado preservado como `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`, separado de qualidade do checkpoint. | Frente encerrada; só volta sob novo experimento se um gargalo futuro tornar essa informação novamente decisiva. | **cut** |
+| **DuplexCascade — tomada de turno por microturnos** | O EXP-0025-R está `cut`: `L` fez 9→4 tomadas prematuras, mas falhou p95 e foi equivalente a `A0@600`; `E` passou 4/4 sentinelas, porém zero fala PT-BR de `D` foi inferida. A pergunta técnica permanece `UNRESOLVED`, `hypothesisRefuted=false`. | Primeiro, saber se gestão de piso é gargalo dominante para usuários; só então perguntar se `E` possui vantagem residual sobre `A0@600`. | Nenhuma execução agora. Se EXP-0026 encontrar gestão de piso dominante e reproduzida, abrir novo ID que primeiro qualifique o [External Challenger Runner](EXTERNAL_CHALLENGER_RUNNER_DESIGN.md); nunca reabrir EXP-0025-R. | EXP-0026: pelo menos 4/6 participantes, severidade material e falha de endpoint/interrupção reproduzida. O futuro challenger terá gate próprio. | Sem esse resultado, manter `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED` e não gastar GPU. | **defer — product priority** |
 | **Lychee-FD — separação acústico-semântica nativa** | Autores reportam full-duplex nativo e ganhos em seu benchmark; pesos e serving são publicados. Não há evidência local PT-BR nem comparabilidade direta com nosso runtime. | Se existe um teto de sobreposição, timing ou naturalidade causado pela arquitetura modular. | Primeiro, adaptar somente traces e taxonomia ao evaluator comum; executar o modelo em GPU apenas após um teto modular medido. Requer GPU, vocoder e controle do efeito de idioma. | Ganho pareado em um gargalo local previamente congelado, não explicado por ASR, TTS, AEC ou orçamento de latência. | Se não houver tarefa PT-BR comparável ou se o ganho desaparecer ao controlar componentes, não adaptar o backbone. | **watch** |
 | **PersonaPlex — prosódia, persona e backchannels** | Autores publicam métricas de transição/interrupção e checkpoint orientado à interação; material é centrado em inglês. Não há A/B local nem evidência PT-BR. | Se pós-treinamento nativo melhora naturalidade percebida além do que política + TTS modular alcançam. | Extrair uma hipótese por vez — timing de backchannel ou contorno prosódico — e julgá-la em A/B humano somente quando naturalidade for o maior gargalo. Requer GPU, revisão de licença e comparabilidade de voz/idioma. | Preferência humana consistente com intelligibilidade, interrupção e latência não inferiores à baseline. | Se o efeito não sobreviver ao controle de voz/conteúdo ou não transferir para PT-BR, manter apenas como referência. | **watch** |
 | **MiniCPM-o — entrada contínua multimodal** | Autores demonstram interação contínua de áudio/vídeo e publicam execução/quantização; fala documentada é inglês/chinês. Não há prova local para nossa vertical atual. | Se câmera e proatividade multimodal justificam ampliar o contrato do produto. | Nenhum probe agora. Quando houver caso de uso medido, comparar um evento visual isolado via adaptador antes de integrar o modelo. Depende de requisito multimodal, GPU e avaliação PT-BR. | Evento visual melhora uma tarefa de usuário definida sem regressão da conversa por voz. | Sem caso de uso multimodal prioritário ou sem ganho causal do vídeo, não integrar. | **defer** |

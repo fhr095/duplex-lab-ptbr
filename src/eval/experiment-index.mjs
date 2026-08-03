@@ -42,7 +42,7 @@ import { canonicalSha256 } from "./factory/canonical-hash.mjs";
 
 const execFileAsync = promisify(execFile);
 
-export const EXPERIMENT_INDEX_SCHEMA_VERSION = 1;
+export const EXPERIMENT_INDEX_SCHEMA_VERSION = 2;
 
 export const EXPERIMENT_STATUSES = Object.freeze([
   "active",
@@ -216,7 +216,9 @@ const EXP0025_R_HOLDOUT_RECEIPT_PATH =
 
 const ACTIVE_CRITICAL_PREREGISTRATION_PATHS = Object.freeze({
   "EXP-0025":
-    "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md"
+    "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md",
+  "EXP-0026":
+    "docs/experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md"
 });
 
 const ACTIVE_PARALLEL_PREREGISTRATION_PATHS = Object.freeze({
@@ -876,8 +878,7 @@ async function assertGitAncestor(projectRoot, ancestor, descendant, label) {
   }
 }
 
-async function assertExp0025RLocalEvidence(index, projectRoot) {
-  const probe = index.currentParallelProbe;
+async function assertExp0025RLocalEvidence(probe, projectRoot) {
   assert(
     probe.canonicalReport === EXP0025_R_LOCAL_CANONICAL_REPORT_PATH,
     "EXP-0025-R canonicalReport precisa apontar para o holdout local"
@@ -1011,8 +1012,7 @@ async function assertExp0025RLocalEvidence(index, projectRoot) {
   ]);
 }
 
-async function assertExp0025RExternalSentinelEvidence(index, projectRoot) {
-  const probe = index.currentParallelProbe;
+async function assertExp0025RExternalSentinelEvidence(probe, projectRoot) {
   const summary = probe.externalSentinelResult;
   assert(
     summary?.status === "sentinels-passed-development-not-evaluated" &&
@@ -1126,8 +1126,7 @@ async function assertExp0025RExternalSentinelEvidence(index, projectRoot) {
   ]);
 }
 
-async function assertExp0025RExternalTerminalEvidence(index, projectRoot) {
-  const probe = index.currentParallelProbe;
+async function assertExp0025RExternalTerminalEvidence(probe, projectRoot) {
   const summary = probe.externalTerminalResult;
   const receiptPath =
     "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5.json";
@@ -2632,68 +2631,111 @@ export async function validateExperimentIndex(index, options = {}) {
       EXPERIMENT_ID_PATTERN.test(index.currentCriticalPath),
     "currentCriticalPath must be an experiment ID"
   );
-  assertObject(index.currentParallelProbe, "currentParallelProbe");
   assert(
-    typeof index.currentParallelProbe.id === "string" &&
-      EXPERIMENT_TRACK_ID_PATTERN.test(index.currentParallelProbe.id),
-    "currentParallelProbe.id must be an experiment track ID"
+    index.currentParallelProbe === null ||
+      (typeof index.currentParallelProbe === "object" &&
+        !Array.isArray(index.currentParallelProbe)),
+    "currentParallelProbe must be null or an object"
   );
+  if (index.currentParallelProbe !== null) {
+    assert(
+      typeof index.currentParallelProbe.id === "string" &&
+        EXPERIMENT_TRACK_ID_PATTERN.test(index.currentParallelProbe.id),
+      "currentParallelProbe.id must be an experiment track ID"
+    );
+    assert(
+      index.currentParallelProbe.id === `${index.currentCriticalPath}-R`,
+      "currentParallelProbe.id must be the R track of currentCriticalPath"
+    );
+    assert(
+      index.currentParallelProbe.parent === index.currentCriticalPath,
+      "currentParallelProbe.parent must match currentCriticalPath"
+    );
+    assert(
+      index.currentParallelProbe.status === "active" ||
+        index.currentParallelProbe.status === "planned" ||
+        index.currentParallelProbe.status === "deferred" ||
+        index.currentParallelProbe.status === "cut",
+      "currentParallelProbe.status must be active, planned, deferred or cut"
+    );
+    assert(
+      index.currentParallelProbe.blocking === false,
+      "currentParallelProbe must be non-blocking"
+    );
+    assert(
+      index.currentParallelProbe.authority === "none",
+      "currentParallelProbe must have zero authority"
+    );
+    const probePreRegistration = resolveRepositoryPath(
+      projectRoot,
+      index.currentParallelProbe.preRegistration,
+      "currentParallelProbe.preRegistration"
+    );
+    await assertFileExists(
+      probePreRegistration,
+      "currentParallelProbe.preRegistration"
+    );
+    const expectedActivePreRegistration =
+      ACTIVE_PARALLEL_PREREGISTRATION_PATHS[index.currentCriticalPath];
+    assert(
+      typeof expectedActivePreRegistration === "string" &&
+        index.currentParallelProbe.preRegistration ===
+          expectedActivePreRegistration,
+      "currentParallelProbe.preRegistration must match the canonical parallel " +
+        "probe preregistration"
+    );
+    const preRegistrationText = await readFile(probePreRegistration, "utf8");
+    assert(
+      preRegistrationText.startsWith(
+        `# ${index.currentParallelProbe.id} —`
+      ),
+      "currentParallelProbe.preRegistration identifies a different experiment"
+    );
+    assert(
+      typeof index.currentParallelProbe.decision === "string" &&
+        index.currentParallelProbe.decision.length > 0,
+      "currentParallelProbe.decision must be a non-empty string"
+    );
+  }
+
   assert(
-    index.currentParallelProbe.id === `${index.currentCriticalPath}-R`,
-    "currentParallelProbe.id must be the R track of currentCriticalPath"
+    Array.isArray(index.parallelProbeHistory) &&
+      index.parallelProbeHistory.length > 0,
+    "parallelProbeHistory must preserve terminal parallel evidence"
   );
+  const historicalProbeIds = new Set();
+  for (const probe of index.parallelProbeHistory) {
+    assertObject(probe, "parallelProbeHistory item");
+    assert(
+      typeof probe.id === "string" &&
+        EXPERIMENT_TRACK_ID_PATTERN.test(probe.id) &&
+        !historicalProbeIds.has(probe.id),
+      "parallelProbeHistory IDs must be unique experiment track IDs"
+    );
+    historicalProbeIds.add(probe.id);
+    assert(
+      probe.status === "cut" || probe.status === "deferred",
+      "parallelProbeHistory entries must be terminal or deferred"
+    );
+    assert(
+      probe.blocking === false && probe.authority === "none",
+      "parallelProbeHistory entries must be non-blocking and non-authoritative"
+    );
+  }
+  const exp0025RProbe = index.parallelProbeHistory.find(
+    ({ id }) => id === "EXP-0025-R"
+  );
+  assertObject(exp0025RProbe, "parallelProbeHistory EXP-0025-R");
   assert(
-    index.currentParallelProbe.parent === index.currentCriticalPath,
-    "currentParallelProbe.parent must match currentCriticalPath"
+    exp0025RProbe.technicalQuestion?.status === "UNRESOLVED" &&
+      exp0025RProbe.technicalQuestion?.priorityDisposition ===
+        "DEFERRED_BY_PRODUCT_PRIORITY" &&
+      exp0025RProbe.technicalQuestion?.hypothesisRefuted === false,
+    "EXP-0025-R technical question must remain unresolved and deferred"
   );
-  assert(
-    index.currentParallelProbe.status === "active" ||
-      index.currentParallelProbe.status === "planned" ||
-      index.currentParallelProbe.status === "deferred" ||
-      index.currentParallelProbe.status === "cut",
-    "currentParallelProbe.status must be active, planned, deferred or cut"
-  );
-  assert(
-    index.currentParallelProbe.blocking === false,
-    "currentParallelProbe must be non-blocking"
-  );
-  assert(
-    index.currentParallelProbe.authority === "none",
-    "currentParallelProbe must have zero authority"
-  );
-  const probePreRegistration = resolveRepositoryPath(
-    projectRoot,
-    index.currentParallelProbe.preRegistration,
-    "currentParallelProbe.preRegistration"
-  );
-  await assertFileExists(
-    probePreRegistration,
-    "currentParallelProbe.preRegistration"
-  );
-  const expectedActivePreRegistration =
-    ACTIVE_PARALLEL_PREREGISTRATION_PATHS[index.currentCriticalPath];
-  assert(
-    typeof expectedActivePreRegistration === "string" &&
-      index.currentParallelProbe.preRegistration ===
-        expectedActivePreRegistration,
-    "currentParallelProbe.preRegistration must match the canonical parallel " +
-      "probe preregistration"
-  );
-  const preRegistrationText = await readFile(probePreRegistration, "utf8");
-  assert(
-    preRegistrationText.startsWith(
-      `# ${index.currentParallelProbe.id} —`
-    ),
-    "currentParallelProbe.preRegistration identifies a different experiment"
-  );
-  assert(
-    typeof index.currentParallelProbe.decision === "string" &&
-      index.currentParallelProbe.decision.length > 0,
-    "currentParallelProbe.decision must be a non-empty string"
-  );
-  await assertExp0025RLocalEvidence(index, projectRoot);
-  await assertExp0025RExternalSentinelEvidence(index, projectRoot);
-  await assertExp0025RExternalTerminalEvidence(index, projectRoot);
+  await assertExp0025RLocalEvidence(exp0025RProbe, projectRoot);
+  await assertExp0025RExternalSentinelEvidence(exp0025RProbe, projectRoot);
+  await assertExp0025RExternalTerminalEvidence(exp0025RProbe, projectRoot);
   assert(Array.isArray(index.entries), "entries must be an array");
   assert(index.entries.length > 0, "entries must not be empty");
 
@@ -2770,7 +2812,8 @@ export async function validateExperimentIndex(index, options = {}) {
     "transitionState contradicts currentCriticalPath"
   );
   assert(
-    index.currentParallelProbe.status !== "cut" || criticalIsTerminal,
+    index.currentParallelProbe === null ||
+      index.currentParallelProbe.status !== "cut" || criticalIsTerminal,
     "parallel probe may be cut only after terminal evidence"
   );
 
@@ -2848,6 +2891,6 @@ if (
     `Experiment index PASS: indexed=${index.entries.length}, ` +
       `canonicalReports=${canonicalReports}, ` +
       `critical=${index.currentCriticalPath}, ` +
-      `parallel=${index.currentParallelProbe.id}\n`
+      `parallel=${index.currentParallelProbe?.id ?? "none"}\n`
   );
 }

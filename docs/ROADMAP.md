@@ -64,6 +64,12 @@ histórico, esta carteira prevalece.
   e da inferência. `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`; a frente foi cortada
   sem sexta alocação, holdout, troca de provider/modelo ou alegação de
   qualidade PT-BR. A confirmação posterior fechou zero Pods ativos.
+- **Planejado/caminho crítico — EXP-0026:** screen formativo de seis sessões
+  externas, uma pessoa por unidade, precedido por um dry-run interno excluído.
+  Cérebro, prompts/parâmetros, ASR, TTS, dispositivos, ruído e janela de coleta
+  serão congelados depois do dry-run. Uma família só domina com top-2 em pelo
+  menos 4/6 participantes, severidade material e falha técnica reproduzida.
+  Zero sessão foi aberta; não há runner externo, GPU ou mudança de runtime.
 - **Estacionado:** executar backbones nativos end-to-end em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -85,9 +91,11 @@ no [pré-registro](experiments/EXP-0021-cdp-capture-recovery.md) e no
 [pré-registro](experiments/EXP-0024-physical-stop-after-capture-qualification.md)
 e no [closeout](experiments/EXP-0024-closeout.md). O EXP-0025 está no
 [pré-registro](experiments/EXP-0025-causal-render-onset-physical-stop.md) e no
-[closeout terminal](experiments/EXP-0025-closeout.md). Não há novo caminho
-crítico registrado: o próximo só nasce sob novo pré-registro para o maior
-gargalo percebido da vertical completa.
+[closeout terminal](experiments/EXP-0025-closeout.md). O novo caminho crítico
+está pré-registrado no
+[EXP-0026](experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md):
+ele mede qual gargalo percebido merece investimento antes de escolher outro
+componente.
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar uma segunda prioridade crítica; o
 [EXP-0025-R](experiments/EXP-0025-R-duplexcascade-floor-control.md) preserva o
@@ -397,14 +405,16 @@ procedurais.
 ## Fase 5 — calibração humana
 
 Status: **instrumento e calibração pequena promovidos no EXP-0015; M4b
-congelado e executado no EXP-0016; nova avaliação humana ampla não é caminho
-crítico**.
+congelado e executado no EXP-0016; screen formativo curto EXP-0026 é o caminho
+crítico; avaliação humana ampla de produto continua fora**.
 
 Há duas atividades diferentes:
 
 1. **calibração pequena de dados/rótulos**, entre M4a e M4b, para pausas,
    backchannels, interrupções e retomadas;
-2. **avaliação humana de produto**, que só vira caminho crítico quando a
+2. **screen humano de prioridade**, que pode entrar cedo e pequeno para ordenar
+   gargalos sem aprovar produto;
+3. **avaliação humana ampla de produto**, que só vira caminho crítico quando a
    fábrica e a vertical local estiverem maduras.
 
 Conversas cegas de produto de 5–10 minutos medem naturalidade, conforto,
@@ -416,6 +426,9 @@ novas famílias que voltam para a automação.
 
 Gate: preferência e guardrails humanos com desenho estatístico versionado;
 nenhum turno da mesma pessoa contado como participante independente.
+
+O EXP-0026 usa a atividade 2: seis sessões, participante como unidade e regra
+de não consenso. Ele não satisfaz o gate amplo descrito acima.
 
 O piloto de timing usou 12 cenas, comparação cega com duas ou três opções,
 empate/dúvida explícitos, atribuição da fala separada e participante como
@@ -495,6 +508,7 @@ card de dados e splits por família, gerador e pessoa.
 | 23 | EXP-0025-R local: microturnos de 600 ms — **`KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`** | holdout selado de 24 pares: 9→4 tomadas prematuras, 5 correções, 0 introduções, 2 sessões melhoradas e 0 misses | p95 `L=1.200 ms` falhou o limite de 800 ms; `L=A0@600`, sem resíduo semântico, `L2`, runtime ou autoridade |
 | 24 | EXP-0025-R externo: sentinelas oficiais — **`DO_NOT_CUT_E_DO_NOT_CLAIM_D_GAIN`** | 4/4 transições válidas sob o `server.py` fixado; tokens brutos preservados; carregamento validado por 112/112 tensores base idênticos | adaptador congelado parou antes de `D`; zero observações pt-BR/H; 35,12 GiB e US$ 0,9581 consumidos; `D`-only depende de uma alocação final e teto cumulativo de 70 GiB |
 | 25 | EXP-0025-R externo terminal — **`CUT_EXTERNAL_MICROTURN_FRONT_ENVIRONMENT_BLOCKED`** | duas alocações `D`-only terminaram antes de download/inferência; recovery GraphQL confirmou zero Pods; gasto cumulativo conservador ≤US$ 1,3864 e 28,8 min | `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`; nenhuma conclusão PT-BR, sexta alocação, troca de provider/modelo, holdout ou autoridade |
+| 26 | EXP-0026: diagnóstico formativo ponta a ponta — **`PENDING_END_TO_END_BOTTLENECK_DIAGNOSIS`** | implementar instrumento, excluir um dry-run interno, congelar a condição e executar seis sessões externas; top-2 uma vez por pessoa, categoria/severidade/comentário por cena e atribuição técnica | planejado, zero sessão; dominante exige ≥4/6, severidade material e reprodução; Live é calibração isolada; zero GPU/runner/DuplexCascade |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
 de produzir evidência física. EXP-0021 e EXP-0022 também estão terminais: suas
@@ -510,6 +524,12 @@ hipótese. A política oficial DuplexCascade passou 4/4 sentinelas, mas nenhuma
 das tentativas terminais iniciou `D`; portanto não há placar pt-BR. O kill
 criterion foi acionado e a frente externa foi cortada sem nova alocação,
 troca de provider/modelo ou holdout. Nenhum resultado concede autoridade.
+
+O EXP-0026 é o único caminho crítico planejado. Ele não tenta confirmar que o
+produto está pronto: usa seis sessões para ordenar ou recusar gargalos. Se
+gestão de piso dominar e for reproduzida, DuplexCascade volta somente sob novo
+ID e com o runner qualificado; caso contrário a pergunta permanece
+`UNRESOLVED — DEFERRED BY PRODUCT PRIORITY`.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
 pela maior falha percebida no relatório, não por ordem fixa. O matcher textual

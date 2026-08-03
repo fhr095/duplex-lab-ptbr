@@ -76,7 +76,7 @@ test("outcome histórico EXP-0018 sobrevive ao próximo caminho crítico", () =>
     }
   };
   assert.doesNotThrow(() => validateExp0018HistoricalOutcome(entry, {
-    currentCriticalPath: "EXP-0025",
+    currentCriticalPath: "EXP-0026",
     currentParallelProbe: {
       status: "planned",
       decision: "probe novo e independente"
@@ -100,84 +100,96 @@ async function fixture() {
 
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
-  assert.equal(index.currentCriticalPath, "EXP-0025");
-  assert.equal(index.transitionState, "terminal-awaiting-next-registration");
-  assert.equal(index.currentParallelProbe.id, "EXP-0025-R");
-  assert.equal(index.currentParallelProbe.status, "cut");
-  assert.equal(index.currentParallelProbe.blocking, false);
+  assert.equal(index.schemaVersion, 2);
+  assert.equal(index.currentCriticalPath, "EXP-0026");
+  assert.equal(index.transitionState, "active");
+  assert.equal(index.currentParallelProbe, null);
+  const exp0025R = index.parallelProbeHistory.find(
+    ({ id }) => id === "EXP-0025-R"
+  );
+  assert.ok(exp0025R);
+  assert.equal(exp0025R.status, "cut");
+  assert.equal(exp0025R.blocking, false);
   assert.equal(
-    index.currentParallelProbe.preRegistration,
+    exp0025R.preRegistration,
     "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md"
   );
   assert.equal(
-    index.currentParallelProbe.canonicalReport,
+    exp0025R.canonicalReport,
     EXP0025_R_LOCAL_CANONICAL_REPORT_PATH
   );
   assert.equal(
-    index.currentParallelProbe.evidenceCommit,
+    exp0025R.evidenceCommit,
     EXP0025_R_LOCAL_EVIDENCE_COMMIT
   );
   assert.equal(
-    index.currentParallelProbe.externalSentinelResult.canonicalReport,
+    exp0025R.externalSentinelResult.canonicalReport,
     EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH
   );
   assert.equal(
-    index.currentParallelProbe.externalSentinelResult.evidenceCommit,
+    exp0025R.externalSentinelResult.evidenceCommit,
     EXP0025_R_EXTERNAL_EVIDENCE_COMMIT
   );
   assert.equal(
-    index.currentParallelProbe.externalSentinelResult.officialSentinelsPassed,
+    exp0025R.externalSentinelResult.officialSentinelsPassed,
     4
   );
   assert.equal(
-    index.currentParallelProbe.externalSentinelResult.developmentEvaluated,
+    exp0025R.externalSentinelResult.developmentEvaluated,
     false
   );
-  assert.equal(index.currentParallelProbe.externalSentinelResult.holdoutRead,
+  assert.equal(exp0025R.externalSentinelResult.holdoutRead,
     false);
   assert.equal(
-    index.currentParallelProbe.externalTerminalResult.status,
+    exp0025R.externalTerminalResult.status,
     "not-evaluated-environment-blocked-terminal"
   );
   assert.equal(
-    index.currentParallelProbe.externalTerminalResult.decision,
+    exp0025R.externalTerminalResult.decision,
     "CUT_EXTERNAL_MICROTURN_FRONT_ENVIRONMENT_BLOCKED"
   );
   assert.equal(
-    index.currentParallelProbe.externalTerminalResult.evidenceCommit,
+    exp0025R.externalTerminalResult.evidenceCommit,
     EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT
   );
   assert.equal(
-    index.currentParallelProbe.externalTerminalResult.closeout,
+    exp0025R.externalTerminalResult.closeout,
     EXP0025_R_EXTERNAL_TERMINAL_CLOSEOUT_PATH
   );
   assert.equal(
-    index.currentParallelProbe.externalTerminalResult.developmentEvaluated,
+    exp0025R.externalTerminalResult.developmentEvaluated,
     false
   );
   assert.equal(
-    index.currentParallelProbe.externalTerminalResult.activePodsAfterRecovery,
+    exp0025R.externalTerminalResult.activePodsAfterRecovery,
     0
   );
-  assert.match(index.currentParallelProbe.decision, /1\.200 ms > 800 ms/u);
-  assert.match(index.currentParallelProbe.nextDecision, /Não repetir/u);
-  assert.equal(index.entries.at(-1).id, "EXP-0025");
-  assert.equal(index.entries.at(-1).status, "cut");
+  assert.equal(exp0025R.technicalQuestion.status, "UNRESOLVED");
   assert.equal(
-    index.entries.at(-1).preRegistration,
+    exp0025R.technicalQuestion.priorityDisposition,
+    "DEFERRED_BY_PRODUCT_PRIORITY"
+  );
+  assert.equal(exp0025R.technicalQuestion.hypothesisRefuted, false);
+  assert.match(exp0025R.decision, /1\.200 ms > 800 ms/u);
+  assert.match(exp0025R.nextDecision, /Não repetir/u);
+
+  const exp0025 = index.entries.find(({ id }) => id === "EXP-0025");
+  assert.equal(exp0025.status, "cut");
+  assert.equal(
+    exp0025.preRegistration,
     "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md"
   );
   assert.equal(
-    index.entries.at(-1).canonicalReport,
+    exp0025.canonicalReport,
     "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json"
   );
   assert.equal(
-    index.entries.at(-1).evidenceCommit,
+    exp0025.evidenceCommit,
     "65a7b6019ab4b7231d0c79b0bff724373bdf6aea"
   );
-  assert.equal(index.entries.at(-1).authority, "none");
-  assert.equal(index.entries.at(-1).criticalPath, true);
-  assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
+  assert.equal(exp0025.authority, "none");
+  assert.equal(exp0025.criticalPath, false);
+  assert.deepEqual(exp0025.cleanCloneChecks, [
     "node --test tests/experiment-index.test.mjs",
     "node --test tests/exp-0025-preregistration.test.mjs",
     "node --test tests/exp-0025-boundary.test.mjs",
@@ -188,6 +200,27 @@ test("índice canônico real referencia evidências existentes", async () => {
     "node --test tests/exp-0025-supervisor.test.mjs",
     "node --test tests/exp-0025-worker.test.mjs"
   ]);
+
+  const exp0026 = index.entries.at(-1);
+  assert.equal(exp0026.id, "EXP-0026");
+  assert.equal(exp0026.status, "planned");
+  assert.equal(exp0026.canonicalReport, null);
+  assert.equal(exp0026.evidenceCommit, null);
+  assert.equal(exp0026.authority, "none");
+  assert.equal(exp0026.criticalPath, true);
+  assert.equal(
+    exp0026.preRegistration,
+    "docs/experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md"
+  );
+  assert.deepEqual(exp0026.cleanCloneChecks, [
+    "node --test tests/exp-0026-preregistration.test.mjs",
+    "node --test tests/experiment-index.test.mjs",
+    "node --test tests/documentation-consistency.test.mjs"
+  ]);
+  assert.equal(
+    index.entries.some(({ id }) => id === "EXP-0026-R"),
+    false
+  );
   const exp0024 = index.entries.find(({ id }) => id === "EXP-0024");
   assert.equal(exp0024.status, "invalidated");
   assert.equal(
@@ -577,30 +610,50 @@ test("rejeita lacuna na sequência canônica e cobertura legada parcial", async 
   );
 });
 
-test("rejeita probe paralelo que bloqueie ou receba autoridade", async () => {
+test("rejeita histórico paralelo bloqueante, autoritativo ou refutado", async () => {
   const blocking = await fixture();
-  blocking.currentParallelProbe.blocking = true;
+  blocking.parallelProbeHistory[0].blocking = true;
   await assert.rejects(
     validateExperimentIndex(blocking, { projectRoot }),
-    /currentParallelProbe must be non-blocking/u
+    /parallelProbeHistory entries must be non-blocking/u
   );
 
   const authoritative = await fixture();
-  authoritative.currentParallelProbe.authority = "shadow-only";
+  authoritative.parallelProbeHistory[0].authority = "shadow-only";
   await assert.rejects(
     validateExperimentIndex(authoritative, { projectRoot }),
-    /currentParallelProbe must have zero authority/u
+    /parallelProbeHistory entries must be non-blocking/u
   );
 
+  const refuted = await fixture();
+  refuted.parallelProbeHistory[0].technicalQuestion.hypothesisRefuted = true;
+  await assert.rejects(
+    validateExperimentIndex(refuted, { projectRoot }),
+    /technical question must remain unresolved and deferred/u
+  );
+});
+
+test("rejeita probe corrente alheio ou sem pré-registro canônico", async () => {
   const unrelated = await fixture();
-  unrelated.currentParallelProbe.id = "EXP-9999-R";
+  unrelated.currentParallelProbe = {
+    ...structuredClone(unrelated.parallelProbeHistory[0]),
+    id: "EXP-9999-R",
+    parent: "EXP-0026",
+    status: "planned"
+  };
   await assert.rejects(
     validateExperimentIndex(unrelated, { projectRoot }),
     /must be the R track of currentCriticalPath/u
   );
 
   const wrongPreRegistration = await fixture();
-  wrongPreRegistration.currentParallelProbe.preRegistration = "README.md";
+  wrongPreRegistration.currentParallelProbe = {
+    ...structuredClone(wrongPreRegistration.parallelProbeHistory[0]),
+    id: "EXP-0026-R",
+    parent: "EXP-0026",
+    status: "planned",
+    preRegistration: "README.md"
+  };
   await assert.rejects(
     validateExperimentIndex(wrongPreRegistration, { projectRoot }),
     /must match the canonical parallel probe preregistration/u
@@ -635,7 +688,6 @@ test("rejeita autoridade sem relatório e drift contra decisão canônica", asyn
     authority: "runtime-control"
   });
   activeAuthority.transitionState = "active";
-  activeAuthority.currentParallelProbe.status = "planned";
   await assert.rejects(
     validateExperimentIndex(activeAuthority, { projectRoot }),
     /cannot have authority before a canonical report/u

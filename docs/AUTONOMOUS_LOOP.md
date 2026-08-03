@@ -150,6 +150,15 @@ confirmou zero Pods, o custo cumulativo conservador ficou abaixo de US$ 1,39 e
 alocação, troca de provider/modelo ou holdout. ASR/TTS não entram na política
 e backbones end-to-end continuam fora.
 
+O EXP-0026 é o caminho crítico planejado depois desse corte. Ele usa humanos
+como sensor de prioridade, não como depurador de componentes: um dry-run
+interno é excluído e seis sessões externas compartilham a mesma condição
+congelada. Uma família só domina com pelo menos 4/6 top-2, severidade material
+e falha técnica reproduzida. Sem isso, o ciclo registra
+`NO_DOMINANT_BOTTLENECK` em vez de abrir três frentes. A pergunta DuplexCascade
+permanece `UNRESOLVED — DEFERRED BY PRODUCT PRIORITY`; runner externo e GPU
+continuam não implementados e não autorizados.
+
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
 ```bash
@@ -170,6 +179,7 @@ npm run eval:exp:0025:r:holdout:audio:check
 npm run eval:exp:0025:r:holdout:seal:check
 npm run eval:exp:0025:r:holdout:report:check
 npm run eval:exp:0025:r:external:report:check
+node --test tests/exp-0026-preregistration.test.mjs
 node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
 node --test tests/exp-0023-*.test.mjs
 node --test tests/exp-0024-*.test.mjs
@@ -307,7 +317,9 @@ humana pequena forneceu a evidência externa para calibrar timing e rótulos ant
 de M4b. O EXP-0015 concluiu três participantes externos únicos, preservou
 equivalência, dúvida, atribuição da fala, atenção e consenso; avaliações
 internas não contaram para o mínimo. Essa amostra não promove qualidade de
-produto. Pessoas entram como caminho crítico para preferência quando sessões e
+produto. O EXP-0026 acrescenta um uso distinto: pessoas como sensor formativo
+da próxima prioridade, sem escolher entre candidatos nem aprovar prontidão.
+Pessoas entram como caminho crítico para **preferência ampla** quando sessões e
 tarefas forem robustas sob grande diversidade, novas campanhas encontrarem
 principalmente caudas conhecidas e
 existirem finalistas maduros que só possam ser separados por percepção. Uma

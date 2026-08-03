@@ -390,6 +390,8 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0025-R — fechamento da trilha local de microturnos](docs/experiments/EXP-0025-R-local-closeout.md)
 - [EXP-0025-R — fechamento das sentinelas externas](docs/experiments/EXP-0025-R-external-sentinel-closeout.md)
 - [EXP-0025-R — fechamento terminal da referência externa](docs/experiments/EXP-0025-R-external-terminal-closeout.md)
+- [EXP-0026 — diagnóstico formativo dos gargalos ponta a ponta](docs/experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md)
+- [External Challenger Runner — desenho não implementado](docs/research/EXTERNAL_CHALLENGER_RUNNER_DESIGN.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -448,3 +450,11 @@ inferência. Assim, `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`: não há comparação
 pt-BR nem alegação contra o modelo. A frente foi cortada sem sexta alocação,
 holdout, troca de provider/modelo ou autoridade; a consulta final confirmou
 zero Pods ativos e o custo cumulativo conservador ficou abaixo de US$ 1,39.
+
+O caminho crítico atual é o EXP-0026, ainda apenas pré-registrado: um dry-run
+interno será excluído e seis participantes externos usarão a mesma condição
+congelada. O diagnóstico só prioriza uma família quando ela aparecer no top-2
+de pelo menos 4/6 pessoas, tiver severidade material e uma falha técnica
+reproduzível. A referência Live comercial, se viável, serve apenas para
+calibrar distância percebida; nenhum output vira treino. DuplexCascade,
+External Challenger Runner e GPU permanecem fora desta rodada.

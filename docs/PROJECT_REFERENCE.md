@@ -6,7 +6,8 @@ fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
 invalidações instrumentais dos EXP-0020/0021/0022, passe instrumental do
 EXP-0023, invalidação instrumental do EXP-0024, corte terminal do EXP-0025 e
 corte do EXP-0025-R local e externo: 4/4 sentinelas oficiais, mas
-`D=NOT_EVALUATED_ENVIRONMENT_BLOCKED` após tentativas terminais pré-inferência**
+`D=NOT_EVALUATED_ENVIRONMENT_BLOCKED` após tentativas terminais pré-inferência;
+EXP-0026 pré-registrado como diagnóstico formativo ponta a ponta**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -48,7 +49,11 @@ inferência, então não existe placar pt-BR nem justificativa para holdout. O
 preserva as sentinelas e o
 [fechamento terminal](experiments/EXP-0025-R-external-terminal-closeout.md)
 preserva `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`, zero Pods, o budget e o corte.
-Não há retry, holdout ou autoridade.
+Não há retry, holdout ou autoridade. A questão técnica do DuplexCascade não foi
+refutada: está `UNRESOLVED — DEFERRED BY PRODUCT PRIORITY`. O
+[EXP-0026](experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md)
+é o único caminho crítico planejado e decidirá, com seis sessões congeladas,
+qual capacidade merece o próximo experimento ou se não há dominante.
 
 ## Tese
 
@@ -107,9 +112,11 @@ Os dois placares permanecem separados.
 ### Escala sintética não é validade externa
 
 IA produz diversidade e velocidade. Humanos verificam, mais tarde, se essa
-diversidade representa o mundo e se a experiência é agradável. Nesta fase
-preliminar, dados humanos não são o gargalo do caminho crítico; usá-los como
-depurador de bugs estruturais teria baixo retorno.
+diversidade representa o mundo e se a experiência é agradável. Uma base humana
+ampla ainda não é o gargalo; usá-la como depurador diário teria baixo retorno.
+Depois das rodadas estruturais, porém, seis sessões formativas têm alto valor
+para escolher **qual** gargalo merece o próximo investimento. Esse é o papel
+estreito do EXP-0026.
 
 ## Princípios originais preservados
 
@@ -182,6 +189,21 @@ O estado atual ainda não prova:
 - TTS aberto promovido;
 - autoridade comportamental aprendida com segurança e generalização ampla;
 - operação inteligente totalmente offline.
+
+### Caminho crítico atual: medir antes de escolher componente
+
+O EXP-0026 é um screen formativo, não uma validação final de produto. Um
+dry-run interno será excluído; depois, seis participantes externos usarão o
+mesmo cérebro, prompt/parâmetros, TTS, dispositivo e ruído congelados. Cada
+cena preserva categoria, severidade e comentário opcional, enquanto o top-2 é
+escolhido uma única vez por pessoa ao final.
+
+Uma família só orienta investimento se aparecer em pelo menos 4/6 top-2,
+tiver severidade material e falha técnica reproduzível atribuída a áudio, ASR
+parcial/final, endpoint, cérebro, TTS, interrupção ou tarefa. Sem essa
+conjunção, o resultado é `NO_DOMINANT_BOTTLENECK`. A referência Live comercial
+pode calibrar distância percebida depois de o top-2 ser selado, mas não entra
+no ranking, na atribuição nem no treino.
 
 ## Estratégia de dados nesta fase: fábrica de avaliações por IA
 
@@ -449,11 +471,14 @@ Esta referência preserva apenas a lógica macro:
     resultado em `D`; as tentativas terminais pré-inferência mantêm
     `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED` e cortam a frente sem nova alocação,
     provider/modelo alternativo, H, ASR/TTS na política ou autoridade;
-17. conceder autoridade somente se houver ganho percebido sem regressão dos
+17. executar o EXP-0026 somente depois de um dry-run interno excluído e freeze
+    da sessão; escolher no máximo um próximo experimento por prevalência,
+    severidade e reprodução, sem forçar consenso;
+18. conceder autoridade somente se houver ganho percebido sem regressão dos
     guardrails;
-18. manter backbones nativos end-to-end no ledger até existir um teto local que
+19. manter backbones nativos end-to-end no ledger até existir um teto local que
     justifique custo e integração;
-19. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+20. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
     observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo
@@ -461,8 +486,11 @@ medido, não por uma fase presumida.
 
 ## Gate para envolver humanos como caminho crítico
 
-Humanos passam a ser o próximo experimento, e não apenas uma verificação
-ocasional, quando:
+O projeto atingiu evidência de engenharia suficiente para usar humanos agora
+como **diagnóstico formativo curto**, sem esperar a melhor base humana e sem
+chamá-lo de teste final. A avaliação humana ampla de produto continua futura.
+Historicamente, humanos passam a ser o próximo experimento, e não apenas uma
+verificação ocasional, quando:
 
 - sessões longas, interrupção, correção e tarefas estiverem estáveis sob grande
   diversidade sintética;
@@ -474,6 +502,9 @@ ocasional, quando:
 O conjunto humano não precisa ser enorme para essa função: ele calibra a
 validade externa, mede preferência e revela o que a fábrica ainda não modela.
 Depois, essas descobertas ampliam novamente a automação.
+
+O EXP-0026 materializa esse uso mínimo: seis pessoas podem ordenar um gargalo,
+mas não estimar a população, aprovar prontidão ou fornecer treino.
 
 ## O que não entra agora no caminho crítico
 
@@ -503,6 +534,8 @@ Este documento é a referência macro canônica. Os demais detalham partes dela:
 - [Experimentos](experiments/): evidências e promoções;
 - [Ledger de challengers](research/CHALLENGER_LEDGER.md): pesquisa externa
   convertida em `test`, `watch`, `defer` ou `cut`;
+- [External Challenger Runner](research/EXTERNAL_CHALLENGER_RUNNER_DESIGN.md):
+  desenho preservado e não implementado para futuras comparações justificadas;
 - pré-análise original `opiniao_chatgpt_sobre_conversacional.md`, mantida
   fora do repositório: fonte histórica da tese, não estado operacional do
   projeto.
