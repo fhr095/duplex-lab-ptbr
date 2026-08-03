@@ -1,0 +1,606 @@
+{
+  "schemaVersion": "exp-0019-causal-audio-manifest-v1",
+  "experimentId": "EXP-0019",
+  "status": "materialized-local-offline",
+  "instrumentationFreeze": {
+    "path": "eval/commitments/exp-0019-instrumentation-freeze-v0.1.json",
+    "fileSha256": "sha256:3afac4a608f13c918429958956dcadc408b92bc45cdb4a1552b3c206ee001509",
+    "canonicalSha256": "sha256:7c7257ee7b4bad8da9c42a39c63231bc3f518dc322092b4ca2006b9aa0dea24f",
+    "runnerSourceCommit": "44e98fe4188fbdffeaf67cd7348740a0dc974c42"
+  },
+  "audioAttempt": {
+    "path": "eval/commitments/exp-0019-audio-attempt-v0.1.json",
+    "fileSha256": "sha256:8f29965021e1dfa0380288ae420c6db22e0f0e4254261975ae7f4e90eb0f0bf3",
+    "canonicalSha256": "sha256:bd11979cf259eeef6e8e0b763fb342b88ca98c8af5e435c25c9ea6977fc1bf8a",
+    "executionHeadCommit": "7e972ac75f2febfc21c3d161f0f5abd5d846a896"
+  },
+  "plan": {
+    "path": "eval/experiments/exp-0019-causal-audio-plan-v0.1.json",
+    "fileSha256": "sha256:3f89925478b8176194409ae21d93d42d64064912aa5da9f3477a383c2a1b6a82",
+    "canonicalSha256": "sha256:7a9e32091e583ef3cb6f5b559c97cf914a7436ce71838be095f21648d2479c3d"
+  },
+  "provenance": {
+    "execution": "local-offline",
+    "executionHeadCommit": "a899208e375d29f1a4864b682c1ad50fecd18b6d",
+    "testHarnessUsed": false,
+    "networkAllowed": false,
+    "paidApiCalls": 0,
+    "gpuRuns": 0,
+    "engine": "supertonic",
+    "model": "supertonic-3",
+    "sdkVersion": "1.3.1",
+    "pythonVersion": "3.12.13",
+    "environmentMode": "uvx-offline-existing-cache",
+    "modelCacheLocation": "local-cache-outside-repository",
+    "modelArtifactBinding": {
+      "files": {
+        "LICENSE": "sha256:0d944a9110fed9a9602d60e0423a272903e7bd21ab060490774efc77c2275e9f",
+        "config.json": "sha256:4099082b107a9d4029849ac76b89eca65e03732660969c2babe5bf308c7357f2",
+        "onnx/duration_predictor.onnx": "sha256:c3eb91414d5ff8a7a239b7fe9e34e7e2bf8a8140d8375ffb14718b1c639325db",
+        "onnx/text_encoder.onnx": "sha256:c7befd5ea8c3119769e8a6c1486c4edc6a3bc8365c67621c881bbb774b9902ff",
+        "onnx/tts.json": "sha256:42078d3aef1cd43ab43021f3c54f47d2d75ceb4e75f627f118890128b06a0d09",
+        "onnx/unicode_indexer.json": "sha256:9bf7346e43883a81f8645c81224f786d43c5b57f3641f6e7671a7d6c493cb24f",
+        "onnx/vector_estimator.onnx": "sha256:883ac868ea0275ef0e991524dc64f16b3c0376efd7c320af6b53f5b780d7c61c",
+        "onnx/vocoder.onnx": "sha256:085de76dd8e8d5836d6ca66826601f615939218f90e519f70ee8a36ed2a4c4ba",
+        "voice_styles/F4.json": "sha256:c2fa764c1225a76dfc3e2c73e8aa4f70d9ee48793860eb34c295fff01c2e032b",
+        "voice_styles/M4.json": "sha256:ca8eefad4fcd989c9379032ff3e50738adc547eeb5e221b82593a6d7b3bac303"
+      },
+      "canonicalSha256": "sha256:e3ebd90e1e069f81ba45349649f613cea5492584facf5243bf531e96d128715e"
+    },
+    "toolchainBinding": {
+      "command": "uvx",
+      "executableSha256": "sha256:dd7b049114909eefa6aa7f523584bdf84547b33f1cea00d2ee88c64bbc17ac5c",
+      "version": "uvx 0.11.18 (x86_64-unknown-linux-gnu)"
+    },
+    "sourceFiles": {
+      "wrapper": {
+        "path": "scripts/materialize-exp-0019-audio.mjs",
+        "fileSha256": "sha256:9ee3dff3af088f8b503c09ca1dc827e759e00c87e9d121798d18a74a52afdf7c"
+      },
+      "pythonMaterializer": {
+        "path": "scripts/lib/materialize-exp-0019-supertonic.py",
+        "fileSha256": "sha256:69fc50473e5d70ba79b9cf0ba8932ec9683fa48a032f9dbbb3d321fc42eea28b"
+      }
+    },
+    "receiptCanonicalSha256": "sha256:ecbd38199096b018791190f57f900c9fd7a38a920bd3c9f131704a0b776a3ea7"
+  },
+  "materializationReceipt": {
+    "assistantSegmentsSynthesizedSeparately": true,
+    "attemptFileSha256": "sha256:8f29965021e1dfa0380288ae420c6db22e0f0e4254261975ae7f4e90eb0f0bf3",
+    "autoDownload": false,
+    "engine": "supertonic",
+    "environmentMode": "uvx-offline-existing-cache",
+    "files": [
+      {
+        "id": "exp0019-assistant-context-development-label-over-version",
+        "prefixEndSample": 42353,
+        "relativePath": "eval/generated/exp-0019/audio/assistants/context-development-label-over-version.wav",
+        "sampleCount": 182787,
+        "segmentSampleCounts": [
+          42353,
+          140434
+        ],
+        "segmentSeeds": [
+          3778055713,
+          3618673434
+        ]
+      },
+      {
+        "id": "exp0019-assistant-context-development-meeting-over-shirt",
+        "prefixEndSample": 71332,
+        "relativePath": "eval/generated/exp-0019/audio/assistants/context-development-meeting-over-shirt.wav",
+        "sampleCount": 211766,
+        "segmentSampleCounts": [
+          71332,
+          140434
+        ],
+        "segmentSeeds": [
+          3270820359,
+          3976477808
+        ]
+      },
+      {
+        "id": "exp0019-assistant-context-development-shirt-over-meeting",
+        "prefixEndSample": 59072,
+        "relativePath": "eval/generated/exp-0019/audio/assistants/context-development-shirt-over-meeting.wav",
+        "sampleCount": 199506,
+        "segmentSampleCounts": [
+          59072,
+          140434
+        ],
+        "segmentSeeds": [
+          648190193,
+          48324639
+        ]
+      },
+      {
+        "id": "exp0019-assistant-context-development-version-over-label",
+        "prefixEndSample": 43468,
+        "relativePath": "eval/generated/exp-0019/audio/assistants/context-development-version-over-label.wav",
+        "sampleCount": 183902,
+        "segmentSampleCounts": [
+          43468,
+          140434
+        ],
+        "segmentSeeds": [
+          1129584526,
+          1858077508
+        ]
+      },
+      {
+        "id": "exp0019-inbound-context-development-label-over-version",
+        "prefixEndSample": null,
+        "relativePath": "eval/generated/exp-0019/audio/inbounds/context-development-label-over-version.wav",
+        "sampleCount": 56842,
+        "segmentSampleCounts": [
+          56842
+        ],
+        "segmentSeeds": [
+          2114623274
+        ]
+      },
+      {
+        "id": "exp0019-inbound-context-development-meeting-over-shirt",
+        "prefixEndSample": null,
+        "relativePath": "eval/generated/exp-0019/audio/inbounds/context-development-meeting-over-shirt.wav",
+        "sampleCount": 62415,
+        "segmentSampleCounts": [
+          62415
+        ],
+        "segmentSeeds": [
+          3777715767
+        ]
+      },
+      {
+        "id": "exp0019-inbound-context-development-shirt-over-meeting",
+        "prefixEndSample": null,
+        "relativePath": "eval/generated/exp-0019/audio/inbounds/context-development-shirt-over-meeting.wav",
+        "sampleCount": 71332,
+        "segmentSampleCounts": [
+          71332
+        ],
+        "segmentSeeds": [
+          3376587781
+        ]
+      },
+      {
+        "id": "exp0019-inbound-context-development-version-over-label",
+        "prefixEndSample": null,
+        "relativePath": "eval/generated/exp-0019/audio/inbounds/context-development-version-over-label.wav",
+        "sampleCount": 49041,
+        "segmentSampleCounts": [
+          49041
+        ],
+        "segmentSeeds": [
+          3793363619
+        ]
+      },
+      {
+        "id": "exp0019-target-target-development-green-label",
+        "prefixEndSample": null,
+        "relativePath": "eval/generated/exp-0019/audio/targets/target-development-green-label.wav",
+        "sampleCount": 43468,
+        "segmentSampleCounts": [
+          43468
+        ],
+        "segmentSeeds": [
+          1274709203
+        ]
+      },
+      {
+        "id": "exp0019-target-target-development-medium-size",
+        "prefixEndSample": null,
+        "relativePath": "eval/generated/exp-0019/audio/targets/target-development-medium-size.wav",
+        "sampleCount": 24520,
+        "segmentSampleCounts": [
+          24520
+        ],
+        "segmentSeeds": [
+          3595714553
+        ]
+      },
+      {
+        "id": "exp0019-target-target-development-thirty-minutes",
+        "prefixEndSample": null,
+        "relativePath": "eval/generated/exp-0019/audio/targets/target-development-thirty-minutes.wav",
+        "sampleCount": 26749,
+        "segmentSampleCounts": [
+          26749
+        ],
+        "segmentSeeds": [
+          778619495
+        ]
+      },
+      {
+        "id": "exp0019-target-target-development-version-three-two",
+        "prefixEndSample": null,
+        "relativePath": "eval/generated/exp-0019/audio/targets/target-development-version-three-two.wav",
+        "sampleCount": 50155,
+        "segmentSampleCounts": [
+          50155
+        ],
+        "segmentSeeds": [
+          934777959
+        ]
+      }
+    ],
+    "instrumentationFreezeFileSha256": "sha256:3afac4a608f13c918429958956dcadc408b92bc45cdb4a1552b3c206ee001509",
+    "language": "pt",
+    "model": "supertonic-3",
+    "modelSampleRate": 44100,
+    "networkAllowed": false,
+    "outputSampleRate": 16000,
+    "packageVersions": {
+      "PyYAML": "6.0.3",
+      "anyio": "4.14.2",
+      "certifi": "2026.7.22",
+      "cffi": "2.1.0",
+      "click": "8.4.2",
+      "filelock": "3.32.2",
+      "flatbuffers": "25.12.19",
+      "fsspec": "2026.7.0",
+      "h11": "0.16.0",
+      "hf-xet": "1.5.2",
+      "httpcore": "1.0.9",
+      "httpx": "0.28.1",
+      "huggingface_hub": "1.26.0",
+      "idna": "3.18",
+      "numpy": "2.5.1",
+      "onnxruntime": "1.28.0",
+      "packaging": "26.2",
+      "protobuf": "7.35.1",
+      "pycparser": "3.0",
+      "soundfile": "0.14.0",
+      "supertonic": "1.3.1",
+      "tqdm": "4.70.0",
+      "typing_extensions": "4.16.0"
+    },
+    "pythonExecutableSha256": "sha256:202c17d1671602a4ef1d43e9b2fdbef0769443f37bf5e51f6b603e0b2c27d9d8",
+    "pythonVersion": "3.12.13",
+    "randomSeedBase": 190019,
+    "randomSeedStrategy": "sha256-stream-segment-numpy-v1",
+    "schemaVersion": "exp-0019-supertonic-materialization-receipt-v1",
+    "sdkVersion": "1.3.1",
+    "speed": 1.05,
+    "supertonicPackageSha256": "sha256:3384e04df77ba7f85ebe3811e6820347ab20c60a70b384b9d584f3efd8f9b157",
+    "totalSteps": 8
+  },
+  "synthesis": {
+    "language": "pt",
+    "totalSteps": 8,
+    "speed": 1.05,
+    "modelSampleRate": 44100,
+    "randomSeedBase": 190019,
+    "randomSeedStrategy": "sha256-stream-segment-numpy-v1",
+    "assistantSegmentsSynthesizedSeparately": true
+  },
+  "audio": {
+    "encoding": "PCM_S16LE_WAVE",
+    "sampleRate": 16000,
+    "channels": 1,
+    "bitsPerSample": 16
+  },
+  "selection": {
+    "total": 12,
+    "roles": {
+      "target": 4,
+      "inbound": 4,
+      "assistant-output": 4
+    }
+  },
+  "targetReuse": {
+    "strategy": "one-canonical-wave-per-target-source",
+    "targetSources": 4,
+    "synthesesPerTarget": 1,
+    "byteIdenticalReuseRequiredWithinPair": true
+  },
+  "retention": {
+    "rawAudioInGit": false,
+    "rawAudioIgnoredUnder": "eval/generated/exp-0019/audio",
+    "manifestInGit": true,
+    "modelWeightsInGit": false
+  },
+  "files": [
+    {
+      "id": "exp0019-assistant-context-development-label-over-version",
+      "role": "assistant-output",
+      "voiceStyle": "F4",
+      "textSha256": "sha256:c80e6ac433f82b0780e7709e388849abfcec53c17398750bc275c814f825d12c",
+      "tailTextSha256": "sha256:8c111e23a7b67cf59716a2be1968ba4bfc4d23aa26ce9d8924dec7a1f3e34e04",
+      "relativePath": "eval/generated/exp-0019/audio/assistants/context-development-label-over-version.wav",
+      "waveSha256": "sha256:030ba5999c5723b08e1869bfe15daadaab1d5453ccb7cc28ecf2a94697f21567",
+      "pcmSha256": "sha256:2a595718e4ec6a69a26df90033c6979250d0208ad39d5f5364e413b8f1741557",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 182787,
+      "prefixEndSample": 42353,
+      "segments": [
+        {
+          "kind": "audible-prefix",
+          "textSha256": "sha256:c80e6ac433f82b0780e7709e388849abfcec53c17398750bc275c814f825d12c",
+          "sampleCount": 42353,
+          "pcmSha256": "sha256:ebc0a46c7369fb6b3d34b00c3267ce28ca476fef23df0db5158337f5ab5ce67c"
+        },
+        {
+          "kind": "neutral-tail",
+          "textSha256": "sha256:8c111e23a7b67cf59716a2be1968ba4bfc4d23aa26ce9d8924dec7a1f3e34e04",
+          "sampleCount": 140434,
+          "pcmSha256": "sha256:d35b654960be67b81a69a60954f60172b1ccff4f5e62a177e0663adbe75cc2b3"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-assistant-context-development-meeting-over-shirt",
+      "role": "assistant-output",
+      "voiceStyle": "F4",
+      "textSha256": "sha256:2a1a5a17cbe0ef4fe789ccb9f072829990018b7eb8aa96de67dc2a64b90c8791",
+      "tailTextSha256": "sha256:8c111e23a7b67cf59716a2be1968ba4bfc4d23aa26ce9d8924dec7a1f3e34e04",
+      "relativePath": "eval/generated/exp-0019/audio/assistants/context-development-meeting-over-shirt.wav",
+      "waveSha256": "sha256:a822481022a36266ff077e592e8053d864aa3eaf2b7ba194701e6cfe5ca30719",
+      "pcmSha256": "sha256:103175a7c4e3603643766f3b0f013e321cda7c7e0e1b8e50349c4fb296b5bac9",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 211766,
+      "prefixEndSample": 71332,
+      "segments": [
+        {
+          "kind": "audible-prefix",
+          "textSha256": "sha256:2a1a5a17cbe0ef4fe789ccb9f072829990018b7eb8aa96de67dc2a64b90c8791",
+          "sampleCount": 71332,
+          "pcmSha256": "sha256:95f042e81285ffffab703da289a5b4bfbffc0f3d2e8c725757d42cd4d8e7ed22"
+        },
+        {
+          "kind": "neutral-tail",
+          "textSha256": "sha256:8c111e23a7b67cf59716a2be1968ba4bfc4d23aa26ce9d8924dec7a1f3e34e04",
+          "sampleCount": 140434,
+          "pcmSha256": "sha256:65a6f5f6ec0d6579c21336f1995722614f4ef2cae3f20301492f863e853a7a2a"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-assistant-context-development-shirt-over-meeting",
+      "role": "assistant-output",
+      "voiceStyle": "F4",
+      "textSha256": "sha256:593d649445c66aeea11da098cedae33fa1410988a4d0ccc0a706b2d92998dbd0",
+      "tailTextSha256": "sha256:8c111e23a7b67cf59716a2be1968ba4bfc4d23aa26ce9d8924dec7a1f3e34e04",
+      "relativePath": "eval/generated/exp-0019/audio/assistants/context-development-shirt-over-meeting.wav",
+      "waveSha256": "sha256:f9f6123f3996565ade976376281911b2c6f774ef4510351bb51a349c3e981546",
+      "pcmSha256": "sha256:0a67de1142151abde84ad310893c4f6d2388dba266cc6d8195fb052868346c5b",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 199506,
+      "prefixEndSample": 59072,
+      "segments": [
+        {
+          "kind": "audible-prefix",
+          "textSha256": "sha256:593d649445c66aeea11da098cedae33fa1410988a4d0ccc0a706b2d92998dbd0",
+          "sampleCount": 59072,
+          "pcmSha256": "sha256:4c40a962c9a646876d783594a2a4ae1e04127e681f68ea45099c2e8c664d97e1"
+        },
+        {
+          "kind": "neutral-tail",
+          "textSha256": "sha256:8c111e23a7b67cf59716a2be1968ba4bfc4d23aa26ce9d8924dec7a1f3e34e04",
+          "sampleCount": 140434,
+          "pcmSha256": "sha256:7cc6c582ce66343cb1b371b15a82e553082796edf157e3ec95edf763c96bcbd6"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-assistant-context-development-version-over-label",
+      "role": "assistant-output",
+      "voiceStyle": "F4",
+      "textSha256": "sha256:aa08136c480711161ae20bca5c0e4b220fc637cf59bc9ad09f84ebec4c948782",
+      "tailTextSha256": "sha256:8c111e23a7b67cf59716a2be1968ba4bfc4d23aa26ce9d8924dec7a1f3e34e04",
+      "relativePath": "eval/generated/exp-0019/audio/assistants/context-development-version-over-label.wav",
+      "waveSha256": "sha256:ea40e239a29375b3763152cbfba459458220dba2be223f209b8f798a33ebff3e",
+      "pcmSha256": "sha256:128a9ff8e5c1daed178eeaeec106fd2593ff78d07ad43f2b14f888e22e061913",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 183902,
+      "prefixEndSample": 43468,
+      "segments": [
+        {
+          "kind": "audible-prefix",
+          "textSha256": "sha256:aa08136c480711161ae20bca5c0e4b220fc637cf59bc9ad09f84ebec4c948782",
+          "sampleCount": 43468,
+          "pcmSha256": "sha256:934d9b0b442655a6f2e4827f2cb19520c126498d1b8f205dc158e2ccaf4577b8"
+        },
+        {
+          "kind": "neutral-tail",
+          "textSha256": "sha256:8c111e23a7b67cf59716a2be1968ba4bfc4d23aa26ce9d8924dec7a1f3e34e04",
+          "sampleCount": 140434,
+          "pcmSha256": "sha256:c362ab8f9b066997b4261799406c5175b7ff1f285bb09b2188c1d83cfff095d7"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-inbound-context-development-label-over-version",
+      "role": "inbound",
+      "voiceStyle": "M4",
+      "textSha256": "sha256:c14c1126536e834e13e33c6f887765c9f77a5c944aa2a41c048767472b23bc7d",
+      "tailTextSha256": null,
+      "relativePath": "eval/generated/exp-0019/audio/inbounds/context-development-label-over-version.wav",
+      "waveSha256": "sha256:6afd18a02df180f7014ff78b98ce5fc786aa770b1b59a12ba2ce4df7376eeda5",
+      "pcmSha256": "sha256:f11964542df9b657b29ad435d895188eec9c8a238dde22751950c356da23710f",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 56842,
+      "prefixEndSample": null,
+      "segments": [
+        {
+          "kind": "utterance",
+          "textSha256": "sha256:c14c1126536e834e13e33c6f887765c9f77a5c944aa2a41c048767472b23bc7d",
+          "sampleCount": 56842,
+          "pcmSha256": "sha256:f11964542df9b657b29ad435d895188eec9c8a238dde22751950c356da23710f"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-inbound-context-development-meeting-over-shirt",
+      "role": "inbound",
+      "voiceStyle": "M4",
+      "textSha256": "sha256:286a8a8a5a705a000d1fc3957e865df761be6c29963c6e72453c2d1f87d3ddd3",
+      "tailTextSha256": null,
+      "relativePath": "eval/generated/exp-0019/audio/inbounds/context-development-meeting-over-shirt.wav",
+      "waveSha256": "sha256:6222b0bfee8346d0578789630faeda0911bca159583b4f180727538ad9dfe124",
+      "pcmSha256": "sha256:be68607204ec34820e89bc557af67f50b532131910f5a8d13576a5e6596ce00a",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 62415,
+      "prefixEndSample": null,
+      "segments": [
+        {
+          "kind": "utterance",
+          "textSha256": "sha256:286a8a8a5a705a000d1fc3957e865df761be6c29963c6e72453c2d1f87d3ddd3",
+          "sampleCount": 62415,
+          "pcmSha256": "sha256:be68607204ec34820e89bc557af67f50b532131910f5a8d13576a5e6596ce00a"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-inbound-context-development-shirt-over-meeting",
+      "role": "inbound",
+      "voiceStyle": "M4",
+      "textSha256": "sha256:55e180dcc6b6c648f67c10068e9c9bfe48876b8c680c109868470cceb3eb1550",
+      "tailTextSha256": null,
+      "relativePath": "eval/generated/exp-0019/audio/inbounds/context-development-shirt-over-meeting.wav",
+      "waveSha256": "sha256:9f75807b5128dde2b05225e51ee14f0cc0887af93eac69c553aea2b7fdc85608",
+      "pcmSha256": "sha256:f5f159c23f3b3812fbf6da0d3652936bc82b3eee87e10085f02e3adc127ea123",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 71332,
+      "prefixEndSample": null,
+      "segments": [
+        {
+          "kind": "utterance",
+          "textSha256": "sha256:55e180dcc6b6c648f67c10068e9c9bfe48876b8c680c109868470cceb3eb1550",
+          "sampleCount": 71332,
+          "pcmSha256": "sha256:f5f159c23f3b3812fbf6da0d3652936bc82b3eee87e10085f02e3adc127ea123"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-inbound-context-development-version-over-label",
+      "role": "inbound",
+      "voiceStyle": "M4",
+      "textSha256": "sha256:3c2e580c9b447f3432b7287ff8b26c85e2a71fbad47aff14c586f2ab8b87f843",
+      "tailTextSha256": null,
+      "relativePath": "eval/generated/exp-0019/audio/inbounds/context-development-version-over-label.wav",
+      "waveSha256": "sha256:20ec1f1efcd37b1f221af5306a58b070298e2789c6bad60194b43f1afcef1789",
+      "pcmSha256": "sha256:3985ab14b0a14ebc1dda0874bc08b97575c712346dac90be4f0dab2d4e7d39ca",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 49041,
+      "prefixEndSample": null,
+      "segments": [
+        {
+          "kind": "utterance",
+          "textSha256": "sha256:3c2e580c9b447f3432b7287ff8b26c85e2a71fbad47aff14c586f2ab8b87f843",
+          "sampleCount": 49041,
+          "pcmSha256": "sha256:3985ab14b0a14ebc1dda0874bc08b97575c712346dac90be4f0dab2d4e7d39ca"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-target-target-development-green-label",
+      "role": "target",
+      "voiceStyle": "M4",
+      "textSha256": "sha256:4c05c2bfeb5af74f1909b2b1737886c49d84426450650fa522d9274bb416716b",
+      "tailTextSha256": null,
+      "relativePath": "eval/generated/exp-0019/audio/targets/target-development-green-label.wav",
+      "waveSha256": "sha256:eafb3bc710479d4bf2645a5df8622172eabec9d50f1f0a6c4f03148009c3a6e6",
+      "pcmSha256": "sha256:56a2390cc529303bfee950b7636e7cbc939a5afb78e94dd5491c81fc1a4a9ff4",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 43468,
+      "prefixEndSample": null,
+      "segments": [
+        {
+          "kind": "utterance",
+          "textSha256": "sha256:4c05c2bfeb5af74f1909b2b1737886c49d84426450650fa522d9274bb416716b",
+          "sampleCount": 43468,
+          "pcmSha256": "sha256:56a2390cc529303bfee950b7636e7cbc939a5afb78e94dd5491c81fc1a4a9ff4"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-target-target-development-medium-size",
+      "role": "target",
+      "voiceStyle": "M4",
+      "textSha256": "sha256:c8541b85f0d1476b0c2d59f3e994cfc58e9593b80786674d6d4898b563de16d7",
+      "tailTextSha256": null,
+      "relativePath": "eval/generated/exp-0019/audio/targets/target-development-medium-size.wav",
+      "waveSha256": "sha256:341ec9eb7034cbfa30d5d180a3162a39c91959e7a6240e1b53536e9982244242",
+      "pcmSha256": "sha256:c1df4916b3aab1a0c2b88e9d2b3fe75882617968aa47dc0a670a196c9e1e6a40",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 24520,
+      "prefixEndSample": null,
+      "segments": [
+        {
+          "kind": "utterance",
+          "textSha256": "sha256:c8541b85f0d1476b0c2d59f3e994cfc58e9593b80786674d6d4898b563de16d7",
+          "sampleCount": 24520,
+          "pcmSha256": "sha256:c1df4916b3aab1a0c2b88e9d2b3fe75882617968aa47dc0a670a196c9e1e6a40"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-target-target-development-thirty-minutes",
+      "role": "target",
+      "voiceStyle": "M4",
+      "textSha256": "sha256:4830c75c768e5e4caa81187a5ff94a815adf8da5fdcf0703a401add18554b833",
+      "tailTextSha256": null,
+      "relativePath": "eval/generated/exp-0019/audio/targets/target-development-thirty-minutes.wav",
+      "waveSha256": "sha256:7c65fd8c4f3a706bcb16a53ef7a5c92b42e2c4b9210caff02ec5f28c361c4c03",
+      "pcmSha256": "sha256:0b745001da0a968aa8557408c5aa2963d5eb97c9f381ea07a148c505290589a4",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 26749,
+      "prefixEndSample": null,
+      "segments": [
+        {
+          "kind": "utterance",
+          "textSha256": "sha256:4830c75c768e5e4caa81187a5ff94a815adf8da5fdcf0703a401add18554b833",
+          "sampleCount": 26749,
+          "pcmSha256": "sha256:0b745001da0a968aa8557408c5aa2963d5eb97c9f381ea07a148c505290589a4"
+        }
+      ]
+    },
+    {
+      "id": "exp0019-target-target-development-version-three-two",
+      "role": "target",
+      "voiceStyle": "M4",
+      "textSha256": "sha256:2efe3d5dab556794030eb73352b7c1f9b7b08eeaf6c66dd62e139c4d345270af",
+      "tailTextSha256": null,
+      "relativePath": "eval/generated/exp-0019/audio/targets/target-development-version-three-two.wav",
+      "waveSha256": "sha256:71b11cac2af682ed98b00d246fbe4e3586b65b210851b3de9059d3208f35b6a7",
+      "pcmSha256": "sha256:764c4954a04558079780ae4a2c19a3d37589a87971c46688733f17766397607f",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitsPerSample": 16,
+      "sampleCount": 50155,
+      "prefixEndSample": null,
+      "segments": [
+        {
+          "kind": "utterance",
+          "textSha256": "sha256:2efe3d5dab556794030eb73352b7c1f9b7b08eeaf6c66dd62e139c4d345270af",
+          "sampleCount": 50155,
+          "pcmSha256": "sha256:764c4954a04558079780ae4a2c19a3d37589a87971c46688733f17766397607f"
+        }
+      ]
+    }
+  ],
+  "manifestSha256": "sha256:d8e6d4c1327f6d54e7ee56e808f7fccb4047c1520ebfb0959d42bdc2fe6fdc88"
+}
