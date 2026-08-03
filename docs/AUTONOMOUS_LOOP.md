@@ -122,6 +122,11 @@ retry e proibição de STOP, mudando somente a autoridade causal para os
 ordinais locais. Um passe prospectivo libera apenas outro pré-registro físico;
 trocar ASR, TTS ou backbone continua fora.
 
+O instrumento EXP-0023 já materializa esse único delta e falha fechado para
+ordinais invertidos, eventos ausentes, lifecycle duplicado, health extra,
+sobreposição TTS, drift de fonte ou topologia Git. Ele ainda não tem evidência
+oficial: auditoria, C0, freeze e opening isolados vêm antes da tentativa única.
+
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
 ```bash
@@ -132,6 +137,7 @@ npm run eval:exp:0020:report:check
 npm run eval:exp:0021:report:check
 npm run eval:exp:0022:report:check
 node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
+node --test tests/exp-0023-*.test.mjs
 npm run eval:index:check
 ```
 

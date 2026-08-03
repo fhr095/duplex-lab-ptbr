@@ -3,7 +3,8 @@
 Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
-invalidações instrumentais dos EXP-0020/0021/0022 e pré-registro do EXP-0023**
+invalidações instrumentais dos EXP-0020/0021/0022 e instrumento pré-registrado
+do EXP-0023 aguardando auditoria e freeze**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -20,7 +21,8 @@ repetiu 4/4 capturas, mas foi invalidado por comparar timestamps produzidos em
 pontos diferentes do Chromium. O
 [EXP-0023](experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md) muda somente
 a autoridade causal para os ordinais locais antes de qualquer nova medição de
-STOP.
+STOP; seu delta, boundary, supervisor e regressões estão implementados, sem
+abertura nem execução oficial até a auditoria e o freeze.
 
 ## Tese
 

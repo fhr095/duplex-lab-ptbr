@@ -1,6 +1,7 @@
 # EXP-0023 — semântica causal de ordinais e timestamps CDP
 
-Status: **pré-registrado; implementação não iniciada; zero autoridade**
+Status: **pré-registrado; instrumento implementado e testado; aguardando
+auditoria e freeze; zero autoridade**
 
 ## Decisão que precisa desbloquear
 
@@ -56,10 +57,12 @@ pelo menos um dos quatro healths precisa exibir a inversão com ordinais
 corretos; caso contrário o resultado não qualifica a nova semântica.
 
 O analisador corrigido deve reaproveitar o contrato fail-closed do EXP-0022 e
-provar que somente os campos temporais autorizados explicam a diferença. Uma
-cópia exclusivamente em memória pode normalizar esses campos para submeter
-todo o restante ao analisador legado; a campanha e o relatório canônicos
-continuam contendo os valores brutos originais.
+provar que somente a autoridade temporal autorizada explica a diferença. Para
+isso, uma cópia exclusivamente em memória projeta os timestamps de lifecycle
+rastreado nos respectivos ordinais e submete todo o restante ao analisador
+legado; em paralelo, os timestamps brutos precisam continuar finitos e não
+anteriores ao próprio request. A campanha e o relatório canônicos preservam
+sempre os valores brutos originais.
 
 ## Campanha fixa
 
@@ -89,7 +92,9 @@ Todos precisam passar:
    request rastreado;
 5. em todos os lifecycles,
    `requestOrdinal < responseOrdinal < terminalOrdinal` e cada timestamp não
-   anterior ao próprio request, sem comparar response contra terminal;
+   anterior ao próprio request, sem comparar response contra terminal; todos
+   os ordinais brutos de evento são positivos e globalmente únicos, e a faixa
+   ordinal de cada navegação termina antes da próxima;
 6. pelo menos um health com `responseTimestamp > finishedTimestamp`, para
    exercitar a hipótese prospectivamente;
 7. bootstrap/audit distintos, marcados, no mesmo frame/loader, com snapshots e
@@ -101,7 +106,9 @@ Todos precisam passar:
 10. browser=CDP em 4/4, A1=A2, B1=B2, A diferente de B, retry limitado,
     ambiente estável, budget negativo e diagnóstico limpo;
 11. relatório sem payload, hash canônico, bindings e checker pós-commit sem
-    passe vacuamente inferido.
+    passe vacuamente inferido; hashes de preregistro/relatório anterior/
+    closeout são recalculados do C0, e receipt, freeze, opening, fingerprint e
+    horários receipt→worker são reconstruídos dos artefatos reais.
 
 Fixtures precisam demonstrar que timestamp response/finish invertido com
 ordinais corretos passa, enquanto ordinal invertido, timestamp anterior ao
@@ -130,6 +137,11 @@ execução física de STOP permanece proibida em todos os ramos.
 6. commitar abertura isolada;
 7. executar uma única campanha oficial;
 8. commitar receipt + relatório juntos, rodar o checker e consolidar sem rerun.
+
+O passo 2 está concluído em desenvolvimento: o delta ordinal, o boundary, o
+supervisor write-once, o checker e as fixtures fail-closed existem. Nenhuma
+campanha EXP-0023 foi aberta ou executada; auditoria, C0 e freeze continuam
+obrigatórios antes da tentativa única.
 
 ## Alegação máxima
 

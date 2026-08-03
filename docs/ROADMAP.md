@@ -46,8 +46,10 @@ histórico, esta carteira prevalece.
   prospectivamente a mesma campanha TTS 2×2 sem STOP e mudar somente a
   autoridade causal: ordinais locais ordenam os eventos; timestamps continuam
   finitos e limitados pelo próprio request, sem ordenar response contra finish.
-  Só um passe autoriza pré-registrar outro experimento físico; executá-lo ainda
-  exigirá freeze e abertura próprios.
+  O instrumento e as regressões fail-closed já estão implementados; auditoria,
+  C0, freeze e abertura isolados precedem a tentativa única. Só um passe
+  autoriza pré-registrar outro experimento físico; executá-lo ainda exigirá
+  freeze e abertura próprios.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -458,7 +460,7 @@ card de dados e splits por família, gerador e pessoa.
 | 17 | EXP-0020: equivalência observável da ordem no renderer — **`INVALIDATE_STOP_ORDER_INSTRUMENT`** | freeze + abertura isolados; tentativa única consumida; primeiro payload TTS vazio no CDP; zero trials persistidos | físico `NOT_EVALUATED`; seis gates vacuamente true explicitados; sem rerun, API, GPU ou autoridade |
 | 18 | EXP-0021: qualificação fail-closed da captura TTS — **`INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION`** | 4/4 WAVs na primeira leitura; browser=CDP; A1=A2, B1=B2 e A≠B; 9/10 gates | contrato esperava um health por navegação, mas bootstrap + auditor produziram dois; tentativa consumida, fatos apenas diagnósticos, zero autoridade |
 | 19 | EXP-0022: binding bootstrap + audit health — **`INVALIDATE_BOOTSTRAP_AUDIT_HEALTH_BINDING`** | 4/4 WAVs; dois healths/nav corretamente ligados; ordinais válidos em 40/40, mas todos com response timestamp posterior ao completion | gate congelado comparou relógios semânticos diferentes; tentativa consumida, fatos diagnósticos, zero autoridade |
-| 20 | EXP-0023: semântica causal ordinal do CDP — **pré-registrado; implementação não iniciada** | mesma campanha/worker sem STOP; ordinais são autoridade, timestamps apenas limites individuais; ao menos uma inversão health precisa exercitar o delta | corrige só a premissa temporal; um passe autoriza novo pré-registro físico, não promove runtime |
+| 20 | EXP-0023: semântica causal ordinal do CDP — **instrumento implementado; aguardando auditoria e freeze** | mesma campanha/worker sem STOP; ordinais são autoridade, timestamps apenas limites individuais; ao menos uma inversão health precisa exercitar o delta | corrige só a premissa temporal; um passe autoriza novo pré-registro físico, não promove runtime |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
 de produzir evidência física. EXP-0021 e EXP-0022 também estão terminais: suas
