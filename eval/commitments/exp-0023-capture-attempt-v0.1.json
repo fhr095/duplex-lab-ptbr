@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "exp-0023-capture-attempt-v1",
+  "experimentId": "EXP-0023",
+  "status": "opened-single-capture-attempt",
+  "openingSourceCommit": "e310185d80d1e4e0a5980a0b749dae80f3635c99",
+  "openedAt": "2026-08-03T10:38:27.105Z",
+  "freeze": {
+    "path": "eval/commitments/exp-0023-instrumentation-freeze-v0.1.json",
+    "fileSha256": "sha256:873757fc14dafbdccb5b2ca09e078f1aee09e77f6c4a2b2497ef8209c2b3c22d",
+    "instrumentationFreezeSha256": "sha256:0671c803e91d478f27bbbe86acb856782f2df7d30e1caa13bcc12acf464f99db",
+    "runnerSourceCommit": "de919470f0b4b59db4f911b7ae5e40fcc9606707",
+    "freezeCommit": "e310185d80d1e4e0a5980a0b749dae80f3635c99"
+  },
+  "campaign": {
+    "nonce": "exp-0023-official-v0.1",
+    "command": "node scripts/run-exp-0023-supervisor.mjs",
+    "inheritedWorkerCommand": "node scripts/run-exp-0022-worker.mjs",
+    "configCanonicalSha256": "sha256:a51ff6d8228505030ddb27208268b8aafa89d0ef2fab02b1e322597e27a01e26",
+    "orderingAuthority": "cdp-delivery-ordinal-v1",
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0022",
+    "navigations": 2,
+    "requestsPerNavigation": 2,
+    "totalRequests": 4,
+    "trialOrder": [
+      {
+        "navigation": 1,
+        "position": 1,
+        "trialId": "A1",
+        "payloadId": "A"
+      },
+      {
+        "navigation": 1,
+        "position": 2,
+        "trialId": "B1",
+        "payloadId": "B"
+      },
+      {
+        "navigation": 2,
+        "position": 1,
+        "trialId": "B2",
+        "payloadId": "B"
+      },
+      {
+        "navigation": 2,
+        "position": 2,
+        "trialId": "A2",
+        "payloadId": "A"
+      }
+    ],
+    "reportPath": "eval/reports/exp-0023-cdp-ordinal-timestamp-semantics-v0.1.json",
+    "receiptPath": "eval/generated/exp-0023/capture-attempt-consumed-v0.1.json"
+  },
+  "gitTopology": {
+    "order": [
+      "C0_INSTRUMENT",
+      "FREEZE",
+      "OPENING",
+      "EVIDENCE"
+    ],
+    "freezeDirectParent": "C0_INSTRUMENT",
+    "openingDirectParent": "FREEZE",
+    "evidenceDirectParent": "OPENING",
+    "evidenceAllowedPaths": [
+      "eval/generated/exp-0023/capture-attempt-consumed-v0.1.json",
+      "eval/reports/exp-0023-cdp-ordinal-timestamp-semantics-v0.1.json"
+    ]
+  },
+  "boundary": {
+    "captureCampaignsBeforeOpening": 0,
+    "reportAbsent": true,
+    "receiptAbsent": true,
+    "rerunAllowed": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "captureAttemptSha256": "sha256:fb5a4a7a89bc7bd26f18c150300deaf4861ae548a6f663056e92e86cd1f92cde"
+}
