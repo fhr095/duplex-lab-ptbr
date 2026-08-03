@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02T23:10:00.000-03:00",
-  "transitionState": "active",
+  "updatedAt": "2026-08-03T00:27:15-03:00",
+  "transitionState": "terminal-awaiting-next-registration",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
     "legacyRange": "EXP-0000..EXP-0006",
@@ -27,7 +27,7 @@
     "status": "planned",
     "blocking": false,
     "authority": "none",
-    "decision": "Se o screen textual passar, pré-registrar separadamente o menor bridge causal em áudio; não materializar áudio ou ASR antes disso."
+    "decision": "Pré-registrar separadamente o menor bridge causal em áudio do checkpoint aprovado; ASR permanece fora até evidência de disponibilidade."
   },
   "entries": [
     {
@@ -220,11 +220,14 @@
     },
     {
       "id": "EXP-0018",
-      "status": "active",
-      "decision": "materialize-context-observability-instrumentation-before-fit",
-      "canonicalReport": null,
-      "evidenceCommit": null,
-      "parallelProbeOutcome": null,
+      "status": "completed",
+      "decision": "PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN",
+      "canonicalReport": "eval/reports/exp-0018-context-development-v0.1.json",
+      "evidenceCommit": "7d03ad715894eb80202d7978fe613f88fc54aacb",
+      "parallelProbeOutcome": {
+        "status": "planned",
+        "decision": "Pré-registrar separadamente o menor bridge causal em áudio do checkpoint aprovado; ASR permanece fora até evidência de disponibilidade."
+      },
       "authority": "none",
       "criticalPath": true,
       "cleanCloneChecks": [
@@ -238,7 +241,7 @@
         "npm run eval:index:check"
       ],
       "supersedes": [],
-      "nextDecision": "Com críticas cegas 24/24 e fronteira física testada, commitar as fontes e o freeze; depois executar fit, calibração, ativação, abertura e development com uma barreira de commit entre estágios."
+      "nextDecision": "Pré-registrar uma emenda e executar o menor screen causal em áudio do mesmo checkpoint; ASR continua fora até provar disponibilidade."
     }
   ]
 }

@@ -6,7 +6,7 @@ organizam capacidades e podem se sobrepor; a tabela
 entra agora no caminho crítico. O racional e as alternativas estão registrados
 na [decisão de runtime e aprendizado](DECISION_RUNTIME_LEARNING_SEQUENCE.md).
 
-## Carteira ativa em 02/08/2026
+## Carteira ativa em 03/08/2026
 
 Esta é a leitura operacional curta. Se outra página usar “próximo” em um relato
 histórico, esta carteira prevalece.
@@ -18,25 +18,28 @@ histórico, esta carteira prevalece.
   linhagens de fundo e 10/15 dirigidas em train, abaixo das 12 independentes
   exigidas por classe. Nenhum fit, limiar ou métrica semântica foi executado;
   os pisos não foram reduzidos.
-- **Agora — EXP-0018:** a matriz textual 2x2 já materializa 24 blocos
-  independentes, 48 pares e 96 casos; alvo/contexto isolados têm teto exato de
-  50%. As críticas cegas passaram 24/24 após reparar 12 ambiguidades; a
-  fronteira física de cinco estágios está implementada e testada, e falta
-  commitá-la/congelá-la antes de fit/calibração. Development
-  já foi auditado estruturalmente, mas continua sem qualquer
-  predição/métrica de candidato. Só materializar áudio se contexto ganhar sem
-  atalho.
-- **Depois, condicional:** testar disponibilidade causal em áudio do mesmo
-  checkpoint congelado. ASR parcial continua fora até esse teto informacional
-  e a integração shadow qualificarem.
+- **Concluído — EXP-0018:** sob uma única abertura selada, `B1` acertou 31/32
+  casos contra 16/32 de `B0`, preservou 16/16 falas dirigidas, recuperou 15/16
+  fundos, venceu 15 pares líquidos e melhorou nos 8/8 blocos e 4/4 famílias.
+  Os 12 gates passaram; o delta local p95 foi 0,127 ms. Isso valida apenas o
+  matcher relacional nas cenas textuais sintéticas contrabalanceadas, sem
+  autoridade, holdout, áudio real ou alegação de compreensão ampla.
+- **Agora — registro do bridge causal em áudio:** fixar o menor teste que
+  reproduz o mesmo checkpoint e as mesmas relações em uma timeline de áudio,
+  provando que somente conteúdo já audível chega ao matcher. A execução não
+  começa até hipótese, unidade, orçamento e gates estarem pré-registrados.
+- **Depois, condicional:** se o teto com texto-oráculo causal sobreviver ao
+  áudio, medir disponibilidade via ASR em um experimento separado. ASR não
+  deve ser confundido com a qualidade já isolada do matcher.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
   local capaz de mudar uma decisão.
 
-O fechamento anterior e o contrato corrente estão no
-[EXP-0017](experiments/EXP-0017-safe-veto-and-semantic-probe.md) e no
-[pré-registro do EXP-0018](experiments/EXP-0018-context-observability-screen.md).
+O fechamento anterior, o contrato congelado e o resultado corrente estão no
+[EXP-0017](experiments/EXP-0017-safe-veto-and-semantic-probe.md), no
+[pré-registro do EXP-0018](experiments/EXP-0018-context-observability-screen.md)
+e em seu [closeout](experiments/EXP-0018-closeout.md).
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar outra prioridade, e o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
@@ -424,16 +427,19 @@ card de dados e splits por família, gerador e pessoa.
 | 13 | EXP-0016: relevância acústica M4b — **`promote-m4b-speaker-relevance-shadow-candidate`** | 108 exemplos/36 clips; holdout bruto 77,8% vs 50%; humano conservador 7/9 vs 5/9; 4 probes Chrome com paridade | veto conservador ainda falha no holdout; uma só faixa de gênero; zero autoridade |
 | 14a | EXP-0017 Core: calibração segura do veto — **`retain-a0-and-cut-acoustic-core`** | 240 exemplos train/dev; `A` 50,8%, 60/60 dirigidas e 1/60 fundos; empate pareado por exemplo com `A0` | nenhum holdout; `A0` vira `A-ref`; família acústica compacta cortada nesta rodada |
 | 14b | EXP-0017-R: probe semântico causal — **cortado antes do fit** | mapa causal físico: 21/30 train; 11 fundos e 10 dirigidas elegíveis | pisos exigiam 12/classe; nenhum fit/limiar/métrica semântica; zero autoridade |
-| 15 | EXP-0018: contexto observável com conteúdo pareado — **agora, freeze pré-fit** | 24 blocos 2x2/96 casos; `D0`, controle `C0`, `B0` target-only e `B1` relacional; auditorias cegas 24/24; fronteira selada de cinco estágios testada | `n` independente 12/4/8 por papel; cada abertura exige commit; development só com auditoria estrutural, zero métrica de candidato; áudio só após passe; sem ASR, GPU/API paga ou autoridade |
+| 15 | EXP-0018: contexto observável com conteúdo pareado — **`PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN`** | 31/32 em `B1` versus 16/32 em `B0`; 16/16 dirigidas, 15/16 fundos; 15 vitórias líquidas; ganho em 8/8 blocos e 4/4 famílias; 12/12 gates | uma abertura e uma tentativa; screen textual sintético sem holdout, áudio, ASR ou autoridade; claim limitado ao matcher relacional |
+| 16 | EXP-0018-R: bridge causal em áudio — **próximo pré-registro** | mesmo checkpoint em timeline física reproduzível; texto-oráculo liberado somente após os bytes correspondentes estarem audíveis; comparação causal com replay e custo | não reabrir development textual; sem ASR, treino, GPU/API paga ou autoridade; cortar antes de ASR se o teto causal não sobreviver |
 
-O EXP-0018 é a única frente de challenger ativa. Modelos completos continuam
-no ledger como `watch` ou `defer`; pesquisa externa não autoriza download,
-adaptação ou GPU.
+O EXP-0018 está terminal e o índice aguarda o pré-registro de sua ponte
+EXP-0018-R; não há execução experimental aberta nesse intervalo. Modelos
+completos continuam no ledger como `watch` ou `defer`; pesquisa externa não
+autoriza download, adaptação ou GPU.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
-pela maior falha percebida no relatório, não por ordem fixa. O gargalo imediato
-é provar que o contexto conversacional — e não um atalho lexical — contém sinal
-útil antes de gastar com a disponibilidade desse sinal em áudio.
+pela maior falha percebida no relatório, não por ordem fixa. O matcher textual
+já demonstrou valor informacional; o gargalo imediato passou a ser provar que
+seus três textos podem ser expostos em uma timeline de áudio sem futuro antes
+de gastar com reconhecimento real.
 
 ## Trilha paralela de governança
 

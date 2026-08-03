@@ -2,7 +2,7 @@
 
 Este documento define **o método recorrente**, não a fila. O estado executável
 vigente fica somente na
-[carteira ativa do Roadmap](ROADMAP.md#carteira-ativa-em-02082026); relatos de
+[carteira ativa do Roadmap](ROADMAP.md#carteira-ativa-em-03082026); relatos de
 loops concluídos abaixo são evidência histórica. A sequência detalhada continua
 na [ordem operacional consolidada](ROADMAP.md#ordem-operacional-consolidada).
 
@@ -88,19 +88,21 @@ em `hold`.
 
 O EXP-0017 foi fechado: o Core não ganhou de `A0`, e o probe `R` foi cortado
 antes do fit porque o mapa causal não atingiu os pisos independentes de fit e
-calibração. O ciclo corrente é o EXP-0018. A fábrica já materializou blocos
-textuais 2x2: cada alvo e cada contexto exatos aparecem nos dois rótulos, e a
-unidade independente é o bloco, não cada par descendente. Duas críticas cegas
-passaram 24/24 após reparar 12 ambiguidades. A fronteira física já separa
-freeze, fit, calibração, ativação, consumo da abertura e development por
-allowlists de arquivo e barreiras de commit; o gate corrente é commit das
-fontes e freeze. Nenhum fit, predição ou métrica de candidato em development
-foi executado.
-Áudio só é materializado
-se esse teto informacional ganhar sem atalho; ASR parcial permanece posterior.
-Nenhuma variante recebe autoridade ou muda o STOP físico. Hipóteses e gates
-estão no
-[pré-registro](experiments/EXP-0018-context-observability-screen.md).
+calibração. O EXP-0018 corrigiu o constructo em blocos textuais 2x2 e executou
+uma única abertura selada. `B1` acertou 31/32 casos contra 16/32 de `B0`, venceu
+15 pares líquidos, melhorou nos 8/8 blocos e 4/4 famílias e passou 12/12 gates,
+com zero autoridade. Esse resultado é um screen de mecanismo sintético, sem
+holdout, áudio ou compreensão semântica ampla.
+
+O índice está agora em `terminal-awaiting-next-registration`. O próximo ciclo
+é a ponte EXP-0018-R: provar, com o mesmo checkpoint, que o conteúdo textual
+necessário pode ser liberado sem futuro em uma timeline de áudio reproduzível.
+O primeiro teto usa texto-oráculo causal; ASR, novo treino e autoridade ficam
+fora para que uma falha de integração não seja confundida com reconhecimento.
+Hipótese, limites e evidência textual permanecem ligados ao
+[pré-registro congelado](experiments/EXP-0018-context-observability-screen.md)
+e ao [closeout](experiments/EXP-0018-closeout.md), que aponta para o relatório
+canônico.
 
 O ciclo é reproduzido por:
 
@@ -126,17 +128,20 @@ npm run eval:exp:0016:browser
 npm run eval:exp:0016:report:check
 ```
 
-No EXP-0018, o loop autônomo valida primeiro integridade pareada,
-contrabalanceamento de lexemas/templates e separação de linhagens. Fit e
-development continuam fisicamente separados; qualquer inviabilidade de piso
-corta a rodada sem emenda oportunista.
+O fechamento do EXP-0018 é verificado sem reabrir a tentativa de development:
 
 ```bash
 npm run eval:exp:0018:data:check
 node --test tests/exp-0018-context-factory.test.mjs
 node --test tests/exp-0018-boundary.test.mjs
 node --test tests/exp-0018-training.test.mjs
+npm run eval:index:check
 ```
+
+Os comandos de freeze, fit, calibração e development são históricos e
+single-attempt; não fazem parte da reprodução pós-fechamento. O índice refaz o
+fit, a calibração, as predições armazenadas e a cronologia Git a partir dos
+artefatos commitados.
 
 Modelos fortes podem continuar gerando ou auditando pequenas amostras difíceis;
 modelos locais/econômicos e transformações determinísticas fornecem volume. O

@@ -88,19 +88,26 @@ async function fixture() {
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
   assert.equal(index.currentCriticalPath, "EXP-0018");
-  assert.equal(index.transitionState, "active");
+  assert.equal(index.transitionState, "terminal-awaiting-next-registration");
   assert.equal(index.currentParallelProbe.id, "EXP-0018-R");
   assert.equal(index.currentParallelProbe.blocking, false);
   assert.equal(
     index.entries.at(-1).canonicalReport,
-    null
+    "eval/reports/exp-0018-context-development-v0.1.json"
   );
   assert.equal(index.entries.at(-1).authority, "none");
-  assert.equal(index.entries.at(-1).evidenceCommit, null);
-  assert.equal(index.entries.at(-1).parallelProbeOutcome, null);
+  assert.equal(
+    index.entries.at(-1).evidenceCommit,
+    "7d03ad715894eb80202d7978fe613f88fc54aacb"
+  );
+  assert.deepEqual(index.entries.at(-1).parallelProbeOutcome, {
+    status: "planned",
+    decision:
+      "Pré-registrar separadamente o menor bridge causal em áudio do checkpoint aprovado; ASR permanece fora até evidência de disponibilidade."
+  });
   assert.equal(
     index.entries.at(-1).decision,
-    "materialize-context-observability-instrumentation-before-fit"
+    "PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN"
   );
   assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
     "node --test tests/exp-0018-context-factory.test.mjs",
@@ -209,12 +216,12 @@ test("rejeita probe paralelo que bloqueie ou receba autoridade", async () => {
   );
 });
 
-test("rejeita autoridade sem relatório e drift contra decisão canônica", async () => {
-  const activeAuthority = await fixture();
-  activeAuthority.entries.at(-1).authority = "runtime-control";
+test("rejeita autoridade e drift contra decisão canônica", async () => {
+  const terminalAuthority = await fixture();
+  terminalAuthority.entries.at(-1).authority = "runtime-control";
   await assert.rejects(
-    validateExperimentIndex(activeAuthority, { projectRoot }),
-    /cannot have authority before a canonical report/u
+    validateExperimentIndex(terminalAuthority, { projectRoot }),
+    /authority contradicts its canonical report contract/u
   );
 
   const cutAuthority = await fixture();

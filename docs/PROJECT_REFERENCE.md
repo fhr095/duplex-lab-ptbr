@@ -1,8 +1,12 @@
 # Referência macro do projeto
 
-Status: **referência canônica — consolidada em 02/08/2026 após auditoria,
-contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow e
-fechamento do EXP-0017 com pré-registro do EXP-0018**
+Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
+contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
+fechamento do EXP-0017 e passe textual estrito do EXP-0018**
+
+O resultado e seus limites estão resumidos no
+[closeout do EXP-0018](experiments/EXP-0018-closeout.md); o plano original
+permanece imutável no pré-registro congelado.
 
 ## Tese
 
@@ -376,11 +380,12 @@ Esta referência preserva apenas a lógica macro:
    sem confundir seu rótulo bruto com uma decisão segura;
 7. preservar o fechamento do EXP-0017: Core sem ganho e `R` inviável antes do
    fit sob pisos causais independentes;
-8. executar o EXP-0018 textual em blocos 2x2: alvo e contexto isolados têm
-   teto de 50%, a relação é a única feature discriminativa e a unidade
-   independente governa split e gate;
-9. materializar áudio do mesmo challenger somente após passe textual; ASR real
-   continua posterior à prova de disponibilidade causal;
+8. preservar o passe estreito do EXP-0018: `B1` fez 31/32 contra 16/32 de
+   `B0`, com 15 vitórias líquidas e ganho nos 8 blocos, mas somente em texto
+   sintético contrabalanceado, sem holdout ou autoridade;
+9. pré-registrar e executar o menor bridge causal em áudio do mesmo checkpoint,
+   liberando texto-oráculo apenas quando os bytes correspondentes já estiverem
+   audíveis; ASR real continua posterior a esse teto;
 10. conceder autoridade somente se houver ganho percebido sem regressão dos
    guardrails;
 11. manter backbones nativos no ledger até existir um teto local que justifique

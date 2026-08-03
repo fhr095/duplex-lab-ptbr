@@ -1,6 +1,6 @@
 # Ledger de challengers
 
-Status: **fila decisória canônica de pesquisa — 02/08/2026**.
+Status: **fila decisória canônica de pesquisa — 03/08/2026**.
 
 Este ledger transforma resultados externos em hipóteses locais pequenas. Ele não
 é um ranking de modelos nem altera a ordem executável do
@@ -35,15 +35,17 @@ O Core do EXP-0017 confirmou esse limite em diversidade sintética nova: `A`
 preservou 60/60 falas dirigidas, mas acertou 1/60 fundos e empatou `A0` por
 exemplo. A hipótese acústica compacta foi cortada sem holdout. O probe `R`
 também foi cortado antes do fit: sua cobertura causal não atingiu os pisos
-independentes e seu corpus não isolava destinatário de léxico. O challenger
-ativo agora testa primeiro a relação entre alvo e contexto sob superfícies
-contrabalanceadas.
+independentes e seu corpus não isolava destinatário de léxico. O EXP-0018
+isolou essa relação: `B1` fez 31/32 contra 16/32 de `B0`, venceu 15 pares
+líquidos e passou os 12 gates. A evidência é apenas textual e sintética; o
+challenger corrente passa a testar se o mesmo sinal existe causalmente em uma
+timeline de áudio, ainda sem ASR.
 
 ## Fila atual
 
 | Challenger / mecanismo | Evidência disponível | Decisão afetada | Menor teste e dependências | Gate | Stop rule | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| **DuplexCascade — microturnos semânticos/contextuais** | Os autores descrevem ASR–LLM–TTS em microturnos de cerca de 600 ms, tokens explícitos de estado e adaptação textual; o EXP-0017-R local foi cortado antes do fit por cobertura causal insuficiente e constructo lexical. | Se contexto recente observável acrescenta sinal além de um microturno isolado quando alvo e léxico contextual aparecem nas duas classes. | EXP-0018 textual primeiro: 24 blocos 2x2, `D0` all-directed, controle estático `C0`, `B0` target-only com slots contextuais zerados e `B1` com interação alvo↔contexto. Áudio só após passe; ASR parcial, GPU/API paga e autoridade ficam fora. | Marginais target/context/metadata em 50%; recall dirigido 100%; fundo e pares completos ≥75%; ganho positivo em ≥6/8 blocos development e nas quatro famílias; p95 local ≤50 ms. | Se críticos cegos encontrarem ambiguidade, a fronteira física falhar ou B1 não ganhar, cortar antes de áudio. Se passar, congelar e pré-registrar o menor screen causal em áudio; não saltar para ASR. | **test** |
+| **DuplexCascade — microturnos semânticos/contextuais** | Os autores descrevem ASR–LLM–TTS em microturnos de cerca de 600 ms e tokens explícitos de estado. Localmente, o EXP-0018 passou o screen textual: `B1` 31/32 versus `B0` 16/32, com 15 vitórias líquidas, 8/8 blocos positivos e zero autoridade. Isso não valida o modelo externo nem áudio real. | Se os três campos que deram ganho textual podem ser expostos causalmente durante áudio sobreposto, sem texto futuro nem reabrir o development. | EXP-0018-R: mesmo checkpoint congelado, timeline reproduzível e texto-oráculo liberado somente depois do trecho correspondente estar audível. ASR, novo treino, GPU/API paga e autoridade ficam fora. | Replay e hashes exatos; zero futuro; paridade textual quando todo o conteúdo requerido já está audível; cobertura causal suficiente sob orçamento pré-registrado; nenhuma regressão do STOP físico. | Se o teto-oráculo não estiver disponível a tempo, cortar o bridge antes de ASR. Se passar, registrar separadamente a prova de disponibilidade com ASR real; não promover runtime. | **test** |
 | **Lychee-FD — separação acústico-semântica nativa** | Autores reportam full-duplex nativo e ganhos em seu benchmark; pesos e serving são publicados. Não há evidência local PT-BR nem comparabilidade direta com nosso runtime. | Se existe um teto de sobreposição, timing ou naturalidade causado pela arquitetura modular. | Primeiro, adaptar somente traces e taxonomia ao evaluator comum; executar o modelo em GPU apenas após um teto modular medido. Requer GPU, vocoder e controle do efeito de idioma. | Ganho pareado em um gargalo local previamente congelado, não explicado por ASR, TTS, AEC ou orçamento de latência. | Se não houver tarefa PT-BR comparável ou se o ganho desaparecer ao controlar componentes, não adaptar o backbone. | **watch** |
 | **PersonaPlex — prosódia, persona e backchannels** | Autores publicam métricas de transição/interrupção e checkpoint orientado à interação; material é centrado em inglês. Não há A/B local nem evidência PT-BR. | Se pós-treinamento nativo melhora naturalidade percebida além do que política + TTS modular alcançam. | Extrair uma hipótese por vez — timing de backchannel ou contorno prosódico — e julgá-la em A/B humano somente quando naturalidade for o maior gargalo. Requer GPU, revisão de licença e comparabilidade de voz/idioma. | Preferência humana consistente com intelligibilidade, interrupção e latência não inferiores à baseline. | Se o efeito não sobreviver ao controle de voz/conteúdo ou não transferir para PT-BR, manter apenas como referência. | **watch** |
 | **MiniCPM-o — entrada contínua multimodal** | Autores demonstram interação contínua de áudio/vídeo e publicam execução/quantização; fala documentada é inglês/chinês. Não há prova local para nossa vertical atual. | Se câmera e proatividade multimodal justificam ampliar o contrato do produto. | Nenhum probe agora. Quando houver caso de uso medido, comparar um evento visual isolado via adaptador antes de integrar o modelo. Depende de requisito multimodal, GPU e avaliação PT-BR. | Evento visual melhora uma tarefa de usuário definida sem regressão da conversa por voz. | Sem caso de uso multimodal prioritário ou sem ganho causal do vídeo, não integrar. | **defer** |

@@ -371,6 +371,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0016 — relevância acústica da fala em M4b](docs/experiments/EXP-0016-speaker-relevance-m4b.md)
 - [EXP-0017 — veto seguro e probe semântico causal](docs/experiments/EXP-0017-safe-veto-and-semantic-probe.md)
 - [EXP-0018 — contexto observável com conteúdo pareado](docs/experiments/EXP-0018-context-observability-screen.md)
+- [EXP-0018 — fechamento do screen textual](docs/experiments/EXP-0018-closeout.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -389,16 +390,16 @@ humanas. O EXP-0017 Core preservou todas as falas dirigidas, mas acertou só
 1/60 fundos e foi cortado sem construir holdout; `A0` permanece referência.
 O probe semântico `R` também terminou antes do fit: o mapa causal físico deixou
 11/15 e 10/15 linhagens elegíveis por classe, abaixo das 12 independentes
-exigidas por seus pisos. O caminho crítico agora é o EXP-0018: sua fábrica 2x2
-já fixou 24 blocos independentes, 48 pares e 96 casos, fazendo cada alvo e cada
-contexto exatos colidirem nos dois rótulos. As duas críticas cegas passaram
-24/24 após reparar 12 ambiguidades. A fronteira selada de cinco estágios já
-está implementada e testada; o freeze ainda precede o primeiro fit, e cada
-saída posterior exige commit antes da próxima abertura. O dataset development foi auditado apenas
-estruturalmente, sem predição ou métrica de candidato. Áudio e ASR
-só entram depois de um passe textual sem atalhos. Até esses gates, o
-checkpoint continua observacional e o comando físico rápido permanece
-determinístico no navegador.
+exigidas por seus pisos. O EXP-0018 então isolou o constructo em 24 blocos 2x2,
+48 pares e 96 casos. Após freeze, fit e calibração separados por commits, sua
+única tentativa de development terminou com 31/32 acertos em `B1` contra 16/32
+em `B0`, 15 vitórias líquidas, ganho nos 8/8 blocos e 4/4 famílias e os 12
+gates aprovados. O resultado permite afirmar apenas que o matcher relacional
+venceu o alvo isolado nessas cenas textuais sintéticas. O próximo fechamento é
+pré-registrar o menor bridge causal em áudio do mesmo checkpoint, ainda com
+texto-oráculo e sem ASR; reconhecimento real só entra se esse teto sobreviver.
+Até lá, o checkpoint continua observacional e o comando físico rápido
+permanece determinístico no navegador.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só
