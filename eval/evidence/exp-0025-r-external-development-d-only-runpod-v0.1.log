@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/workspace/duplex-lab-ptbr/scripts/run_exp_0025_r_external_d_only.py", line 19, in <module>
+    from scripts import run_exp_0025_r_external as shared
+ModuleNotFoundError: No module named 'scripts'
