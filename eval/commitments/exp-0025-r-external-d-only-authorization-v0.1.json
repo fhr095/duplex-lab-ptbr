@@ -1,0 +1,271 @@
+{
+  "schemaVersion": "exp-0025-r-external-d-only-authorization-v1",
+  "experimentId": "EXP-0025-R",
+  "stage": "FOURTH_ALLOCATION_DEVELOPMENT_D_ONLY_AUTHORIZED",
+  "authorizedAt": "2026-08-03T17:41:39-03:00",
+  "authorizationSourceCommit": "0047807543715553a218eb8e2ce0c7b537a90bd7",
+  "authorizationBasis": {
+    "userStatement": "pode sim. Tem autorização para fazer o que precisar",
+    "constrainedInterpretation": "ONE_FINAL_D_ONLY_ALLOCATION_WITH_SAME_MODEL_AND_EXISTING_DECISION_TREE",
+    "doesNotBroadenOriginalExperiment": true
+  },
+  "candidate": {
+    "id": "E-official-duplexcascade-v0.1",
+    "role": "OFFICIAL_EXTERNAL_TEXTUAL_MICROTURN_POLICY",
+    "officialCodeCommit": "42893024ca90c8de8ac3ed624467ebc123512ff8",
+    "externalRepository": "sbintuitions/DuplexCascade",
+    "externalSnapshotCommit": "dca21cb1309bb533d80f5aa5600c7b0cc2c470e3",
+    "baseRepository": "Qwen/Qwen2-7B-Instruct",
+    "baseSnapshotCommit": "f2826a00ceef68f0f2b946d945ecc0477ce4450c",
+    "configuration": {
+      "overlapWindowSeconds": 0.6,
+      "maxNewTokens": 64,
+      "doSample": false,
+      "infraSeed": 25025,
+      "freePromptAdded": false,
+      "quantizationAllowed": false,
+      "checkpointSwapAllowed": false,
+      "mappingChangeAllowed": false,
+      "officialRuntimeContextInterpretationFrozen": true
+    }
+  },
+  "authorizedStages": [
+    "DEVELOPMENT_D_SINGLE_PASS_COMPLETION"
+  ],
+  "scope": {
+    "sentinelRerunAuthorized": false,
+    "developmentPassOrdinal": 1,
+    "fourthAllocationAuthorized": true,
+    "fifthAllocationAuthorized": false,
+    "automaticRetryAuthorized": false,
+    "checkpointSwapAuthorized": false,
+    "mappingSweepAuthorized": false,
+    "localReproductionAuthorized": false,
+    "additionalApiAuthorized": false,
+    "asrOrTtsAuthorized": false,
+    "runtimeChangeAuthorized": false
+  },
+  "explicitlyNotAuthorized": [
+    "SENTINEL_RERUN",
+    "ANY_HOLDOUT_INFERENCE",
+    "FIFTH_ALLOCATION_OR_AUTOMATIC_RETRY",
+    "CHECKPOINT_OR_MODEL_SWAP",
+    "SWEEP_OR_FAVORABLE_SEED_RERUN",
+    "MAPPING_CHANGE_AFTER_D",
+    "L2_OR_ANY_LOCAL_REPRODUCTION",
+    "ADDITIONAL_API",
+    "ASR_OR_TTS",
+    "RUNTIME_AUTHORITY"
+  ],
+  "priorSentinelEvidence": {
+    "path": "eval/reports/exp-0025-r-external-development-v0.1.json",
+    "fileSha256": "653f4086772c9b3804e96768de543c5c07808439e0fd383240ab64c5cf167d54",
+    "reportSha256": "sha256:1276c467c8e68f1427795030e9d2dbb5c85cbc0e0eec4cfbd8bd8c4d5fe12cde",
+    "evidenceCommit": "67dc6aa364d02209cf7fe7f7e21e5fc854e89dfa",
+    "officialSentinelsPassed": 4,
+    "developmentEvaluated": false,
+    "holdoutRead": false,
+    "sentinelRerunRequired": false
+  },
+  "priorLoadValidity": {
+    "path": "eval/evidence/exp-0025-r-external-peft-base-equivalence-v0.1.json",
+    "fileSha256": "c718241504581d0fafe717bd83fdc173d205be835f3bab79aaa801b952cad8e1",
+    "tensorCount": 112,
+    "allEqual": true
+  },
+  "priorProviderReceipts": [
+    {
+      "path": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json",
+      "fileSha256": "f2e9c269706fd73f0d15186e52d3421ffd945ee9650954dce816274561f78cd3",
+      "status": "FAILED",
+      "terminationConfirmed": true
+    },
+    {
+      "path": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.2.json",
+      "fileSha256": "38111013be902507ad05ec43d7be59dce806592cb72c6341707aed0119e0f502",
+      "status": "FAILED",
+      "terminationConfirmed": true
+    },
+    {
+      "path": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.3.json",
+      "fileSha256": "e0bb211fd00d95e0b67d3f7f77cb12c6d5f15e8e1e5b22d1c19d2559093bb343",
+      "status": "COMPLETED",
+      "terminationConfirmed": true
+    }
+  ],
+  "inputBindings": {
+    "development": {
+      "path": "eval/datasets/exp-0025-r-development-v0.1.json",
+      "fileSha256": "c49b69623bcfccbc836674487bd49ce97f80616a0072e0dc7d7aee76887008b2",
+      "packSha256": "sha256:e074c3ff6aa32ab399d6b00d15c96fabceb72afc163905f5a33a93fb6d135b0d",
+      "pairs": 16,
+      "utterances": 32,
+      "sessions": 8
+    },
+    "priorAuthorization": {
+      "path": "eval/commitments/exp-0025-r-external-development-authorization-v0.1.json",
+      "fileSha256": "6d4f65fcfe2ce680d558b00d9cf0916a1cf91fd90aeba32097ebb15884d1545f"
+    }
+  },
+  "sourceBindings": [
+    {
+      "path": "scripts/run_exp_0025_r_external_d_only.py",
+      "byteLength": 18108,
+      "sha256": "2a626c5ee20a8ca2096a8db8ba08b6ce0a14f849a3a391f30cb5f7a804593bf9"
+    },
+    {
+      "path": "scripts/run-exp-0025-r-runpod-d-only.mjs",
+      "byteLength": 23433,
+      "sha256": "9e5b7bc46e57b24cdf2bc8874cf44e28aabec08096252898a6a87b330a74a4c5"
+    },
+    {
+      "path": "scripts/check-exp-0025-r-external-d-only-authorization.mjs",
+      "byteLength": 9293,
+      "sha256": "b4a54697dff6c40ef6c09073dea22f6ad4993be0580440ce7df149c0b35a9213"
+    },
+    {
+      "path": "scripts/run_exp_0025_r_external.py",
+      "byteLength": 22864,
+      "sha256": "e6102a886af69e2bced944d804efca59b82d8825993ea445266609a93507589e"
+    },
+    {
+      "path": "src/eval/exp-0025-r-external.mjs",
+      "byteLength": 12312,
+      "sha256": "5b2e6920a9f600170a94876199c53cd3f85b66445067600a6a48b69b665b31d1"
+    },
+    {
+      "path": "src/eval/exp-0025-r-external-d-only.mjs",
+      "byteLength": 13641,
+      "sha256": "b858b12a075739865a232dbc796ad9631523007ffdbffe1d875116e19a2c8315"
+    },
+    {
+      "path": "src/eval/exp-0025-r-official-runtime-semantics.mjs",
+      "byteLength": 2204,
+      "sha256": "2a84e05ed037bc246d0f4bb416b6350a07b179716519029601857a8e25ea462d"
+    }
+  ],
+  "officialSourceBindings": [
+    {
+      "path": "model.py",
+      "sha256": "ba4fd852966b67acc909827c55cb436385f01534aa425cce7d72c623829dc077"
+    },
+    {
+      "path": "server.py",
+      "sha256": "404a1b6f51e87c012e1111cc21a712ed8895e9a5ee99328bd1245a7c6a654037"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "a7198f886702944bc58c39add0b83906eb2cdf655e11143fb5c75d30aa99eb41"
+    }
+  ],
+  "cumulativeBudget": {
+    "priorCumulativeTransferBytesUpperBound": 37706974907,
+    "rehydrationTransferBytesUpperBound": 32666833251,
+    "projectedCumulativeTransferBytes": 70373808158,
+    "maximumDownloadGiB": 70,
+    "priorCumulativeGpuSeconds": 1193.4900000095367,
+    "maximumGpuHours": 2,
+    "priorCumulativeEstimatedCostUsd": 0.958107250007656,
+    "maximumExternalCostUsd": 12,
+    "firstLimitReachedStopsExecution": true,
+    "gpuOrCostIncreaseAuthorized": false
+  },
+  "providerExecution": {
+    "provider": "runpod",
+    "infrastructureAttempt": 4,
+    "finalAdditionalAllocation": true,
+    "supersedesAttempt3TerminalFlagOnly": true,
+    "automaticRetryAllowed": false,
+    "cloudType": "SECURE",
+    "gpuTypeId": "NVIDIA H100 PCIe",
+    "gpuCount": 1,
+    "gpuFallbackAllowed": false,
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "containerDiskInGb": 30,
+    "volumeInGb": 60,
+    "volumeMountPath": "/workspace",
+    "minimumRamPerGpuGb": 64,
+    "minimumVcpuPerGpu": 8,
+    "interruptible": false,
+    "maximumAcceptedHourlyUsd": 6,
+    "remoteRunTimeoutSeconds": 5700,
+    "terminationRequiredInFinally": true,
+    "packagePins": {
+      "transformers": "4.46.3",
+      "peft": "0.13.2",
+      "huggingface-hub": "0.26.2",
+      "safetensors": "0.4.5",
+      "hf-transfer": "0.1.9"
+    },
+    "dataBoundary": {
+      "transferredInputs": [
+        "scripts/run_exp_0025_r_external_d_only.py",
+        "scripts/run_exp_0025_r_external.py",
+        "eval/datasets/exp-0025-r-development-v0.1.json",
+        "eval/reports/exp-0025-r-external-development-v0.1.json",
+        "eval/commitments/exp-0025-r-external-d-only-authorization-v0.1.json"
+      ],
+      "holdoutTransferred": false,
+      "environmentFileTransferred": false,
+      "accountApiKeyTransferred": false,
+      "openAiApiKeyTransferred": false
+    }
+  },
+  "protocol": {
+    "sentinelGenerationCount": 0,
+    "developmentUnit": "PREFIX_PAIR_WITH_UTTERANCE_METRICS_AND_SESSION_CLUSTER",
+    "comparators": [
+      "A0_NATIVE_DECISION_REFERENCE",
+      "A0_AT_600_CADENCE_DIAGNOSTIC"
+    ],
+    "rawEvidence": {
+      "path": "eval/evidence/exp-0025-r-external-development-d-only-raw-v0.1.json",
+      "journalPath": "eval/evidence/exp-0025-r-external-development-d-only-raw-v0.1.journal.ndjson",
+      "preserveInputTokenIds": true,
+      "preserveGeneratedTokenIds": true,
+      "preserveGeneratedTokenPieces": true,
+      "preserveDecodedRaw": true,
+      "preserveTrajectory": true,
+      "preserveGenerationLatency": true
+    },
+    "providerReceiptPath": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.4.json",
+    "providerLogPath": "eval/evidence/exp-0025-r-external-development-d-only-runpod-v0.1.log",
+    "aggregateReportPath": "eval/reports/exp-0025-r-external-development-complete-v0.1.json"
+  },
+  "residualDevelopmentGateAgainstA0At600": {
+    "completeUtterances": 32,
+    "completePairs": 16,
+    "minimumCorrectedPrematureTakeovers": 1,
+    "minimumNetPrematureTakeoverImprovement": 1,
+    "maximumIntroducedPrematureTakeovers": 0,
+    "minimumSessionsImproved": 1,
+    "maximumSafeSessionRegressions": 0,
+    "maximumMissedTakeoverDelta": 0,
+    "maximumPreFinalTakeovers": 0,
+    "postFinalP95MustNotExceedA0At600": true,
+    "maximumPostFinalDelayMs": 1200,
+    "maximumProtocolFailures": 0,
+    "passDecision": "JUSTIFY_FRESH_EXTERNAL_HOLDOUT_PREREGISTRATION",
+    "failDecision": "CUT_EXTERNAL_MICROTURN_FRONT"
+  },
+  "oldHoldout": {
+    "id": "H-L-exp-0025-r-v0.1",
+    "executionAuthorized": false,
+    "statusForExternalCandidate": "INELIGIBLE_FOR_CONFIRMATION"
+  },
+  "freshExternalHoldout": {
+    "id": null,
+    "exists": false,
+    "creationAuthorized": false,
+    "executionAuthorized": false,
+    "requiresSeparateAuthorizationAfterResidualGate": true
+  },
+  "automaticFollowups": {
+    "secondLocalReproduction": false,
+    "runtimeChange": false,
+    "checkpointChange": false,
+    "anotherModel": false
+  },
+  "authorityEligible": false,
+  "authorizationSha256": "sha256:9b977836d1f70442da85328eb7582118ad574e990ff778728d13e76959223181"
+}

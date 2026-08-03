@@ -1,8 +1,8 @@
 # EXP-0025-R — referência DuplexCascade e controle local de tomada de turno
 
 Status: **trilha local concluída e cortada; sentinelas oficiais de `E` 4/4;
-`D=NOT_EVALUATED`; aguardando decisão explícita sobre teto cumulativo de
-download; nenhum holdout autorizado; não bloqueante; zero autoridade**
+`D=NOT_EVALUATED`; uma única alocação final `D`-only autorizada e ainda não
+executada; nenhum holdout autorizado; não bloqueante; zero autoridade**
 
 Evidência corrente: o pack D e o headroom permanecem versionados; o resultado
 one-shot de `L` está em
@@ -16,8 +16,26 @@ semântica do servidor oficial, mas o adaptador congelado parou fail-closed
 antes de `D` por uma interpretação contextual incompleta. O
 [fechamento das sentinelas](EXP-0025-R-external-sentinel-closeout.md) registra
 a correção, a validade do carregamento e o orçamento. A autorização não
-alcança nenhum holdout, outro checkpoint, sweep, `L2`, API ou modelo; nova
-alocação aguarda uma decisão explícita sobre o teto de download.
+alcança nenhum holdout, outro checkpoint, sweep, `L2`, API ou modelo; a emenda
+abaixo registra a decisão posterior somente para completar `D`.
+
+## Emenda D-only autorizada em 03/08/2026
+
+Depois do fechamento das sentinelas, o responsável autorizou uma única quarta
+alocação para completar somente `D` com o mesmo checkpoint. A interpretação
+operacional da autorização está congelada em
+`eval/commitments/exp-0025-r-external-d-only-authorization-v0.1.json`:
+
+- teto cumulativo de download elevado de 40 para 70 GiB;
+- tetos cumulativos de duas GPU-horas e US$ 12 inalterados;
+- zero nova geração de sentinela e uma única passagem das 32 falas de `D`;
+- mesmo H100, checkpoint, base, seed, cadência e configuração;
+- nenhum `H`, quinto Pod, retry automático, sweep, `L2`, ASR/TTS, API ou
+  autoridade;
+- encerramento do Pod obrigatório mesmo em falha.
+
+Essa emenda excepciona somente a marca terminal da terceira alocação. Os três
+consumos anteriores e o diagnóstico PEFT continuam contando integralmente.
 
 ## Emenda prospectiva antes de E
 

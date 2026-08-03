@@ -4,6 +4,15 @@ import test from "node:test";
 
 import developmentPack from
   "../eval/datasets/exp-0025-r-development-v0.1.json" with { type: "json" };
+import priorExternalRaw from
+  "../eval/evidence/exp-0025-r-external-development-raw-v0.1.json" with {
+    type: "json"
+  };
+import {
+  analyzeExp0025RExternalDOnlyDevelopment,
+  joinExp0025RExternalEvidence,
+  validateExp0025RDOnlyRawEvidence
+} from "../src/eval/exp-0025-r-external-d-only.mjs";
 import {
   EXP0025_R_EXTERNAL_CANDIDATE_ID,
   EXP0025_R_EXTERNAL_RAW_SCHEMA,
@@ -20,6 +29,8 @@ import {
 } from "../src/eval/exp-0025-r-floor-control.mjs";
 import { validateExp0025RExternalAuthorization } from
   "../scripts/check-exp-0025-r-external-authorization.mjs";
+import { validateExp0025RDOnlyAuthorization } from
+  "../scripts/check-exp-0025-r-external-d-only-authorization.mjs";
 
 const validSentinels = [
   { id: "english-user-talking", output: EXP0025_R_TOKENS.userTalking },
@@ -54,6 +65,55 @@ function a0At600Observations() {
     const replay = replayAdaptiveEndpoint(utterance, { gridMs: 600 });
     return observation(utterance, replay.firstTakeFloorAtMs);
   });
+}
+
+function validDOnlyRaw() {
+  return {
+    schemaVersion: "exp-0025-r-external-d-only-raw-evidence-v1",
+    experimentId: "EXP-0025-R",
+    candidateId: EXP0025_R_EXTERNAL_CANDIDATE_ID,
+    stage: "DEVELOPMENT_D_ONLY_AFTER_OFFICIAL_SENTINELS",
+    status: "COMPLETED",
+    authorization: {
+      sentinelRerunAuthorized: false,
+      developmentAuthorized: true,
+      holdoutInferenceAuthorized: false,
+      localReproductionAuthorized: false,
+      automaticRetryAuthorized: false
+    },
+    priorSentinelEvidence: {
+      officialSentinelsPassed: 4,
+      sentinelGenerationsThisRun: 0
+    },
+    configuration: {
+      overlapWindowSeconds: 0.6,
+      maxNewTokens: 64,
+      doSample: false,
+      infraSeed: 25025,
+      freePromptAdded: false,
+      quantized: false,
+      officialRuntimeContextMapping: true
+    },
+    checkpoint: {
+      officialCodeCommit: "42893024ca90c8de8ac3ed624467ebc123512ff8",
+      externalSnapshotCommit: "dca21cb1309bb533d80f5aa5600c7b0cc2c470e3",
+      baseSnapshotCommit: "f2826a00ceef68f0f2b946d945ecc0477ce4450c"
+    },
+    inputs: { holdoutTransferred: false },
+    modelLoad: {
+      missingKeys: Array.from({ length: 112 }, (_, index) =>
+        `model.layers.${index}.q_proj.base_layer.weight`),
+      unexpectedKeys: Array.from({ length: 112 }, (_, index) =>
+        `model.layers.${index}.q_proj.weight`)
+    },
+    budget: {
+      projectedCumulativeTransferBytes: 70_373_808_158,
+      cumulativeGpuSeconds: 1_500,
+      cumulativeEstimatedCostUsd: 2
+    },
+    development: a0At600Observations(),
+    evidenceSha256: "0".repeat(64)
+  };
 }
 
 test("E só justifica H fresco com ganho residual seguro sobre A0@600", () => {
@@ -194,6 +254,71 @@ test("semântica oficial faz user talking ceder piso durante fala assistente", (
     evaluateDuplexCascadeOfficialRuntimeSentinels(observations).status,
     "PASS"
   );
+});
+
+test("D aceita a leitura oficial auditada sem reescrever saídas brutas", () => {
+  const observations = structuredClone(validSentinels);
+  observations.find((item) => item.id === "english-user-interruption").output =
+    EXP0025_R_TOKENS.userTalking;
+  const official = evaluateDuplexCascadeOfficialRuntimeSentinels(observations);
+  const analysis = analyzeExp0025RExternalDOnlyDevelopment({
+    pack: developmentPack,
+    sentinelObservations: observations,
+    developmentObservations: a0At600Observations(),
+    officialRuntimeSentinelAnalysis: official
+  });
+  assert.equal(analysis.sentinels.status, "PASS");
+  assert.equal(analysis.sentinels.results.at(-1).output,
+    EXP0025_R_TOKENS.userTalking);
+  assert.equal(analysis.developmentEvaluated, true);
+
+  const invalid = structuredClone(official);
+  invalid.officialRuntimeBinding.sha256 = "0".repeat(64);
+  assert.throws(() => analyzeExp0025RExternalDOnlyDevelopment({
+    pack: developmentPack,
+    sentinelObservations: observations,
+    developmentObservations: a0At600Observations(),
+    officialRuntimeSentinelAnalysis: invalid
+  }), /não fecha o binding/u);
+});
+
+test("evidência D-only exige mesmo candidato, zero H e 32 trajetórias", () => {
+  const dOnly = validDOnlyRaw();
+  assert.equal(validateExp0025RDOnlyRawEvidence(dOnly), true);
+  const joined = joinExp0025RExternalEvidence(priorExternalRaw, dOnly);
+  assert.equal(joined.sentinelObservations.length, 4);
+  assert.equal(joined.developmentObservations.length, 32);
+  assert.equal(joined.holdoutRead, false);
+  dOnly.inputs.holdoutTransferred = true;
+  assert.equal(validateExp0025RDOnlyRawEvidence(dOnly), false);
+});
+
+test("quarta alocação é D-only, final e não transfere H ou sentinelas", async () => {
+  const validation = await validateExp0025RDOnlyAuthorization({
+    preflight: true
+  });
+  assert.deepEqual(validation.errors, []);
+  assert.equal(validation.valid, true);
+  assert.equal(validation.authorization.providerExecution.infrastructureAttempt,
+    4);
+  assert.equal(validation.authorization.providerExecution.finalAdditionalAllocation,
+    true);
+  assert.equal(validation.authorization.providerExecution.automaticRetryAllowed,
+    false);
+  assert.equal(validation.authorization.cumulativeBudget.maximumDownloadGiB,
+    70);
+  assert.equal(validation.authorization.oldHoldout.executionAuthorized, false);
+
+  const [pythonSource, providerSource] = await Promise.all([
+    readFile("scripts/run_exp_0025_r_external_d_only.py", "utf8"),
+    readFile("scripts/run-exp-0025-r-runpod-d-only.mjs", "utf8")
+  ]);
+  assert.doesNotMatch(pythonSource, /run_sentinels\(/u);
+  assert.match(pythonSource, /shared\.run_development\(/u);
+  assert.doesNotMatch(providerSource, /exp-0025-r-holdout/iu);
+  assert.doesNotMatch(providerSource, /external-sentinels-v0\.1/iu);
+  assert.match(providerSource, /INFRASTRUCTURE_ATTEMPT = 4/u);
+  assert.match(providerSource, /MAX_DOWNLOAD_BYTES = 70 \* 1024 \*\* 3/u);
 });
 
 test("autorização prospectiva vincula D e torna H-L inelegível para E", async () => {
