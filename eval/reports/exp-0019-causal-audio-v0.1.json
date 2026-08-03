@@ -1,0 +1,159 @@
+{
+  "schemaVersion": "exp-0019-causal-audio-canonical-report-v1",
+  "experimentId": "EXP-0019",
+  "status": "complete",
+  "decision": "CUT_CAUSAL_AUDIO_BRIDGE",
+  "pass": false,
+  "instrumentValid": true,
+  "authorityEligible": false,
+  "validation": {
+    "audioAttemptValid": true,
+    "audioManifestValid": true,
+    "browserCheckpointValid": true,
+    "browserReportValid": true,
+    "evidenceChainBound": true,
+    "instrumentationFreezeValid": true,
+    "nodeReplayValid": true,
+    "planValid": true,
+    "sourceCheckpointValid": true
+  },
+  "gates": {
+    "completeCausalBundle": true,
+    "zeroFutureEvidence": true,
+    "pairIsolationAndPayload": true,
+    "frozenSignature": true,
+    "nodeChromeParity": true,
+    "cardinalityAndDeterminism": false,
+    "latencyWithinBudget": true,
+    "lifecycleAndPhysicalStopIsolated": false,
+    "frozenCheckpointZeroAuthorityAndCost": true
+  },
+  "metrics": {
+    "scenes": 8,
+    "pairs": 4,
+    "streams": 12,
+    "nodeProposals": 16,
+    "browserRepetitions": 2,
+    "browserReadyEvaluations": 16,
+    "causalProbeArmEvaluations": 48,
+    "frozenSignature": {
+      "B0": {
+        "correct": 4,
+        "observations": 8
+      },
+      "B1": {
+        "correct": 7,
+        "observations": 8,
+        "directedCorrect": 4,
+        "directedObservations": 4,
+        "backgroundCorrect": 3,
+        "backgroundObservations": 4
+      },
+      "paired": {
+        "pairs": 4,
+        "wins": 3,
+        "losses": 0,
+        "ties": 1
+      },
+      "knownMiss": {
+        "pairRootId": "development-correction-version-label-target-development-green-label",
+        "targetSurfaceId": "target-development-green-label",
+        "contextSurfaceId": "context-development-version-over-label",
+        "expected": "BACKGROUND_OR_NOT_DIRECTED",
+        "predicted": "DIRECTED_TO_ASSISTANT"
+      }
+    },
+    "nodeComputeP95Ms": 2.9581020000000535,
+    "browserProposalLatencyP95Ms": 8.699999988079071,
+    "browserCalculationP95Ms": 5.5,
+    "rendererStopP95Ms": 56.57300003576279,
+    "maximumFeatureRelativeError": 0,
+    "maximumProbabilityRelativeError": 0,
+    "exploratory": {
+      "onsetToProposalMs": [
+        2734.6875,
+        1231.8125,
+        2276.75,
+        2734.6875,
+        2276.75,
+        1232.5,
+        1232.5,
+        1231.8125
+      ],
+      "onsetToProposalP95Ms": 2734.6875,
+      "backgroundCounterfactualHoldMs": [
+        300,
+        300,
+        300,
+        300
+      ],
+      "backgroundCounterfactualHoldP95Ms": 300
+    },
+    "effectsDispatched": 0,
+    "paidApiCalls": 0,
+    "gpuRuns": 0
+  },
+  "evidence": {
+    "preregistration": {
+      "path": "docs/experiments/EXP-0019-causal-audio-context-bridge.md",
+      "fileSha256": "sha256:94cfa2e8b483c6da0f744d19703872326bac69e1aa230706e18ab0ab2259fb53"
+    },
+    "plan": {
+      "path": "eval/experiments/exp-0019-causal-audio-plan-v0.1.json",
+      "fileSha256": "sha256:3f89925478b8176194409ae21d93d42d64064912aa5da9f3477a383c2a1b6a82",
+      "canonicalSha256": "sha256:7a9e32091e583ef3cb6f5b559c97cf914a7436ce71838be095f21648d2479c3d"
+    },
+    "instrumentationFreeze": {
+      "path": "eval/commitments/exp-0019-instrumentation-freeze-v0.1.json",
+      "fileSha256": "sha256:3afac4a608f13c918429958956dcadc408b92bc45cdb4a1552b3c206ee001509",
+      "canonicalSha256": "sha256:7c7257ee7b4bad8da9c42a39c63231bc3f518dc322092b4ca2006b9aa0dea24f"
+    },
+    "audioAttempt": {
+      "path": "eval/commitments/exp-0019-audio-attempt-v0.1.json",
+      "fileSha256": "sha256:8f29965021e1dfa0380288ae420c6db22e0f0e4254261975ae7f4e90eb0f0bf3",
+      "canonicalSha256": "sha256:bd11979cf259eeef6e8e0b763fb342b88ca98c8af5e435c25c9ea6977fc1bf8a"
+    },
+    "audioManifest": {
+      "path": "eval/sources/exp-0019-causal-audio-v0.1.json",
+      "fileSha256": "sha256:7c04a78664434e0ace0bfac442e2e98f1b49dd29116ad5dc8b80717659cb619b",
+      "canonicalSha256": "sha256:d8e6d4c1327f6d54e7ee56e808f7fccb4047c1520ebfb0959d42bdc2fe6fdc88"
+    },
+    "nodeReplay": {
+      "path": "eval/reports/exp-0019-node-replay-v0.1.json",
+      "fileSha256": "sha256:d3951971d2c945895941d2836d1987b8647ec54188a48deea94f04c9f0b22cc9",
+      "canonicalSha256": "sha256:a0e07c59847a5b7cd24acdfaa23b7045200a88a3e524faacb3f04767cdb8b0fe"
+    },
+    "browserReport": {
+      "path": "eval/reports/exp-0019-browser-v0.1.json",
+      "fileSha256": "sha256:f0a1a5aa4f9bfc5a00d4aae3d4df67f9c31fe1bf4aabf11d9bd9a5139d566519",
+      "canonicalSha256": "sha256:e2956fd791ce99da58ef9977ed5bab9636543268bf8b6eead7ce711d1db11072"
+    },
+    "sourceCheckpoint": {
+      "path": "eval/checkpoints/exp-0018-context-v0.1.json",
+      "fileSha256": "sha256:3f5080b93b406540d601368dbbfd4d0e05257d3a6171b1d876c636864b0807a8",
+      "canonicalSha256": "sha256:2d6d21adc3a27bebd9aa24a635068ce06be2a62b6c8c7545dce57623af3cb87b"
+    },
+    "browserCheckpoint": {
+      "path": "web/context-relevance-checkpoint.json",
+      "fileSha256": "sha256:9c5e9b161f6c55ca3b667edbacd3c5975a845dfe0d8ef6681c9a034195b0d2f0",
+      "canonicalSha256": "sha256:42a5f2e422d05cedd210785494a9e83e39b208113566895e0283ccb2e7d3ec0a"
+    }
+  },
+  "promoted": "nenhuma capacidade",
+  "notPromoted": [
+    "ASR incremental ou diarização",
+    "autoridade sobre STOP, lifecycle, renderer ou efeitos",
+    "qualidade perceptiva, naturalidade ou generalização de produto",
+    "qualquer modelo externo como dependência arquitetural"
+  ],
+  "nextExperiment": "Localizar o primeiro gate causal/runtime falho antes de adicionar ASR.",
+  "limitations": [
+    "oito cenas sintéticas selecionadas de development, não amostra representativa",
+    "texto-oráculo só é liberado no fim de cada clip; reconhecimento de fala não foi testado",
+    "Supertonic fornece estímulo reproduzível, não evidência de naturalidade percebida",
+    "duas execuções Chrome medem determinismo de integração, não robustez estatística",
+    "nenhuma decisão deste experimento pode produzir efeitos"
+  ],
+  "paidApiCalls": 0,
+  "reportSha256": "sha256:261155d1f26b34d2230f15d2510277ca40fe9b872ef0463de009fc35e00c4d2c"
+}
