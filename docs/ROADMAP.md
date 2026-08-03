@@ -35,7 +35,8 @@ histórico, esta carteira prevalece.
 - **Agora — EXP-0021, qualificação da captura CDP:** medir primeiro quatro
   respostas TTS sem STOP, em duas navegações, comparando SHA-256 calculado no
   browser e no CDP. Buffers explícitos e retry limitado nunca podem refazer o
-  fetch ou aceitar corpo vazio. Só um passe autoriza outro experimento físico.
+  fetch ou aceitar corpo vazio. Só um passe autoriza pré-registrar outro
+  experimento físico; executá-lo exige freeze e abertura próprios.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -439,7 +440,7 @@ card de dados e splits por família, gerador e pessoa.
 | 15 | EXP-0018: contexto observável com conteúdo pareado — **`PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN`** | 31/32 em `B1` versus 16/32 em `B0`; 16/16 dirigidas, 15/16 fundos; 15 vitórias líquidas; ganho em 8/8 blocos e 4/4 famílias; 12/12 gates | uma abertura e uma tentativa; screen textual sintético sem holdout, áudio, ASR ou autoridade; claim limitado ao matcher relacional |
 | 16 | EXP-0019: bridge causal em áudio — **`CUT_CAUSAL_AUDIO_BRIDGE`** | 8 cenas/4 pares/12 streams; 48 probes sem inferência; 16/16 paridade Node/Chrome; proposta p95 8,7 ms; STOP p95 56,573 ms; 7/9 gates | ordem `speech.paused`/`render.stopped` variou; trace e lifecycle on/off não determinísticos; zero autoridade/API/GPU; ASR não autorizado |
 | 17 | EXP-0020: equivalência observável da ordem no renderer — **`INVALIDATE_STOP_ORDER_INSTRUMENT`** | freeze + abertura isolados; tentativa única consumida; primeiro payload TTS vazio no CDP; zero trials persistidos | físico `NOT_EVALUATED`; seis gates vacuamente true explicitados; sem rerun, API, GPU ou autoridade |
-| 18 | EXP-0021: qualificação fail-closed da captura TTS — **ativo, pré-registrado; instrumento pendente** | 2 navegações × 2 fetches sem STOP; A/B balanceado; digest browser=CDP; buffers explícitos + até 4 leituras do mesmo requestId | qualifica apenas o boundary de coleta; um passe autoriza novo pré-registro físico, não promove runtime |
+| 18 | EXP-0021: qualificação fail-closed da captura TTS — **ativo; instrumento implementado e testado sem Chrome, aguardando freeze** | 2 navegações × 2 fetches sem STOP; A/B balanceado; digest browser=CDP; buffers explícitos + até 4 leituras do mesmo requestId | qualifica apenas o boundary de coleta; um passe autoriza novo pré-registro físico, não promove runtime |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
 de produzir evidência física. O EXP-0021 é a frente crítica e qualifica somente

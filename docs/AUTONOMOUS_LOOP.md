@@ -124,6 +124,7 @@ node --test tests/exp-0019-contract.test.mjs
 node --test tests/exp-0019-browser-runner.test.mjs
 node --test tests/exp-0019-analysis.test.mjs
 npm run eval:exp:0020:report:check
+node --test tests/exp-0021-*.test.mjs
 npm run eval:index:check
 ```
 

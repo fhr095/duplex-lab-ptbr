@@ -3,7 +3,7 @@
 Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
-invalidação instrumental do EXP-0020 e pré-registro do EXP-0021**
+invalidação instrumental do EXP-0020 e implementação pré-freeze do EXP-0021**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original

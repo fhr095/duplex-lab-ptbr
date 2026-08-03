@@ -1,6 +1,7 @@
 # EXP-0021 — qualificação fail-closed da captura TTS pelo CDP
 
-Status: **pré-registrado; instrumento ainda não implementado; zero autoridade**
+Status: **pré-registrado; instrumento implementado e aprovado em testes puros;
+ainda não congelado nem aberto; zero Chrome, TTS oficial ou autoridade**
 
 ## Decisão que precisa desbloquear
 
@@ -38,8 +39,9 @@ que 4/4 respostas foram capturadas; o retry permanece provado por teste
 determinístico. Se ao menos uma ocorrer, o relatório pode acrescentar
 `transientRecoveryObserved=true`, limitado às ocorrências registradas.
 
-Nenhum resultado deste experimento autoriza repetir o EXP-0020, interpretar
-ordem física ou promover runtime.
+Nenhum resultado deste experimento autoriza repetir o EXP-0020, executar uma
+medição física de STOP, interpretar ordem física ou promover runtime. Um passe
+autoriza somente escrever e revisar o pré-registro de outro número.
 
 ## Challenger mínimo
 
@@ -52,9 +54,10 @@ Somente o adaptador de instrumentação poderá mudar:
    worker espera respectivamente 0, 8, 24 e 64 ms; se todas forem necessárias,
    o atraso acumulado é 96 ms;
 3. depois do primeiro sucesso nenhum timer ou leitura adicional é criado;
-4. somente `{ body: "" }` pode avançar à leitura seguinte. Erro de comando,
-   `base64Encoded !== true`, base64/WAV inválido ou corpo ainda vazio na quarta
-   leitura encerra aquela captura como falha;
+4. somente `{ body: "", base64Encoded: true }` pode avançar à leitura
+   seguinte. A flag é validada antes do vazio; erro de comando,
+   `base64Encoded !== true`, base64/WAV inválido ou corpo ainda vazio na
+   quarta leitura encerra aquela captura como falha;
 5. cada resultado registra requestId, sequência, timestamps das quatro janelas
    possíveis, quantidade de leituras, vazios anteriores ao sucesso e
    `encodedDataLength` de `loadingFinished`;
@@ -97,6 +100,13 @@ O commit de evidência precisa ser filho direto da abertura e adicionar somente
 receipt + report. Checkers posteriores aceitam descendentes, mas validam os
 bytes e commits históricos.
 
+O endpoint CDP oficial não é livre: ele precisa ser HTTP no gateway padrão do
+WSL, porta 9223. Um `CDP_URL` herdado só é aceito se for exatamente essa mesma
+autoridade. A aba nasce em `about:blank`; o targetId retornado precisa coincidir
+com o path `/devtools/page/<targetId>`, e o worker reconstrói a autoridade do
+WebSocket a partir do endpoint validado, em vez de confiar no host declarado
+pelo Chrome. Endpoint, política, targetId e path ficam no envelope.
+
 ## Unidade, payloads e campanha fixa
 
 A unidade é uma resposta TTS local, não uma fala renderizada. A única campanha
@@ -126,6 +136,14 @@ CDP.
 Os gates exigem A1=A2, B1=B2 e A≠B, além de browser=CDP em cada unidade. Probes
 exploratórios anteriores ficam fora da contagem.
 
+Em cada navegação, o próprio browser também faz um único `GET /api/health`.
+Seu runId, fingerprint, brain, ASR, VAD, estado/engine/voz/cultura TTS precisam
+coincidir com os health externos antes/depois. Assim, browser, servidor local
+e processo medido ficam ligados pela mesma identidade de runtime. O freeze
+calcula ainda o fingerprint esperado diretamente da árvore C0 usando o mesmo
+algoritmo do servidor; o supervisor o recalcula do commit e do worktree, e o
+analisador rejeita um servidor stale mesmo que ele seja internamente estável.
+
 Não haverá `Audio`, `AudioContext`, `HTMLMediaElement.play`, `speak`,
 `speakLoop`, sessão ativa, barge-in, STOP ou evento de lifecycle. Um script
 CDP instalado antes dos scripts da página contará construções/chamadas de
@@ -138,7 +156,12 @@ No intervalo oficial, o relatório precisa conter estes valores exatos:
 - 4 requests e 4 sínteses locais Windows TTS via `POST /api/tts`;
 - 0 construções de `Audio`, `AudioContext` ou
   `webkitAudioContext`;
-- 0 chamadas de `HTMLMediaElement.play`, `speak` ou `speakLoop`;
+- 0 chamadas observadas de `HTMLMediaElement.play` ou Web Speech
+  `speechSynthesis.speak`;
+- o worker não chama `__duplexLab.speak` ou `speakLoop`; como a interface
+  exposta pela página é congelada, essa ausência não recebe contador
+  inventado: fica ligada ao source freeze, aos quatro fetches diretos exatos,
+  à cardinalidade de `/api/tts`, ao trace e aos contadores de áudio;
 - 0 eventos de barge-in, STOP ou transição de lifecycle;
 - 0 decisões/efeitos no training trace;
 - 0 ativações de microfone, captura, ASR ou VAD;
@@ -156,7 +179,10 @@ Os testes precisam provar, por doubles controlados:
 - primeiro corpo vazio seguido de corpo válido;
 - quatro corpos vazios e nenhum quinto comando;
 - erro de protocolo sem retry;
-- `base64Encoded=false`, base64 e WAV inválidos sem retry;
+- corpo vazio com `base64Encoded=false`, base64 e WAV inválidos sem retry;
+- WAV com RIFF/WAVE mas sem chunks `fmt ` e `data` coerentes sendo rejeitado;
+- CDP restrito ao gateway WSL e WebSocket preso ao targetId criado;
+- fingerprint do servidor stale divergindo da árvore C0 congelada;
 - delays pré-leitura exatos [0, 8, 24, 64], mesmo requestId, timestamps
   monotônicos e nenhum timer após sucesso;
 - uma única requisição por unidade, mesmo quando há quatro leituras;
@@ -183,11 +209,14 @@ Todos são obrigatórios para passe:
    retry;
 4. em 4/4 unidades, comprimento e SHA-256 do browser são idênticos aos bytes
    CDP do mesmo trial;
-5. A1=A2, B1=B2, A≠B e todos os WAVs têm mais de 44 bytes e menos de 2 MiB;
+5. A1=A2, B1=B2, A≠B e todos os WAVs têm mais de 44 bytes, menos de
+   2 MiB e chunks `fmt ` + `data` estruturalmente coerentes;
 6. cada captura usa 1–4 leituras no mesmo requestId, respeita os delays e só
    aceita `base64Encoded=true` com WAV íntegro;
-7. A1 e B2, primeiras respostas pós-navegação, passam;
-8. fingerprint, Chrome, voz e cultura permanecem iguais;
+7. A1 e B2, primeiras respostas **TTS** pós-health em cada navegação, passam;
+8. endpoint/target CDP, runId e fingerprint vistos pelo Node e pelo browser,
+   fingerprint esperado derivado da árvore C0, Chrome, voz e cultura
+   permanecem ligados e iguais;
 9. todos os contadores do budget negativo têm os valores exatos;
 10. diagnostics, cardinalidade, receipt/report binding, hash canônico e
     topologia Git passam sem valor vacuamente aprovado.
@@ -196,15 +225,17 @@ O exercício real do retry não é exigido: flutuação ausente não será fabri
 
 ## Tabela total de decisões
 
-| Condição prioritária | Decisão |
-| --- | --- |
-| freeze, abertura, receipt, origem, cardinalidade, payload/ordem, cadeia/requestId, fingerprint, budget negativo, binding, report ou topologia inválidos; crash/timeout/órfão | `INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION` |
-| campanha estruturalmente válida, mas comando CDP falha; quatro corpos ficam vazios; status/MIME, `encodedDataLength`, `base64Encoded`, base64 ou WAV diverge; buffer é excedido; digest/comprimento diverge; A/B perde estabilidade ou distinção | `FIX_CDP_TTS_CAPTURE_QUALIFICATION` |
-| 10/10 gates passam | `PASS_CDP_TTS_CAPTURE_QUALIFICATION` |
+| Condição prioritária | Decisão | próximo movimento mínimo congelado |
+| --- | --- | --- |
+| freeze, abertura, receipt, origem, cardinalidade, payload/ordem, cadeia/requestId, fingerprint, budget negativo, binding, report ou topologia inválidos; crash/timeout/órfão | `INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION` | reparar e reauditar o instrumento; pré-registrar outro número de captura; não medir STOP |
+| campanha estruturalmente válida, mas comando CDP falha; quatro corpos ficam vazios; status/MIME, `encodedDataLength`, `base64Encoded`, base64 ou WAV diverge; buffer é excedido; digest/comprimento diverge; A/B perde estabilidade ou distinção | `FIX_CDP_TTS_CAPTURE_QUALIFICATION` | diagnosticar o código tipado e pré-registrar o menor challenger de captura; não medir STOP |
+| 10/10 gates passam | `PASS_CDP_TTS_CAPTURE_QUALIFICATION` | pré-registrar um novo experimento físico de STOP |
 
 A precedência é `INVALIDATE > FIX > PASS`. Nenhuma falha de coleta vira
 invalidação se a campanha e seus bindings forem válidos; nenhuma violação de
 campanha vira “fix” interpretável.
+Nenhum dos três ramos autoriza rerun sob o número EXP-0021 ou execução física
+de STOP; até no passe, a única permissão é pré-registrar outro experimento.
 
 ## Alternativas cortadas nesta rodada
 
@@ -236,7 +267,8 @@ interrupção, acústica, conversa ou qualidade para usuários.
 5. materializar e commitar isoladamente a abertura;
 6. executar A1/B1/B2/A2 uma única vez;
 7. commitar receipt + relatório e consolidar a decisão;
-8. somente um passe pode abrir outro número experimental para STOP físico.
+8. somente um passe pode pré-registrar outro número experimental para STOP
+   físico; a execução desse novo número exige seu próprio freeze e abertura.
 
 ## Trilha paralela
 
