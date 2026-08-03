@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "exp-0021-capture-attempt-v1",
+  "experimentId": "EXP-0021",
+  "status": "opened-single-capture-attempt",
+  "openingSourceCommit": "7b772a3cc9bdcca97df18ae1dd0e6c9b2f9545c5",
+  "openedAt": "2026-08-03T08:45:29.965Z",
+  "freeze": {
+    "path": "eval/commitments/exp-0021-instrumentation-freeze-v0.1.json",
+    "fileSha256": "sha256:dac99cce711723c26b89646b9765c4bd89932a31c3550d1361f97cb95694b8dc",
+    "instrumentationFreezeSha256": "sha256:8e58012a2c9d8ecafe590f57b18a4fdad06ccf093c3137bb96e4f6dff3693c0b",
+    "runnerSourceCommit": "2fbe5af88931d49c236cc27f241f2a74c545f1d2",
+    "freezeCommit": "7b772a3cc9bdcca97df18ae1dd0e6c9b2f9545c5"
+  },
+  "campaign": {
+    "nonce": "exp-0021-official-v0.1",
+    "command": "node scripts/run-exp-0021-supervisor.mjs",
+    "configCanonicalSha256": "sha256:1410b78f39cedd06db8485c3ddf1477c761324eb0cc38e230b17777169bd2dee",
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0021",
+    "navigations": 2,
+    "requestsPerNavigation": 2,
+    "totalRequests": 4,
+    "trialOrder": [
+      {
+        "navigation": 1,
+        "position": 1,
+        "trialId": "A1",
+        "payloadId": "A"
+      },
+      {
+        "navigation": 1,
+        "position": 2,
+        "trialId": "B1",
+        "payloadId": "B"
+      },
+      {
+        "navigation": 2,
+        "position": 1,
+        "trialId": "B2",
+        "payloadId": "B"
+      },
+      {
+        "navigation": 2,
+        "position": 2,
+        "trialId": "A2",
+        "payloadId": "A"
+      }
+    ],
+    "reportPath": "eval/reports/exp-0021-cdp-capture-qualification-v0.1.json",
+    "receiptPath": "eval/generated/exp-0021/capture-attempt-consumed-v0.1.json"
+  },
+  "gitTopology": {
+    "order": [
+      "C0_INSTRUMENT",
+      "FREEZE",
+      "OPENING",
+      "EVIDENCE"
+    ],
+    "freezeDirectParent": "C0_INSTRUMENT",
+    "openingDirectParent": "FREEZE",
+    "evidenceDirectParent": "OPENING",
+    "evidenceAllowedPaths": [
+      "eval/generated/exp-0021/capture-attempt-consumed-v0.1.json",
+      "eval/reports/exp-0021-cdp-capture-qualification-v0.1.json"
+    ]
+  },
+  "boundary": {
+    "captureCampaignsBeforeOpening": 0,
+    "reportAbsent": true,
+    "receiptAbsent": true,
+    "rerunAllowed": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "captureAttemptSha256": "sha256:11b9af411d663f5b4fde841562e7c192d3a8703f93edd8a6b8b599aff5f38b55"
+}
