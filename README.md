@@ -387,6 +387,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0025 — âncora causal e STOP renderizado terminal](docs/experiments/EXP-0025-causal-render-onset-physical-stop.md)
 - [EXP-0025 — fechamento e corte terminal do instrumento](docs/experiments/EXP-0025-closeout.md)
 - [EXP-0025-R — referência DuplexCascade e controle local de tomada de turno](docs/experiments/EXP-0025-R-duplexcascade-floor-control.md)
+- [EXP-0025-R — fechamento da trilha local de microturnos](docs/experiments/EXP-0025-R-local-closeout.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -433,8 +434,10 @@ a condição de prontidão ainda exigia um audit que ele já não instalava. O
 Chrome foi ligado, nenhum trial ocorreu e `STOP-R` permaneceu
 `NOT_EVALUATED`; a linhagem do instrumento foi cortada sem rerun.
 
-Em paralelo, o EXP-0025-R já materializou 16 pares/32 falas em D e confirmou
-headroom: `A0-native` tomou o turno prematuramente em 8/16 continuações;
-`A0@600` registrou 4/16 apenas como diagnóstico. O checkpoint oficial não foi
-executado, depende de autorização externa separada, e o holdout segue fechado;
-a trilha não bloqueia o STOP nem concede autoridade.
+Em paralelo, o EXP-0025-R confirmou headroom em D e executou um único
+controlador local congelado no holdout selado. `L` reduziu tomadas prematuras
+de 9/24 para 4/24, corrigiu cinco falas sem introduções e melhorou duas
+sessões, mas falhou o gate de atraso: p95 de 1.200 ms contra 800 ms. Como foi
+equivalente a `A0@600`, mantemos `A0` e cortamos `L` sem segunda hipótese. O
+checkpoint oficial permanece `NOT_EVALUATED` e depende de autorização externa
+separada; a trilha não bloqueia o STOP nem concede autoridade.

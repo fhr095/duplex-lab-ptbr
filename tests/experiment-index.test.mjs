@@ -13,6 +13,8 @@ import {
   EXP0023_EVIDENCE_COMMIT,
   EXP0024_CANONICAL_REPORT_PATH,
   EXP0024_EVIDENCE_COMMIT,
+  EXP0025_R_LOCAL_CANONICAL_REPORT_PATH,
+  EXP0025_R_LOCAL_EVIDENCE_COMMIT,
   readExperimentIndex,
   validateExp0018HistoricalOutcome,
   validateExperimentIndex
@@ -103,6 +105,16 @@ test("índice canônico real referencia evidências existentes", async () => {
     index.currentParallelProbe.preRegistration,
     "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md"
   );
+  assert.equal(
+    index.currentParallelProbe.canonicalReport,
+    EXP0025_R_LOCAL_CANONICAL_REPORT_PATH
+  );
+  assert.equal(
+    index.currentParallelProbe.evidenceCommit,
+    EXP0025_R_LOCAL_EVIDENCE_COMMIT
+  );
+  assert.match(index.currentParallelProbe.decision, /1\.200 ms > 800 ms/u);
+  assert.match(index.currentParallelProbe.nextDecision, /Autorizar/u);
   assert.equal(index.entries.at(-1).id, "EXP-0025");
   assert.equal(index.entries.at(-1).status, "cut");
   assert.equal(

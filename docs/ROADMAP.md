@@ -55,11 +55,12 @@ histórico, esta carteira prevalece.
   caminho mínimo já não instalava. Foram seis frames canônicos, zero trials e
   `STOP-R=NOT_EVALUATED`. A linhagem deste instrumento está encerrada sem
   rerun; health, rede e WAV permaneceram fora dos gates e não causaram o corte.
-- **Paralelo ativo — EXP-0025-R:** o pack D pt-BR foi materializado e `A0`
-  confirmou headroom com 8/16 tomadas prematuras; `A0@600` registrou 4/16 e
-  p95 pós-final de 1.200 ms apenas como diagnóstico de cadência. A referência
-  externa `E` não foi executada, seu orçamento continua sem autorização e o
-  holdout permanece fechado.
+- **Paralelo ativo, trilha local cortada — EXP-0025-R:** no holdout one-shot,
+  `L` reduziu tomadas prematuras de 9/24 para 4/24, corrigiu cinco falas sem
+  introduzir falhas e melhorou duas sessões, mas falhou o gate p95: 1.200 ms
+  contra 800 ms. Como foi equivalente a `A0@600`, mantemos `A0` e não abrimos
+  `L2`. A referência externa `E` segue `NOT_EVALUATED`, condicionada a
+  autorização explícita de até 40 GiB, 2 GPU-horas e US$ 12.
 - **Estacionado:** executar backbones nativos end-to-end em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -82,11 +83,14 @@ no [pré-registro](experiments/EXP-0021-cdp-capture-recovery.md) e no
 e no [closeout](experiments/EXP-0024-closeout.md). O EXP-0025 está no
 [pré-registro](experiments/EXP-0025-causal-render-onset-physical-stop.md) e no
 [closeout terminal](experiments/EXP-0025-closeout.md). Não há novo caminho
-crítico registrado enquanto a trilha paralela testa tomada de turno.
+crítico registrado enquanto a decisão externa da trilha paralela aguarda
+autorização.
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar uma segunda prioridade crítica; o
 [EXP-0025-R](experiments/EXP-0025-R-duplexcascade-floor-control.md) define seu
-único probe ativo, e o
+único probe ativo e o
+[closeout local](experiments/EXP-0025-R-local-closeout.md) preserva o corte de
+`L`; o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
 artefatos canônicos verificáveis.
 
@@ -481,6 +485,7 @@ card de dados e splits por família, gerador e pessoa.
 | 20 | EXP-0023: semântica causal ordinal do CDP — **`PASS_CDP_TTS_CAPTURE_AFTER_ORDINAL_BINDING`** | 4/4 browser=CDP; 40 lifecycles, 120 ordinais globais únicos, 40 inversões response/finish e 10/10 gates | qualifica só o instrumento neste Chrome/processo; zero STOP, rerun ou autoridade |
 | 21 | EXP-0024: equivalência física com captura qualificada — **`INVALIDATE_PHYSICAL_STOP_AFTER_CAPTURE_QUALIFICATION`** | tentativa única chegou ao primeiro trial; fala natural produziu múltiplos `render.active` e a expressão exigia cardinalidade unitária | físico `NOT_EVALUATED`; zero trial/captura física persistida, rerun, mudança de produto ou autoridade |
 | 22 | EXP-0025: âncora causal + STOP renderizado — **`CUT_RENDER_STOP_INSTRUMENT_LINEAGE`** | Chrome ligado e primeira navegação iniciada; prontidão herdada exigiu audit removido; journal válido com 6 frames e zero trials | `STOP-R=NOT_EVALUATED`; health/rede/WAV não causaram o corte; tentativa terminal, zero rerun ou autoridade |
+| 23 | EXP-0025-R local: microturnos de 600 ms — **`KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`** | holdout selado de 24 pares: 9→4 tomadas prematuras, 5 correções, 0 introduções, 2 sessões melhoradas e 0 misses | p95 `L=1.200 ms` falhou o limite de 800 ms; `L=A0@600`, sem resíduo semântico, `L2`, runtime ou autoridade; `E` aguarda autorização |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
 de produzir evidência física. EXP-0021 e EXP-0022 também estão terminais: suas
@@ -489,18 +494,20 @@ prospectivamente a captura sob semântica ordinal. O EXP-0024 foi invalidado
 antes de medir STOP porque confundiu atividade acústica segmentada com um único
 início. O EXP-0025 também encerrou sem medir STOP: sua condição de prontidão
 continuou exigindo um audit removido do caminho mínimo. A linhagem do
-instrumento foi cortada em vez de abrir outro reparo. Em paralelo, o EXP-0025-R
-já materializou D e confirmou headroom da baseline. A inferência da política
-oficial DuplexCascade continua condicionada a preflight,
-orçamento fechado e autorização explícita de GPU; nenhum resultado concede
-autoridade ou troca de backbone.
+instrumento foi cortada em vez de abrir outro reparo. Em paralelo, o
+EXP-0025-R confirmou headroom e encerrou sua trilha local no holdout: `L`
+comprou menos cortes ao custo de p95 de 1.200 ms e foi cortado sem segunda
+hipótese. A inferência da política oficial DuplexCascade continua condicionada
+a preflight, orçamento fechado e autorização explícita de GPU; nenhum
+resultado concede autoridade ou troca de backbone.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
 pela maior falha percebida no relatório, não por ordem fixa. O matcher textual
 já demonstrou valor informacional e sobreviveu causalmente ao áudio-oráculo; o
 renderer permanece desconhecido, mas seu valor de informação marginal não
-justifica outro ciclo instrumental imediato. O probe paralelo de tomada de
-turno concentra o próximo aprendizado; `STOP-A` continua exigindo
+justifica outro ciclo instrumental imediato. Na tomada de turno, a trilha local
+já respondeu e foi cortada; resta decidir explicitamente se o valor da
+referência externa `E` justifica seu budget. `STOP-A` continua exigindo
 loopback/line-in ou outro sensor causal quando voltar a ser o maior gargalo.
 
 ## Trilha paralela de governança

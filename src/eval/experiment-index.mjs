@@ -129,6 +129,10 @@ export const EXP0025_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json";
 export const EXP0025_EVIDENCE_COMMIT =
   "65a7b6019ab4b7231d0c79b0bff724373bdf6aea";
+export const EXP0025_R_LOCAL_CANONICAL_REPORT_PATH =
+  "eval/reports/exp-0025-r-local-holdout-v0.1.json";
+export const EXP0025_R_LOCAL_EVIDENCE_COMMIT =
+  "0b3fda7bda09e46b3f212d34c5c9d4fe8895dae0";
 
 const EXP0023_C0_COMMIT =
   "de919470f0b4b59db4f911b7ae5e40fcc9606707";
@@ -170,6 +174,14 @@ const EXP0025_RECEIPT_PATH =
   "eval/generated/exp-0025/causal-render-onset-attempt-consumed-v0.1.json";
 const EXP0025_JOURNAL_PATH =
   "eval/generated/exp-0025/causal-render-onset-journal-v0.1.ndjson";
+const EXP0025_R_LOCAL_FREEZE_PATH =
+  "eval/commitments/exp-0025-r-local-candidate-freeze-v0.1.json";
+const EXP0025_R_HOLDOUT_SEAL_PATH =
+  "eval/commitments/exp-0025-r-holdout-seal-v0.1.json";
+const EXP0025_R_HOLDOUT_OPENING_PATH =
+  "eval/commitments/exp-0025-r-holdout-opening-v0.1.json";
+const EXP0025_R_HOLDOUT_RECEIPT_PATH =
+  "eval/generated/exp-0025-r/holdout-attempt-consumed-v0.1.json";
 
 const ACTIVE_CRITICAL_PREREGISTRATION_PATHS = Object.freeze({
   "EXP-0025":
@@ -831,6 +843,141 @@ async function assertGitAncestor(projectRoot, ancestor, descendant, label) {
   } catch {
     assert(false, `${label} rompe a cronologia de commits`);
   }
+}
+
+async function assertExp0025RLocalEvidence(index, projectRoot) {
+  const probe = index.currentParallelProbe;
+  assert(
+    probe.canonicalReport === EXP0025_R_LOCAL_CANONICAL_REPORT_PATH,
+    "EXP-0025-R canonicalReport precisa apontar para o holdout local"
+  );
+  assert(
+    probe.evidenceCommit === EXP0025_R_LOCAL_EVIDENCE_COMMIT,
+    "EXP-0025-R evidenceCommit precisa preservar a passagem local única"
+  );
+  assert(
+    Array.isArray(probe.cleanCloneChecks) &&
+      probe.cleanCloneChecks.length > 0 &&
+      probe.cleanCloneChecks.every((command) =>
+        typeof command === "string" &&
+        /^node --test tests\/[A-Za-z0-9._-]+\.test\.mjs$/u.test(command)),
+    "EXP-0025-R cleanCloneChecks são inválidos"
+  );
+  assert(
+    Array.isArray(probe.localReproductionCommands) &&
+      probe.localReproductionCommands.length > 0 &&
+      probe.localReproductionCommands.every((command) =>
+        typeof command === "string" && command.length > 0),
+    "EXP-0025-R localReproductionCommands são inválidos"
+  );
+  assert(
+    typeof probe.nextDecision === "string" && probe.nextDecision.length > 0,
+    "EXP-0025-R nextDecision precisa ser explícita"
+  );
+  for (const command of probe.cleanCloneChecks) {
+    const path = command.match(
+      /^node --test (tests\/[A-Za-z0-9._-]+\.test\.mjs)$/u
+    )[1];
+    await assertFileExists(
+      resolveRepositoryPath(projectRoot, path, "EXP-0025-R cleanCloneChecks"),
+      "EXP-0025-R cleanCloneChecks"
+    );
+  }
+
+  const [reportArtifact, receiptArtifact, freezeArtifact, sealArtifact,
+    openingArtifact] = await Promise.all([
+    readArtifact(projectRoot, EXP0025_R_LOCAL_CANONICAL_REPORT_PATH,
+      "EXP-0025-R report local"),
+    readArtifact(projectRoot, EXP0025_R_HOLDOUT_RECEIPT_PATH,
+      "EXP-0025-R receipt H"),
+    readArtifact(projectRoot, EXP0025_R_LOCAL_FREEZE_PATH,
+      "EXP-0025-R freeze L"),
+    readArtifact(projectRoot, EXP0025_R_HOLDOUT_SEAL_PATH,
+      "EXP-0025-R seal H"),
+    readArtifact(projectRoot, EXP0025_R_HOLDOUT_OPENING_PATH,
+      "EXP-0025-R opening H")
+  ]);
+  const report = reportArtifact.value;
+  const reportCore = structuredClone(report);
+  delete reportCore.reportSha256;
+  const failedGates = Object.entries(report.analysis?.holdoutGate ?? {})
+    .filter(([, passed]) => passed === false).map(([gate]) => gate);
+  assert(
+    report.schemaVersion === "exp-0025-r-local-holdout-report-v1" &&
+      report.experimentId === "EXP-0025-R" &&
+      report.stage === "LOCAL_HOLDOUT_CONFIRMATORY" &&
+      report.reportSha256 === `sha256:${canonicalSha256(reportCore)}` &&
+      report.decision?.code ===
+        "KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER" &&
+      report.decision.localCandidateWon === false &&
+      report.decision.cadenceAttribution ===
+        "CANDIDATE_EQUIVALENT_TO_A0_AT_600" &&
+      report.analysis.native.prematureTakeoverCount === 9 &&
+      report.analysis.candidate.prematureTakeoverCount === 4 &&
+      report.analysis.againstNative.correctedPrematureTakeovers === 5 &&
+      report.analysis.againstNative.introducedPrematureTakeovers === 0 &&
+      report.analysis.againstNative.sessionsImproved === 2 &&
+      report.analysis.candidate.postFinalDecisionDelayMs.p95 === 1_200 &&
+      isDeepStrictEqual(failedGates, ["p95AtMost800"]) &&
+      report.externalReference.executionAuthorized === false &&
+      report.externalReference.status ===
+        "NOT_EVALUATED_NO_AUTHORIZATION" &&
+      report.runtimeChanged === false && report.authorityEligible === false,
+    "EXP-0025-R report local perdeu resultado, limite ou decisão congelada"
+  );
+
+  const receipt = receiptArtifact.value;
+  const receiptCore = structuredClone(receipt);
+  delete receiptCore.receiptSha256;
+  const freeze = freezeArtifact.value;
+  const freezeCore = structuredClone(freeze);
+  delete freezeCore.freezeSha256;
+  const seal = sealArtifact.value;
+  const sealCore = structuredClone(seal);
+  delete sealCore.sealSha256;
+  const opening = openingArtifact.value;
+  const openingCore = structuredClone(opening);
+  delete openingCore.openingSha256;
+  assert(
+    receipt.receiptSha256 === `sha256:${canonicalSha256(receiptCore)}` &&
+      receipt.inferencePassOrdinal === 1 &&
+      receipt.rerunAllowedAfterThisWrite === false &&
+      freeze.freezeSha256 === `sha256:${canonicalSha256(freezeCore)}` &&
+      freeze.candidate.singleCandidate === true &&
+      seal.sealSha256 === `sha256:${canonicalSha256(sealCore)}` &&
+      seal.holdout.inferenceCountAtSeal === 0 &&
+      opening.openingSha256 === `sha256:${canonicalSha256(openingCore)}` &&
+      opening.outputsAbsentAtOpening === true &&
+      report.receipt.receiptSha256 === receipt.receiptSha256 &&
+      report.seal.sealSha256 === seal.sealSha256 &&
+      report.opening.openingSha256 === opening.openingSha256 &&
+      opening.seal.sealSha256 === seal.sealSha256 &&
+      seal.localCandidate.freezeSha256 === freeze.freezeSha256,
+    "EXP-0025-R cadeia freeze→seal→opening→receipt→report divergiu"
+  );
+  const [evidencePaths, evidenceParent, headCommit] = await Promise.all([
+    changedPathsAtCommit(projectRoot, EXP0025_R_LOCAL_EVIDENCE_COMMIT),
+    gitText(projectRoot, "rev-parse", `${EXP0025_R_LOCAL_EVIDENCE_COMMIT}^`),
+    gitText(projectRoot, "rev-parse", "HEAD")
+  ]);
+  assert(
+    evidenceParent === report.executionCommit &&
+      isDeepStrictEqual(evidencePaths, [
+        EXP0025_R_HOLDOUT_RECEIPT_PATH,
+        EXP0025_R_LOCAL_CANONICAL_REPORT_PATH
+      ].toSorted()),
+    "EXP-0025-R commit de evidência local perdeu isolamento"
+  );
+  await Promise.all([
+    assertGitFileMatches(projectRoot, EXP0025_R_LOCAL_EVIDENCE_COMMIT,
+      EXP0025_R_LOCAL_CANONICAL_REPORT_PATH, reportArtifact.bytes,
+      "EXP-0025-R report local"),
+    assertGitFileMatches(projectRoot, EXP0025_R_LOCAL_EVIDENCE_COMMIT,
+      EXP0025_R_HOLDOUT_RECEIPT_PATH, receiptArtifact.bytes,
+      "EXP-0025-R receipt H"),
+    assertGitAncestor(projectRoot, EXP0025_R_LOCAL_EVIDENCE_COMMIT,
+      headCommit, "EXP-0025-R evidenceCommit→HEAD")
+  ]);
 }
 
 async function assertCanonicalReport(entry, projectRoot, index) {
@@ -2273,6 +2420,7 @@ export async function validateExperimentIndex(index, options = {}) {
       index.currentParallelProbe.decision.length > 0,
     "currentParallelProbe.decision must be a non-empty string"
   );
+  await assertExp0025RLocalEvidence(index, projectRoot);
   assert(Array.isArray(index.entries), "entries must be an array");
   assert(index.entries.length > 0, "entries must not be empty");
 

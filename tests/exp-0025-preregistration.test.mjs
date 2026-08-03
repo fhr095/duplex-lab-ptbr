@@ -10,6 +10,10 @@ const researchPath = new URL(
   "../docs/experiments/EXP-0025-R-duplexcascade-floor-control.md",
   import.meta.url
 );
+const researchCloseoutPath = new URL(
+  "../docs/experiments/EXP-0025-R-local-closeout.md",
+  import.meta.url
+);
 
 async function text(path) {
   return readFile(path, "utf8");
@@ -84,4 +88,22 @@ test("EXP-0025-R separa checkpoint externo de reprodução local", async () => {
     document,
     /`TAKE_FLOOR`:[^\n]*<\|user backchannel\|>/iu
   );
+});
+
+test("EXP-0025-R preserva corte local sem inventar resultado externo", async () => {
+  const document = await text(researchCloseoutPath);
+  requiresAll(document, [
+    "KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER",
+    "9/24",
+    "4/24",
+    "cinco falas",
+    "1.200 ms",
+    "800 ms",
+    "CANDIDATE_EQUIVALENT_TO_A0_AT_600",
+    "E=NOT_EVALUATED_NO_AUTHORIZATION",
+    "zero segundo candidato",
+    "0b3fda7bda09e46b3f212d34c5c9d4fe8895dae0",
+    "sha256:c35745cba0361222272dc07fa2ed9b12f934dbb06cafdf2d974a1e43275516ba"
+  ]);
+  assert.doesNotMatch(document, /E venceu|checkpoint oficial foi executado/iu);
 });

@@ -137,12 +137,14 @@ de prontidão que ainda exigia `__exp0022Audit`, já não instalado. O Chrome fo
 ligado, a primeira navegação começou e nenhum trial ocorreu: `STOP-R` ficou
 `NOT_EVALUATED`. A tentativa terminal não será reparada ou repetida.
 
-O EXP-0025-R avança em paralelo e sem autoridade. O pack D materializado e a
-baseline já confirmaram headroom: 8/16 tomadas prematuras em `A0-native`;
-`A0@600` é apenas diagnóstico. O checkpoint textual oficial DuplexCascade só
-pode rodar com budget e autorização próprios; depois, no máximo um controlador
-local será congelado antes do holdout independente. ASR/TTS não entram na
-política e backbones end-to-end continuam fora.
+O EXP-0025-R avançou em paralelo e sem autoridade. Depois do headroom em D, o
+único controlador local foi congelado antes de H e executado uma vez: reduziu
+tomadas prematuras de 9/24 para 4/24, corrigiu cinco falas sem introduções e
+melhorou duas sessões. Ainda assim, foi cortado porque seu p95 pós-final de
+1.200 ms excedeu 800 ms e foi idêntico a `A0@600`; não haverá `L2`. O
+checkpoint oficial DuplexCascade continua `NOT_EVALUATED` e só pode rodar com
+budget e autorização próprios. ASR/TTS não entram na política e backbones
+end-to-end continuam fora.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
@@ -158,6 +160,11 @@ npm run eval:exp:0024:report:check
 npm run eval:exp:0025:report:check
 npm run eval:exp:0025:r:audio:check
 npm run eval:exp:0025:r:baseline:check
+npm run eval:exp:0025:r:local:development:check
+npm run eval:exp:0025:r:local:freeze:check
+npm run eval:exp:0025:r:holdout:audio:check
+npm run eval:exp:0025:r:holdout:seal:check
+npm run eval:exp:0025:r:holdout:report:check
 node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
 node --test tests/exp-0023-*.test.mjs
 node --test tests/exp-0024-*.test.mjs

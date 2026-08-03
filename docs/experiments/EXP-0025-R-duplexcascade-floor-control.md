@@ -1,12 +1,14 @@
 # EXP-0025-R — referência DuplexCascade e controle local de tomada de turno
 
-Status: **pré-registrado; pack D e A0 executados; E/L não executados; holdout
-fechado; não bloqueante; zero autoridade**
+Status: **trilha local concluída e cortada; `E` não executado e aguardando
+autorização explícita; não bloqueante; zero autoridade**
 
-Evidência corrente: o pack D materializado está em
-`eval/datasets/exp-0025-r-development-v0.1.json` e o relatório reproduzível de
-headroom em `eval/reports/exp-0025-r-baseline-headroom-v0.1.json`. A inferência
-externa continua sem autorização.
+Evidência corrente: o pack D e o headroom permanecem versionados; o resultado
+one-shot de `L` está em
+`eval/reports/exp-0025-r-local-holdout-v0.1.json` e no
+[closeout local](EXP-0025-R-local-closeout.md). `L` não venceu porque seu p95
+pós-final foi 1.200 ms, acima do gate de 800 ms, e foi equivalente a
+`A0@600`. A inferência externa continua sem autorização.
 
 ## Pergunta decisória
 
@@ -219,6 +221,15 @@ prematuras, zero miss e p95 pós-final de 1.060 ms; `A0@600`, apenas
 diagnóstico, teve 4/16, zero miss e p95 de 1.200 ms. O gate produziu
 `BASELINE_HEADROOM_CONFIRMED`; `E` segue não autorizado e `H` não foi aberto.
 
+Resultado local posterior, sem reescrever o pré-registro: um único `L`
+article-inspired foi congelado antes de gerar `H` e executado uma vez. Em 24
+pares, `A0-native` teve 9 tomadas prematuras e `L` teve 4; foram cinco
+correções, zero introduções, duas sessões melhoradas, zero miss e zero falha
+de protocolo. `L` falhou somente o gate p95 absoluto: 1.200 ms contra 800 ms.
+Como foi exatamente equivalente a `A0@600`, a decisão foi
+`KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`, sem `L2` ou autoridade. `E`
+permanece `NOT_EVALUATED_NO_AUTHORIZATION`.
+
 ## Regra de vitória no holdout
 
 Cada candidato (`E` e `L`) vence `A0` somente se **todos** os itens passarem:
@@ -323,3 +334,9 @@ ASR, TTS, áudio simultâneo ou qualidade de voz.
 `L` vencedor permite afirmar apenas que um controlador local compacto reduziu
 tomadas prematuras sob o gate de atraso no holdout congelado. Promoção para
 shadow, áudio real ou autoridade exige experimento novo.
+
+## Fontes primárias da referência externa
+
+- [artigo oficial DuplexCascade](https://arxiv.org/html/2603.09180);
+- [repositório oficial](https://github.com/sbintuitions/DuplexCascade);
+- [checkpoint e model card oficiais](https://huggingface.co/sbintuitions/DuplexCascade).

@@ -5,7 +5,7 @@ contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
 invalidações instrumentais dos EXP-0020/0021/0022, passe instrumental do
 EXP-0023, invalidação instrumental do EXP-0024, corte terminal do EXP-0025 e
-headroom A0 confirmado no EXP-0025-R paralelo**
+corte do challenger local no holdout EXP-0025-R**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -34,10 +34,12 @@ caminho mínimo. Com seis frames, zero trials e `STOP-R=NOT_EVALUATED`, a
 linhagem do instrumento foi cortada sem rerun. Health, rede e WAV ficaram fora
 dos gates e não causaram a falha. O
 [EXP-0025-R](experiments/EXP-0025-R-duplexcascade-floor-control.md) é uma
-trilha não bloqueante: seu pack D materializado mostrou 8/16 tomadas
-prematuras em `A0-native`, confirmando headroom, enquanto `A0@600` permaneceu
-diagnóstico. A política oficial externa e a reprodução local continuam etapas
-separadas; `E` não foi executado, o holdout segue fechado e não há autoridade.
+trilha não bloqueante. Depois de confirmar headroom em D, um único `L` foi
+congelado e executado uma vez em H: reduziu tomadas prematuras de 9/24 para
+4/24, sem introduções, mas falhou o gate p95 com 1.200 ms e foi equivalente a
+`A0@600`. O [closeout local](experiments/EXP-0025-R-local-closeout.md) preserva
+`KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`. `E` não foi executado e continua
+dependente de autorização externa; não há autoridade.
 
 ## Tese
 
@@ -432,10 +434,10 @@ Esta referência preserva apenas a lógica macro:
 15. preservar o corte terminal do EXP-0025: a prontidão herdada exigiu um
     audit removido, nenhum trial ocorreu e `STOP-R` permanece desconhecido;
     não reparar nem repetir esta linhagem;
-16. preservar o headroom confirmado do EXP-0025-R e executar suas etapas
-    candidatas separadamente — checkpoint textual oficial `E` somente após
-    autorização explícita e um único controlador local `L` — por fala/sessão,
-    sem ASR/TTS na política, bloqueio ou autoridade;
+16. preservar o resultado local do EXP-0025-R: `L` corrigiu cinco tomadas sem
+    introduções, mas falhou p95 e foi cortado como equivalente a `A0@600`;
+    não abrir `L2`; executar `E` somente com autorização explícita e budget
+    congelado, sem ASR/TTS na política, bloqueio ou autoridade;
 17. conceder autoridade somente se houver ganho percebido sem regressão dos
     guardrails;
 18. manter backbones nativos end-to-end no ledger até existir um teto local que
