@@ -86,8 +86,8 @@ ainda parcialmente rotulada, diversidade acústica limitada a uma voz e ausênci
 de validação humana. O relatório canônico é gerado localmente em
 `eval/reports/eval-factory-campaign-v0.2.json`.
 
-O EXP-0014 foi promovido com 324/324 testes. Após EXP-0015 e EXP-0016, a
-suíte corrente possui **355/355 testes** e também cobre sessão cega,
+O EXP-0014 foi promovido com 324/324 testes. Na fotografia imediatamente após
+EXP-0015 e EXP-0016, a suíte possuía **355/355 testes** e também cobria sessão cega,
 contrafactuais estéreo, integridade das anotações, fronteira de fit e separação
 entre promoção técnica, calibração humana, capacidade aprendida e autoridade.
 Os 223/223 acima pertencem à
@@ -381,6 +381,8 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0022 — binding causal de bootstrap + audit health](docs/experiments/EXP-0022-bootstrap-audit-health-binding.md)
 - [EXP-0022 — fechamento e invalidação por semântica temporal CDP](docs/experiments/EXP-0022-closeout.md)
 - [EXP-0023 — semântica causal de ordinais e timestamps CDP](docs/experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md)
+- [EXP-0023 — fechamento e passe instrumental](docs/experiments/EXP-0023-closeout.md)
+- [EXP-0024 — equivalência física do STOP com captura qualificada](docs/experiments/EXP-0024-physical-stop-after-capture-qualification.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -415,10 +417,12 @@ browser e no CDP, mas foi invalidado porque seu contrato esperava um health por
 navegação e a página mais o auditor produziram dois. O EXP-0022 distinguiu os
 dois healths e repetiu as 4/4 capturas, porém foi invalidado porque comparou
 timestamps gerados em pontos diferentes do Chromium: os 40/40 ordinais estavam
-corretos enquanto `responseTimestamp > finishedTimestamp`. O EXP-0023 mantém a
-mesma campanha sem STOP e muda somente a autoridade causal para os ordinais do
-stream CDP. Só um passe prospectivo permite pré-registrar outra medição física;
-ASR continua fora.
+corretos enquanto `responseTimestamp > finishedTimestamp`. O EXP-0023 manteve
+a mesma campanha sem STOP, mudou somente a autoridade causal e passou 10/10
+gates: 4/4 browser=CDP, 40 lifecycles e 120 ordinais globais únicos. O
+EXP-0024 está pré-registrado para integrar esse coletor à campanha física 2×6
+do EXP-0020 sem alterar o runtime. Implementação e auditoria precedem C0,
+freeze e a abertura única; ASR continua fora.
 
 Modelos nativos full-duplex continuam no torneio como referências. Eles só
 entram cedo quando desafiam uma decisão concreta do contrato/evaluator e só

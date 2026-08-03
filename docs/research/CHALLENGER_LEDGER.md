@@ -28,8 +28,9 @@ veto seguro: o classificador bruto chegou a 77,8% no holdout contra 50% da
 baseline; a versão conservadora preservou 5/5 falas dirigidas nas âncoras
 humanas, porém falhou o gate offline. Esses números pertencem ao
 [relatório canônico do EXP-0016](../../eval/reports/exp-0016-speaker-relevance-m4b-v1.json),
-não aos trabalhos externos. A lacuna torna contexto semântico causal o próximo
-probe de maior valor da informação.
+não aos trabalhos externos. Naquele checkpoint, a lacuna tornou contexto
+semântico causal o próximo probe; EXP-0017-R/0018/0019 já testaram essa direção
+e hoje são evidência histórica, não a fila corrente.
 
 O Core do EXP-0017 confirmou esse limite em diversidade sintética nova: `A`
 preservou 60/60 falas dirigidas, mas acertou 1/60 fundos e empatou `A0` por
@@ -44,10 +45,13 @@ de 8,7 ms, mas foi cortado porque a ordem física
 medido agora é lifecycle. EXP-0020 não conseguiu ler o primeiro corpo TTS;
 EXP-0021 recuperou 4/4 corpos, mas confundiu dois healths; EXP-0022 separou os
 healths e repetiu as 4/4 capturas, porém revelou que timestamps internos do CDP
-não são autoridade da ordem de entrega. O EXP-0023 testa somente a correção
-ordinal antes de voltar ao STOP. Isso não cria motivo para baixar ou executar
-qualquer challenger. ASR continua desconhecido e deferido; os experimentos não
-autorizam concluir que reconhecimento deixou de ser um gargalo futuro.
+não são autoridade da ordem de entrega. O EXP-0023 testou somente a correção
+ordinal e passou 10/10 gates, qualificando a captura sem medir STOP. O EXP-0024
+agora integra essa captura à campanha física já desenhada. Isso não cria motivo
+para baixar ou executar qualquer challenger: primeiro precisamos saber se há
+uma falha física concreta e qual mecanismo ela exige. ASR continua desconhecido
+e deferido; os experimentos não autorizam concluir que reconhecimento deixou
+de ser um gargalo futuro.
 
 ## Fila atual
 

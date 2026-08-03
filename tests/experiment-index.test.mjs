@@ -9,6 +9,8 @@ import {
   EXP0020_CANONICAL_REPORT_PATH,
   EXP0021_CANONICAL_REPORT_PATH,
   EXP0022_CANONICAL_REPORT_PATH,
+  EXP0023_CANONICAL_REPORT_PATH,
+  EXP0023_EVIDENCE_COMMIT,
   readExperimentIndex,
   validateExp0018HistoricalOutcome,
   validateExperimentIndex
@@ -66,7 +68,7 @@ test("outcome histórico EXP-0018 sobrevive ao próximo caminho crítico", () =>
     }
   };
   assert.doesNotThrow(() => validateExp0018HistoricalOutcome(entry, {
-    currentCriticalPath: "EXP-0023",
+    currentCriticalPath: "EXP-0024",
     currentParallelProbe: {
       status: "planned",
       decision: "probe novo e independente"
@@ -90,21 +92,40 @@ async function fixture() {
 
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
-  assert.equal(index.currentCriticalPath, "EXP-0023");
+  assert.equal(index.currentCriticalPath, "EXP-0024");
   assert.equal(index.transitionState, "active");
-  assert.equal(index.currentParallelProbe.id, "EXP-0023-R");
+  assert.equal(index.currentParallelProbe.id, "EXP-0024-R");
   assert.equal(index.currentParallelProbe.status, "deferred");
   assert.equal(index.currentParallelProbe.blocking, false);
   assert.equal(
     index.currentParallelProbe.preRegistration,
-    "docs/experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md"
+    "docs/experiments/EXP-0024-physical-stop-after-capture-qualification.md"
   );
-  assert.equal(index.entries.at(-1).id, "EXP-0023");
+  assert.equal(index.entries.at(-1).id, "EXP-0024");
   assert.equal(index.entries.at(-1).status, "active");
   assert.equal(index.entries.at(-1).canonicalReport, null);
   assert.equal(index.entries.at(-1).authority, "none");
   assert.equal(index.entries.at(-1).criticalPath, true);
   assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
+    "node --test tests/exp-0020-analysis.test.mjs",
+    "node --test tests/exp-0020-browser-harness.test.mjs",
+    "node --test tests/exp-0021-cdp-capture.test.mjs",
+    "node --test tests/exp-0023-analysis.test.mjs"
+  ]);
+  const exp0023 = index.entries.find(({ id }) => id === "EXP-0023");
+  assert.equal(exp0023.status, "completed");
+  assert.equal(
+    exp0023.decision,
+    "PASS_CDP_TTS_CAPTURE_AFTER_ORDINAL_BINDING"
+  );
+  assert.equal(exp0023.canonicalReport, EXP0023_CANONICAL_REPORT_PATH);
+  assert.equal(
+    exp0023.evidenceCommit,
+    EXP0023_EVIDENCE_COMMIT
+  );
+  assert.equal(exp0023.authority, "none");
+  assert.equal(exp0023.criticalPath, false);
+  assert.deepEqual(exp0023.cleanCloneChecks, [
     "node --test tests/exp-0021-cdp-capture.test.mjs",
     "node --test tests/exp-0022-worker.test.mjs",
     "node --test tests/exp-0023-boundary.test.mjs",
@@ -322,6 +343,40 @@ test("EXP-0022 preserva inversão temporal sem inventar passe", async () => {
   );
 });
 
+test("EXP-0023 preserva passe instrumental sem conceder autoridade", async () => {
+  const changedStatus = await fixture();
+  changedStatus.entries.find(({ id }) => id === "EXP-0023").status =
+    "promoted";
+  await assert.rejects(
+    validateExperimentIndex(changedStatus, { projectRoot }),
+    /EXP-0023.status contradicts its canonical report contract/u
+  );
+
+  const inventedDecision = await fixture();
+  inventedDecision.entries.find(({ id }) => id === "EXP-0023").decision =
+    "promote-runtime";
+  await assert.rejects(
+    validateExperimentIndex(inventedDecision, { projectRoot }),
+    /EXP-0023.decision contradicts its canonical report/u
+  );
+
+  const inventedAuthority = await fixture();
+  inventedAuthority.entries.find(({ id }) => id === "EXP-0023").authority =
+    "runtime-control";
+  await assert.rejects(
+    validateExperimentIndex(inventedAuthority, { projectRoot }),
+    /EXP-0023.authority contradicts its canonical report contract/u
+  );
+
+  const preEvidenceCommit = await fixture();
+  preEvidenceCommit.entries.find(({ id }) => id === "EXP-0023")
+    .evidenceCommit = "30813869f3a2bdbf0c69ca3bf72073b68d54c361";
+  await assert.rejects(
+    validateExperimentIndex(preEvidenceCommit, { projectRoot }),
+    /EXP-0023 evidenceCommit precisa ser o fechamento oficial imutável/u
+  );
+});
+
 test("rejeita IDs duplicados", async () => {
   const index = await fixture();
   index.entries[1].id = index.entries[0].id;
@@ -414,6 +469,22 @@ test("rejeita probe paralelo que bloqueie ou receba autoridade", async () => {
   await assert.rejects(
     validateExperimentIndex(unrelated, { projectRoot }),
     /must be the R track of currentCriticalPath/u
+  );
+
+  const wrongPreRegistration = await fixture();
+  wrongPreRegistration.currentParallelProbe.preRegistration = "README.md";
+  await assert.rejects(
+    validateExperimentIndex(wrongPreRegistration, { projectRoot }),
+    /must match the canonical active experiment preregistration/u
+  );
+});
+
+test("rejeita clean-clone check inválido no experimento ativo", async () => {
+  const index = await fixture();
+  index.entries.at(-1).cleanCloneChecks = ["not-a-command"];
+  await assert.rejects(
+    validateExperimentIndex(index, { projectRoot }),
+    /cleanCloneChecks must be direct Node test commands/u
   );
 });
 

@@ -3,8 +3,8 @@
 Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
-invalidações instrumentais dos EXP-0020/0021/0022 e instrumento pré-registrado
-do EXP-0023 aguardando auditoria e freeze**
+invalidações instrumentais dos EXP-0020/0021/0022, passe instrumental do
+EXP-0023 e EXP-0024 físico pré-registrado**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -19,10 +19,13 @@ health de bootstrap com o health explícito do auditor. O
 [EXP-0022](experiments/EXP-0022-closeout.md) distinguiu os dois healths e
 repetiu 4/4 capturas, mas foi invalidado por comparar timestamps produzidos em
 pontos diferentes do Chromium. O
-[EXP-0023](experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md) muda somente
-a autoridade causal para os ordinais locais antes de qualquer nova medição de
-STOP; seu delta, boundary, supervisor e regressões estão implementados, sem
-abertura nem execução oficial até a auditoria e o freeze.
+[EXP-0023](experiments/EXP-0023-closeout.md) mudou somente a autoridade causal
+para ordinais e passou prospectivamente: 4/4 browser=CDP, 120 ordinais globais
+únicos e 10/10 gates, sem STOP ou autoridade. O
+[EXP-0024](experiments/EXP-0024-physical-stop-after-capture-qualification.md)
+está pré-registrado para unir essa captura à campanha física 2×6 do EXP-0020,
+mantendo o runtime byte a byte; implementação e auditoria precedem qualquer
+freeze ou abertura.
 
 ## Tese
 
@@ -408,13 +411,16 @@ Esta referência preserva apenas a lógica macro:
     sequência real tem um health de bootstrap mais um explícito;
 12. preservar a invalidação do EXP-0022: os healths foram distinguidos e 4/4
     capturas repetidas, mas 40/40 lifecycles violaram a desigualdade temporal
-    congelada; testar no EXP-0023 somente ordinais como autoridade causal, sem
-    STOP;
-13. conceder autoridade somente se houver ganho percebido sem regressão dos
+    congelada;
+13. preservar o passe estreito do EXP-0023: ordinais qualificaram 40
+    lifecycles e 4/4 capturas, mas nenhum STOP ou áudio renderizado foi medido;
+14. executar no EXP-0024 somente a integração mínima entre campanha física e
+    coletor qualificado, sem mudar o runtime ou reinterpretar EXP-0020;
+15. conceder autoridade somente se houver ganho percebido sem regressão dos
     guardrails;
-14. manter backbones nativos no ledger até existir um teto local que justifique
+16. manter backbones nativos no ledger até existir um teto local que justifique
     custo e integração;
-15. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+17. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
     observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo

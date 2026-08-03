@@ -42,14 +42,15 @@ histórico, esta carteira prevalece.
   timestamps de origem. Em 40/40 requests, os ordinais estavam corretos e
   `responseTimestamp > finishedTimestamp`; nove de dez gates passaram, claim
   permaneceu nulo e a tentativa não será repetida.
-- **Agora — EXP-0023, semântica ordinal do lifecycle CDP:** repetir
-  prospectivamente a mesma campanha TTS 2×2 sem STOP e mudar somente a
-  autoridade causal: ordinais locais ordenam os eventos; timestamps continuam
-  finitos e limitados pelo próprio request, sem ordenar response contra finish.
-  O instrumento e as regressões fail-closed já estão implementados; auditoria,
-  C0, freeze e abertura isolados precedem a tentativa única. Só um passe
-  autoriza pré-registrar outro experimento físico; executá-lo ainda exigirá
-  freeze e abertura próprios.
+- **Concluído — EXP-0023:** a tentativa única passou os dez gates. Foram 4/4
+  WAVs browser=CDP, 40 requests e 120 ordinais globais únicos; os 40
+  timestamps response/finish invertidos exercitaram o delta prospectivamente.
+  O coletor está qualificado neste escopo, sem STOP ou autoridade de runtime.
+- **Agora — EXP-0024, equivalência física do STOP:** integrar a campanha 2×6
+  do EXP-0020 ao coletor qualificado, mantendo o runtime byte a byte. Primeiro
+  implementar e auditar sem Chrome; só então decidir C0, freeze e abertura da
+  tentativa única. O objetivo é distinguir telemetria concorrente equivalente
+  de uma divergência física que um usuário poderia perceber.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -65,9 +66,10 @@ no [closeout](experiments/EXP-0020-closeout.md). A qualificação invalidada est
 no [pré-registro](experiments/EXP-0021-cdp-capture-recovery.md) e no
 [closeout do EXP-0021](experiments/EXP-0021-closeout.md). O EXP-0022 está no
 [pré-registro](experiments/EXP-0022-bootstrap-audit-health-binding.md) e no
-[closeout do EXP-0022](experiments/EXP-0022-closeout.md). O caminho corrente
-está no
-[pré-registro do EXP-0023](experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md).
+[closeout do EXP-0022](experiments/EXP-0022-closeout.md). O EXP-0023 está no
+[pré-registro](experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md) e no
+[closeout](experiments/EXP-0023-closeout.md). O caminho corrente está no
+[pré-registro do EXP-0024](experiments/EXP-0024-physical-stop-after-capture-qualification.md).
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar outra prioridade, e o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
@@ -403,9 +405,10 @@ M4b, não uma avaliação de produto ou autoridade no runtime.
 ## Fase 6 — adaptação nativa de áudio
 
 Um mecanismo extraído de uma referência pode desafiar o contrato quando
-responder uma pergunta concreta sem bloquear o EXP-0017 Core. O primeiro probe
-é semântico e usa o runtime existente; executar um backbone nativo ou GPU paga
-exige um gargalo local medido e orçamento explícito.
+responder uma pergunta concreta da carteira ativa sem desviar seu caminho
+crítico. Os probes semânticos EXP-0017-R/0018 são resultados históricos;
+executar outro mecanismo, backbone nativo ou GPU paga exige um gargalo local
+novo, medido e com orçamento explícito.
 
 Adaptação ou adoção só começa se houver evidência de que a cascata atingiu um
 teto em prosódia, sobreposição ou timing.
@@ -460,22 +463,23 @@ card de dados e splits por família, gerador e pessoa.
 | 17 | EXP-0020: equivalência observável da ordem no renderer — **`INVALIDATE_STOP_ORDER_INSTRUMENT`** | freeze + abertura isolados; tentativa única consumida; primeiro payload TTS vazio no CDP; zero trials persistidos | físico `NOT_EVALUATED`; seis gates vacuamente true explicitados; sem rerun, API, GPU ou autoridade |
 | 18 | EXP-0021: qualificação fail-closed da captura TTS — **`INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION`** | 4/4 WAVs na primeira leitura; browser=CDP; A1=A2, B1=B2 e A≠B; 9/10 gates | contrato esperava um health por navegação, mas bootstrap + auditor produziram dois; tentativa consumida, fatos apenas diagnósticos, zero autoridade |
 | 19 | EXP-0022: binding bootstrap + audit health — **`INVALIDATE_BOOTSTRAP_AUDIT_HEALTH_BINDING`** | 4/4 WAVs; dois healths/nav corretamente ligados; ordinais válidos em 40/40, mas todos com response timestamp posterior ao completion | gate congelado comparou relógios semânticos diferentes; tentativa consumida, fatos diagnósticos, zero autoridade |
-| 20 | EXP-0023: semântica causal ordinal do CDP — **instrumento implementado; aguardando auditoria e freeze** | mesma campanha/worker sem STOP; ordinais são autoridade, timestamps apenas limites individuais; ao menos uma inversão health precisa exercitar o delta | corrige só a premissa temporal; um passe autoriza novo pré-registro físico, não promove runtime |
+| 20 | EXP-0023: semântica causal ordinal do CDP — **`PASS_CDP_TTS_CAPTURE_AFTER_ORDINAL_BINDING`** | 4/4 browser=CDP; 40 lifecycles, 120 ordinais globais únicos, 40 inversões response/finish e 10/10 gates | qualifica só o instrumento neste Chrome/processo; zero STOP, rerun ou autoridade |
+| 21 | EXP-0024: equivalência física com captura qualificada — **pré-registrado** | integrar a campanha 2×6 do EXP-0020 ao coletor aprovado, sem mudar runtime; medir estado, efeito, silêncio, latência e projeção terminal | implementar/auditar antes de C0 e abertura; uma tentativa, sem fabricar diversidade ou promover runtime diretamente |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
 de produzir evidência física. EXP-0021 e EXP-0022 também estão terminais: suas
-4/4 capturas são diagnósticas, não uma qualificação. O EXP-0023 é a frente
-crítica e corrige somente a autoridade de ordem do lifecycle CDP antes de outra
-campanha de STOP. Modelos completos
+4/4 capturas são diagnósticas, não uma qualificação. O EXP-0023 qualificou
+prospectivamente a captura sob semântica ordinal. O EXP-0024 é a frente crítica
+e reutiliza essa peça para finalmente medir o STOP sem alterar o runtime.
+Modelos completos
 continuam no ledger como `watch` ou `defer`; pesquisa externa não autoriza
 download, adaptação ou GPU.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
 pela maior falha percebida no relatório, não por ordem fixa. O matcher textual
 já demonstrou valor informacional e sobreviveu causalmente ao áudio-oráculo; o
-gargalo imediato é recuperar de modo confiável a evidência do renderer e só
-então interpretar a ordem física do lifecycle, antes de gastar com
-reconhecimento real.
+gargalo imediato é interpretar a ordem física do lifecycle com o coletor agora
+qualificado, antes de gastar com reconhecimento real.
 
 ## Trilha paralela de governança
 

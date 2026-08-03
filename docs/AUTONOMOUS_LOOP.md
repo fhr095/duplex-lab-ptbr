@@ -117,15 +117,19 @@ repetiu 4/4 capturas; ainda assim, foi invalidado por exigir
 `responseTimestamp <= finishedTimestamp`. Em 40/40 requests os ordinais de
 entrega estavam corretos e os timestamps invertidos, coerentes com o Chromium
 usar o instante do handler para response e o completion anterior da rede para
-finish. O EXP-0023 mantém worker, campanha 2×2, payloads, TTS, healths, buffers,
-retry e proibição de STOP, mudando somente a autoridade causal para os
-ordinais locais. Um passe prospectivo libera apenas outro pré-registro físico;
-trocar ASR, TTS ou backbone continua fora.
+finish.
 
-O instrumento EXP-0023 já materializa esse único delta e falha fechado para
-ordinais invertidos, eventos ausentes, lifecycle duplicado, health extra,
-sobreposição TTS, drift de fonte ou topologia Git. Ele ainda não tem evidência
-oficial: auditoria, C0, freeze e opening isolados vêm antes da tentativa única.
+O EXP-0023 manteve worker, campanha 2×2, payloads, TTS, healths, buffers, retry
+e proibição de STOP, mudando somente a autoridade causal para ordinais. A
+tentativa única passou 10/10 gates: 4/4 browser=CDP, 120 ordinais globais
+únicos e as 40 inversões temporais exercitadas. Isso qualifica o instrumento
+neste escopo, não o runtime de voz.
+
+O EXP-0024 agora integra o menor conjunto já existente: expressão e análise
+física do EXP-0020 mais captura fail-closed dos EXP-0021–0023, sem alterar as
+fontes de produção. Ele está apenas pré-registrado; implementação, fixtures e
+auditoria vêm antes de C0, freeze e abertura. Trocar ASR, TTS ou backbone
+continua fora até uma falha física ou perceptiva escolher o mecanismo.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
@@ -136,6 +140,7 @@ node --test tests/exp-0019-analysis.test.mjs
 npm run eval:exp:0020:report:check
 npm run eval:exp:0021:report:check
 npm run eval:exp:0022:report:check
+npm run eval:exp:0023:report:check
 node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
 node --test tests/exp-0023-*.test.mjs
 npm run eval:index:check
@@ -242,9 +247,9 @@ Cada iteração segue um contrato curto:
 
 Depois do EXP-0007, uma correção na cascata só entra no caminho crítico se
 evitar risco, preservar a fidelidade do trace, remover um confounder de
-comparação ou desbloquear o gate corrente do EXP-0017. Cada ramificação declara
-timebox e regra de parada; duas hipóteses são o orçamento comum, com exceção
-explícita para falha grave.
+comparação ou desbloquear o gate corrente definido no Roadmap. Cada ramificação
+declara timebox e regra de parada; duas hipóteses são o orçamento comum, com
+exceção explícita para falha grave.
 
 O EXP-0007 mostrou que framing/merge explicava o PCM variável, mas sua variante
 não venceu segurança nem latência. O EXP-0008 comprovou que um verificador forte

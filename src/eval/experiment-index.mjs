@@ -101,6 +101,28 @@ export const EXP0021_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0021-cdp-capture-qualification-v0.1.json";
 export const EXP0022_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0022-bootstrap-audit-health-binding-v0.1.json";
+export const EXP0023_CANONICAL_REPORT_PATH =
+  "eval/reports/exp-0023-cdp-ordinal-timestamp-semantics-v0.1.json";
+export const EXP0023_EVIDENCE_COMMIT =
+  "ee0d5864aac4a984b33c9bdb86273ca9e7283b38";
+
+const EXP0023_C0_COMMIT =
+  "de919470f0b4b59db4f911b7ae5e40fcc9606707";
+const EXP0023_FREEZE_COMMIT =
+  "e310185d80d1e4e0a5980a0b749dae80f3635c99";
+const EXP0023_OPENING_COMMIT =
+  "30813869f3a2bdbf0c69ca3bf72073b68d54c361";
+const EXP0023_FREEZE_PATH =
+  "eval/commitments/exp-0023-instrumentation-freeze-v0.1.json";
+const EXP0023_ATTEMPT_PATH =
+  "eval/commitments/exp-0023-capture-attempt-v0.1.json";
+const EXP0023_RECEIPT_PATH =
+  "eval/generated/exp-0023/capture-attempt-consumed-v0.1.json";
+
+const ACTIVE_PREREGISTRATION_PATHS = Object.freeze({
+  "EXP-0024":
+    "docs/experiments/EXP-0024-physical-stop-after-capture-qualification.md"
+});
 
 export function validateExp0018HistoricalOutcome(entry, index, decision) {
   const outcome = EXP0018_CANONICAL_OUTCOMES[decision];
@@ -379,6 +401,85 @@ const CANONICAL_REPORT_CONTRACTS = Object.freeze({
       ["analysis.metrics.usageDelta.paidApiCalls", 0],
       ["analysis.metrics.usageDelta.externalLlmUsed", false]
     ]
+  },
+  "EXP-0023": {
+    status: "completed",
+    authority: "none",
+    decisionPath: "decision",
+    assertions: [
+      ["schemaVersion",
+        "exp-0023-cdp-ordinal-timestamp-semantics-report-v1"],
+      ["measurementStatus", "EVALUATED"],
+      ["analysis.measurementStatus", "EVALUATED"],
+      ["analysis.decision",
+        "PASS_CDP_TTS_CAPTURE_AFTER_ORDINAL_BINDING"],
+      ["pass", true],
+      ["instrumentValid", true],
+      ["authorityEligible", false],
+      ["campaign.boundary.freezeVerified", true],
+      ["campaign.boundary.attemptVerified", true],
+      ["campaign.boundary.receiptVerified", true],
+      ["campaign.boundary.receiptWriteOnce", true],
+      ["campaign.boundary.receiptBeforeNetwork", true],
+      ["campaign.boundary.rerunAllowed", false],
+      ["campaign.audits.instrumentationFreezeValid", true],
+      ["campaign.audits.openingValid", true],
+      ["campaign.audits.receiptValid", true],
+      ["campaign.audits.sourceBindingsValid", true],
+      ["campaign.audits.rerunRefused", true],
+      ["campaign.workerEnvelope.status", "completed"],
+      ["campaign.workerEnvelope.failure", null],
+      ["campaign.workerEnvelope.campaign.navigations.length", 2],
+      ["analysis.units.length", 4],
+      ["analysis.metrics.navigationCount", 2],
+      ["analysis.metrics.unitCount", 4],
+      ["analysis.metrics.successfulCaptures", 4],
+      ["analysis.metrics.totalReads", 4],
+      ["analysis.metrics.timestampDiagnostics.trackedRequests", 40],
+      ["analysis.metrics.timestampDiagnostics.recordedEventOrdinals", 120],
+      ["analysis.metrics.timestampDiagnostics.uniqueRecordedEventOrdinals",
+        120],
+      ["analysis.metrics.timestampDiagnostics.ordinalLedgerUnique", true],
+      ["analysis.metrics.timestampDiagnostics.navigationOrdinalOrderValid",
+        true],
+      ["analysis.metrics.timestampDiagnostics.responseAfterTerminalCount",
+        40],
+      [
+        "analysis.metrics.timestampDiagnostics.healthResponseAfterTerminalCount",
+        4
+      ],
+      ["analysis.structural.timestampPolicyValid", true],
+      ["analysis.structural.healthTimestampSummariesBound", true],
+      ["analysis.structural.prospectiveHealthInversionObserved", true],
+      ["analysis.structural.legacyDeltaIsolated", true],
+      ["analysis.structural.bootstrapAuditHealthBindingValid", true],
+      ["analysis.structural.navigationAuditValid", true],
+      ["analysis.gates.boundaryAndSupervisor", true],
+      ["analysis.gates.fixedCampaign", true],
+      ["analysis.gates.cdpChainAndResponse", true],
+      ["analysis.gates.browserCdpByteIdentity", true],
+      ["analysis.gates.payloadStabilityAndDistinction", true],
+      ["analysis.gates.boundedFailClosedCapture", true],
+      ["analysis.gates.firstResponsePerNavigation", true],
+      ["analysis.gates.environmentStable", true],
+      ["analysis.gates.negativeBudgetExact", true],
+      ["analysis.gates.diagnosticsNetworkAndBindings", true],
+      ["analysis.nextMove.physicalStopPreregistrationAllowed", true],
+      ["analysis.nextMove.physicalStopExecutionAllowed", false],
+      ["analysis.nextMove.sameExperimentRerunAllowed", false],
+      ["contract.campaign.negativeBudget.lifecycle.bargeIn", 0],
+      ["contract.campaign.negativeBudget.lifecycle.stop", 0],
+      ["contract.campaign.negativeBudget.lifecycle.transitions", 0],
+      ["contract.campaign.negativeBudget.trainingTrace.decisions", 0],
+      ["contract.campaign.negativeBudget.trainingTrace.effects", 0],
+      ["contract.campaign.negativeBudget.externalRequests", 0],
+      ["contract.campaign.negativeBudget.gpuRuns", 0],
+      ["contract.campaign.negativeBudget.challengerRuns", 0],
+      ["contract.campaign.negativeBudget.backboneRuns", 0],
+      ["contract.campaign.negativeBudget.canProduceNewEffects", false],
+      ["analysis.metrics.usageDelta.paidApiCalls", 0],
+      ["analysis.metrics.usageDelta.externalLlmUsed", false]
+    ]
   }
 });
 
@@ -393,6 +494,13 @@ function assertObject(value, label) {
     value !== null && typeof value === "object" && !Array.isArray(value),
     `${label} must be an object`
   );
+}
+
+function exactKeys(value, keys) {
+  return value !== null && typeof value === "object" &&
+    !Array.isArray(value) &&
+    JSON.stringify(Object.keys(value).toSorted()) ===
+      JSON.stringify([...keys].toSorted());
 }
 
 function experimentNumber(experimentId) {
@@ -468,6 +576,10 @@ async function git(projectRoot, ...args) {
     : Buffer.from(result.stdout);
 }
 
+async function gitText(projectRoot, ...args) {
+  return (await git(projectRoot, ...args)).toString("utf8").trim();
+}
+
 async function gitFileAt(projectRoot, commit, repositoryPath) {
   try {
     return await git(projectRoot, "show", `${commit}:${repositoryPath}`);
@@ -477,6 +589,17 @@ async function gitFileAt(projectRoot, commit, repositoryPath) {
     }
     throw error;
   }
+}
+
+async function changedPathsAtCommit(projectRoot, commit) {
+  return (await git(
+    projectRoot,
+    "diff-tree",
+    "--no-commit-id",
+    "--name-only",
+    "-r",
+    commit
+  )).toString("utf8").split(/\r?\n/u).filter(Boolean).toSorted();
 }
 
 async function assertGitFileMatches(
@@ -571,6 +694,14 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0022 canonicalReport precisa usar o output canônico");
     assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
       "EXP-0022 terminal exige evidenceCommit");
+  }
+  if (entry.id === "EXP-0023") {
+    assert(entry.canonicalReport === EXP0023_CANONICAL_REPORT_PATH,
+      "EXP-0023 canonicalReport precisa usar o output canônico");
+    assert(/^[a-f0-9]{40}$/u.test(entry.evidenceCommit ?? ""),
+      "EXP-0023 terminal exige evidenceCommit");
+    assert(entry.evidenceCommit === EXP0023_EVIDENCE_COMMIT,
+      "EXP-0023 evidenceCommit precisa ser o fechamento oficial imutável");
   }
 
   const path = resolveRepositoryPath(
@@ -1081,6 +1212,217 @@ async function assertCanonicalReport(entry, projectRoot, index) {
       "EXP-0022 canonical report"
     );
   }
+  if (entry.id === "EXP-0023") {
+    const navigations = report.campaign?.workerEnvelope?.campaign?.navigations;
+    const requests = Array.isArray(navigations)
+      ? navigations.flatMap((navigation) => navigation.networkRequests ?? [])
+      : [];
+    const ordinals = requests.flatMap((request) => [
+      request.requestOrdinal,
+      request.responseOrdinal,
+      request.finishedOrdinal
+    ]);
+    assert(
+      Array.isArray(navigations) && navigations.length === 2 &&
+        navigations.every((navigation) =>
+          Array.isArray(navigation.networkRequests) &&
+          navigation.networkRequests.filter((request) => {
+            try {
+              return request.method === "GET" &&
+                new URL(request.url).pathname === "/api/health";
+            } catch {
+              return false;
+            }
+          }).length === 2
+        ),
+      "EXP-0023 precisa preservar dois health GETs por navegação"
+    );
+    assert(
+      requests.length === 40 && requests.every((request) =>
+        request.tracksLoadingLifecycle === true &&
+        Number.isSafeInteger(request.requestOrdinal) &&
+        Number.isSafeInteger(request.responseOrdinal) &&
+        Number.isSafeInteger(request.finishedOrdinal) &&
+        request.requestOrdinal > 0 &&
+        request.requestOrdinal < request.responseOrdinal &&
+        request.responseOrdinal < request.finishedOrdinal &&
+        Number.isFinite(request.timestamp) &&
+        Number.isFinite(request.responseTimestamp) &&
+        Number.isFinite(request.finishedTimestamp) &&
+        request.timestamp <= request.responseTimestamp &&
+        request.timestamp <= request.finishedTimestamp &&
+        request.responseTimestamp > request.finishedTimestamp
+      ),
+      "EXP-0023 precisa preservar 40 lifecycles ordinais e inversões brutas"
+    );
+    assert(
+      ordinals.length === 120 && new Set(ordinals).size === 120,
+      "EXP-0023 precisa preservar 120 ordinais globais únicos"
+    );
+    const navigationRanges = navigations.map((navigation) => {
+      const values = navigation.networkRequests.flatMap((request) => [
+        request.requestOrdinal,
+        request.responseOrdinal,
+        request.finishedOrdinal
+      ]);
+      return { min: Math.min(...values), max: Math.max(...values) };
+    });
+    assert(
+      navigationRanges[0].max < navigationRanges[1].min,
+      "EXP-0023 precisa preservar faixas ordinais ordenadas por navegação"
+    );
+    assert(
+      Array.isArray(report.analysis?.units) &&
+        report.analysis.units.length === 4 &&
+        report.analysis.units.every((unit) =>
+          unit.captureQualified === true &&
+          unit.byteIdentity === true &&
+          unit.readCount === 1
+        ),
+      "EXP-0023 precisa preservar as quatro capturas qualificadas"
+    );
+    assert(
+      typeof report.claim === "string" && report.claim.length > 0,
+      "EXP-0023 passe exige claim limitada não vazia"
+    );
+    const [receiptArtifact, attemptArtifact, freezeArtifact] =
+      await Promise.all([
+        readArtifact(projectRoot, EXP0023_RECEIPT_PATH,
+          "EXP-0023 receipt"),
+        readArtifact(projectRoot, EXP0023_ATTEMPT_PATH,
+          "EXP-0023 opening"),
+        readArtifact(projectRoot, EXP0023_FREEZE_PATH,
+          "EXP-0023 freeze")
+      ]);
+    const receipt = receiptArtifact.value;
+    const receiptCore = structuredClone(receipt);
+    delete receiptCore.receiptSha256;
+    assert(
+      exactKeys(receipt, [
+        "attempt", "authority", "boundary", "consumedAt", "experimentId",
+        "receiptSha256", "schemaVersion", "status", "workerCommand"
+      ]) &&
+        receipt.schemaVersion ===
+          "exp-0023-capture-attempt-consumption-v1" &&
+        receipt.experimentId === "EXP-0023" &&
+        receipt.status === "consumed-before-worker" &&
+        Number.isFinite(Date.parse(receipt.consumedAt ?? "")) &&
+        receipt.attempt?.path === EXP0023_ATTEMPT_PATH &&
+        receipt.attempt?.fileSha256 === attemptArtifact.fileSha256 &&
+        receipt.attempt?.captureAttemptSha256 ===
+          attemptArtifact.value.captureAttemptSha256 &&
+        receipt.attempt?.attemptCommit === EXP0023_OPENING_COMMIT &&
+        receipt.attempt?.nonce === "exp-0023-official-v0.1" &&
+        receipt.workerCommand === "node scripts/run-exp-0022-worker.mjs" &&
+        receipt.boundary?.receiptBeforeWorker === true &&
+        receipt.boundary?.receiptBeforeNetwork === true &&
+        receipt.boundary?.rerunAllowed === false &&
+        receipt.authority?.mode === "measurement-only" &&
+        receipt.authority?.canProduceNewEffects === false &&
+        receipt.receiptSha256 ===
+          `sha256:${canonicalSha256(receiptCore)}`,
+      "EXP-0023 receipt diverge do consumo canônico"
+    );
+    assert(
+      Date.parse(receipt.consumedAt) <= Date.parse(
+        report.campaign?.workerEnvelope?.startedAt ?? ""
+      ),
+      "EXP-0023 receipt precisa preceder o worker pelos bytes reais"
+    );
+    assert(
+      report.campaign?.boundary?.freezePath === EXP0023_FREEZE_PATH &&
+        report.campaign.boundary.freezeFileSha256 ===
+          freezeArtifact.fileSha256 &&
+        report.campaign.boundary.freezeCanonicalSha256 ===
+          freezeArtifact.value.instrumentationFreezeSha256 &&
+        report.campaign.boundary.attemptPath === EXP0023_ATTEMPT_PATH &&
+        report.campaign.boundary.attemptFileSha256 ===
+          attemptArtifact.fileSha256 &&
+        report.campaign.boundary.attemptCanonicalSha256 ===
+          attemptArtifact.value.captureAttemptSha256 &&
+        report.campaign.boundary.receiptPath === EXP0023_RECEIPT_PATH &&
+        report.campaign.boundary.receiptFileSha256 ===
+          receiptArtifact.fileSha256,
+      "EXP-0023 report não está ligado aos bytes reais do boundary"
+    );
+    const core = structuredClone(report);
+    delete core.reportSha256;
+    assert(
+      report.reportSha256 === `sha256:${canonicalSha256(core)}`,
+      "EXP-0023 reportSha256 diverge do conteúdo canônico"
+    );
+    const headCommit = (await git(projectRoot, "rev-parse", "HEAD"))
+      .toString("utf8").trim();
+    await assertGitAncestor(
+      projectRoot,
+      entry.evidenceCommit,
+      headCommit,
+      "EXP-0023 evidenceCommit→HEAD"
+    );
+    await assertGitFileMatches(
+      projectRoot,
+      entry.evidenceCommit,
+      EXP0023_CANONICAL_REPORT_PATH,
+      await readFile(path),
+      "EXP-0023 canonical report"
+    );
+    await assertGitFileMatches(
+      projectRoot,
+      entry.evidenceCommit,
+      EXP0023_RECEIPT_PATH,
+      receiptArtifact.bytes,
+      "EXP-0023 receipt"
+    );
+    const [receiptCommit, reportCommit, evidenceParent, openingParent,
+      freezeParent, evidencePaths, openingPaths, freezePaths] =
+      await Promise.all([
+        gitText(projectRoot, "log", "-1", "--format=%H", "--",
+          EXP0023_RECEIPT_PATH),
+        gitText(projectRoot, "log", "-1", "--format=%H", "--",
+          EXP0023_CANONICAL_REPORT_PATH),
+        gitText(projectRoot, "rev-parse", `${EXP0023_EVIDENCE_COMMIT}^`),
+        gitText(projectRoot, "rev-parse", `${EXP0023_OPENING_COMMIT}^`),
+        gitText(projectRoot, "rev-parse", `${EXP0023_FREEZE_COMMIT}^`),
+        changedPathsAtCommit(projectRoot, EXP0023_EVIDENCE_COMMIT),
+        changedPathsAtCommit(projectRoot, EXP0023_OPENING_COMMIT),
+        changedPathsAtCommit(projectRoot, EXP0023_FREEZE_COMMIT)
+      ]);
+    assert(
+      receiptCommit === EXP0023_EVIDENCE_COMMIT &&
+        reportCommit === EXP0023_EVIDENCE_COMMIT &&
+        evidenceParent === EXP0023_OPENING_COMMIT &&
+        openingParent === EXP0023_FREEZE_COMMIT &&
+        freezeParent === EXP0023_C0_COMMIT,
+      "EXP-0023 topologia C0→freeze→opening→evidence divergiu"
+    );
+    assert(
+      JSON.stringify(evidencePaths) === JSON.stringify([
+        EXP0023_RECEIPT_PATH,
+        EXP0023_CANONICAL_REPORT_PATH
+      ].toSorted()) &&
+        JSON.stringify(openingPaths) === JSON.stringify([
+          EXP0023_ATTEMPT_PATH
+        ]) &&
+        JSON.stringify(freezePaths) === JSON.stringify([
+          EXP0023_FREEZE_PATH
+        ]),
+      "EXP-0023 commits isolados alteraram paths não autorizados"
+    );
+    await assertGitFileMatches(
+      projectRoot,
+      EXP0023_FREEZE_COMMIT,
+      EXP0023_FREEZE_PATH,
+      freezeArtifact.bytes,
+      "EXP-0023 freeze"
+    );
+    await assertGitFileMatches(
+      projectRoot,
+      EXP0023_OPENING_COMMIT,
+      EXP0023_ATTEMPT_PATH,
+      attemptArtifact.bytes,
+      "EXP-0023 opening"
+    );
+  }
 }
 
 function validateEntryShape(entry, index) {
@@ -1167,6 +1509,13 @@ function validateEntryShape(entry, index) {
       entry.evidenceCommit === null ||
         /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),
       "EXP-0021.evidenceCommit precisa ser null ou commit completo"
+    );
+  }
+  if (entry.id === "EXP-0022" || entry.id === "EXP-0023") {
+    assert(
+      entry.evidenceCommit === null ||
+        /^[a-f0-9]{40}$/u.test(entry.evidenceCommit),
+      `${entry.id}.evidenceCommit precisa ser null ou commit completo`
     );
   }
 }
@@ -1311,6 +1660,20 @@ export async function validateExperimentIndex(index, options = {}) {
     probePreRegistration,
     "currentParallelProbe.preRegistration"
   );
+  const expectedActivePreRegistration =
+    ACTIVE_PREREGISTRATION_PATHS[index.currentCriticalPath];
+  assert(
+    typeof expectedActivePreRegistration === "string" &&
+      index.currentParallelProbe.preRegistration ===
+        expectedActivePreRegistration,
+    "currentParallelProbe.preRegistration must match the canonical active " +
+      "experiment preregistration"
+  );
+  const preRegistrationText = await readFile(probePreRegistration, "utf8");
+  assert(
+    preRegistrationText.startsWith(`# ${index.currentCriticalPath} —`),
+    "currentParallelProbe.preRegistration identifies a different experiment"
+  );
   assert(
     typeof index.currentParallelProbe.decision === "string" &&
       index.currentParallelProbe.decision.length > 0,
@@ -1387,26 +1750,24 @@ export async function validateExperimentIndex(index, options = {}) {
         `${entry.id}.supersedes references unknown ${supersededId}`
       );
     }
-    if (entry.canonicalReport !== null) {
-      assert(
-        entry.cleanCloneChecks.length > 0,
-        `${entry.id} must provide at least one clean-clone check`
+    assert(
+      entry.cleanCloneChecks.length > 0,
+      `${entry.id} must provide at least one clean-clone check`
+    );
+    for (const command of entry.cleanCloneChecks) {
+      const commandMatch = command.match(
+        /^node --test (tests\/[A-Za-z0-9._-]+\.test\.mjs)$/u
       );
-      for (const command of entry.cleanCloneChecks) {
-        const commandMatch = command.match(
-          /^node --test (tests\/[A-Za-z0-9._-]+\.test\.mjs)$/u
-        );
-        assert(
-          commandMatch,
-          `${entry.id}.cleanCloneChecks must be direct Node test commands`
-        );
-        const testPath = resolveRepositoryPath(
-          projectRoot,
-          commandMatch[1],
-          `${entry.id}.cleanCloneChecks`
-        );
-        await assertFileExists(testPath, `${entry.id}.cleanCloneChecks`);
-      }
+      assert(
+        commandMatch,
+        `${entry.id}.cleanCloneChecks must be direct Node test commands`
+      );
+      const testPath = resolveRepositoryPath(
+        projectRoot,
+        commandMatch[1],
+        `${entry.id}.cleanCloneChecks`
+      );
+      await assertFileExists(testPath, `${entry.id}.cleanCloneChecks`);
     }
     await assertCanonicalReport(entry, projectRoot, index);
   }
