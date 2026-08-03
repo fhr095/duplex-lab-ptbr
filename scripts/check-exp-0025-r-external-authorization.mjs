@@ -88,7 +88,16 @@ export async function validateExp0025RExternalAuthorization(options = {}) {
       provider?.dataBoundary?.holdoutTransferred !== false ||
       provider?.dataBoundary?.environmentFileTransferred !== false ||
       provider?.dataBoundary?.accountApiKeyTransferred !== false ||
-      provider?.dataBoundary?.openAiApiKeyTransferred !== false) {
+      provider?.dataBoundary?.openAiApiKeyTransferred !== false ||
+      provider?.infrastructureRetry?.attempt1?.status !==
+        "FAILED_BEFORE_MODEL_INFERENCE" ||
+      provider?.infrastructureRetry?.attempt1
+        ?.sentinelOrDevelopmentGenerationCount !== 0 ||
+      provider?.infrastructureRetry?.attempt1?.terminationConfirmed !== true ||
+      provider?.infrastructureRetry?.attempt2?.authorized !== true ||
+      provider?.infrastructureRetry?.attempt2?.modelInferenceAttemptOrdinal !== 1 ||
+      provider?.infrastructureRetry?.attempt2
+        ?.automaticFurtherInfrastructureRetry !== false) {
       errors.push("ambiente RunPod ou fronteira de dados divergiu");
     }
 

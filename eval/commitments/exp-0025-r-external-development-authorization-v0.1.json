@@ -76,8 +76,8 @@
     },
     {
       "path": "scripts/run-exp-0025-r-runpod.mjs",
-      "byteLength": 19109,
-      "sha256": "4863a6f200ec8b9011312ca17711f2782335b8684ef6ef76ece1ff84f049d59b"
+      "byteLength": 20877,
+      "sha256": "317561b59c9a2a41a69ef65ad5aa46b1e2481a580491c9de9509da19191d0b64"
     },
     {
       "path": "src/eval/exp-0025-r-external.mjs",
@@ -150,6 +150,33 @@
       "requiresContainerRestart": true,
       "modelDataMappingOrInferenceChanged": false
     },
+    "infrastructureRetry": {
+      "frozenAt": "2026-08-03T16:43:33-03:00",
+      "attempt1": {
+        "podId": "50igmb24czpkfm",
+        "status": "FAILED_BEFORE_MODEL_INFERENCE",
+        "failure": "TAR_OWNER_RESTORE_REJECTED_BY_VOLUME",
+        "experimentInputTransferCompleted": false,
+        "sentinelOrDevelopmentGenerationCount": 0,
+        "allocationSeconds": 335.48799991607666,
+        "estimatedGpuCostUsd": 0.2693223110437393,
+        "terminationConfirmed": true,
+        "receiptPath": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json",
+        "receiptSha256": "f2e9c269706fd73f0d15186e52d3421ffd945ee9650954dce816274561f78cd3"
+      },
+      "attempt2": {
+        "authorized": true,
+        "modelInferenceAttemptOrdinal": 1,
+        "sameCandidateCheckpointDataMappingAndSeed": true,
+        "changes": [
+          "SET_SAME_EPHEMERAL_KEY_IN_PUBLIC_KEY_AND_SSH_PUBLIC_KEY_AT_CREATION",
+          "EXTRACT_INPUT_TAR_WITH_NO_SAME_OWNER"
+        ],
+        "remainingGpuSeconds": 6864.512000083923,
+        "remainingExternalCostUsd": 11.73067768895626,
+        "automaticFurtherInfrastructureRetry": false
+      }
+    },
     "dataBoundary": {
       "transferredInputs": [
         "scripts/run_exp_0025_r_external.py",
@@ -180,7 +207,10 @@
       "preserveTrajectory": true,
       "preserveGenerationLatency": true
     },
-    "providerReceiptPath": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json",
+    "providerReceiptPaths": [
+      "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json",
+      "eval/evidence/exp-0025-r-external-runpod-allocation-v0.2.json"
+    ],
     "providerLogPath": "eval/evidence/exp-0025-r-external-development-runpod-v0.1.log",
     "aggregateReportPath": "eval/reports/exp-0025-r-external-development-v0.1.json"
   },
@@ -228,5 +258,5 @@
     "anotherModel": false
   },
   "authorityEligible": false,
-  "authorizationSha256": "sha256:7930ab8fb3644976fa0fef9fa85d0f8177361f16d512b516d7cd4f17c76e44e2"
+  "authorizationSha256": "sha256:aac23fc52b2c2d5802220cc000fc1125b4dc1ea03cbe7688a70044a1a716d895"
 }

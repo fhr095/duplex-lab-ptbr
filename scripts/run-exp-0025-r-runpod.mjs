@@ -23,8 +23,16 @@ const POD_NAME_PREFIX = "duplex-exp0025-r-e-";
 const MAX_GPU_SECONDS = 2 * 60 * 60;
 const MAX_COST_USD = 12;
 const REMOTE_RUN_TIMEOUT_SECONDS = 6_000;
-const PROVIDER_RECEIPT =
+const INFRASTRUCTURE_ATTEMPT = 2;
+const PRIOR_ALLOCATION_SECONDS = 335.48799991607666;
+const PRIOR_COST_USD = 0.2693223110437393;
+const REMAINING_GPU_SECONDS = MAX_GPU_SECONDS - PRIOR_ALLOCATION_SECONDS;
+const PRIOR_PROVIDER_RECEIPT =
   "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json";
+const PRIOR_PROVIDER_RECEIPT_SHA256 =
+  "f2e9c269706fd73f0d15186e52d3421ffd945ee9650954dce816274561f78cd3";
+const PROVIDER_RECEIPT =
+  "eval/evidence/exp-0025-r-external-runpod-allocation-v0.2.json";
 const REMOTE_LOG =
   "eval/evidence/exp-0025-r-external-development-runpod-v0.1.log";
 const RAW_EVIDENCE =
@@ -259,7 +267,7 @@ async function waitForConnection(apiKey, podId, temporary, allocationStartEpoch)
   let lastStatus = null;
   for (let attempt = 0; attempt < 120; attempt += 1) {
     const elapsed = Date.now() / 1_000 - allocationStartEpoch;
-    if (elapsed >= MAX_GPU_SECONDS - 300) {
+    if (elapsed >= REMAINING_GPU_SECONDS - 300) {
       throw new Error("Pod não ficou acessível dentro do budget temporal");
     }
     const pod = await runpodRequest(
@@ -267,7 +275,8 @@ async function waitForConnection(apiKey, podId, temporary, allocationStartEpoch)
       `/pods/${encodeURIComponent(podId)}`
     );
     const rate = Number(pod?.adjustedCostPerHr ?? pod?.costPerHr);
-    if (Number.isFinite(rate) && rate * 2 > MAX_COST_USD) {
+    if (Number.isFinite(rate) &&
+      PRIOR_COST_USD + rate * REMAINING_GPU_SECONDS / 3_600 > MAX_COST_USD) {
       throw new Error(`taxa do Pod US$ ${rate}/h excede o budget congelado`);
     }
     const status = pod?.desiredStatus ?? pod?.lastStatusChange ?? "UNKNOWN";
@@ -297,7 +306,7 @@ async function uploadInputs(connection, temporary) {
     [
       ...sshArgs(connection, temporary),
       "mkdir -p /workspace/duplex-lab-ptbr && " +
-        "tar -xf - -C /workspace/duplex-lab-ptbr"
+        "tar --no-same-owner -xf - -C /workspace/duplex-lab-ptbr"
     ],
     { stdio: ["pipe", "inherit", "inherit"] }
   );
@@ -399,6 +408,18 @@ async function assertLocalInputs() {
       throw new Error(`hash local divergente antes da alocação: ${path}`);
     }
   }
+  const priorReceiptPath = resolve(PROJECT_ROOT, PRIOR_PROVIDER_RECEIPT);
+  const priorReceiptBytes = await readFile(priorReceiptPath);
+  if (sha256(priorReceiptBytes) !== PRIOR_PROVIDER_RECEIPT_SHA256) {
+    throw new Error("recibo da tentativa de infraestrutura 1 divergiu");
+  }
+  const priorReceipt = JSON.parse(priorReceiptBytes.toString("utf8"));
+  if (priorReceipt.status !== "FAILED" ||
+    priorReceipt.termination?.confirmed !== true ||
+    priorReceipt.runtime?.retrieved?.[RAW_EVIDENCE] !== false ||
+    priorReceipt.runtime?.retrieved?.[RAW_JOURNAL] !== false) {
+    throw new Error("tentativa de infraestrutura 1 não é elegível para retry");
+  }
   for (const path of [PROVIDER_RECEIPT, REMOTE_LOG]) {
     if (await exists(resolve(PROJECT_ROOT, path))) {
       throw new Error(`execução anterior detectada: ${path}`);
@@ -440,7 +461,10 @@ async function main() {
       body: JSON.stringify({
         ...POD_REQUEST,
         name: podName,
-        env: { SSH_PUBLIC_KEY: temporary.publicKey }
+        env: {
+          PUBLIC_KEY: temporary.publicKey,
+          SSH_PUBLIC_KEY: temporary.publicKey
+        }
       })
     });
     podId = created?.id;
@@ -463,7 +487,7 @@ async function main() {
     );
     await uploadInputs(connection, temporary);
     const elapsedMs = (Date.now() / 1_000 - allocationStartEpoch) * 1_000;
-    const remainingMs = MAX_GPU_SECONDS * 1_000 - elapsedMs - 120_000;
+    const remainingMs = REMAINING_GPU_SECONDS * 1_000 - elapsedMs - 120_000;
     if (remainingMs <= 0) throw new Error("budget temporal consumido antes de E");
     remoteResult = await runRemote(
       connection,
@@ -526,6 +550,8 @@ async function main() {
       schemaVersion: "exp-0025-r-runpod-allocation-receipt-v1",
       experimentId: EXPERIMENT_ID,
       candidateId: CANDIDATE_ID,
+      infrastructureAttempt: INFRASTRUCTURE_ATTEMPT,
+      modelInferenceAttempt: 1,
       requestedAt,
       completedAt,
       status: primaryError ? "FAILED" : "COMPLETED",
@@ -536,7 +562,10 @@ async function main() {
         requested: {
           ...POD_REQUEST,
           name: podName,
-          env: { SSH_PUBLIC_KEY: "EPHEMERAL_REDACTED" }
+          env: {
+            PUBLIC_KEY: "EPHEMERAL_REDACTED",
+            SSH_PUBLIC_KEY: "EPHEMERAL_REDACTED"
+          }
         },
         observed: observedPod
           ? {
@@ -565,14 +594,22 @@ async function main() {
       },
       budget: {
         allocationSeconds,
+        priorAllocationSeconds: PRIOR_ALLOCATION_SECONDS,
+        cumulativeAllocationSeconds:
+          PRIOR_ALLOCATION_SECONDS + allocationSeconds,
         maximumGpuSeconds: MAX_GPU_SECONDS,
         hourlyUsd,
         estimatedGpuCostUsd,
+        priorEstimatedGpuCostUsd: PRIOR_COST_USD,
+        cumulativeEstimatedGpuCostUsd:
+          Number.isFinite(estimatedGpuCostUsd)
+            ? PRIOR_COST_USD + estimatedGpuCostUsd
+            : null,
         maximumExternalCostUsd: MAX_COST_USD,
         withinFrozenLimits:
-          allocationSeconds <= MAX_GPU_SECONDS &&
+          PRIOR_ALLOCATION_SECONDS + allocationSeconds <= MAX_GPU_SECONDS &&
           Number.isFinite(estimatedGpuCostUsd) &&
-          estimatedGpuCostUsd <= MAX_COST_USD
+          PRIOR_COST_USD + estimatedGpuCostUsd <= MAX_COST_USD
       },
       termination,
       error: primaryError?.message ?? null
