@@ -1,9 +1,8 @@
 # EXP-0025-R — referência DuplexCascade e controle local de tomada de turno
 
-Status: **trilha local concluída e cortada; sentinelas oficiais de `E` 4/4;
-`D=NOT_EVALUATED`; quarta alocação encerrada antes de download/inferência por
-falha de import remoto; uma quinta alocação corretiva autorizada e ainda não
-executada; nenhum holdout ou autoridade autorizado**
+Status: **terminal; trilha local cortada; sentinelas oficiais de `E` 4/4;
+`D=NOT_EVALUATED_ENVIRONMENT_BLOCKED`; quinta alocação encerrada antes de
+download/inferência; frente externa cortada; nenhum holdout ou autoridade**
 
 Evidência corrente: o pack D e o headroom permanecem versionados; o resultado
 one-shot de `L` está em
@@ -70,8 +69,27 @@ prospectiva e limitada está congelada em
 
 O adaptador científico original permanece byte a byte congelado. Como seu
 bloco de orçamento interno conserva o acumulado anterior à quarta tentativa,
-o recibo de provedor `v0.5` será a fonte autoritativa para o consumo cumulativo;
-isso não altera geração, trajetórias ou comparação do candidato.
+o recibo de provedor `v0.5` seria a fonte cumulativa. Como a API REST não
+confirmou a terminação, o artefato posterior de recovery tornou-se a fonte
+autoritativa do limite superior; isso não altera geração, trajetórias ou
+comparação do candidato.
+
+### Resultado terminal da quinta alocação
+
+A H100 foi criada e o primeiro probe SSH passou, mas a conexão seguinte
+expirou antes de transferir os inputs ou iniciar o processo. Não houve download
+do checkpoint, geração, raw, journal ou log remoto. A API REST também ficou
+indisponível no `finally`; por isso o recibo write-once preservou a terminação
+como não confirmada. O mesmo Pod foi terminado pela API GraphQL oficial e a
+consulta posterior confirmou zero Pods ativos.
+
+O orçamento recuperado conta conservadoramente até a confirmação posterior:
+no máximo 439,642 segundos e US$ 0,3529 nesta tentativa; acumulado de até
+1.726,939 segundos e US$ 1,3864. A evidência e a decisão estão no
+[fechamento terminal externo](EXP-0025-R-external-terminal-closeout.md).
+`E` permanece `NOT_EVALUATED_ENVIRONMENT_BLOCKED`; a tentativa terminal
+aciona o kill criterion e corta a frente sem sexta alocação, troca de provider,
+modelo ou holdout.
 
 ## Emenda prospectiva antes de E
 

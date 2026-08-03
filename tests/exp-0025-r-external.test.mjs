@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
@@ -27,6 +28,8 @@ import {
   EXP0025_R_TOKENS,
   replayAdaptiveEndpoint
 } from "../src/eval/exp-0025-r-floor-control.mjs";
+import { canonicalSha256 } from
+  "../src/eval/factory/canonical-hash.mjs";
 import { validateExp0025RExternalAuthorization } from
   "../scripts/check-exp-0025-r-external-authorization.mjs";
 import { validateExp0025RDOnlyAuthorization } from
@@ -365,6 +368,29 @@ test("quinta alocação repete só D via correção de caminho e termina a linha
   assert.doesNotMatch(providerSource, /exp-0025-r-holdout/iu);
   assert.doesNotMatch(providerSource, /run_sentinels\(/u);
   assert.match(providerSource, /automaticRetryAuthorized: false/u);
+});
+
+test("recovery confirma zero Pods sem reescrever o recibo terminal", async () => {
+  const receiptBytes = await readFile(
+    "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5.json"
+  );
+  const recovery = JSON.parse(await readFile(
+    "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5-termination-recovery.json",
+    "utf8"
+  ));
+  assert.equal(recovery.providerReceipt.fileSha256,
+    createHash("sha256").update(receiptBytes).digest("hex"));
+  assert.equal(recovery.providerReceipt.preservedWithoutModification, true);
+  assert.equal(recovery.termination.confirmed, true);
+  assert.equal(recovery.termination.activePodCountAfterMutation, 0);
+  assert.equal(recovery.termination.projectPodCountAfterMutation, 0);
+  assert.equal(recovery.scope.newAllocationCreated, false);
+  assert.equal(recovery.scope.inferenceRetried, false);
+  assert.equal(recovery.budgetRecovery.withinFrozenLimits, true);
+  const core = structuredClone(recovery);
+  delete core.evidenceSha256;
+  assert.equal(recovery.evidenceSha256,
+    `sha256:${canonicalSha256(core)}`);
 });
 
 test("autorização prospectiva vincula D e torna H-L inelegível para E", async () => {

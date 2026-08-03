@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "exp-0025-r-runpod-termination-recovery-v1",
+  "experimentId": "EXP-0025-R",
+  "infrastructureAttempt": 5,
+  "providerReceipt": {
+    "path": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5.json",
+    "fileSha256": "335cc3a70e43cbb3ebefd418f81ca8a07f339dc82e0cda699e88eb8c24473391",
+    "preservedWithoutModification": true
+  },
+  "targetBinding": {
+    "source": "providerReceipt.provider.podId",
+    "podIdSha256": "db4fc7a5b5b4721eea61ed1885f9e805401795dc00b79131f9e6b31335bcd6bd"
+  },
+  "recoveryReason": {
+    "receiptTerminationConfirmed": false,
+    "receiptTerminationError": "fetch failed",
+    "restApiUnavailable": true,
+    "scientificExecutionSucceeded": false,
+    "modelDownloaded": false,
+    "modelInferenceStarted": false
+  },
+  "termination": {
+    "requestedAtByReceipt": "2026-08-03T21:15:10.713Z",
+    "recoveredAt": "2026-08-03T18:20:45-03:00",
+    "providerApi": "https://api.runpod.io/graphql",
+    "officialMutation": "podTerminate",
+    "mutationAccepted": true,
+    "confirmationQuery": "myself.pods",
+    "targetPresentAfterMutation": false,
+    "activePodCountAfterMutation": 0,
+    "projectPodCountAfterMutation": 0,
+    "confirmed": true
+  },
+  "budgetRecovery": {
+    "reason": "receipt stopped its clock before termination could be confirmed",
+    "allocationStart": "2026-08-03T21:13:25.358Z",
+    "terminationConfirmationUpperBound": "2026-08-03T18:20:45-03:00",
+    "allocationSecondsUpperBound": 439.642,
+    "hourlyUsd": 2.89,
+    "attemptEstimatedCostUsdUpperBound": 0.3529348277777778,
+    "priorCumulativeGpuSeconds": 1287.297000169754,
+    "cumulativeGpuSecondsUpperBound": 1726.939000169754,
+    "maximumGpuSeconds": 7200,
+    "priorCumulativeEstimatedCostUsd": 1.0334134251362748,
+    "cumulativeEstimatedCostUsdUpperBound": 1.3863482529140525,
+    "maximumExternalCostUsd": 12,
+    "withinFrozenLimits": true,
+    "cumulativeBudgetAuthority": true
+  },
+  "scope": {
+    "newAllocationCreated": false,
+    "inferenceRetried": false,
+    "holdoutRead": false,
+    "sixthAllocationAuthorized": false
+  },
+  "evidenceSha256": "sha256:82ec43029c5f2322fc6ad430ff90d8584201b86705bfcd16833a53dc736a032b"
+}

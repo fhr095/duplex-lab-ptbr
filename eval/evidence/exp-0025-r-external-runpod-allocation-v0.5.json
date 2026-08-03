@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "exp-0025-r-runpod-d-only-allocation-receipt-v1",
+  "experimentId": "EXP-0025-R",
+  "candidateId": "E-official-duplexcascade-v0.1",
+  "infrastructureAttempt": 5,
+  "modelInferenceAttempt": 2,
+  "developmentInferencePass": 1,
+  "requestedAt": "2026-08-03T21:13:25.358Z",
+  "completedAt": "2026-08-03T21:15:21.208Z",
+  "status": "FAILED",
+  "provider": {
+    "id": "runpod",
+    "podId": "zeeovgg6uigman",
+    "podName": "duplex-exp0025-r-e-d-only-retry-1785791605358",
+    "requested": {
+      "name": "duplex-exp0025-r-e-d-only-retry-1785791605358",
+      "cloudType": "SECURE",
+      "computeType": "GPU",
+      "gpuTypeIds": [
+        "NVIDIA H100 PCIe"
+      ],
+      "gpuTypePriority": "availability",
+      "gpuCount": 1,
+      "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+      "containerDiskInGb": 30,
+      "volumeInGb": 60,
+      "volumeMountPath": "/workspace",
+      "ports": [
+        "22/tcp"
+      ],
+      "supportPublicIp": true,
+      "interruptible": false,
+      "locked": false,
+      "minRAMPerGPU": 64,
+      "minVCPUPerGPU": 8,
+      "dockerEntrypoint": [],
+      "dockerStartCmd": [],
+      "env": {
+        "PUBLIC_KEY": "EPHEMERAL_REDACTED",
+        "SSH_PUBLIC_KEY": "EPHEMERAL_REDACTED"
+      }
+    },
+    "observed": {
+      "image": null,
+      "gpu": null,
+      "memoryInGb": 251,
+      "vcpuCount": 16,
+      "costPerHr": 2.89,
+      "adjustedCostPerHr": null
+    }
+  },
+  "dataBoundary": {
+    "transferredInputs": [
+      "scripts/run_exp_0025_r_external_d_only_v2.py",
+      "scripts/run_exp_0025_r_external_d_only.py",
+      "scripts/run_exp_0025_r_external.py",
+      "eval/datasets/exp-0025-r-development-v0.1.json",
+      "eval/reports/exp-0025-r-external-development-v0.1.json",
+      "eval/commitments/exp-0025-r-external-d-only-authorization-v0.1.json",
+      "eval/commitments/exp-0025-r-external-d-only-retry-authorization-v0.1.json"
+    ],
+    "transferredInputSha256": {
+      "scripts/run_exp_0025_r_external_d_only_v2.py": "534397af1280a18034bbe8a9ca6d5d6ee2e3ce5fc37f7bb477170e0dc4322f80",
+      "scripts/run_exp_0025_r_external_d_only.py": "2a626c5ee20a8ca2096a8db8ba08b6ce0a14f849a3a391f30cb5f7a804593bf9",
+      "scripts/run_exp_0025_r_external.py": "e6102a886af69e2bced944d804efca59b82d8825993ea445266609a93507589e",
+      "eval/datasets/exp-0025-r-development-v0.1.json": "c49b69623bcfccbc836674487bd49ce97f80616a0072e0dc7d7aee76887008b2",
+      "eval/reports/exp-0025-r-external-development-v0.1.json": "653f4086772c9b3804e96768de543c5c07808439e0fd383240ab64c5cf167d54",
+      "eval/commitments/exp-0025-r-external-d-only-authorization-v0.1.json": "a4a81c30f56ac45571927cc2002712afe8c565cc9641ecc0731bd50fdaa9c1d2",
+      "eval/commitments/exp-0025-r-external-d-only-retry-authorization-v0.1.json": "b8beac26f5d72493c2476a430bb5cb26d93e1c69f2af26984e0c76e26b1e8eae"
+    },
+    "holdoutTransferred": false,
+    "environmentFileTransferred": false,
+    "accountApiKeyTransferred": false,
+    "openAiApiKeyTransferred": false
+  },
+  "runtime": {
+    "packagePins": {
+      "transformers": "4.46.3",
+      "peft": "0.13.2",
+      "huggingface-hub": "0.26.2",
+      "safetensors": "0.4.5",
+      "hf-transfer": "0.1.9"
+    },
+    "remoteTimeoutSeconds": 5700,
+    "remoteExitCode": null,
+    "sentinelGenerationCount": 0,
+    "retrieved": {
+      "eval/evidence/exp-0025-r-external-development-d-only-raw-v0.1.json": false,
+      "eval/evidence/exp-0025-r-external-development-d-only-raw-v0.1.journal.ndjson": false,
+      "eval/evidence/exp-0025-r-external-development-d-only-runpod-v0.2.log": false
+    }
+  },
+  "budget": {
+    "allocationSeconds": 115.84999990463257,
+    "priorCumulativeAllocationSeconds": 1287.297000169754,
+    "cumulativeAllocationSeconds": 1403.1470000743866,
+    "maximumGpuSeconds": 7200,
+    "hourlyUsd": 2.89,
+    "estimatedGpuCostUsd": 0.0930018054789967,
+    "priorCumulativeEstimatedGpuCostUsd": 1.0334134251362748,
+    "cumulativeEstimatedGpuCostUsd": 1.1264152306152715,
+    "maximumExternalCostUsd": 12,
+    "priorCumulativeTransferBytesUpperBound": 37706974907,
+    "rehydrationTransferBytesUpperBound": 32666833251,
+    "projectedCumulativeTransferBytes": 70373808158,
+    "maximumCumulativeDownloadBytes": 75161927680,
+    "withinFrozenLimits": true
+  },
+  "termination": {
+    "requestedAt": "2026-08-03T21:15:10.713Z",
+    "confirmedAt": null,
+    "confirmed": false,
+    "error": "fetch failed"
+  },
+  "automaticRetryAuthorized": false,
+  "error": "execução remota E D-only falhou: code=255 signal=none"
+}
