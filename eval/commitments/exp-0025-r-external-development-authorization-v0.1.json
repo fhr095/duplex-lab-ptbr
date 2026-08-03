@@ -138,6 +138,18 @@
     "maximumAcceptedHourlyUsd": 6,
     "remoteRunTimeoutSeconds": 6000,
     "terminationRequiredInFinally": true,
+    "accessBootstrapAmendment": {
+      "frozenAt": "2026-08-03T16:40:19-03:00",
+      "podId": "50igmb24czpkfm",
+      "beforeAnyExperimentInputTransferred": true,
+      "initialRequestedVariable": "SSH_PUBLIC_KEY",
+      "providerObservedPublicKeyVariable": "EMPTY",
+      "providerObservedSshPublicKeyVariable": "EPHEMERAL_PRESENT",
+      "action": "PATCH_SAME_EPHEMERAL_KEY_INTO_PUBLIC_KEY_AND_SSH_PUBLIC_KEY",
+      "sameAllocation": true,
+      "requiresContainerRestart": true,
+      "modelDataMappingOrInferenceChanged": false
+    },
     "dataBoundary": {
       "transferredInputs": [
         "scripts/run_exp_0025_r_external.py",
@@ -216,5 +228,5 @@
     "anotherModel": false
   },
   "authorityEligible": false,
-  "authorizationSha256": "sha256:0f56534a3321b01daf9cf00b59a38abf5c456c24a1da1a3ff222a3ae1404ae9e"
+  "authorizationSha256": "sha256:7930ab8fb3644976fa0fef9fa85d0f8177361f16d512b516d7cd4f17c76e44e2"
 }
