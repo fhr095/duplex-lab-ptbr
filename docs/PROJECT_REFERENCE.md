@@ -6,7 +6,8 @@ fechamento do EXP-0017 e passe textual estrito do EXP-0018**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0018](experiments/EXP-0018-closeout.md); o plano original
-permanece imutável no pré-registro congelado.
+permanece imutável no pré-registro congelado. O caminho crítico seguinte está
+no [pré-registro do EXP-0019](experiments/EXP-0019-causal-audio-context-bridge.md).
 
 ## Tese
 

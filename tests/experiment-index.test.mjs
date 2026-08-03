@@ -87,29 +87,36 @@ async function fixture() {
 
 test("índice canônico real referencia evidências existentes", async () => {
   const index = await readExperimentIndex(indexPath);
-  assert.equal(index.currentCriticalPath, "EXP-0018");
-  assert.equal(index.transitionState, "terminal-awaiting-next-registration");
-  assert.equal(index.currentParallelProbe.id, "EXP-0018-R");
+  assert.equal(index.currentCriticalPath, "EXP-0019");
+  assert.equal(index.transitionState, "active");
+  assert.equal(index.currentParallelProbe.id, "EXP-0019-R");
   assert.equal(index.currentParallelProbe.blocking, false);
-  assert.equal(
-    index.entries.at(-1).canonicalReport,
-    "eval/reports/exp-0018-context-development-v0.1.json"
-  );
+  assert.equal(index.entries.at(-1).canonicalReport, null);
   assert.equal(index.entries.at(-1).authority, "none");
   assert.equal(
-    index.entries.at(-1).evidenceCommit,
+    index.entries.at(-1).decision,
+    "materialize-minimal-causal-audio-context-bridge"
+  );
+  assert.deepEqual(index.entries.at(-1).cleanCloneChecks, []);
+  const exp0018 = index.entries.find(({ id }) => id === "EXP-0018");
+  assert.equal(
+    exp0018.canonicalReport,
+    "eval/reports/exp-0018-context-development-v0.1.json"
+  );
+  assert.equal(
+    exp0018.evidenceCommit,
     "7d03ad715894eb80202d7978fe613f88fc54aacb"
   );
-  assert.deepEqual(index.entries.at(-1).parallelProbeOutcome, {
+  assert.deepEqual(exp0018.parallelProbeOutcome, {
     status: "planned",
     decision:
       "Pré-registrar separadamente o menor bridge causal em áudio do checkpoint aprovado; ASR permanece fora até evidência de disponibilidade."
   });
   assert.equal(
-    index.entries.at(-1).decision,
+    exp0018.decision,
     "PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN"
   );
-  assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
+  assert.deepEqual(exp0018.cleanCloneChecks, [
     "node --test tests/exp-0018-context-factory.test.mjs",
     "node --test tests/exp-0018-boundary.test.mjs",
     "node --test tests/exp-0018-training.test.mjs",
@@ -216,12 +223,12 @@ test("rejeita probe paralelo que bloqueie ou receba autoridade", async () => {
   );
 });
 
-test("rejeita autoridade e drift contra decisão canônica", async () => {
-  const terminalAuthority = await fixture();
-  terminalAuthority.entries.at(-1).authority = "runtime-control";
+test("rejeita autoridade sem relatório e drift contra decisão canônica", async () => {
+  const activeAuthority = await fixture();
+  activeAuthority.entries.at(-1).authority = "runtime-control";
   await assert.rejects(
-    validateExperimentIndex(terminalAuthority, { projectRoot }),
-    /authority contradicts its canonical report contract/u
+    validateExperimentIndex(activeAuthority, { projectRoot }),
+    /cannot have authority before a canonical report/u
   );
 
   const cutAuthority = await fixture();

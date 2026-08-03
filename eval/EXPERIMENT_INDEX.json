@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T00:27:15-03:00",
-  "transitionState": "terminal-awaiting-next-registration",
+  "updatedAt": "2026-08-03T00:41:38-03:00",
+  "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
     "legacyRange": "EXP-0000..EXP-0006",
@@ -19,15 +19,15 @@
     "id": "runtime-baseline-ptbr-v0.3",
     "manifest": "eval/baselines/runtime-baseline-v0.3.json"
   },
-  "currentCriticalPath": "EXP-0018",
+  "currentCriticalPath": "EXP-0019",
   "currentParallelProbe": {
-    "id": "EXP-0018-R",
-    "parent": "EXP-0018",
-    "preRegistration": "docs/experiments/EXP-0018-context-observability-screen.md",
+    "id": "EXP-0019-R",
+    "parent": "EXP-0019",
+    "preRegistration": "docs/experiments/EXP-0019-causal-audio-context-bridge.md",
     "status": "planned",
     "blocking": false,
     "authority": "none",
-    "decision": "Pré-registrar separadamente o menor bridge causal em áudio do checkpoint aprovado; ASR permanece fora até evidência de disponibilidade."
+    "decision": "Comparar tokens explícitos e microturnos do DuplexCascade somente se o bridge local revelar uma lacuna causal; nenhuma execução de modelo agora."
   },
   "entries": [
     {
@@ -229,7 +229,7 @@
         "decision": "Pré-registrar separadamente o menor bridge causal em áudio do checkpoint aprovado; ASR permanece fora até evidência de disponibilidade."
       },
       "authority": "none",
-      "criticalPath": true,
+      "criticalPath": false,
       "cleanCloneChecks": [
         "node --test tests/exp-0018-context-factory.test.mjs",
         "node --test tests/exp-0018-boundary.test.mjs",
@@ -242,6 +242,20 @@
       ],
       "supersedes": [],
       "nextDecision": "Pré-registrar uma emenda e executar o menor screen causal em áudio do mesmo checkpoint; ASR continua fora até provar disponibilidade."
+    },
+    {
+      "id": "EXP-0019",
+      "status": "active",
+      "decision": "materialize-minimal-causal-audio-context-bridge",
+      "canonicalReport": null,
+      "authority": "none",
+      "criticalPath": true,
+      "cleanCloneChecks": [],
+      "localReproductionCommands": [
+        "npm run eval:index:check"
+      ],
+      "supersedes": [],
+      "nextDecision": "Materializar e auditar o pack de 12 streams e 8 schedules; congelar adapter e plano antes de qualquer campanha Node ou Chrome."
     }
   ]
 }

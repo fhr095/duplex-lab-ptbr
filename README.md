@@ -372,6 +372,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0017 — veto seguro e probe semântico causal](docs/experiments/EXP-0017-safe-veto-and-semantic-probe.md)
 - [EXP-0018 — contexto observável com conteúdo pareado](docs/experiments/EXP-0018-context-observability-screen.md)
 - [EXP-0018 — fechamento do screen textual](docs/experiments/EXP-0018-closeout.md)
+- [EXP-0019 — bridge causal de contexto em áudio](docs/experiments/EXP-0019-causal-audio-context-bridge.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
 ## Próximo fechamento
@@ -395,9 +396,9 @@ exigidas por seus pisos. O EXP-0018 então isolou o constructo em 24 blocos 2x2,
 única tentativa de development terminou com 31/32 acertos em `B1` contra 16/32
 em `B0`, 15 vitórias líquidas, ganho nos 8/8 blocos e 4/4 famílias e os 12
 gates aprovados. O resultado permite afirmar apenas que o matcher relacional
-venceu o alvo isolado nessas cenas textuais sintéticas. O próximo fechamento é
-pré-registrar o menor bridge causal em áudio do mesmo checkpoint, ainda com
-texto-oráculo e sem ASR; reconhecimento real só entra se esse teto sobreviver.
+venceu o alvo isolado nessas cenas textuais sintéticas. O EXP-0019 pré-registra
+agora o menor bridge causal em áudio do mesmo checkpoint: oito cenas,
+texto-oráculo e zero ASR; reconhecimento real só entra se esse teto sobreviver.
 Até lá, o checkpoint continua observacional e o comando físico rápido
 permanece determinístico no navegador.
 

@@ -24,10 +24,11 @@ histórico, esta carteira prevalece.
   Os 12 gates passaram; o delta local p95 foi 0,127 ms. Isso valida apenas o
   matcher relacional nas cenas textuais sintéticas contrabalanceadas, sem
   autoridade, holdout, áudio real ou alegação de compreensão ampla.
-- **Agora — registro do bridge causal em áudio:** fixar o menor teste que
+- **Agora — EXP-0019, bridge causal em áudio:** materializar o menor teste que
   reproduz o mesmo checkpoint e as mesmas relações em uma timeline de áudio,
-  provando que somente conteúdo já audível chega ao matcher. A execução não
-  começa até hipótese, unidade, orçamento e gates estarem pré-registrados.
+  provando que somente conteúdo já audível chega ao matcher. Hipótese, duas
+  unidades 2x2, orçamento e gates estão pré-registrados; áudio ainda não foi
+  gerado.
 - **Depois, condicional:** se o teto com texto-oráculo causal sobreviver ao
   áudio, medir disponibilidade via ASR em um experimento separado. ASR não
   deve ser confundido com a qualidade já isolada do matcher.
@@ -428,12 +429,11 @@ card de dados e splits por família, gerador e pessoa.
 | 14a | EXP-0017 Core: calibração segura do veto — **`retain-a0-and-cut-acoustic-core`** | 240 exemplos train/dev; `A` 50,8%, 60/60 dirigidas e 1/60 fundos; empate pareado por exemplo com `A0` | nenhum holdout; `A0` vira `A-ref`; família acústica compacta cortada nesta rodada |
 | 14b | EXP-0017-R: probe semântico causal — **cortado antes do fit** | mapa causal físico: 21/30 train; 11 fundos e 10 dirigidas elegíveis | pisos exigiam 12/classe; nenhum fit/limiar/métrica semântica; zero autoridade |
 | 15 | EXP-0018: contexto observável com conteúdo pareado — **`PASS_TO_MINIMAL_CAUSAL_AUDIO_SCREEN`** | 31/32 em `B1` versus 16/32 em `B0`; 16/16 dirigidas, 15/16 fundos; 15 vitórias líquidas; ganho em 8/8 blocos e 4/4 famílias; 12/12 gates | uma abertura e uma tentativa; screen textual sintético sem holdout, áudio, ASR ou autoridade; claim limitado ao matcher relacional |
-| 16 | EXP-0018-R: bridge causal em áudio — **próximo pré-registro** | mesmo checkpoint em timeline física reproduzível; texto-oráculo liberado somente após os bytes correspondentes estarem audíveis; comparação causal com replay e custo | não reabrir development textual; sem ASR, treino, GPU/API paga ou autoridade; cortar antes de ASR se o teto causal não sobreviver |
+| 16 | EXP-0019: bridge causal em áudio — **pré-registrado; instrumentação pendente** | dois blocos 2x2/8 cenas; mesmo checkpoint; 12 streams locais; texto-oráculo liberado somente após o fim amostral; paridade Node/Chrome e lifecycle inalterado | não reabrir development textual; sem ASR, treino, GPU/API paga ou autoridade; cortar antes de ASR se o teto causal não sobreviver |
 
-O EXP-0018 está terminal e o índice aguarda o pré-registro de sua ponte
-EXP-0018-R; não há execução experimental aberta nesse intervalo. Modelos
-completos continuam no ledger como `watch` ou `defer`; pesquisa externa não
-autoriza download, adaptação ou GPU.
+O EXP-0018 está terminal; sua ponte planejada foi registrada como EXP-0019 e é
+a única frente crítica ativa. Modelos completos continuam no ledger como
+`watch` ou `defer`; pesquisa externa não autoriza download, adaptação ou GPU.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
 pela maior falha percebida no relatório, não por ordem fixa. O matcher textual

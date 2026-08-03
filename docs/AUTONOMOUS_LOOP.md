@@ -94,10 +94,10 @@ uma única abertura selada. `B1` acertou 31/32 casos contra 16/32 de `B0`, vence
 com zero autoridade. Esse resultado é um screen de mecanismo sintético, sem
 holdout, áudio ou compreensão semântica ampla.
 
-O índice está agora em `terminal-awaiting-next-registration`. O próximo ciclo
-é a ponte EXP-0018-R: provar, com o mesmo checkpoint, que o conteúdo textual
-necessário pode ser liberado sem futuro em uma timeline de áudio reproduzível.
-O primeiro teto usa texto-oráculo causal; ASR, novo treino e autoridade ficam
+O índice avançou para o EXP-0019, que materializa a ponte antes planejada como
+EXP-0018-R: provar, com o mesmo checkpoint, que o conteúdo textual necessário
+pode ser liberado sem futuro em uma timeline de áudio reproduzível. O primeiro
+teto usa oito cenas e texto-oráculo causal; ASR, novo treino e autoridade ficam
 fora para que uma falha de integração não seja confundida com reconhecimento.
 Hipótese, limites e evidência textual permanecem ligados ao
 [pré-registro congelado](experiments/EXP-0018-context-observability-screen.md)
