@@ -1,0 +1,314 @@
+{
+  "schemaVersion": "exp-0022-instrumentation-freeze-v1",
+  "experimentId": "EXP-0022",
+  "status": "frozen-before-capture-opening",
+  "runnerSourceCommit": "29b589a956e4aab487e71673d4c92b141d3c0511",
+  "nodeVersion": "v22.22.2",
+  "sourceBaseline": {
+    "experimentId": "EXP-0021",
+    "evidenceCommit": "2fbe5af88931d49c236cc27f241f2a74c545f1d2"
+  },
+  "implementationBoundary": {
+    "baseCommit": "dbd4204c3961c2950d0c72885253339095f96fcb",
+    "c0ChangedPaths": [
+      ".gitignore",
+      "docs/AUTONOMOUS_LOOP.md",
+      "docs/PROJECT_REFERENCE.md",
+      "docs/ROADMAP.md",
+      "docs/experiments/EXP-0022-bootstrap-audit-health-binding.md",
+      "eval/EXPERIMENT_INDEX.json",
+      "package.json",
+      "scripts/freeze-exp-0022-instrumentation.mjs",
+      "scripts/open-exp-0022-capture-attempt.mjs",
+      "scripts/run-exp-0022-supervisor.mjs",
+      "scripts/run-exp-0022-worker.mjs",
+      "src/eval/exp-0022-bootstrap-audit-health-binding.mjs",
+      "src/eval/exp-0022-boundary.mjs",
+      "tests/exp-0022-analysis.test.mjs",
+      "tests/exp-0022-boundary.test.mjs",
+      "tests/exp-0022-supervisor.test.mjs",
+      "tests/exp-0022-worker.test.mjs",
+      "tests/experiment-index.test.mjs"
+    ],
+    "runtimeBaselineCommit": "2fbe5af88931d49c236cc27f241f2a74c545f1d2",
+    "runtimeChangedPaths": [
+      "package.json",
+      "src/eval/exp-0022-bootstrap-audit-health-binding.mjs",
+      "src/eval/exp-0022-boundary.mjs",
+      "src/eval/experiment-index.mjs"
+    ]
+  },
+  "runtimeBinding": {
+    "algorithm": "sha256-source-tree-v1",
+    "sha256": "d8fda5dccceb13bd0b2e7ae4e1e9d8e7d4fde03b5e5a64f7c183acc2396ee5b4",
+    "fileCount": 117,
+    "roots": [
+      "src",
+      "web",
+      "package.json",
+      "package-lock.json",
+      "requirements-asr.txt"
+    ]
+  },
+  "artifacts": {
+    "preregistration": {
+      "path": "docs/experiments/EXP-0022-bootstrap-audit-health-binding.md",
+      "fileSha256": "sha256:d3f43d6c3b8f9f5b29cacd05a0d572bb21d49d7337bcf001efed68707329bb78"
+    },
+    "exp0021Report": {
+      "path": "eval/reports/exp-0021-cdp-capture-qualification-v0.1.json",
+      "fileSha256": "sha256:618626b19c86483edbb9c0ceed958d968768bfbca2e64440e27e62ca144f810a"
+    },
+    "exp0021Closeout": {
+      "path": "docs/experiments/EXP-0021-closeout.md",
+      "fileSha256": "sha256:3dbd1b4e3f13f72e953ae49a44ac2ca6ab4f8e1f309e5ce910d1d3a089fff2c1"
+    }
+  },
+  "config": {
+    "targetUrl": "http://localhost:4173/?automation=1&experiment=0022",
+    "ttsUrl": "http://localhost:4173/api/tts",
+    "navigationCount": 2,
+    "unitsPerNavigation": 2,
+    "totalUnits": 4,
+    "ttsRate": 1,
+    "payloadOrder": [
+      "A1",
+      "B1",
+      "B2",
+      "A2"
+    ],
+    "healthBinding": {
+      "bootstrapRequestsPerNavigation": 1,
+      "auditRequestsPerNavigation": 1,
+      "totalHealthRequestsPerNavigation": 2,
+      "auditQueryName": "exp0022_probe",
+      "auditProbeIds": [
+        "nav-1",
+        "nav-2"
+      ],
+      "auditHeaderName": "x-duplex-exp-0022-audit",
+      "auditHeaderValue": "audit-health-v0.1"
+    },
+    "networkEnable": {
+      "maxTotalBufferSize": 16777216,
+      "maxResourceBufferSize": 2097152,
+      "maxPostDataSize": 65536,
+      "enableDurableMessages": false
+    },
+    "capture": {
+      "delayBeforeReadMs": [
+        0,
+        8,
+        24,
+        64
+      ],
+      "maxReads": 4,
+      "maximumAccumulatedDelayMs": 96,
+      "minimumWavBytesExclusive": 44,
+      "maximumWavBytesExclusive": 2097152
+    },
+    "provider": "local",
+    "cdp": {
+      "protocol": "http:",
+      "port": "9223",
+      "hostPolicy": "wsl-default-gateway",
+      "initialTarget": "about:blank",
+      "webSocketPathPrefix": "/devtools/page/"
+    },
+    "asrState": "disabled",
+    "vadControlEngine": "adaptive-energy-vad",
+    "vadShadowState": "disabled",
+    "ttsEngine": "windows-system-speech",
+    "negativeBudget": {
+      "ttsRequests": 4,
+      "localTtsSyntheses": 4,
+      "audioConstructors": {
+        "Audio": 0,
+        "AudioContext": 0,
+        "webkitAudioContext": 0
+      },
+      "calls": {
+        "htmlMediaElementPlay": 0,
+        "speechSynthesisSpeak": 0
+      },
+      "lifecycle": {
+        "bargeIn": 0,
+        "stop": 0,
+        "transitions": 0
+      },
+      "trainingTrace": {
+        "decisions": 0,
+        "effects": 0
+      },
+      "inputActivations": 0,
+      "externalRequests": 0,
+      "usageDelta": {
+        "requests": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0
+      },
+      "gpuRuns": 0,
+      "challengerRuns": 0,
+      "backboneRuns": 0,
+      "canProduceNewEffects": false
+    }
+  },
+  "configCanonicalSha256": "sha256:1eb9db8381696b5631569dab2daa4eefacdd11aca462ba88b2829bfa0ac038ad",
+  "productionSources": [
+    {
+      "path": "src/brain/provider.mjs",
+      "fileSha256": "sha256:9ba71504e91de572f8c7531358ca2140b9c1409868074493da3d1eb9118540bd",
+      "exp0021FileSha256": "sha256:9ba71504e91de572f8c7531358ca2140b9c1409868074493da3d1eb9118540bd"
+    },
+    {
+      "path": "src/cli/serve.mjs",
+      "fileSha256": "sha256:b0a305cdc4cec5ca27c837436c1e27555d17a9f3912fab53c6ef2a9eedad7b29",
+      "exp0021FileSha256": "sha256:b0a305cdc4cec5ca27c837436c1e27555d17a9f3912fab53c6ef2a9eedad7b29"
+    },
+    {
+      "path": "src/tts/windows-system-tts.mjs",
+      "fileSha256": "sha256:9f0d019d48176b3db2f0c461865875b55b67645055a9a5480e3db88d9f665518",
+      "exp0021FileSha256": "sha256:9f0d019d48176b3db2f0c461865875b55b67645055a9a5480e3db88d9f665518"
+    },
+    {
+      "path": "web/app.mjs",
+      "fileSha256": "sha256:dc51356b3ec4ddb2e920bdf29c7ff28f4d7fccb66fc29bef145bfb879e304bba",
+      "exp0021FileSha256": "sha256:dc51356b3ec4ddb2e920bdf29c7ff28f4d7fccb66fc29bef145bfb879e304bba"
+    },
+    {
+      "path": "web/index.html",
+      "fileSha256": "sha256:78c55898656f161c7af20c8990a2bf49a949a2a4a49910fddf2cd24f8daa4a32",
+      "exp0021FileSha256": "sha256:78c55898656f161c7af20c8990a2bf49a949a2a4a49910fddf2cd24f8daa4a32"
+    },
+    {
+      "path": "web/local-audio-reflex.mjs",
+      "fileSha256": "sha256:9230ad7fb96bff6472e2338f520cd9ab2f7306cda3e42ae2cb362a14c759b908",
+      "exp0021FileSha256": "sha256:9230ad7fb96bff6472e2338f520cd9ab2f7306cda3e42ae2cb362a14c759b908"
+    },
+    {
+      "path": "web/output-interruption-lifecycle.mjs",
+      "fileSha256": "sha256:b2bda7e6dfcc0393f393c683feba1ae460aa5c2d727529542c6deca1c71238bd",
+      "exp0021FileSha256": "sha256:b2bda7e6dfcc0393f393c683feba1ae460aa5c2d727529542c6deca1c71238bd"
+    },
+    {
+      "path": "web/pcm-capture.mjs",
+      "fileSha256": "sha256:ead10169f18fd4bd11d0139af6167b5333404b1163d30df9d1e25b14562d0c5b",
+      "exp0021FileSha256": "sha256:ead10169f18fd4bd11d0139af6167b5333404b1163d30df9d1e25b14562d0c5b"
+    },
+    {
+      "path": "web/training-trace-recorder.mjs",
+      "fileSha256": "sha256:1a404f8a0cf8cb8d362a56d661ea603a0a68d58bc9ae6fb7212ded6fcef0fa79",
+      "exp0021FileSha256": "sha256:1a404f8a0cf8cb8d362a56d661ea603a0a68d58bc9ae6fb7212ded6fcef0fa79"
+    },
+    {
+      "path": "web/turn-taking.mjs",
+      "fileSha256": "sha256:d9210e3cc8ae0e2f6dde6ec80ebaaf860eaa453b10fdf243fa14b2f2e9fb11f9",
+      "exp0021FileSha256": "sha256:d9210e3cc8ae0e2f6dde6ec80ebaaf860eaa453b10fdf243fa14b2f2e9fb11f9"
+    }
+  ],
+  "instrumentationSources": [
+    {
+      "path": ".gitignore",
+      "fileSha256": "sha256:0ec79b7b1adf8656b1eb8a050b616bc067f1f76236b0809e8f314ed1f96d2095"
+    },
+    {
+      "path": "package.json",
+      "fileSha256": "sha256:4457155a45ceb3690a22345a8a4d684e35104ea4f45bd4027f758f60f1ae9c65"
+    },
+    {
+      "path": "scripts/freeze-exp-0022-instrumentation.mjs",
+      "fileSha256": "sha256:afb78c5e5a943594f1ab302ae8d69b60378690214a175e7222a75a242b583fcb"
+    },
+    {
+      "path": "scripts/lib/exp-0021-cdp-capture.mjs",
+      "fileSha256": "sha256:1668300ca7481283b8739d0bcb118b218505d68e5a80b16647522e342483b809",
+      "exp0021FileSha256": "sha256:1668300ca7481283b8739d0bcb118b218505d68e5a80b16647522e342483b809"
+    },
+    {
+      "path": "scripts/open-exp-0022-capture-attempt.mjs",
+      "fileSha256": "sha256:74d5d99f89bd6774bb1606c4b94930429b1e1eddac1a449dc34e33bae43e9f49"
+    },
+    {
+      "path": "scripts/run-exp-0022-supervisor.mjs",
+      "fileSha256": "sha256:5ec67ba03826a34726f8cfe4f45b8d0493b88d0e9820068eede3233600bb60c1"
+    },
+    {
+      "path": "scripts/run-exp-0022-worker.mjs",
+      "fileSha256": "sha256:a5303038b143ad945bfa1b7d07a780b2cba9540bbcfe6ef68c5979d00fe13721"
+    },
+    {
+      "path": "src/eval/exp-0022-bootstrap-audit-health-binding.mjs",
+      "fileSha256": "sha256:d9cde8504d0ec38a6382771d2d5e31723237946187114cb43072970d675fd59e"
+    },
+    {
+      "path": "src/eval/exp-0022-boundary.mjs",
+      "fileSha256": "sha256:7f99938f29a2f759c40bbf71755d24a3f2bbbb073cd5c5fdbfc1e7dba7c96fd2"
+    },
+    {
+      "path": "src/eval/factory/canonical-hash.mjs",
+      "fileSha256": "sha256:773d45148e5c8594254a1f91db108f18ff15683ff706044d58251b7fdbc3bac0",
+      "exp0021FileSha256": "sha256:773d45148e5c8594254a1f91db108f18ff15683ff706044d58251b7fdbc3bac0"
+    },
+    {
+      "path": "src/eval/runtime-provenance.mjs",
+      "fileSha256": "sha256:774901d6899342e948883c15da17d6c78d66cec2c15002a69fd4ebbb3f099c4c",
+      "exp0021FileSha256": "sha256:774901d6899342e948883c15da17d6c78d66cec2c15002a69fd4ebbb3f099c4c"
+    },
+    {
+      "path": "src/eval/source-fingerprint.mjs",
+      "fileSha256": "sha256:fe542f4e08db60aadb306553611280ebbd708759d859b9e8fc565262597a22fd",
+      "exp0021FileSha256": "sha256:fe542f4e08db60aadb306553611280ebbd708759d859b9e8fc565262597a22fd"
+    },
+    {
+      "path": "tests/exp-0021-cdp-capture.test.mjs",
+      "fileSha256": "sha256:c951892188c6a264e8fac3e8661cbfb7a533f3427103e29cdd29c51fab5e959e",
+      "exp0021FileSha256": "sha256:c951892188c6a264e8fac3e8661cbfb7a533f3427103e29cdd29c51fab5e959e"
+    },
+    {
+      "path": "tests/exp-0022-analysis.test.mjs",
+      "fileSha256": "sha256:bf9eba940524e07328ee70eb4b143d12859a41598688227d5e4db9c50461f68f"
+    },
+    {
+      "path": "tests/exp-0022-boundary.test.mjs",
+      "fileSha256": "sha256:e725ffe7e9fb9b192c3e1157031ac625953a734f3fc120aa50280870c50ddcc2"
+    },
+    {
+      "path": "tests/exp-0022-supervisor.test.mjs",
+      "fileSha256": "sha256:33fa10489ac5da84a5f43f0f9d51c643a74e3505cd1c79df5c2d318e17a70e1f"
+    },
+    {
+      "path": "tests/exp-0022-worker.test.mjs",
+      "fileSha256": "sha256:b21bd1c73058b4638a45fb56254808a5266a8f6d931ded209bcaccef707ae3b9"
+    }
+  ],
+  "gitTopology": {
+    "order": [
+      "C0_INSTRUMENT",
+      "FREEZE",
+      "OPENING",
+      "EVIDENCE"
+    ],
+    "freezeDirectParent": "C0_INSTRUMENT",
+    "openingDirectParent": "FREEZE",
+    "evidenceDirectParent": "OPENING",
+    "evidenceAllowedPaths": [
+      "eval/generated/exp-0022/capture-attempt-consumed-v0.1.json",
+      "eval/reports/exp-0022-bootstrap-audit-health-binding-v0.1.json"
+    ]
+  },
+  "boundary": {
+    "browserAttemptsBeforeFreeze": 0,
+    "captureCampaignsBeforeFreeze": 0,
+    "reportAbsent": true,
+    "receiptAbsent": true,
+    "paidApiCalls": 0,
+    "gpuRuns": 0,
+    "canProduceNewEffects": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "instrumentationFreezeSha256": "sha256:b48ca5387226d4400e2f0e01609867b8010307879e580870562e05b0719ddd53"
+}
