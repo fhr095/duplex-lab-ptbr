@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "exp-0018-development-activation-v1",
+  "experimentId": "EXP-0018",
+  "status": "development-authorized-for-one-opening",
+  "checkpointSourceCommit": "a116908040fd66407b2cd8ae18f1c673d3e017c0",
+  "bindings": {
+    "prefitFreezeFileSha256": "sha256:fd56d964bb5240014902f5f602b8e6be188d329d0b8677041ba2f42946f4c0ee",
+    "prefitFreezeSha256": "sha256:97cac1c7e6d4fc63276e44e2a1462907754a048cbe0e5168af8934a69b32b01e",
+    "trainAttestationFileSha256": "sha256:b1af74383cf55c3544fc7d7b3ce5ee2fde5f326c4763998507282f6def9dcaa6",
+    "trainAttestationSha256": "sha256:91007030d40c671badc80c47f36bbb45276614dbd9e981bb9a6dbf10fa07a10d",
+    "checkpointFileSha256": "sha256:3f5080b93b406540d601368dbbfd4d0e05257d3a6171b1d876c636864b0807a8",
+    "checkpointSha256": "sha256:2d6d21adc3a27bebd9aa24a635068ce06be2a62b6c8c7545dce57623af3cb87b",
+    "configFileSha256": "sha256:9686dc6827b14070be199bb6dc967e19e6dfaec937606e2d90f75a780560e207"
+  },
+  "execution": {
+    "openingsAllowed": 1,
+    "openingsUsedBeforeActivation": 0,
+    "reportMustNotExistBeforeOpening": true,
+    "openingReceiptCreatedBeforeDevelopmentRead": true,
+    "calibrationDerivationRevalidated": true,
+    "predictionRuns": 1
+  },
+  "filesystemBoundary": {
+    "permissionModelEnabled": true,
+    "allowedDataReads": [
+      "eval/experiments/exp-0018-context-observability-v0.1.json",
+      "eval/datasets/exp-0018-context-calibration-v0.1.json",
+      "eval/commitments/exp-0018-prefit-freeze-v0.1.json",
+      "eval/commitments/exp-0018-train-attestation-v0.1.json",
+      "eval/checkpoints/exp-0018-context-v0.1.json"
+    ],
+    "deniedDataReads": [
+      "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+      "eval/datasets/exp-0018-context-fit-v0.1.json",
+      "eval/datasets/exp-0018-context-development-v0.1.json",
+      "eval/checkpoints/exp-0018-fit-candidate-v0.1.json"
+    ],
+    "allowedWrites": [
+      "eval/commitments/exp-0018-development-activation-v0.1.json"
+    ],
+    "environmentSanitized": true,
+    "nodeVersion": "v22.22.2",
+    "preflightCommit": "a116908040fd66407b2cd8ae18f1c673d3e017c0",
+    "denialProbesPassed": true
+  },
+  "authority": {
+    "mode": "offline-shadow-only",
+    "canProduceEffects": false
+  },
+  "developmentActivationSha256": "sha256:edf16281ae39865399eaa5d6417e5e5cc75de4ca6a2a2f0fe62e8192a878c5ab"
+}
