@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T06:14:39-03:00",
+  "updatedAt": "2026-08-03T06:59:11-03:00",
   "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
@@ -19,15 +19,15 @@
     "id": "runtime-baseline-ptbr-v0.3",
     "manifest": "eval/baselines/runtime-baseline-v0.3.json"
   },
-  "currentCriticalPath": "EXP-0022",
+  "currentCriticalPath": "EXP-0023",
   "currentParallelProbe": {
-    "id": "EXP-0022-R",
-    "parent": "EXP-0022",
-    "preRegistration": "docs/experiments/EXP-0022-bootstrap-audit-health-binding.md",
+    "id": "EXP-0023-R",
+    "parent": "EXP-0023",
+    "preRegistration": "docs/experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md",
     "status": "deferred",
     "blocking": false,
     "authority": "none",
-    "decision": "Trilha sem execução: challengers permanecem somente no ledger enquanto o EXP-0022 qualifica o binding causal dos dois healths; nenhum backbone será aberto."
+    "decision": "Trilha sem execução: challengers permanecem somente no ledger enquanto o EXP-0023 testa a semântica causal mínima dos eventos CDP; nenhum backbone será aberto."
   },
   "entries": [
     {
@@ -314,11 +314,12 @@
     },
     {
       "id": "EXP-0022",
-      "status": "active",
-      "decision": "pending-bootstrap-audit-health-binding-qualification",
-      "canonicalReport": null,
+      "status": "invalidated",
+      "decision": "INVALIDATE_BOOTSTRAP_AUDIT_HEALTH_BINDING",
+      "canonicalReport": "eval/reports/exp-0022-bootstrap-audit-health-binding-v0.1.json",
+      "evidenceCommit": "b8aba7c49715e846a57bafbcbb1eeb4dee2f8a56",
       "authority": "none",
-      "criticalPath": true,
+      "criticalPath": false,
       "cleanCloneChecks": [
         "node --test tests/exp-0021-cdp-capture.test.mjs",
         "node --test tests/exp-0022-boundary.test.mjs",
@@ -327,11 +328,33 @@
         "node --test tests/exp-0022-analysis.test.mjs"
       ],
       "localReproductionCommands": [
+        "npm run eval:exp:0022:report:check",
         "node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs",
         "npm run eval:index:check"
       ],
       "supersedes": [],
-      "nextDecision": "Implementar e congelar a distinção entre um health de bootstrap e um health explícito de auditoria por navegação; somente um passe pode autorizar o pré-registro futuro de STOP."
+      "nextDecision": "Pré-registrar um novo instrumento que use ordinais CDP como autoridade da ordem de entrega e mantenha timestamps como limites individuais; sem rerun do EXP-0022 nem STOP."
+    },
+    {
+      "id": "EXP-0023",
+      "status": "active",
+      "decision": "pending-cdp-ordinal-timestamp-semantics",
+      "canonicalReport": null,
+      "authority": "none",
+      "criticalPath": true,
+      "cleanCloneChecks": [
+        "node --test tests/exp-0021-cdp-capture.test.mjs",
+        "node --test tests/exp-0022-worker.test.mjs",
+        "node --test tests/exp-0023-boundary.test.mjs",
+        "node --test tests/exp-0023-supervisor.test.mjs",
+        "node --test tests/exp-0023-analysis.test.mjs"
+      ],
+      "localReproductionCommands": [
+        "node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-worker.test.mjs tests/exp-0023-*.test.mjs",
+        "npm run eval:index:check"
+      ],
+      "supersedes": [],
+      "nextDecision": "Implementar e congelar somente a semântica ordinal do lifecycle CDP; um passe prospectivo autoriza apenas o pré-registro futuro de STOP."
     }
   ]
 }

@@ -37,13 +37,17 @@ histórico, esta carteira prevalece.
   e todos os gates de captura verdadeiros. O instrumento, porém, exigia um
   health por navegação e observou corretamente dois — bootstrap + auditoria.
   A tentativa foi consumida, o claim permaneceu nulo e não há qualificação.
-- **Agora — EXP-0022, binding bootstrap + audit health:** repetir a mesma
-  campanha TTS 2×2 sem STOP, distinguindo causalmente exatamente um health de
-  bootstrap já concluído e um novo health produzido pela sonda explícita. Não
-  basta aceitar dois requests quaisquer. O instrumento e seus testes estão
-  implementados sem abrir Chrome/rede e aguardam freeze. Só um passe autoriza
-  pré-registrar outro experimento físico; executá-lo ainda exigirá freeze e
-  abertura próprios.
+- **Concluído/invalidado — EXP-0022:** os dois healths foram distinguidos e 4/4
+  capturas repetidas, mas o instrumento misturou ordem de entrega com
+  timestamps de origem. Em 40/40 requests, os ordinais estavam corretos e
+  `responseTimestamp > finishedTimestamp`; nove de dez gates passaram, claim
+  permaneceu nulo e a tentativa não será repetida.
+- **Agora — EXP-0023, semântica ordinal do lifecycle CDP:** repetir
+  prospectivamente a mesma campanha TTS 2×2 sem STOP e mudar somente a
+  autoridade causal: ordinais locais ordenam os eventos; timestamps continuam
+  finitos e limitados pelo próprio request, sem ordenar response contra finish.
+  Só um passe autoriza pré-registrar outro experimento físico; executá-lo ainda
+  exigirá freeze e abertura próprios.
 - **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
@@ -57,9 +61,11 @@ e em seu [closeout](experiments/EXP-0019-closeout.md). A tentativa física e sua
 invalidação estão no [EXP-0020](experiments/EXP-0020-physical-stop-order.md) e
 no [closeout](experiments/EXP-0020-closeout.md). A qualificação invalidada está
 no [pré-registro](experiments/EXP-0021-cdp-capture-recovery.md) e no
-[closeout do EXP-0021](experiments/EXP-0021-closeout.md). O caminho corrente
+[closeout do EXP-0021](experiments/EXP-0021-closeout.md). O EXP-0022 está no
+[pré-registro](experiments/EXP-0022-bootstrap-audit-health-binding.md) e no
+[closeout do EXP-0022](experiments/EXP-0022-closeout.md). O caminho corrente
 está no
-[pré-registro do EXP-0022](experiments/EXP-0022-bootstrap-audit-health-binding.md).
+[pré-registro do EXP-0023](experiments/EXP-0023-cdp-ordinal-timestamp-semantics.md).
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
 criar outra prioridade, e o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
@@ -451,12 +457,14 @@ card de dados e splits por família, gerador e pessoa.
 | 16 | EXP-0019: bridge causal em áudio — **`CUT_CAUSAL_AUDIO_BRIDGE`** | 8 cenas/4 pares/12 streams; 48 probes sem inferência; 16/16 paridade Node/Chrome; proposta p95 8,7 ms; STOP p95 56,573 ms; 7/9 gates | ordem `speech.paused`/`render.stopped` variou; trace e lifecycle on/off não determinísticos; zero autoridade/API/GPU; ASR não autorizado |
 | 17 | EXP-0020: equivalência observável da ordem no renderer — **`INVALIDATE_STOP_ORDER_INSTRUMENT`** | freeze + abertura isolados; tentativa única consumida; primeiro payload TTS vazio no CDP; zero trials persistidos | físico `NOT_EVALUATED`; seis gates vacuamente true explicitados; sem rerun, API, GPU ou autoridade |
 | 18 | EXP-0021: qualificação fail-closed da captura TTS — **`INVALIDATE_CDP_TTS_CAPTURE_QUALIFICATION`** | 4/4 WAVs na primeira leitura; browser=CDP; A1=A2, B1=B2 e A≠B; 9/10 gates | contrato esperava um health por navegação, mas bootstrap + auditor produziram dois; tentativa consumida, fatos apenas diagnósticos, zero autoridade |
-| 19 | EXP-0022: binding bootstrap + audit health — **implementado e testado sem Chrome; aguardando freeze** | mesma campanha 2×2 sem STOP; bootstrap completo + audit marcado por navegação, lifecycle 1→1→1, ordinais CDP e TTS somente depois do finish | repara só cardinalidade e ordem causal; um passe autoriza novo pré-registro físico, não promove runtime |
+| 19 | EXP-0022: binding bootstrap + audit health — **`INVALIDATE_BOOTSTRAP_AUDIT_HEALTH_BINDING`** | 4/4 WAVs; dois healths/nav corretamente ligados; ordinais válidos em 40/40, mas todos com response timestamp posterior ao completion | gate congelado comparou relógios semânticos diferentes; tentativa consumida, fatos diagnósticos, zero autoridade |
+| 20 | EXP-0023: semântica causal ordinal do CDP — **pré-registrado; implementação não iniciada** | mesma campanha/worker sem STOP; ordinais são autoridade, timestamps apenas limites individuais; ao menos uma inversão health precisa exercitar o delta | corrige só a premissa temporal; um passe autoriza novo pré-registro físico, não promove runtime |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
-de produzir evidência física. O EXP-0021 também está terminal: suas 4/4
-capturas são diagnósticas, não uma qualificação. O EXP-0022 é a frente crítica
-e corrige somente o vínculo causal dos dois healths antes de outra campanha de STOP. Modelos completos
+de produzir evidência física. EXP-0021 e EXP-0022 também estão terminais: suas
+4/4 capturas são diagnósticas, não uma qualificação. O EXP-0023 é a frente
+crítica e corrige somente a autoridade de ordem do lifecycle CDP antes de outra
+campanha de STOP. Modelos completos
 continuam no ledger como `watch` ou `defer`; pesquisa externa não autoriza
 download, adaptação ou GPU.
 

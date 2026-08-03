@@ -111,15 +111,16 @@ persistidos e a decisão é `INVALIDATE_STOP_ORDER_INSTRUMENT`, com físico
 invalidação dos probes exploratórios posteriores.
 
 O EXP-0021 aplicou o próximo PDCA ao boundary que efetivamente falhou e
-recuperou de forma diagnóstica 4/4 WAVs idênticos entre browser e CDP. A
-tentativa, porém, foi invalidada: o instrumento congelado esperava um health
-por navegação, enquanto a página produz um no bootstrap e o auditor produz
-outro explicitamente. O EXP-0022 muda somente esse binding. Ele exige um único
-health já concluído antes da sonda e exatamente um novo health causado pela
-sonda, com requestIds distintos e ordem causal registrada. A campanha 2×2,
-payloads, TTS, buffers, retry e proibição de STOP permanecem iguais. Um passe
-libera apenas outro pré-registro físico; trocar ASR, TTS ou backbone continua
-fora.
+recuperou de forma diagnóstica 4/4 WAVs idênticos entre browser e CDP, mas
+confundiu os healths de bootstrap e auditoria. O EXP-0022 distinguiu os dois e
+repetiu 4/4 capturas; ainda assim, foi invalidado por exigir
+`responseTimestamp <= finishedTimestamp`. Em 40/40 requests os ordinais de
+entrega estavam corretos e os timestamps invertidos, coerentes com o Chromium
+usar o instante do handler para response e o completion anterior da rede para
+finish. O EXP-0023 mantém worker, campanha 2×2, payloads, TTS, healths, buffers,
+retry e proibição de STOP, mudando somente a autoridade causal para os
+ordinais locais. Um passe prospectivo libera apenas outro pré-registro físico;
+trocar ASR, TTS ou backbone continua fora.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
@@ -129,6 +130,7 @@ node --test tests/exp-0019-browser-runner.test.mjs
 node --test tests/exp-0019-analysis.test.mjs
 npm run eval:exp:0020:report:check
 npm run eval:exp:0021:report:check
+npm run eval:exp:0022:report:check
 node --test tests/exp-0021-cdp-capture.test.mjs tests/exp-0022-*.test.mjs
 npm run eval:index:check
 ```

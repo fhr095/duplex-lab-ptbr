@@ -41,8 +41,13 @@ líquidos e passou os 12 gates. O EXP-0019 confirmou que o sinal pode ser
 montado causalmente em áudio-oráculo, com 16/16 de paridade e p95 de proposta
 de 8,7 ms, mas foi cortado porque a ordem física
 `speech.paused`/`render.stopped` não foi determinística. O gargalo imediato
-medido agora é lifecycle. ASR continua desconhecido e deferido; o experimento
-não autoriza concluir que reconhecimento deixou de ser um gargalo futuro.
+medido agora é lifecycle. EXP-0020 não conseguiu ler o primeiro corpo TTS;
+EXP-0021 recuperou 4/4 corpos, mas confundiu dois healths; EXP-0022 separou os
+healths e repetiu as 4/4 capturas, porém revelou que timestamps internos do CDP
+não são autoridade da ordem de entrega. O EXP-0023 testa somente a correção
+ordinal antes de voltar ao STOP. Isso não cria motivo para baixar ou executar
+qualquer challenger. ASR continua desconhecido e deferido; os experimentos não
+autorizam concluir que reconhecimento deixou de ser um gargalo futuro.
 
 ## Fila atual
 
