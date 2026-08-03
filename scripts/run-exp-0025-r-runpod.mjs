@@ -23,16 +23,27 @@ const POD_NAME_PREFIX = "duplex-exp0025-r-e-";
 const MAX_GPU_SECONDS = 2 * 60 * 60;
 const MAX_COST_USD = 12;
 const REMOTE_RUN_TIMEOUT_SECONDS = 6_000;
-const INFRASTRUCTURE_ATTEMPT = 2;
-const PRIOR_ALLOCATION_SECONDS = 335.48799991607666;
-const PRIOR_COST_USD = 0.2693223110437393;
+const MAX_DOWNLOAD_BYTES = 40 * 1024 ** 3;
+const FROZEN_ARTIFACT_BYTES = 32_662_348_987;
+const PRIOR_TRANSFER_BYTES_UPPER_BOUND = 3_400_000_000;
+const INFRASTRUCTURE_ATTEMPT = 3;
+const PRIOR_ALLOCATION_SECONDS = 907.2149999141693;
+const PRIOR_COST_USD = 0.7282920415977637;
 const REMAINING_GPU_SECONDS = MAX_GPU_SECONDS - PRIOR_ALLOCATION_SECONDS;
-const PRIOR_PROVIDER_RECEIPT =
-  "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json";
-const PRIOR_PROVIDER_RECEIPT_SHA256 =
-  "f2e9c269706fd73f0d15186e52d3421ffd945ee9650954dce816274561f78cd3";
+const PRIOR_PROVIDER_RECEIPTS = Object.freeze([
+  {
+    path: "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json",
+    sha256:
+      "f2e9c269706fd73f0d15186e52d3421ffd945ee9650954dce816274561f78cd3"
+  },
+  {
+    path: "eval/evidence/exp-0025-r-external-runpod-allocation-v0.2.json",
+    sha256:
+      "38111013be902507ad05ec43d7be59dce806592cb72c6341707aed0119e0f502"
+  }
+]);
 const PROVIDER_RECEIPT =
-  "eval/evidence/exp-0025-r-external-runpod-allocation-v0.2.json";
+  "eval/evidence/exp-0025-r-external-runpod-allocation-v0.3.json";
 const REMOTE_LOG =
   "eval/evidence/exp-0025-r-external-development-runpod-v0.1.log";
 const RAW_EVIDENCE =
@@ -66,7 +77,8 @@ const PACKAGE_PINS = Object.freeze({
   transformers: "4.46.3",
   peft: "0.13.2",
   "huggingface-hub": "0.26.2",
-  safetensors: "0.4.5"
+  safetensors: "0.4.5",
+  "hf-transfer": "0.1.9"
 });
 
 const TRANSFERRED_INPUTS = Object.freeze([
@@ -332,6 +344,7 @@ function remoteScript({ allocationStartEpoch, hourlyUsd }) {
   return `set -Eeuo pipefail
 export PYTHONUNBUFFERED=1
 export HF_HOME=/workspace/hf-cache
+export HF_HUB_ENABLE_HF_TRANSFER=1
 export CUDA_VISIBLE_DEVICES=0
 cd /workspace/duplex-lab-ptbr
 echo '[remote] verificando hardware e inputs'
@@ -347,6 +360,7 @@ ${officialChecks}
 python -m pip install --no-cache-dir --upgrade ${packages}
 python -c 'import torch; assert torch.cuda.is_available(); print("[remote] torch", torch.__version__, "cuda", torch.version.cuda)'
 echo '[remote] iniciando quatro sentinelas; D só roda se todas passarem'
+mkdir -p eval/evidence
 timeout --signal=TERM --kill-after=30s ${REMOTE_RUN_TIMEOUT_SECONDS}s \
   python scripts/run_exp_0025_r_external.py \
     --output ${RAW_EVIDENCE} \
@@ -408,17 +422,22 @@ async function assertLocalInputs() {
       throw new Error(`hash local divergente antes da alocação: ${path}`);
     }
   }
-  const priorReceiptPath = resolve(PROJECT_ROOT, PRIOR_PROVIDER_RECEIPT);
-  const priorReceiptBytes = await readFile(priorReceiptPath);
-  if (sha256(priorReceiptBytes) !== PRIOR_PROVIDER_RECEIPT_SHA256) {
-    throw new Error("recibo da tentativa de infraestrutura 1 divergiu");
+  for (const prior of PRIOR_PROVIDER_RECEIPTS) {
+    const priorReceiptBytes = await readFile(resolve(PROJECT_ROOT, prior.path));
+    if (sha256(priorReceiptBytes) !== prior.sha256) {
+      throw new Error(`recibo de infraestrutura divergiu: ${prior.path}`);
+    }
+    const priorReceipt = JSON.parse(priorReceiptBytes.toString("utf8"));
+    if (priorReceipt.status !== "FAILED" ||
+      priorReceipt.termination?.confirmed !== true ||
+      priorReceipt.runtime?.retrieved?.[RAW_EVIDENCE] !== false ||
+      priorReceipt.runtime?.retrieved?.[RAW_JOURNAL] !== false) {
+      throw new Error(`tentativa anterior não é elegível: ${prior.path}`);
+    }
   }
-  const priorReceipt = JSON.parse(priorReceiptBytes.toString("utf8"));
-  if (priorReceipt.status !== "FAILED" ||
-    priorReceipt.termination?.confirmed !== true ||
-    priorReceipt.runtime?.retrieved?.[RAW_EVIDENCE] !== false ||
-    priorReceipt.runtime?.retrieved?.[RAW_JOURNAL] !== false) {
-    throw new Error("tentativa de infraestrutura 1 não é elegível para retry");
+  if (PRIOR_TRANSFER_BYTES_UPPER_BOUND + FROZEN_ARTIFACT_BYTES >
+    MAX_DOWNLOAD_BYTES) {
+    throw new Error("retry excederia o budget cumulativo de download");
   }
   for (const path of [PROVIDER_RECEIPT, REMOTE_LOG]) {
     if (await exists(resolve(PROJECT_ROOT, path))) {
@@ -606,10 +625,17 @@ async function main() {
             ? PRIOR_COST_USD + estimatedGpuCostUsd
             : null,
         maximumExternalCostUsd: MAX_COST_USD,
+        priorTransferBytesUpperBound: PRIOR_TRANSFER_BYTES_UPPER_BOUND,
+        frozenArtifactBytes: FROZEN_ARTIFACT_BYTES,
+        projectedCumulativeTransferBytes:
+          PRIOR_TRANSFER_BYTES_UPPER_BOUND + FROZEN_ARTIFACT_BYTES,
+        maximumDownloadBytes: MAX_DOWNLOAD_BYTES,
         withinFrozenLimits:
           PRIOR_ALLOCATION_SECONDS + allocationSeconds <= MAX_GPU_SECONDS &&
           Number.isFinite(estimatedGpuCostUsd) &&
-          PRIOR_COST_USD + estimatedGpuCostUsd <= MAX_COST_USD
+          PRIOR_COST_USD + estimatedGpuCostUsd <= MAX_COST_USD &&
+          PRIOR_TRANSFER_BYTES_UPPER_BOUND + FROZEN_ARTIFACT_BYTES <=
+            MAX_DOWNLOAD_BYTES
       },
       termination,
       error: primaryError?.message ?? null

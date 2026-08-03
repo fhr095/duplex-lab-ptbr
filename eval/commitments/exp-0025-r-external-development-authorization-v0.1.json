@@ -76,8 +76,8 @@
     },
     {
       "path": "scripts/run-exp-0025-r-runpod.mjs",
-      "byteLength": 20877,
-      "sha256": "317561b59c9a2a41a69ef65ad5aa46b1e2481a580491c9de9509da19191d0b64"
+      "byteLength": 21837,
+      "sha256": "2d655d780f1b454ede2b665de72d9fc92fe0b513dd072074c3d13474d07d6128"
     },
     {
       "path": "src/eval/exp-0025-r-external.mjs",
@@ -133,7 +133,8 @@
       "transformers": "4.46.3",
       "peft": "0.13.2",
       "huggingface-hub": "0.26.2",
-      "safetensors": "0.4.5"
+      "safetensors": "0.4.5",
+      "hf-transfer": "0.1.9"
     },
     "maximumAcceptedHourlyUsd": 6,
     "remoteRunTimeoutSeconds": 6000,
@@ -166,6 +167,20 @@
       },
       "attempt2": {
         "authorized": true,
+        "podId": "xdafd551objuie",
+        "status": "FAILED_BEFORE_MODEL_INFERENCE",
+        "failure": "SEQUENTIAL_HF_DOWNLOAD_TRANSPORT_TOO_SLOW_AND_ABORTED",
+        "sentinelOrDevelopmentGenerationCount": 0,
+        "maximumObservedArtifactCacheBytes": 3166699520,
+        "sequentialDownloaderBytesPerSecondProbe": 1572864,
+        "freshRangeBytesPerSecondProbe": 57639545,
+        "allocationSeconds": 571.7269999980927,
+        "estimatedGpuCostUsd": 0.4589697305540244,
+        "cumulativeAllocationSeconds": 907.2149999141693,
+        "cumulativeEstimatedGpuCostUsd": 0.7282920415977637,
+        "terminationConfirmed": true,
+        "receiptPath": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.2.json",
+        "receiptSha256": "38111013be902507ad05ec43d7be59dce806592cb72c6341707aed0119e0f502",
         "modelInferenceAttemptOrdinal": 1,
         "sameCandidateCheckpointDataMappingAndSeed": true,
         "changes": [
@@ -174,6 +189,23 @@
         ],
         "remainingGpuSeconds": 6864.512000083923,
         "remainingExternalCostUsd": 11.73067768895626,
+        "automaticFurtherInfrastructureRetry": false
+      },
+      "attempt3": {
+        "frozenAt": "2026-08-03T16:55:50-03:00",
+        "authorized": true,
+        "terminalInfrastructureAttempt": true,
+        "modelInferenceAttemptOrdinal": 1,
+        "sameCandidateCheckpointDataMappingAndSeed": true,
+        "changes": [
+          "ENABLE_HF_TRANSFER_0_1_9_FOR_ARTIFACT_TRANSPORT_ONLY",
+          "CREATE_EVIDENCE_DIRECTORY_BEFORE_TEE"
+        ],
+        "priorTransferBytesUpperBound": 3400000000,
+        "projectedCumulativeTransferBytes": 36062348987,
+        "maximumCumulativeTransferBytes": 42949672960,
+        "remainingGpuSeconds": 6292.785000085831,
+        "remainingExternalCostUsd": 11.271707958402236,
         "automaticFurtherInfrastructureRetry": false
       }
     },
@@ -209,7 +241,8 @@
     },
     "providerReceiptPaths": [
       "eval/evidence/exp-0025-r-external-runpod-allocation-v0.1.json",
-      "eval/evidence/exp-0025-r-external-runpod-allocation-v0.2.json"
+      "eval/evidence/exp-0025-r-external-runpod-allocation-v0.2.json",
+      "eval/evidence/exp-0025-r-external-runpod-allocation-v0.3.json"
     ],
     "providerLogPath": "eval/evidence/exp-0025-r-external-development-runpod-v0.1.log",
     "aggregateReportPath": "eval/reports/exp-0025-r-external-development-v0.1.json"
@@ -258,5 +291,5 @@
     "anotherModel": false
   },
   "authorityEligible": false,
-  "authorizationSha256": "sha256:aac23fc52b2c2d5802220cc000fc1125b4dc1ea03cbe7688a70044a1a716d895"
+  "authorizationSha256": "sha256:3b011dc3a5d475ce85ccdfe25ceb9b1e191b9dcb215915f01a8e7f51e0abe103"
 }

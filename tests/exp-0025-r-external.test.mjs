@@ -210,4 +210,14 @@ test("autorização prospectiva vincula D e torna H-L inelegível para E", async
       .modelInferenceAttemptOrdinal,
     1
   );
+  assert.equal(
+    validation.authorization.providerExecution.infrastructureRetry.attempt3
+      .terminalInfrastructureAttempt,
+    true
+  );
+  assert.equal(
+    validation.authorization.providerExecution.infrastructureRetry.attempt3
+      .modelInferenceAttemptOrdinal,
+    1
+  );
 });
