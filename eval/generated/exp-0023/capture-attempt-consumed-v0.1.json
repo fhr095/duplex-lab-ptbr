@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "exp-0023-capture-attempt-consumption-v1",
+  "experimentId": "EXP-0023",
+  "status": "consumed-before-worker",
+  "consumedAt": "2026-08-03T10:39:01.756Z",
+  "attempt": {
+    "path": "eval/commitments/exp-0023-capture-attempt-v0.1.json",
+    "fileSha256": "sha256:f586137a7d1200958add84797410af6f360e5c0c4fa1bf2c2008b6101993cac2",
+    "captureAttemptSha256": "sha256:fb5a4a7a89bc7bd26f18c150300deaf4861ae548a6f663056e92e86cd1f92cde",
+    "attemptCommit": "30813869f3a2bdbf0c69ca3bf72073b68d54c361",
+    "nonce": "exp-0023-official-v0.1"
+  },
+  "workerCommand": "node scripts/run-exp-0022-worker.mjs",
+  "boundary": {
+    "receiptBeforeWorker": true,
+    "receiptBeforeNetwork": true,
+    "rerunAllowed": false
+  },
+  "authority": {
+    "mode": "measurement-only",
+    "canProduceNewEffects": false
+  },
+  "receiptSha256": "sha256:1b70b9bc524af89f6ebaca3294d055e0258b741c774554f75b28d75d479a75f3"
+}
