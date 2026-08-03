@@ -50,12 +50,18 @@ histórico, esta carteira prevalece.
   trial, mas a expressão exigiu exatamente um `render.active` inicial. A fala
   natural produziu múltiplas transições acústicas; nenhum STOP foi persistido,
   o físico permanece `NOT_EVALUATED` e não houve rerun.
-- **Agora — EXP-0025, âncora causal de render:** preservar toda a multiplicidade
-  acústica, escolher o primeiro `render.active` pós-reset por posição causal e
-  persistir um resultado tipado mesmo quando uma pré-condição falhar. O runtime
-  produtivo permanece byte a byte; implementação e auditoria precedem uma nova
-  freeze e uma única abertura.
-- **Estacionado:** executar backbones nativos em GPU, otimizar prosódia/TTS,
+- **Agora — EXP-0025, STOP renderizado terminal:** preservar toda a
+  multiplicidade no grafo Web Audio, escolher o primeiro `render.active`
+  pós-reset por posição causal e persistir um resultado tipado. O constructo é
+  o último quantum não silencioso no renderer (`STOP-R`), não o último som
+  audível na sala (`STOP-A`). Uma única abertura encerra esta família de
+  instrumento em qualquer folha da árvore.
+- **Paralelo planejado — EXP-0025-R:** executar a política textual oficial do
+  DuplexCascade como referência `E` e congelar uma única reprodução local `L`;
+  comparar `A0/E/L` por fala e sessão em tomada prematura e atraso após finais
+  verdadeiros. A trilha é não bloqueante, tem zero autoridade e orçamento
+  externo ainda não autorizado.
+- **Estacionado:** executar backbones nativos end-to-end em GPU, otimizar prosódia/TTS,
   ampliar multimodalidade e conduzir avaliação humana ampla de produto. Cada
   frente só volta quando for o maior gargalo percebido e houver comparação
   local capaz de mudar uma decisão.
@@ -77,7 +83,9 @@ no [pré-registro](experiments/EXP-0021-cdp-capture-recovery.md) e no
 e no [closeout](experiments/EXP-0024-closeout.md). O caminho corrente está no
 [pré-registro do EXP-0025](experiments/EXP-0025-causal-render-onset-physical-stop.md).
 O [ledger de challengers](research/CHALLENGER_LEDGER.md) controla a pesquisa sem
-criar outra prioridade, e o
+criar uma segunda prioridade crítica; o
+[EXP-0025-R](experiments/EXP-0025-R-duplexcascade-floor-control.md) define seu
+único probe ativo, e o
 [índice de experimentos](../eval/EXPERIMENT_INDEX.json) liga decisões a
 artefatos canônicos verificáveis.
 
@@ -471,25 +479,26 @@ card de dados e splits por família, gerador e pessoa.
 | 19 | EXP-0022: binding bootstrap + audit health — **`INVALIDATE_BOOTSTRAP_AUDIT_HEALTH_BINDING`** | 4/4 WAVs; dois healths/nav corretamente ligados; ordinais válidos em 40/40, mas todos com response timestamp posterior ao completion | gate congelado comparou relógios semânticos diferentes; tentativa consumida, fatos diagnósticos, zero autoridade |
 | 20 | EXP-0023: semântica causal ordinal do CDP — **`PASS_CDP_TTS_CAPTURE_AFTER_ORDINAL_BINDING`** | 4/4 browser=CDP; 40 lifecycles, 120 ordinais globais únicos, 40 inversões response/finish e 10/10 gates | qualifica só o instrumento neste Chrome/processo; zero STOP, rerun ou autoridade |
 | 21 | EXP-0024: equivalência física com captura qualificada — **`INVALIDATE_PHYSICAL_STOP_AFTER_CAPTURE_QUALIFICATION`** | tentativa única chegou ao primeiro trial; fala natural produziu múltiplos `render.active` e a expressão exigia cardinalidade unitária | físico `NOT_EVALUATED`; zero trial/captura física persistida, rerun, mudança de produto ou autoridade |
-| 22 | EXP-0025: âncora causal de render + falha tipada — **pré-registrado** | selecionar o primeiro `render.active` pós-reset, preservar multiplicidade e tornar todo resultado iniciado recuperável | implementar/auditar antes de C0, freeze e abertura nova; runtime byte a byte, uma tentativa e zero autoridade |
+| 22 | EXP-0025: âncora causal + STOP renderizado — **pré-registrado e terminal** | selecionar o primeiro `render.active` pós-reset, preservar multiplicidade e separar `I` instrumento, `S` STOP-R, `A` delta da âncora e `O` ordem | uma abertura; mede grafo Web Audio, não cauda audível; invalidação corta a linhagem em vez de abrir reparo automático |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
 de produzir evidência física. EXP-0021 e EXP-0022 também estão terminais: suas
 4/4 capturas são diagnósticas, não uma qualificação. O EXP-0023 qualificou
 prospectivamente a captura sob semântica ordinal. O EXP-0024 foi invalidado
 antes de medir STOP porque confundiu atividade acústica segmentada com um único
-início. O EXP-0025 é a frente crítica e corrige somente essa semântica e a
-persistência de falhas, sem alterar o runtime.
-Modelos completos
-continuam no ledger como `watch` ou `defer`; pesquisa externa não autoriza
-download, adaptação ou GPU.
+início. O EXP-0025 é a frente crítica e corrige somente essa semântica, mede
+`STOP-R` e persiste falhas, sem alterar o runtime. Em paralelo, o EXP-0025-R
+pode montar pack, adaptador e baseline sem depender desse resultado. A
+inferência da política oficial DuplexCascade continua condicionada a preflight,
+orçamento fechado e autorização explícita de GPU; nenhum resultado concede
+autoridade ou troca de backbone.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram
 pela maior falha percebida no relatório, não por ordem fixa. O matcher textual
 já demonstrou valor informacional e sobreviveu causalmente ao áudio-oráculo; o
-gargalo imediato é obter uma âncora física válida e recuperável para então
-interpretar a ordem do lifecycle com o coletor qualificado, antes de gastar com
-reconhecimento real.
+gargalo imediato do caminho crítico é obter uma âncora de renderer válida e
+recuperável. Isso não impede o probe paralelo e não será confundido com
+`STOP-A`, que exigirá loopback/line-in ou outro sensor causal.
 
 ## Trilha paralela de governança
 

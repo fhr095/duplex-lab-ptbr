@@ -4,7 +4,8 @@ Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,
 invalidações instrumentais dos EXP-0020/0021/0022, passe instrumental do
-EXP-0023, invalidação instrumental do EXP-0024 e EXP-0025 pré-registrado**
+EXP-0023, invalidação instrumental do EXP-0024, EXP-0025 terminal
+pré-registrado e EXP-0025-R paralelo pré-registrado**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -29,8 +30,13 @@ primeiro STOP persistido: uma fala natural gerou múltiplos `render.active` e o
 instrumento exigia exatamente um. O físico permanece `NOT_EVALUATED`. O
 [EXP-0025](experiments/EXP-0025-causal-render-onset-physical-stop.md) está
 pré-registrado para selecionar o primeiro marcador por posição causal,
-preservar toda multiplicidade e persistir falhas tipadas, ainda sem mudar o
-runtime produtivo.
+preservar toda multiplicidade e medir `STOP-R` no grafo Web Audio. Ele não
+mede o último som audível na sala e uma única abertura encerra esta família de
+instrumento. O
+[EXP-0025-R](experiments/EXP-0025-R-duplexcascade-floor-control.md) é uma
+trilha não bloqueante: separa a execução da política textual oficial do
+DuplexCascade de uma reprodução local mínima e compara ambas contra a baseline
+por fala e sessão, sem autoridade.
 
 ## Tese
 
@@ -422,13 +428,17 @@ Esta referência preserva apenas a lógica macro:
 14. preservar a invalidação do EXP-0024: a cardinalidade unitária de
     `render.active` falhou antes de qualquer STOP persistido, logo o resultado
     físico continua desconhecido e a tentativa não será repetida;
-15. executar no EXP-0025 somente a correção causal da âncora e a persistência
-    tipada de falhas, sem mudar o runtime ou reinterpretar EXP-0024;
-16. conceder autoridade somente se houver ganho percebido sem regressão dos
+15. executar no EXP-0025 somente a correção causal da âncora e medir `STOP-R`,
+    separando instrumento, renderer e ordem; uma abertura encerra a família e
+    não será chamada de último som audível;
+16. executar em paralelo o EXP-0025-R em duas etapas separadas — checkpoint
+    textual oficial `E` e um único controlador local `L` — por fala/sessão,
+    sem ASR/TTS, bloqueio ou autoridade;
+17. conceder autoridade somente se houver ganho percebido sem regressão dos
     guardrails;
-17. manter backbones nativos no ledger até existir um teto local que justifique
-    custo e integração;
-18. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
+18. manter backbones nativos end-to-end no ledger até existir um teto local que
+    justifique custo e integração;
+19. continuar escolhendo ASR, TTS, acústica ou cérebro pelo maior gargalo
     observado, não por ordem fixa.
 
 Qualidade de ASR, TTS, acústica ou cérebro entra depois pelo maior gargalo

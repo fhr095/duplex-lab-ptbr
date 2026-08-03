@@ -97,22 +97,24 @@ test("índice canônico real referencia evidências existentes", async () => {
   assert.equal(index.currentCriticalPath, "EXP-0025");
   assert.equal(index.transitionState, "active");
   assert.equal(index.currentParallelProbe.id, "EXP-0025-R");
-  assert.equal(index.currentParallelProbe.status, "deferred");
+  assert.equal(index.currentParallelProbe.status, "planned");
   assert.equal(index.currentParallelProbe.blocking, false);
   assert.equal(
     index.currentParallelProbe.preRegistration,
-    "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md"
+    "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md"
   );
   assert.equal(index.entries.at(-1).id, "EXP-0025");
   assert.equal(index.entries.at(-1).status, "active");
+  assert.equal(
+    index.entries.at(-1).preRegistration,
+    "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md"
+  );
   assert.equal(index.entries.at(-1).canonicalReport, null);
   assert.equal(index.entries.at(-1).authority, "none");
   assert.equal(index.entries.at(-1).criticalPath, true);
   assert.deepEqual(index.entries.at(-1).cleanCloneChecks, [
-    "node --test tests/exp-0024-browser-harness.test.mjs",
-    "node --test tests/exp-0024-journal.test.mjs",
-    "node --test tests/exp-0024-stop-order.test.mjs",
-    "node --test tests/exp-0024-supervisor.test.mjs"
+    "node --test tests/experiment-index.test.mjs",
+    "node --test tests/exp-0025-preregistration.test.mjs"
   ]);
   const exp0024 = index.entries.find(({ id }) => id === "EXP-0024");
   assert.equal(exp0024.status, "invalidated");
@@ -529,7 +531,17 @@ test("rejeita probe paralelo que bloqueie ou receba autoridade", async () => {
   wrongPreRegistration.currentParallelProbe.preRegistration = "README.md";
   await assert.rejects(
     validateExperimentIndex(wrongPreRegistration, { projectRoot }),
-    /must match the canonical active experiment preregistration/u
+    /must match the canonical parallel probe preregistration/u
+  );
+});
+
+test("rejeita troca unilateral do pré-registro crítico", async () => {
+  const wrongCriticalPreRegistration = await fixture();
+  wrongCriticalPreRegistration.entries.at(-1).preRegistration =
+    "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md";
+  await assert.rejects(
+    validateExperimentIndex(wrongCriticalPreRegistration, { projectRoot }),
+    /must match the canonical critical preregistration/u
   );
 });
 

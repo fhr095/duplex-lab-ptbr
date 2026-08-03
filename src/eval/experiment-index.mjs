@@ -145,9 +145,14 @@ const EXP0024_RECEIPT_PATH =
 const EXP0024_JOURNAL_PATH =
   "eval/generated/exp-0024/physical-stop-journal-v0.1.ndjson";
 
-const ACTIVE_PREREGISTRATION_PATHS = Object.freeze({
+const ACTIVE_CRITICAL_PREREGISTRATION_PATHS = Object.freeze({
   "EXP-0025":
     "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md"
+});
+
+const ACTIVE_PARALLEL_PREREGISTRATION_PATHS = Object.freeze({
+  "EXP-0025":
+    "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md"
 });
 
 export function validateExp0018HistoricalOutcome(entry, index, decision) {
@@ -2005,17 +2010,19 @@ export async function validateExperimentIndex(index, options = {}) {
     "currentParallelProbe.preRegistration"
   );
   const expectedActivePreRegistration =
-    ACTIVE_PREREGISTRATION_PATHS[index.currentCriticalPath];
+    ACTIVE_PARALLEL_PREREGISTRATION_PATHS[index.currentCriticalPath];
   assert(
     typeof expectedActivePreRegistration === "string" &&
       index.currentParallelProbe.preRegistration ===
         expectedActivePreRegistration,
-    "currentParallelProbe.preRegistration must match the canonical active " +
-      "experiment preregistration"
+    "currentParallelProbe.preRegistration must match the canonical parallel " +
+      "probe preregistration"
   );
   const preRegistrationText = await readFile(probePreRegistration, "utf8");
   assert(
-    preRegistrationText.startsWith(`# ${index.currentCriticalPath} —`),
+    preRegistrationText.startsWith(
+      `# ${index.currentParallelProbe.id} —`
+    ),
     "currentParallelProbe.preRegistration identifies a different experiment"
   );
   assert(
@@ -2049,6 +2056,34 @@ export async function validateExperimentIndex(index, options = {}) {
   assert(
     criticalEntries[0].id === index.currentCriticalPath,
     "currentCriticalPath must match the entry marked criticalPath"
+  );
+  const expectedCriticalPreRegistration =
+    ACTIVE_CRITICAL_PREREGISTRATION_PATHS[index.currentCriticalPath];
+  assert(
+    typeof expectedCriticalPreRegistration === "string" &&
+      criticalEntries[0].preRegistration ===
+        expectedCriticalPreRegistration,
+    "current critical entry must match the canonical critical " +
+      "preregistration"
+  );
+  const criticalPreRegistration = resolveRepositoryPath(
+    projectRoot,
+    criticalEntries[0].preRegistration,
+    `${index.currentCriticalPath}.preRegistration`
+  );
+  await assertFileExists(
+    criticalPreRegistration,
+    `${index.currentCriticalPath}.preRegistration`
+  );
+  const criticalPreRegistrationText = await readFile(
+    criticalPreRegistration,
+    "utf8"
+  );
+  assert(
+    criticalPreRegistrationText.startsWith(
+      `# ${index.currentCriticalPath} —`
+    ),
+    "critical preregistration identifies a different experiment"
   );
   assert(
     criticalEntries[0].status === "active" ||

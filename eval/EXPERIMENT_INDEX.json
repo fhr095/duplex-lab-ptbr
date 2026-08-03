@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T09:15:00-03:00",
+  "updatedAt": "2026-08-03T10:30:36-03:00",
   "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
@@ -23,11 +23,11 @@
   "currentParallelProbe": {
     "id": "EXP-0025-R",
     "parent": "EXP-0025",
-    "preRegistration": "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md",
-    "status": "deferred",
+    "preRegistration": "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md",
+    "status": "planned",
     "blocking": false,
     "authority": "none",
-    "decision": "Trilha sem execução: challengers permanecem no ledger enquanto o EXP-0025 corrige e qualifica a âncora causal do instrumento; nenhum backbone será aberto sem uma falha física ou percebida medida."
+    "decision": "Pré-registrado em duas etapas: executar a política textual oficial do DuplexCascade como referência E e congelar uma única reprodução local L; comparar A0/E/L por fala no mesmo holdout, sem bloquear o STOP renderizado ou conceder autoridade."
   },
   "entries": [
     {
@@ -385,21 +385,20 @@
     {
       "id": "EXP-0025",
       "status": "active",
-      "decision": "pending-causal-render-onset-physical-stop",
+      "decision": "pending-terminal-causal-render-onset-render-stop",
+      "preRegistration": "docs/experiments/EXP-0025-causal-render-onset-physical-stop.md",
       "canonicalReport": null,
       "authority": "none",
       "criticalPath": true,
       "cleanCloneChecks": [
-        "node --test tests/exp-0024-browser-harness.test.mjs",
-        "node --test tests/exp-0024-journal.test.mjs",
-        "node --test tests/exp-0024-stop-order.test.mjs",
-        "node --test tests/exp-0024-supervisor.test.mjs"
+        "node --test tests/experiment-index.test.mjs",
+        "node --test tests/exp-0025-preregistration.test.mjs"
       ],
       "localReproductionCommands": [
         "npm run eval:index:check"
       ],
       "supersedes": [],
-      "nextDecision": "Implementar e auditar somente a âncora pelo primeiro render.active e o resultado tipado obrigatório; depois decidir C0, freeze e uma abertura nova."
+      "nextDecision": "Conformar o protótipo pré-C0 ao constructo STOP-R e aos gates I/S/A/O; uma única abertura encerra esta família, enquanto o EXP-0025-R avança de forma não bloqueante sob orçamento separado."
     }
   ]
 }

@@ -131,12 +131,18 @@ O EXP-0024 integrou esse conjunto sem alterar as fontes de produção, mas sua
 atividade acústica. Nenhum STOP foi persistido, o físico é `NOT_EVALUATED` e a
 tentativa não será repetida.
 
-O EXP-0025 aplica o PDCA mínimo à premissa que falhou: ancora o trigger no
-primeiro `render.active` pós-reset por posição causal, preserva todos os demais
-e obriga cada trial iniciado a persistir `COLLECTED` ou
-`INSTRUMENT_FAILURE`. O runtime produtivo continua intocado; implementação,
-fixtures e auditoria vêm antes de C0, freeze e abertura. Trocar ASR, TTS ou
-backbone continua fora até uma falha física ou perceptiva escolher o mecanismo.
+O EXP-0025 aplica o último PDCA desta família à premissa que falhou: ancora o
+trigger no primeiro `render.active` pós-reset por posição causal, preserva os
+demais e obriga cada trial a persistir `COLLECTED` ou `INSTRUMENT_FAILURE`.
+Separa validade do instrumento, `STOP-R`, exercício da multiplicidade e ordem
+de telemetria. `STOP-R` termina no grafo Web Audio e não prova som audível na
+sala; qualquer folha encerra o experimento sem reparo instrumental automático.
+
+O EXP-0025-R avança em paralelo e sem autoridade. Primeiro executa, se houver
+budget e autorização próprios, o checkpoint textual oficial DuplexCascade;
+depois congela um único controlador local antes de holdout independente. A
+unidade é a fala, e os gates combinam tomada prematura e atraso após finais
+verdadeiros. ASR/TTS e backbones end-to-end continuam fora.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
