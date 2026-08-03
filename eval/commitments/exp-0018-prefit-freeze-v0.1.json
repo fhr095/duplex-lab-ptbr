@@ -1,0 +1,263 @@
+{
+  "schemaVersion": "exp-0018-prefit-freeze-v1",
+  "experimentId": "EXP-0018",
+  "status": "fit-authorized-development-sealed",
+  "runnerSourceCommit": "32c68a1cfd8f9d81bbc86cc217b801998588f2df",
+  "nodeVersion": "v22.22.2",
+  "artifacts": {
+    "config": {
+      "path": "eval/experiments/exp-0018-context-observability-v0.1.json",
+      "fileSha256": "sha256:9686dc6827b14070be199bb6dc967e19e6dfaec937606e2d90f75a780560e207",
+      "canonicalSha256": "sha256:ed74eec86ae0f800bdaf4ea6a961fedf2e2101c22c2c1ebf5071c86a20e94d5f"
+    },
+    "catalog": {
+      "path": "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+      "fileSha256": "sha256:168356dc8cc0df76dce04e7c7ade5d30da6366bd4f31201cd02250b27bb41474",
+      "canonicalSha256": "sha256:aa0bf11a8bdd14974f1df5540e9f85b7f17b3f4a45a9674b0ed78d12620c6c9c"
+    },
+    "fitDataset": {
+      "path": "eval/datasets/exp-0018-context-fit-v0.1.json",
+      "fileSha256": "sha256:03176c02e0a823e60ff16ee81e2176366502c089b6432a88d34fb396bf3ffcc4",
+      "canonicalSha256": "sha256:ac68d6604e84887e5c76947158206d636f8fc6ffba9d1eb4b89d6c46bec7e94c",
+      "readSetSha256": "sha256:cb4947088f19adf91bc2ac85aef8ccbf7a5718fe34c90a4671b5e10feb825026"
+    },
+    "calibrationDataset": {
+      "path": "eval/datasets/exp-0018-context-calibration-v0.1.json",
+      "fileSha256": "sha256:65b3beab7c68f9e908b0cde23df955a6d5c02f35e2258b8c28daa7e4bedf2e79",
+      "canonicalSha256": "sha256:1add8d233e81131f5f943cab94c436cb6f690361527da9f0ad30b018235104c8"
+    },
+    "developmentDataset": {
+      "path": "eval/datasets/exp-0018-context-development-v0.1.json",
+      "fileSha256": "sha256:903f808361048aa027000f2d8434afdb58c763e8913f764223aa3a488dd265f8",
+      "canonicalSha256": "sha256:50873802ab4f4c56a00d890e26913f203463eff4f8d664e40b7bf106c2f1bdb5"
+    },
+    "instrumentationAudit": {
+      "path": "eval/commitments/exp-0018-instrumentation-audit-v0.1.json",
+      "fileSha256": "sha256:fa8058f3527646266b36c0e9348639b0fc1a1f5346a5812d2856ee0a551b8f34",
+      "canonicalSha256": "sha256:33b2e46b0e7aac517af320f4465f1e8073dd20019cd6194590f674d3062dc059"
+    },
+    "blindSemanticReview": {
+      "path": "eval/commitments/exp-0018-blind-semantic-review-v0.1.json",
+      "fileSha256": "sha256:9956e030ba274feeafc90418c1335c54ba8bce5220027896d394007f732dce7d",
+      "canonicalSha256": "sha256:b7f199e7cfc72901f83fd6f22b0b9ba74f95611303c459cb572de42abff5c489"
+    }
+  },
+  "criticalSources": [
+    {
+      "path": "docs/experiments/EXP-0018-context-observability-screen.md",
+      "fileSha256": "sha256:28777dc0e22b40660051c9077c36ec6f5439ac6669c4a9286c1750086cdb4ad3"
+    },
+    {
+      "path": "package.json",
+      "fileSha256": "sha256:8ea050d5d68587286a678d7189a5603422f487f9c7cb92225b6717788741a1d9"
+    },
+    {
+      "path": "scripts/activate-exp-0018-development.mjs",
+      "fileSha256": "sha256:251ba561521122a0a1d50dee6d58a8dcc14b3b01806df5f2be6327bf8b40cc62"
+    },
+    {
+      "path": "scripts/calibrate-exp-0018-context.mjs",
+      "fileSha256": "sha256:4310c41a01b05910ca5f8ef42c63f77fb3182b97b9b3da3b06783d2c83b085ef"
+    },
+    {
+      "path": "scripts/consume-exp-0018-development-opening.mjs",
+      "fileSha256": "sha256:d8d2ddb8a4fd2ee8a1d131bd1b2f63effc1de2fa760a8bc27f568303339a506a"
+    },
+    {
+      "path": "scripts/eval-exp-0018-context-development.mjs",
+      "fileSha256": "sha256:a94340be391ac3ce724d2f08bac3d153f5b9c17cf76b9b3981b3bf394df127cc"
+    },
+    {
+      "path": "scripts/fit-exp-0018-context.mjs",
+      "fileSha256": "sha256:a081ae7714b7b4b1f1c732329e8ec056e0c125a61930b38c961845560b70534c"
+    },
+    {
+      "path": "scripts/freeze-exp-0018-prefit.mjs",
+      "fileSha256": "sha256:1c230dcca259c98c72728c9e4a0b0b5be8502423ccfb04e5da9eb80161118baa"
+    },
+    {
+      "path": "scripts/invalidate-exp-0018-development.mjs",
+      "fileSha256": "sha256:4662e5dbea7b9ddea59f18547e45ea231cb9af761758ea55c106ebb54788c86f"
+    },
+    {
+      "path": "scripts/lib/exp-0018-io.mjs",
+      "fileSha256": "sha256:56e0e98daa7e113757deca925c319954694e4656ebda6c446a70797b40e43b7b"
+    },
+    {
+      "path": "scripts/run-exp-0018-sealed-stage.mjs",
+      "fileSha256": "sha256:bce158a6783a2f02bff0028ca601f47dbc44892c8cf5d5f4861728bd460074ca"
+    },
+    {
+      "path": "src/eval/exp-0018-boundary.mjs",
+      "fileSha256": "sha256:eb07dc6b253ec547d91a12978b3fe46b3de860c2d588dd5b0b65713035f3dae5"
+    },
+    {
+      "path": "src/eval/exp-0018-context.mjs",
+      "fileSha256": "sha256:2faf41feb428119009e40f6f662b49de538361d92647c1c2255ca2634e5f9976"
+    },
+    {
+      "path": "src/eval/exp-0018-training.mjs",
+      "fileSha256": "sha256:bcefe96693461f3b7608c7497e50dea59e05ea72868ae45f16f84af398b94b0a"
+    },
+    {
+      "path": "src/eval/experiment-index.mjs",
+      "fileSha256": "sha256:2ef9c6b9ecc333d673061c001131881342530b7b5aacde038af3b8e639fd81d8"
+    },
+    {
+      "path": "src/eval/factory/canonical-hash.mjs",
+      "fileSha256": "sha256:773d45148e5c8594254a1f91db108f18ff15683ff706044d58251b7fdbc3bac0"
+    },
+    {
+      "path": "src/learning/softmax-classifier.mjs",
+      "fileSha256": "sha256:e8cba992a0d8169b94fd292519bb5336bee2095599cdd147c5c32c80f7b336fc"
+    },
+    {
+      "path": "tests/exp-0018-boundary.test.mjs",
+      "fileSha256": "sha256:2e3392a5059eef81924424332fef5d439bcddde2f7f114c150812abcb2bb93cb"
+    },
+    {
+      "path": "tests/exp-0018-training.test.mjs",
+      "fileSha256": "sha256:bd8f43f6e97b27e2f0ac68624dd115298589295e853457415e7a123e76516267"
+    },
+    {
+      "path": "tests/experiment-index.test.mjs",
+      "fileSha256": "sha256:a8a894b115df12183fa6a1a9ec64cfd51f806309a6e18aaf9b6f6fda3ae6683e"
+    }
+  ],
+  "stageContracts": {
+    "fit": {
+      "dataReads": [
+        "eval/experiments/exp-0018-context-observability-v0.1.json",
+        "eval/datasets/exp-0018-context-fit-v0.1.json",
+        "eval/commitments/exp-0018-prefit-freeze-v0.1.json"
+      ],
+      "prohibitedDataReads": [
+        "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+        "eval/datasets/exp-0018-context-calibration-v0.1.json",
+        "eval/datasets/exp-0018-context-development-v0.1.json"
+      ],
+      "writes": [
+        "eval/checkpoints/exp-0018-fit-candidate-v0.1.json",
+        "eval/commitments/exp-0018-train-attestation-v0.1.json"
+      ]
+    },
+    "calibration": {
+      "dataReads": [
+        "eval/experiments/exp-0018-context-observability-v0.1.json",
+        "eval/datasets/exp-0018-context-calibration-v0.1.json",
+        "eval/commitments/exp-0018-prefit-freeze-v0.1.json",
+        "eval/checkpoints/exp-0018-fit-candidate-v0.1.json",
+        "eval/commitments/exp-0018-train-attestation-v0.1.json"
+      ],
+      "prohibitedDataReads": [
+        "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+        "eval/datasets/exp-0018-context-fit-v0.1.json",
+        "eval/datasets/exp-0018-context-development-v0.1.json"
+      ],
+      "writes": [
+        "eval/checkpoints/exp-0018-context-v0.1.json"
+      ]
+    },
+    "activation": {
+      "dataReads": [
+        "eval/experiments/exp-0018-context-observability-v0.1.json",
+        "eval/datasets/exp-0018-context-calibration-v0.1.json",
+        "eval/commitments/exp-0018-prefit-freeze-v0.1.json",
+        "eval/commitments/exp-0018-train-attestation-v0.1.json",
+        "eval/checkpoints/exp-0018-context-v0.1.json"
+      ],
+      "prohibitedDataReads": [
+        "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+        "eval/datasets/exp-0018-context-fit-v0.1.json",
+        "eval/datasets/exp-0018-context-development-v0.1.json",
+        "eval/checkpoints/exp-0018-fit-candidate-v0.1.json"
+      ],
+      "writes": [
+        "eval/commitments/exp-0018-development-activation-v0.1.json"
+      ]
+    },
+    "opening": {
+      "dataReads": [
+        "eval/experiments/exp-0018-context-observability-v0.1.json",
+        "eval/commitments/exp-0018-prefit-freeze-v0.1.json",
+        "eval/commitments/exp-0018-train-attestation-v0.1.json",
+        "eval/checkpoints/exp-0018-context-v0.1.json",
+        "eval/commitments/exp-0018-development-activation-v0.1.json"
+      ],
+      "prohibitedDataReads": [
+        "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+        "eval/datasets/exp-0018-context-fit-v0.1.json",
+        "eval/datasets/exp-0018-context-calibration-v0.1.json",
+        "eval/datasets/exp-0018-context-development-v0.1.json",
+        "eval/checkpoints/exp-0018-fit-candidate-v0.1.json"
+      ],
+      "writes": [
+        "eval/commitments/exp-0018-development-opening-v0.1.json"
+      ]
+    },
+    "invalidation": {
+      "dataReads": [
+        "eval/experiments/exp-0018-context-observability-v0.1.json",
+        "eval/commitments/exp-0018-prefit-freeze-v0.1.json",
+        "eval/commitments/exp-0018-train-attestation-v0.1.json",
+        "eval/checkpoints/exp-0018-context-v0.1.json",
+        "eval/commitments/exp-0018-development-activation-v0.1.json",
+        "eval/commitments/exp-0018-development-opening-v0.1.json",
+        "eval/commitments/exp-0018-development-attempt-v0.1.json"
+      ],
+      "prohibitedDataReads": [
+        "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+        "eval/datasets/exp-0018-context-fit-v0.1.json",
+        "eval/datasets/exp-0018-context-calibration-v0.1.json",
+        "eval/datasets/exp-0018-context-development-v0.1.json",
+        "eval/checkpoints/exp-0018-fit-candidate-v0.1.json"
+      ],
+      "writes": [
+        "eval/reports/exp-0018-context-development-v0.1.json"
+      ]
+    },
+    "development": {
+      "dataReads": [
+        "eval/experiments/exp-0018-context-observability-v0.1.json",
+        "eval/datasets/exp-0018-context-development-v0.1.json",
+        "eval/commitments/exp-0018-prefit-freeze-v0.1.json",
+        "eval/commitments/exp-0018-train-attestation-v0.1.json",
+        "eval/checkpoints/exp-0018-context-v0.1.json",
+        "eval/commitments/exp-0018-development-activation-v0.1.json",
+        "eval/commitments/exp-0018-development-opening-v0.1.json",
+        "eval/commitments/exp-0018-development-attempt-v0.1.json"
+      ],
+      "prohibitedDataReads": [
+        "eval/experiments/exp-0018-context-pairs.pt-BR.v0.1.json",
+        "eval/datasets/exp-0018-context-fit-v0.1.json",
+        "eval/datasets/exp-0018-context-calibration-v0.1.json",
+        "eval/checkpoints/exp-0018-fit-candidate-v0.1.json"
+      ],
+      "writes": [
+        "eval/reports/exp-0018-context-development-v0.1.json"
+      ]
+    }
+  },
+  "boundary": {
+    "instrumentationPassed": true,
+    "blindSemanticReviewPassed": true,
+    "modelFitPerformed": false,
+    "calibrationPerformed": false,
+    "developmentCandidateMetricsRead": false,
+    "fitAuthorized": true,
+    "developmentAuthorized": false,
+    "canProduceEffects": false
+  },
+  "budget": {
+    "externalModelCalls": 0,
+    "paidApiCalls": 0,
+    "paidGpuRuns": 0,
+    "asrRuns": 0,
+    "audioMaterializations": 0
+  },
+  "authority": {
+    "mode": "offline-shadow-only",
+    "canProduceEffects": false
+  },
+  "prefitFreezeSha256": "sha256:97cac1c7e6d4fc63276e44e2a1462907754a048cbe0e5168af8934a69b32b01e"
+}
