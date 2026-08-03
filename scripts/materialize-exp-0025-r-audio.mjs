@@ -149,7 +149,7 @@ async function synthesizeCached(text, options) {
     text,
     rate: TTS_RATE
   })));
-  const path = resolve(EXP0025_R_AUDIO_ROOT, "tts-cache", `${key}.wav`);
+  const path = resolve(options.audioRoot, "tts-cache", `${key}.wav`);
   const cached = await readFile(path).catch(() => null);
   if (cached) return cached;
   const wave = await options.synthesize(text, { rate: TTS_RATE });
@@ -192,8 +192,8 @@ function withProvenance(plan, records) {
   return createExp0025RFloorPack(core);
 }
 
-export async function materializeExp0025RAudio(options = {}) {
-  const plan = buildExp0025RDevelopmentPack();
+export async function materializeExp0025RPackAudio(plan, options = {}) {
+  const audioRoot = options.audioRoot ?? EXP0025_R_AUDIO_ROOT;
   const status = options.engine
     ? null
     : await prewarmWindowsSpeech();
@@ -223,8 +223,13 @@ export async function materializeExp0025RAudio(options = {}) {
       const ends = pair.find((item) => item.outcome === "ENDS");
       const prefixWave = continues.prefix === firstPrefix
         ? control
-        : await synthesizeCached(continues.prefix, { engine, synthesize });
+        : await synthesizeCached(continues.prefix, {
+          audioRoot,
+          engine,
+          synthesize
+        });
       const suffixWave = await synthesizeCached(continues.suffix, {
+        audioRoot,
         engine,
         synthesize
       });
@@ -238,7 +243,7 @@ export async function materializeExp0025RAudio(options = {}) {
         [ends, composed.endsWave]
       ]) {
         const relativePath =
-          `${EXP0025_R_AUDIO_ROOT}/${utterance.id}.wav`;
+          `${audioRoot}/${utterance.id}.wav`;
         await writeAtomic(resolve(relativePath), wave);
         records.set(utterance.id, {
           status: "MATERIALIZED",
@@ -264,16 +269,24 @@ export async function materializeExp0025RAudio(options = {}) {
     if (!validation.valid) {
       throw new Error(`pack materializado inválido: ${validation.errors.join("; ")}`);
     }
-    await writeAtomic(
-      resolve(options.path ?? EXP0025_R_DEVELOPMENT_PACK_PATH),
-      `${canonicalJson(pack)}\n`
-    );
     return pack;
   } finally {
     if (!options.engine) {
       await closeWindowsSpeechSynthesizer({ drain: true });
     }
   }
+}
+
+export async function materializeExp0025RAudio(options = {}) {
+  const pack = await materializeExp0025RPackAudio(
+    buildExp0025RDevelopmentPack(),
+    { ...options, audioRoot: EXP0025_R_AUDIO_ROOT }
+  );
+  await writeAtomic(
+    resolve(options.path ?? EXP0025_R_DEVELOPMENT_PACK_PATH),
+    `${canonicalJson(pack)}\n`
+  );
+  return pack;
 }
 
 export async function checkExp0025RAudio(options = {}) {
