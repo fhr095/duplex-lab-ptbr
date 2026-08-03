@@ -4,10 +4,12 @@ import test from "node:test";
 import { encodePcm16Wave } from "../src/audio/wav.mjs";
 import {
   EXP0025_R_ACTIONS,
+  EXP0025_R_LOCAL_CANDIDATE_ID,
   EXP0025_R_TOKENS,
   analyzeExp0025RBaselineHeadroom,
   evaluateDuplexCascadeSentinels,
   interpretDuplexCascadeOutput,
+  replayArticleInspiredMicroturn,
   replayAdaptiveEndpoint,
   validateExp0025RFloorPack
 } from "../src/eval/exp-0025-r-floor-control.mjs";
@@ -96,6 +98,44 @@ test("A0@600 projeta a mesma política sem virar challenger", () => {
   assert.equal(gridContinues.prematureTakeover, true);
   assert.equal(nativeEnds.postFinalDecisionDelayMs, 520);
   assert.equal(gridEnds.postFinalDecisionDelayMs, 600);
+});
+
+test("L usa estado USER_THINKING causal e nunca consulta o desfecho futuro", () => {
+  const pack = buildExp0025RDevelopmentPack();
+  const incompletePair = pack.utterances.filter((item) =>
+    item.pairId === "exp0025r-dev-p01");
+  const continues = incompletePair.find((item) =>
+    item.outcome === "CONTINUES");
+  const ends = incompletePair.find((item) => item.outcome === "ENDS");
+  const continued = replayArticleInspiredMicroturn(continues);
+  const ended = replayArticleInspiredMicroturn(ends);
+
+  assert.equal(continued.candidateId, EXP0025_R_LOCAL_CANDIDATE_ID);
+  assert.equal(continued.prematureTakeover, false);
+  assert.deepEqual(
+    continued.trajectory.map((item) => item.state),
+    ["USER_THINKING", "USER_TALKING"]
+  );
+  assert.equal(ended.postFinalDecisionDelayMs, 1_200);
+  assert.deepEqual(
+    ended.trajectory.map((item) => item.state),
+    ["USER_THINKING", "USER_FINISHED"]
+  );
+  assert.deepEqual(continued.trajectory[0], ended.trajectory[0]);
+});
+
+test("L evita a tomada de piso quando a voz retorna exatamente no tick", () => {
+  const pack = buildExp0025RDevelopmentPack();
+  const pair = pack.utterances.filter((item) =>
+    item.pairId === "exp0025r-dev-p13");
+  const continues = pair.find((item) => item.outcome === "CONTINUES");
+  const ends = pair.find((item) => item.outcome === "ENDS");
+
+  assert.equal(replayAdaptiveEndpoint(continues, {
+    gridMs: 20
+  }).prematureTakeover, true);
+  assert.equal(replayArticleInspiredMicroturn(continues).prematureTakeover, false);
+  assert.equal(replayArticleInspiredMicroturn(ends).postFinalDecisionDelayMs, 600);
 });
 
 test("composição WAV preserva prefixo físico idêntico no par", () => {

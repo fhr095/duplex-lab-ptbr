@@ -1,11 +1,16 @@
 import { isDeepStrictEqual } from "node:util";
 
-import { decideEndpoint } from "../interaction/adaptive-endpoint.mjs";
+import {
+  decideEndpoint,
+  looksIncompletePtBr
+} from "../interaction/adaptive-endpoint.mjs";
 import { canonicalSha256 } from "./factory/canonical-hash.mjs";
 
 export const EXP0025_R_PACK_SCHEMA = "exp-0025-r-floor-pack-v1";
 export const EXP0025_R_BASELINE_REPORT_SCHEMA =
   "exp-0025-r-baseline-headroom-report-v1";
+export const EXP0025_R_LOCAL_CANDIDATE_ID =
+  "L-article-inspired-thinking-state-v0.1";
 
 export const EXP0025_R_ACTIONS = Object.freeze({
   continueListening: "CONTINUE_LISTENING",
@@ -404,6 +409,70 @@ export function replayAdaptiveEndpoint(utterance, options = {}) {
   });
 }
 
+export function replayArticleInspiredMicroturn(utterance) {
+  if (!validateUtterance(utterance, utterance?.split)) {
+    throw new TypeError("fala inválida para replay L");
+  }
+  const trajectory = [];
+  const incomplete = looksIncompletePtBr(utterance.prefix);
+  let firstTakeFloorAtMs = null;
+
+  for (let microturn = 1; microturn <= 2; microturn += 1) {
+    const atMs = utterance.criticalBoundaryAtMs +
+      microturn * EXP0025_R_CADENCES.externalMs;
+    if (utterance.outcome === "CONTINUES" &&
+      utterance.resumeAtMs <= atMs) {
+      trajectory.push({
+        atMs: utterance.resumeAtMs,
+        action: EXP0025_R_ACTIONS.continueListening,
+        state: "USER_TALKING",
+        reason: "VOICE_RESUMED_BEFORE_MICROTURN_DECISION"
+      });
+      break;
+    }
+    if (microturn === 1 && incomplete) {
+      trajectory.push({
+        atMs,
+        action: EXP0025_R_ACTIONS.continueListening,
+        state: "USER_THINKING",
+        reason: "OPEN_PT_BR_PREFIX_AT_FIRST_SILENT_MICROTURN"
+      });
+      continue;
+    }
+    firstTakeFloorAtMs = atMs;
+    trajectory.push({
+      atMs,
+      action: EXP0025_R_ACTIONS.takeFloor,
+      state: "USER_FINISHED",
+      reason: incomplete
+        ? "SECOND_SILENT_MICROTURN_COMPLETED"
+        : "CLOSED_PREFIX_AT_FIRST_SILENT_MICROTURN"
+    });
+    break;
+  }
+  const prematureTakeover = utterance.outcome === "CONTINUES" &&
+    firstTakeFloorAtMs !== null && firstTakeFloorAtMs < utterance.resumeAtMs;
+  const postFinalDecisionDelayMs = utterance.outcome === "ENDS"
+    ? firstTakeFloorAtMs - utterance.trueFinalAtMs
+    : null;
+  return deepFreeze({
+    id: utterance.id,
+    pairId: utterance.pairId,
+    sessionId: utterance.sessionId,
+    outcome: utterance.outcome,
+    gridMs: EXP0025_R_CADENCES.externalMs,
+    candidateId: EXP0025_R_LOCAL_CANDIDATE_ID,
+    firstTakeFloorAtMs,
+    prematureTakeover,
+    postFinalDecisionDelayMs,
+    missedTakeover: utterance.outcome === "ENDS" &&
+      (postFinalDecisionDelayMs === null ||
+        postFinalDecisionDelayMs > EXP0025_R_CADENCES.finalObservationMs),
+    protocolFailure: false,
+    trajectory
+  });
+}
+
 function nearestRankP95(values) {
   if (values.length === 0) return null;
   const sorted = [...values].sort((left, right) => left - right);
@@ -436,6 +505,137 @@ function summarize(results) {
       continues.some((item) =>
         item.sessionId === sessionId && item.prematureTakeover)).length
   };
+}
+
+function compareResults(a0Results, candidateResults) {
+  const candidateById = new Map(candidateResults.map((item) => [item.id, item]));
+  const pairs = a0Results.map((a0) => ({
+    a0,
+    candidate: candidateById.get(a0.id)
+  }));
+  const continues = pairs.filter(({ a0 }) => a0.outcome === "CONTINUES");
+  const ends = pairs.filter(({ a0 }) => a0.outcome === "ENDS");
+  const sessionIds = new Set(a0Results.map((item) => item.sessionId));
+  const a0SessionFailed = (sessionId) => continues.some(({ a0 }) =>
+    a0.sessionId === sessionId && a0.prematureTakeover);
+  const candidateSessionFailed = (sessionId) => continues.some(
+    ({ candidate }) => candidate.sessionId === sessionId &&
+      candidate.prematureTakeover
+  );
+  const corrected = continues.filter(({ a0, candidate }) =>
+    a0.prematureTakeover && !candidate.prematureTakeover);
+  const introduced = continues.filter(({ a0, candidate }) =>
+    !a0.prematureTakeover && candidate.prematureTakeover);
+  const improvedSessions = [...sessionIds].filter((sessionId) =>
+    a0SessionFailed(sessionId) && !candidateSessionFailed(sessionId));
+  const regressedSessions = [...sessionIds].filter((sessionId) =>
+    !a0SessionFailed(sessionId) && candidateSessionFailed(sessionId));
+  return {
+    correctedPrematureTakeovers: corrected.length,
+    correctedUtteranceIds: corrected.map(({ a0 }) => a0.id),
+    introducedPrematureTakeovers: introduced.length,
+    introducedUtteranceIds: introduced.map(({ a0 }) => a0.id),
+    sessionsImproved: improvedSessions.length,
+    improvedSessionIds: improvedSessions,
+    safeSessionsRegressed: regressedSessions.length,
+    regressedSessionIds: regressedSessions,
+    missedTakeoverDelta: ends.filter(({ candidate }) =>
+      candidate.missedTakeover).length - ends.filter(({ a0 }) =>
+      a0.missedTakeover).length
+  };
+}
+
+function cadenceDiagnostics(nativeResults, gridResults, candidateResults) {
+  const gridById = new Map(gridResults.map((item) => [item.id, item]));
+  const candidateById = new Map(candidateResults.map((item) => [item.id, item]));
+  return nativeResults.map((native) => {
+    const grid = gridById.get(native.id);
+    const candidate = candidateById.get(native.id);
+    return {
+      id: native.id,
+      outcome: native.outcome,
+      nativeToGridPrematureChange: Number(grid.prematureTakeover) -
+        Number(native.prematureTakeover),
+      nativeToGridDelayDeltaMs: finite(native.postFinalDecisionDelayMs) &&
+        finite(grid.postFinalDecisionDelayMs)
+        ? grid.postFinalDecisionDelayMs - native.postFinalDecisionDelayMs
+        : null,
+      gridToCandidatePrematureChange: Number(candidate.prematureTakeover) -
+        Number(grid.prematureTakeover),
+      gridToCandidateDelayDeltaMs: finite(grid.postFinalDecisionDelayMs) &&
+        finite(candidate.postFinalDecisionDelayMs)
+        ? candidate.postFinalDecisionDelayMs - grid.postFinalDecisionDelayMs
+        : null
+    };
+  });
+}
+
+export function evaluateExp0025RLocalCandidate(pack) {
+  const validation = validateExp0025RMaterializedPack(pack);
+  if (!validation.valid) {
+    throw new TypeError(`pack materializado inválido: ${validation.errors.join("; ")}`);
+  }
+  const nativeResults = pack.utterances.map((utterance) =>
+    replayAdaptiveEndpoint(utterance, {
+      gridMs: EXP0025_R_CADENCES.nativeMs
+    }));
+  const a0At600Results = pack.utterances.map((utterance) =>
+    replayAdaptiveEndpoint(utterance, {
+      gridMs: EXP0025_R_CADENCES.externalMs
+    }));
+  const candidateResults = pack.utterances.map(
+    replayArticleInspiredMicroturn
+  );
+  const native = summarize(nativeResults);
+  const a0At600 = summarize(a0At600Results);
+  const candidate = summarize(candidateResults);
+  const againstNative = compareResults(nativeResults, candidateResults);
+  const againstA0At600 = compareResults(a0At600Results, candidateResults);
+  const holdoutGate = pack.split === "holdout" ? {
+    complete: candidate.utteranceCount === 48 && pack.pairs === 24,
+    correctedAtLeastFour:
+      againstNative.correctedPrematureTakeovers >= 4,
+    zeroIntroducedPremature:
+      againstNative.introducedPrematureTakeovers === 0,
+    sessionsImprovedAtLeastTwo: againstNative.sessionsImproved >= 2,
+    zeroSafeSessionRegression: againstNative.safeSessionsRegressed === 0,
+    noMissRegression: againstNative.missedTakeoverDelta <= 0,
+    p95AtMost800: candidate.postFinalDecisionDelayMs.p95 <= 800,
+    p95DeltaAtMost300:
+      candidate.postFinalDecisionDelayMs.p95 -
+        native.postFinalDecisionDelayMs.p95 <= 300,
+    maximumAtMost1200: candidate.postFinalDecisionDelayMs.maximum <= 1_200,
+    zeroProtocolFailure: candidate.protocolFailureCount === 0
+  } : null;
+  const holdoutWin = holdoutGate === null
+    ? null
+    : Object.values(holdoutGate).every(Boolean);
+  return deepFreeze({
+    candidateId: EXP0025_R_LOCAL_CANDIDATE_ID,
+    role: "ARTICLE_INSPIRED_MECHANISM_PROBE",
+    split: pack.split,
+    packSha256: pack.packSha256,
+    native,
+    a0At600,
+    candidate,
+    againstNative,
+    againstA0At600,
+    cadenceAttribution: isDeepStrictEqual(candidate, a0At600)
+      ? "CANDIDATE_EQUIVALENT_TO_A0_AT_600"
+      : "CANDIDATE_HAS_RESIDUAL_BEYOND_CADENCE",
+    cadenceDiagnostics: cadenceDiagnostics(
+      nativeResults,
+      a0At600Results,
+      candidateResults
+    ),
+    utteranceResults: {
+      native: nativeResults,
+      a0At600: a0At600Results,
+      candidate: candidateResults
+    },
+    holdoutGate,
+    holdoutWin
+  });
 }
 
 export function analyzeExp0025RBaselineHeadroom(pack) {
