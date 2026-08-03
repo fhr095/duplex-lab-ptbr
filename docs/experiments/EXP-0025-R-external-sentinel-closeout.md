@@ -1,5 +1,9 @@
 # EXP-0025-R — fechamento das sentinelas externas
 
+Nota posterior: este documento preserva o estado após as sentinelas. A rodada
+foi encerrada depois como `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`; consulte o
+[fechamento terminal externo](EXP-0025-R-external-terminal-closeout.md).
+
 Status: **sentinelas oficiais 4/4; desenvolvimento `NOT_EVALUATED`; nenhuma
 inferência em holdout; aguardando decisão explícita sobre uma única alocação
 adicional `D`-only e sobre ampliar o teto cumulativo de download**

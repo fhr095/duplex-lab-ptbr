@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03T17:16:36-03:00",
+  "updatedAt": "2026-08-03T18:26:35-03:00",
   "transitionState": "terminal-awaiting-next-registration",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
@@ -24,10 +24,10 @@
     "id": "EXP-0025-R",
     "parent": "EXP-0025",
     "preRegistration": "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md",
-    "status": "active",
+    "status": "cut",
     "blocking": false,
     "authority": "none",
-    "decision": "A trilha local one-shot está encerrada: L reduziu tomadas prematuras de 9/24 para 4/24 no holdout, corrigiu cinco falas sem introduzir falhas e melhorou duas sessões, mas falhou o gate perceptível de p95 (1.200 ms > 800 ms) e foi equivalente a A0@600. Manter A0 e cortar L. E passou 4/4 sentinelas sob a semântica oficial, mas D permanece NOT_EVALUATED; não cortar E nem alegar ganho.",
+    "decision": "Manter A0 e cortar o EXP-0025-R. L reduziu tomadas prematuras de 9/24 para 4/24, mas falhou p95 (1.200 ms > 800 ms) e foi equivalente a A0@600. E passou 4/4 sentinelas oficiais, porém as tentativas terminais de D falharam antes do download e da inferência; E=NOT_EVALUATED_ENVIRONMENT_BLOCKED, sem alegação de qualidade PT-BR, holdout ou retry.",
     "canonicalReport": "eval/reports/exp-0025-r-local-holdout-v0.1.json",
     "evidenceCommit": "0b3fda7bda09e46b3f212d34c5c9d4fe8895dae0",
     "externalSentinelResult": {
@@ -38,6 +38,20 @@
       "officialSentinelsPassed": 4,
       "developmentEvaluated": false,
       "holdoutRead": false
+    },
+    "externalTerminalResult": {
+      "status": "not-evaluated-environment-blocked-terminal",
+      "decision": "CUT_EXTERNAL_MICROTURN_FRONT_ENVIRONMENT_BLOCKED",
+      "evidenceCommit": "41926aaf21043658f7e8b7dc62ffad9830e10896",
+      "closeout": "docs/experiments/EXP-0025-R-external-terminal-closeout.md",
+      "providerReceipt": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5.json",
+      "terminationRecovery": "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5-termination-recovery.json",
+      "officialSentinelsPassed": 4,
+      "developmentEvaluated": false,
+      "developmentUtterances": 0,
+      "holdoutRead": false,
+      "activePodsAfterRecovery": 0,
+      "authority": "none"
     },
     "cleanCloneChecks": [
       "node --test tests/exp-0025-r-floor-control.test.mjs",
@@ -53,9 +67,10 @@
       "npm run eval:exp:0025:r:holdout:seal:check",
       "npm run eval:exp:0025:r:holdout:report:check",
       "npm run eval:exp:0025:r:external:report:check",
+      "npm run eval:exp:0025:r:external:d-only:retry:authorization:check",
       "npm run eval:index:check"
     ],
-    "nextDecision": "Autorizar explicitamente ou recusar uma única quarta alocação D-only do mesmo E e elevar o teto cumulativo de download de 40 para 70 GiB; GPU e custo permanecem nos limites originais, sem sentinela nova, H, L2 ou troca de modelo."
+    "nextDecision": "Não repetir EXP-0025-R nem trocar silenciosamente de provider ou modelo. Registrar o próximo caminho crítico somente para o maior gargalo percebido da vertical completa, com hipótese e gate novos."
   },
   "entries": [
     {

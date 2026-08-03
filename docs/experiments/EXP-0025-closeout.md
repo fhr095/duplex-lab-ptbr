@@ -72,8 +72,7 @@ ou qualidade full-duplex.
 ## Próxima decisão
 
 Não abrir um EXP-0026 apenas para reparar outra vez este instrumento. A trilha
-EXP-0025-R já demonstrou headroom percebível na tomada de turno e pode avançar
-sem custo externo com um probe local congelado; a referência oficial `E`
-continua condicionada à autorização explícita de GPU/download. Uma nova frente
-crítica deve atacar uma capacidade percebida diferente e pré-registrada, não
-reinterpretar este resultado.
+EXP-0025-R depois testou esse headroom: o probe local foi cortado como
+equivalente a `A0@600`, e a referência oficial terminou sem observações PT-BR
+por bloqueio de ambiente. Uma nova frente crítica deve atacar uma capacidade
+percebida diferente e pré-registrada, não reinterpretar este resultado.

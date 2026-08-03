@@ -3,8 +3,9 @@
 Nota posterior: este documento preserva o estado no fechamento local. `E` foi
 depois autorizado e passou 4/4 sentinelas sob a semântica oficial, mas não
 chegou a `D`; consulte o
-[fechamento externo](EXP-0025-R-external-sentinel-closeout.md). O relato abaixo
-permanece histórico e não foi reescrito.
+[fechamento das sentinelas](EXP-0025-R-external-sentinel-closeout.md) e o
+[fechamento terminal](EXP-0025-R-external-terminal-closeout.md). O relato
+abaixo permanece histórico e não foi reescrito.
 
 Status: **trilha local concluída em 03/08/2026 —
 `KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`; `E=NOT_EVALUATED`; zero

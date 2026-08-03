@@ -15,6 +15,8 @@ import {
   EXP0024_EVIDENCE_COMMIT,
   EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH,
   EXP0025_R_EXTERNAL_EVIDENCE_COMMIT,
+  EXP0025_R_EXTERNAL_TERMINAL_CLOSEOUT_PATH,
+  EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT,
   EXP0025_R_LOCAL_CANONICAL_REPORT_PATH,
   EXP0025_R_LOCAL_EVIDENCE_COMMIT,
   readExperimentIndex,
@@ -101,7 +103,7 @@ test("índice canônico real referencia evidências existentes", async () => {
   assert.equal(index.currentCriticalPath, "EXP-0025");
   assert.equal(index.transitionState, "terminal-awaiting-next-registration");
   assert.equal(index.currentParallelProbe.id, "EXP-0025-R");
-  assert.equal(index.currentParallelProbe.status, "active");
+  assert.equal(index.currentParallelProbe.status, "cut");
   assert.equal(index.currentParallelProbe.blocking, false);
   assert.equal(
     index.currentParallelProbe.preRegistration,
@@ -133,8 +135,32 @@ test("índice canônico real referencia evidências existentes", async () => {
   );
   assert.equal(index.currentParallelProbe.externalSentinelResult.holdoutRead,
     false);
+  assert.equal(
+    index.currentParallelProbe.externalTerminalResult.status,
+    "not-evaluated-environment-blocked-terminal"
+  );
+  assert.equal(
+    index.currentParallelProbe.externalTerminalResult.decision,
+    "CUT_EXTERNAL_MICROTURN_FRONT_ENVIRONMENT_BLOCKED"
+  );
+  assert.equal(
+    index.currentParallelProbe.externalTerminalResult.evidenceCommit,
+    EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT
+  );
+  assert.equal(
+    index.currentParallelProbe.externalTerminalResult.closeout,
+    EXP0025_R_EXTERNAL_TERMINAL_CLOSEOUT_PATH
+  );
+  assert.equal(
+    index.currentParallelProbe.externalTerminalResult.developmentEvaluated,
+    false
+  );
+  assert.equal(
+    index.currentParallelProbe.externalTerminalResult.activePodsAfterRecovery,
+    0
+  );
   assert.match(index.currentParallelProbe.decision, /1\.200 ms > 800 ms/u);
-  assert.match(index.currentParallelProbe.nextDecision, /Autorizar/u);
+  assert.match(index.currentParallelProbe.nextDecision, /Não repetir/u);
   assert.equal(index.entries.at(-1).id, "EXP-0025");
   assert.equal(index.entries.at(-1).status, "cut");
   assert.equal(

@@ -137,6 +137,10 @@ export const EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH =
   "eval/reports/exp-0025-r-external-development-v0.1.json";
 export const EXP0025_R_EXTERNAL_EVIDENCE_COMMIT =
   "67dc6aa364d02209cf7fe7f7e21e5fc854e89dfa";
+export const EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT =
+  "41926aaf21043658f7e8b7dc62ffad9830e10896";
+export const EXP0025_R_EXTERNAL_TERMINAL_CLOSEOUT_PATH =
+  "docs/experiments/EXP-0025-R-external-terminal-closeout.md";
 
 const EXP0025_R_EXTERNAL_EVIDENCE_PATHS = Object.freeze([
   "eval/evidence/exp-0025-r-external-development-raw-v0.1.journal.ndjson",
@@ -145,6 +149,20 @@ const EXP0025_R_EXTERNAL_EVIDENCE_PATHS = Object.freeze([
   "eval/evidence/exp-0025-r-external-peft-base-equivalence-v0.1.json",
   "eval/evidence/exp-0025-r-external-runpod-allocation-v0.3.json",
   EXP0025_R_EXTERNAL_CANONICAL_REPORT_PATH
+]);
+
+const EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_PATHS = Object.freeze([
+  "docs/experiments/EXP-0025-R-duplexcascade-floor-control.md",
+  EXP0025_R_EXTERNAL_TERMINAL_CLOSEOUT_PATH,
+  "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5-termination-recovery.json",
+  "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5.json",
+  "tests/exp-0025-r-external.test.mjs"
+]);
+
+const EXP0025_R_EXTERNAL_TERMINAL_IMMUTABLE_PATHS = Object.freeze([
+  EXP0025_R_EXTERNAL_TERMINAL_CLOSEOUT_PATH,
+  "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5-termination-recovery.json",
+  "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5.json"
 ]);
 
 const EXP0023_C0_COMMIT =
@@ -1104,6 +1122,131 @@ async function assertExp0025RExternalSentinelEvidence(index, projectRoot) {
       EXP0025_R_EXTERNAL_EVIDENCE_COMMIT,
       headCommit,
       "EXP-0025-R externalEvidenceCommit→HEAD"
+    )
+  ]);
+}
+
+async function assertExp0025RExternalTerminalEvidence(index, projectRoot) {
+  const probe = index.currentParallelProbe;
+  const summary = probe.externalTerminalResult;
+  const receiptPath =
+    "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5.json";
+  const recoveryPath =
+    "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5-termination-recovery.json";
+  assert(
+    summary?.status === "not-evaluated-environment-blocked-terminal" &&
+      summary.decision ===
+        "CUT_EXTERNAL_MICROTURN_FRONT_ENVIRONMENT_BLOCKED" &&
+      summary.evidenceCommit ===
+        EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT &&
+      summary.closeout === EXP0025_R_EXTERNAL_TERMINAL_CLOSEOUT_PATH &&
+      summary.providerReceipt === receiptPath &&
+      summary.terminationRecovery === recoveryPath &&
+      summary.officialSentinelsPassed === 4 &&
+      summary.developmentEvaluated === false &&
+      summary.developmentUtterances === 0 &&
+      summary.holdoutRead === false &&
+      summary.activePodsAfterRecovery === 0 &&
+      summary.authority === "none",
+    "EXP-0025-R resumo terminal externo perdeu decisão ou limites"
+  );
+
+  const [receiptArtifact, recoveryArtifact, ...currentEvidence] =
+    await Promise.all([
+      readArtifact(projectRoot, receiptPath,
+        "EXP-0025-R recibo terminal externo"),
+      readArtifact(projectRoot, recoveryPath,
+        "EXP-0025-R recovery terminal externo"),
+      ...EXP0025_R_EXTERNAL_TERMINAL_IMMUTABLE_PATHS.map(async (path) => ({
+        path,
+        bytes: await readFile(resolveRepositoryPath(
+          projectRoot, path, "EXP-0025-R evidência terminal externa"
+        ))
+      }))
+    ]);
+  const receipt = receiptArtifact.value;
+  const recovery = recoveryArtifact.value;
+  const recoveryCore = structuredClone(recovery);
+  delete recoveryCore.evidenceSha256;
+  const retrieved = receipt.runtime?.retrieved ?? {};
+  assert(
+    receipt.schemaVersion ===
+        "exp-0025-r-runpod-d-only-allocation-receipt-v1" &&
+      receipt.experimentId === "EXP-0025-R" &&
+      receipt.infrastructureAttempt === 5 &&
+      receipt.modelInferenceAttempt === 2 &&
+      receipt.developmentInferencePass === 1 &&
+      receipt.status === "FAILED" &&
+      receipt.runtime?.remoteExitCode === null &&
+      receipt.runtime?.sentinelGenerationCount === 0 &&
+      Object.keys(retrieved).length === 3 &&
+      Object.values(retrieved).every((value) => value === false) &&
+      receipt.dataBoundary?.holdoutTransferred === false &&
+      receipt.dataBoundary?.environmentFileTransferred === false &&
+      receipt.dataBoundary?.accountApiKeyTransferred === false &&
+      receipt.dataBoundary?.openAiApiKeyTransferred === false &&
+      receipt.budget?.withinFrozenLimits === true &&
+      receipt.termination?.confirmed === false &&
+      receipt.termination?.error === "fetch failed" &&
+      receipt.automaticRetryAuthorized === false,
+    "EXP-0025-R recibo terminal externo perdeu falha ou fronteira"
+  );
+  assert(
+    recovery.schemaVersion ===
+        "exp-0025-r-runpod-termination-recovery-v1" &&
+      recovery.experimentId === "EXP-0025-R" &&
+      recovery.infrastructureAttempt === 5 &&
+      recovery.evidenceSha256 ===
+        `sha256:${canonicalSha256(recoveryCore)}` &&
+      recovery.providerReceipt?.fileSha256 ===
+        sha256Bytes(receiptArtifact.bytes).slice(7) &&
+      recovery.providerReceipt?.preservedWithoutModification === true &&
+      recovery.recoveryReason?.modelDownloaded === false &&
+      recovery.recoveryReason?.modelInferenceStarted === false &&
+      recovery.termination?.officialMutation === "podTerminate" &&
+      recovery.termination?.targetPresentAfterMutation === false &&
+      recovery.termination?.activePodCountAfterMutation === 0 &&
+      recovery.termination?.projectPodCountAfterMutation === 0 &&
+      recovery.termination?.confirmed === true &&
+      recovery.budgetRecovery?.allocationSecondsUpperBound === 439.642 &&
+      recovery.budgetRecovery?.cumulativeGpuSecondsUpperBound ===
+        1726.939000169754 &&
+      recovery.budgetRecovery?.cumulativeEstimatedCostUsdUpperBound ===
+        1.3863482529140525 &&
+      recovery.budgetRecovery?.withinFrozenLimits === true &&
+      recovery.budgetRecovery?.cumulativeBudgetAuthority === true &&
+      recovery.scope?.newAllocationCreated === false &&
+      recovery.scope?.inferenceRetried === false &&
+      recovery.scope?.holdoutRead === false &&
+      recovery.scope?.sixthAllocationAuthorized === false,
+    "EXP-0025-R recovery perdeu terminação, budget ou zero retry"
+  );
+
+  const [committedPaths, headCommit] = await Promise.all([
+    changedPathsAtCommit(
+      projectRoot, EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT),
+    gitText(projectRoot, "rev-parse", "HEAD")
+  ]);
+  assert(
+    isDeepStrictEqual(
+      committedPaths,
+      [...EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_PATHS].toSorted()
+    ),
+    "EXP-0025-R commit terminal externo perdeu isolamento"
+  );
+  await Promise.all([
+    ...currentEvidence.map((item) => assertGitFileMatches(
+      projectRoot,
+      EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT,
+      item.path,
+      item.bytes,
+      "EXP-0025-R evidência terminal externa"
+    )),
+    assertGitAncestor(
+      projectRoot,
+      EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT,
+      headCommit,
+      "EXP-0025-R terminalEvidenceCommit→HEAD"
     )
   ]);
 }
@@ -2550,6 +2693,7 @@ export async function validateExperimentIndex(index, options = {}) {
   );
   await assertExp0025RLocalEvidence(index, projectRoot);
   await assertExp0025RExternalSentinelEvidence(index, projectRoot);
+  await assertExp0025RExternalTerminalEvidence(index, projectRoot);
   assert(Array.isArray(index.entries), "entries must be an array");
   assert(index.entries.length > 0, "entries must not be empty");
 

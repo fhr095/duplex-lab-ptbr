@@ -143,12 +143,12 @@ tomadas prematuras de 9/24 para 4/24, corrigiu cinco falas sem introduções e
 melhorou duas sessões. Ainda assim, foi cortado porque seu p95 pós-final de
 1.200 ms excedeu 800 ms e foi idêntico a `A0@600`; não haverá `L2`. O
 checkpoint oficial DuplexCascade passou 4/4 sentinelas sob a semântica do
-runtime publicado, mas o adaptador fail-closed encerrou antes de `D`; logo não
-há ganho pt-BR medido. Todos os Pods foram encerrados, custo e GPU ficaram
-dentro do budget, e uma passagem `D`-only aguarda autorização para uma única
-quarta alocação e para elevar o teto cumulativo de download de 40 para 70 GiB.
-ASR/TTS não entram na política, H permanece proibido e backbones end-to-end
-continuam fora.
+runtime publicado. As duas alocações terminais destinadas a `D` falharam antes
+do download e da inferência; logo não há ganho pt-BR medido. O recovery
+confirmou zero Pods, o custo cumulativo conservador ficou abaixo de US$ 1,39 e
+`E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`. A frente foi cortada sem sexta
+alocação, troca de provider/modelo ou holdout. ASR/TTS não entram na política
+e backbones end-to-end continuam fora.
 
 O fechamento corrente e seus contratos verificáveis em clone limpo usam:
 
