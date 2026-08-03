@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "exp-0024-physical-stop-attempt-consumption-v1",
+  "experimentId": "EXP-0024",
+  "nonce": "exp-0024-official-v0.1",
+  "consumedAt": "2026-08-03T12:07:53.514Z",
+  "deadlineMs": 600000,
+  "supervisorPid": 2256775,
+  "workerCommand": "node scripts/run-exp-0024-worker.mjs",
+  "opening": {
+    "path": "eval/commitments/exp-0024-physical-stop-attempt-v0.1.json",
+    "fileSha256": "sha256:f4075a6f41252eb308b9800409f60fde91427a97b3e25e9bf3b5e3dc79baebbd",
+    "canonicalSha256": "sha256:caed773a889ab5e792d2eea56f99d8d57349e3536388409bdcae0b4a63099b6d",
+    "commit": "a860e7806193286d79bda5a1cfc373ff8d03710d"
+  },
+  "rerunAllowed": false,
+  "receiptSha256": "sha256:9dcffbe3ee353fa8039e5d40f03f916e67815081e3ddaf41ae15fdf29c8a5500"
+}
