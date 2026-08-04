@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "exp-0026-private-station-v1",
+  "exampleOnly": true,
+  "instructions": "Copie para fora do Git, remova exampleOnly/instructions e substitua todos os valores REPLACE_* depois de medir a estação física.",
+  "stationId": "REPLACE_OPAQUE_STATION_ID",
+  "windowsBuild": "REPLACE_WINDOWS_BUILD",
+  "wslBuild": "REPLACE_WSL_BUILD",
+  "chromeBuild": "REPLACE_CHROME_BUILD",
+  "roomId": "REPLACE_OPAQUE_ROOM_ID",
+  "networkCondition": "REPLACE_NETWORK_CONDITION",
+  "clockSynchronization": "performance.now browser + server ISO; REPLACE_QUALIFICATION_NOTE",
+  "microphone": {
+    "opaqueId": "REPLACE_MIC_ID",
+    "model": "REPLACE_MIC_MODEL",
+    "volume": 0.5,
+    "position": "REPLACE_POSITION_AND_DISTANCE",
+    "sampleRate": 48000,
+    "channels": 1,
+    "echoCancellation": true,
+    "noiseSuppression": true,
+    "autoGainControl": true
+  },
+  "output": {
+    "opaqueId": "REPLACE_OUTPUT_ID",
+    "model": "REPLACE_OUTPUT_MODEL",
+    "volume": 0.5,
+    "position": "REPLACE_POSITION_AND_DISTANCE"
+  },
+  "noiseDevice": {
+    "opaqueId": "REPLACE_NOISE_DEVICE_ID",
+    "model": "REPLACE_NOISE_DEVICE_MODEL",
+    "volume": 0.5,
+    "position": "REPLACE_POSITION_AND_DISTANCE"
+  },
+  "tts": {
+    "engine": "windows-system-speech",
+    "voice": "Microsoft Maria Desktop",
+    "culture": "pt-BR",
+    "rate": 1,
+    "format": "REPLACE_FORMAT_FROM_HEALTH"
+  }
+}

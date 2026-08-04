@@ -464,7 +464,7 @@
     },
     {
       "id": "EXP-0026",
-      "status": "planned",
+      "status": "active",
       "decision": "PENDING_END_TO_END_BOTTLENECK_DIAGNOSIS",
       "preRegistration": "docs/experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md",
       "canonicalReport": null,
@@ -473,15 +473,26 @@
       "criticalPath": true,
       "cleanCloneChecks": [
         "node --test tests/exp-0026-preregistration.test.mjs",
+        "node --test tests/exp-0026-instrument.test.mjs",
+        "node --test tests/exp-0026-session-store.test.mjs",
+        "node --test tests/exp-0026-blind-analysis.test.mjs",
+        "node --test tests/exp-0026-freeze.test.mjs",
+        "node --test tests/exp-0026-qualification-reports.test.mjs",
         "node --test tests/experiment-index.test.mjs",
         "node --test tests/documentation-consistency.test.mjs"
       ],
       "localReproductionCommands": [
         "node --test tests/exp-0026-preregistration.test.mjs",
+        "node --test tests/exp-0026-instrument.test.mjs",
+        "node --test tests/exp-0026-session-store.test.mjs",
+        "node --test tests/exp-0026-blind-analysis.test.mjs",
+        "node --test tests/exp-0026-freeze.test.mjs",
+        "node --test tests/exp-0026-qualification-reports.test.mjs",
+        "npm run eval:exp:0026:stimuli:check",
         "npm run eval:index:check"
       ],
       "supersedes": [],
-      "nextDecision": "Implementar somente o instrumento, executar um dry-run interno excluído, congelar a sessão e então coletar seis participantes externos para escolher no máximo um próximo experimento."
+      "nextDecision": "Não repetir o dry-run: preencher roster diverso e condição física, materializar o freeze final e então coletar seis participantes externos para escolher no máximo um próximo experimento."
     }
   ]
 }

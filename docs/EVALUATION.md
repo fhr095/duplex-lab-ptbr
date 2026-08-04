@@ -241,6 +241,8 @@ causalidade de eco.
   top-2 em ≥4/6, severidade material e falha técnica reproduzida; sem 4/6 o
   resultado obrigatório é `NO_DOMINANT_BOTTLENECK`. A referência comercial é
   calibração descritiva separada e nunca entra no ranking ou no treino.
+  O dry-run excluído, seis lifecycles isolados e o smoke da ordem cega já
+  passaram; as seis sessões externas permanecem em zero até o freeze físico.
 - Toda comparação registra hardware, região, rede, versão, seed e configuração.
 
 ## Dados

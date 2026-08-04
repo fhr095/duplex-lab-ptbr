@@ -62,5 +62,8 @@ eval/reports/*
 !eval/reports/exp-0025-r-local-holdout-v0.1.json
 !eval/reports/exp-0025-r-external-development-v0.1.json
 !eval/reports/exp-0025-causal-render-onset-physical-stop-v0.1.json
+!eval/reports/exp-0026-lifecycle-smoke-v0.1.json
+!eval/reports/exp-0026-instrument-dry-run-v0.1.json
+!eval/reports/exp-0026-blind-order-smoke-v0.1.json
 coverage/
 tmp/

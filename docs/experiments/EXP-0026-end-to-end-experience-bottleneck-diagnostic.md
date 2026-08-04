@@ -1,8 +1,9 @@
 # EXP-0026 — diagnóstico formativo dos gargalos da experiência ponta a ponta
 
-Status: **pré-registrado com emenda prospectiva de 2026-08-03; instrumento
-ainda não implementado; zero dry-run, zero sessão humana e zero bloco
-comercial executados; zero GPU, runner externo ou mudança de runtime
+Status: **ativo; pré-registro emendado prospectivamente em 2026-08-03;
+instrumento implementado e qualificado por um dry-run interno excluído; zero
+sessão humana externa e zero bloco comercial executados; freeze final aguarda
+roster e qualificação física; zero GPU, runner externo ou mudança de runtime
 autorizados**
 
 ## Decisão que este experimento desbloqueia
@@ -113,14 +114,16 @@ preflight; não há fallback silencioso para cérebro local.
 
 ## Sequência de implementação, dry-run e freeze
 
-O pré-registro congela agora as cenas, estimandos, gates e árvore de decisão.
-A sequência futura é:
+O pré-registro congelou as cenas, estimandos, gates e árvore de decisão. A
+sequência e seu estado corrente são:
 
-1. implementar somente o instrumento e os registros necessários;
-2. executar **um dry-run interno**, com ID separado e excluído de toda análise;
-3. corrigir apenas defeito operacional que impeça aplicar o protocolo;
-4. materializar o freeze final descrito acima;
-5. abrir as seis sessões externas.
+1. ~~implementar somente o instrumento e os registros necessários~~ — feito;
+2. ~~executar **um dry-run interno**, com ID separado e excluído de toda
+   análise~~ — feito, sem repetição;
+3. ~~corrigir apenas defeito operacional que impeça aplicar o protocolo~~ —
+   feito prospectivamente, sem mudar constructo ou gate;
+4. materializar o freeze final descrito acima — pendente de roster e estação;
+5. abrir as seis sessões externas — bloqueado pelo item 4.
 
 O dry-run não pode calibrar severidade, alterar a regra de 4/6, escolher outra
 categoria, adicionar cenas ou antecipar o ranking. Qualquer mudança de
@@ -292,7 +295,7 @@ e servidor são encerrados antes de criar o ciclo seguinte. O teto de 25 chamada
 é independente por participante; chamadas não utilizadas não migram e atingir
 o teto de uma pessoa não reduz nem amplia o orçamento de outra.
 
-Antes do dry-run humano, um smoke automatizado simulará seis ciclos completos e
+Antes do dry-run interno, um smoke automatizado simulará seis ciclos completos e
 deverá provar, para cada novo processo, `processRunId` distinto, uso inicial
 `0/25`, histórico vazio, zero kernels ativos, storage do navegador vazio e
 encerramento limpo. Qualquer reutilização ou vazamento falha de forma fechada e
@@ -461,6 +464,29 @@ Todos precisam passar:
 Uma falha antes da primeira cena impede abrir a sessão; ela não pode ser
 reinterpretada como resposta humana.
 
+### Materialização do freeze final
+
+Os modelos versionados estão em
+`docs/templates/EXP-0026-PRIVATE-ROSTER.example.json` e
+`docs/templates/EXP-0026-PRIVATE-STATION.example.json`. Eles devem ser copiados
+para fora do Git, preenchidos e ter `exampleOnly` removido. O roster proíbe
+nome, contato, documento e endereço; o freeze público preserva somente aliases,
+hash do manifesto privado e os booleanos agregados dos gates de diversidade.
+
+Com worktree limpa, zero sessão externa e os três relatórios de qualificação
+passando, o comando abaixo cria uma única vez a janela de sete dias:
+
+```bash
+npm run eval:exp:0026:freeze -- \
+  --roster /caminho/privado/roster.json \
+  --station /caminho/privado/station.json
+```
+
+O supervisor `npm run eval:exp:0026:session -- --participant P01 --order 0`
+recusa sessão sem freeze, alias/ordem divergente, fonte modificada, janela
+expirada, runtime/TTS divergente ou alias já consumido. Cada execução abre um
+contexto efêmero do Chrome e encerra esse contexto e o processo ao concluir.
+
 ## Árvore de decisão terminal
 
 ### Gestão de piso dominante
@@ -520,8 +546,37 @@ O closeout deverá conter:
 
 ## Resultado
 
-Ainda não executado. Nenhum dado humano ou comercial foi observado neste
-experimento.
+O instrumento foi implementado e o único dry-run interno foi concluído como
+`PASS_EXCLUDED_DRY_RUN`. Ele percorreu os sete blocos, respeitou o guard de dois
+minutos de `F0`, persistiu e verificou sete traces consentidos, recusou áudio
+não consentido, selou o top-2 e permaneceu abaixo do teto estrutural de 25
+chamadas. A fala foi injetada no browser sob o papel excluído; portanto esse
+resultado qualifica o protocolo e **não** mede captura acústica, ASR, percepção
+humana ou qualidade do produto.
+
+O smoke de lifecycle executou seis processos e seis contextos reais do Chrome
+do Windows. Cada ciclo foi contaminado com histórico, uma chamada, um kernel e
+storage antes de ser encerrado; o ciclo seguinte começou novamente com
+histórico/storage vazios, kernel `0` e orçamento `0/25`. A abertura cega também
+foi exercitada: o bundle técnico não continha formulários, a junção foi recusada
+antes do selo, e os dados humanos só abriram depois dos hashes do coding.
+
+Uma screenshot pós-conclusão excedeu o timeout. Ela não participa de constructo,
+métrica ou gate; foi removida do caminho crítico sem repetir o dry-run. Como
+correções operacionais prospectivas, novas anotações persistem início, fim e
+duração da cena, a API exige um token efêmero por processo e o áudio consentido
+é persistido antes de o runtime liberar o `MediaStream`, com retry idempotente
+pelo mesmo hash. Nenhum constructo ou gate de dominância mudou.
+
+Evidência versionada:
+
+- `eval/reports/exp-0026-lifecycle-smoke-v0.1.json`;
+- `eval/reports/exp-0026-instrument-dry-run-v0.1.json`;
+- `eval/reports/exp-0026-blind-order-smoke-v0.1.json`.
+
+Nenhum dado humano externo ou comercial foi observado. A coleta externa
+continua bloqueada até o freeze final de roster, estação, dispositivos e
+janela; isso não reabre implementação nem autoriza outro dry-run.
 
 ## Decisão
 

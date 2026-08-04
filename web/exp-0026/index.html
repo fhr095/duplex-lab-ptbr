@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>EXP-0026 · diagnóstico da experiência</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/exp-0026/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <div>
+          <p class="eyebrow">EXP-0026 · EVALUATION-ONLY</p>
+          <h1>Diagnóstico da experiência completa</h1>
+          <p class="lede">
+            Uma sessão curta para descobrir o que mais prejudica a conversa —
+            sem transformar sua voz ou respostas em dados de treino.
+          </p>
+        </div>
+        <div class="status" id="statusCard">
+          <span class="status-dot"></span>
+          <div><small>ESTADO</small><strong id="statusText">carregando</strong></div>
+        </div>
+      </header>
+
+      <section class="notice" id="errorBox" hidden></section>
+      <section class="card" id="instrument" aria-live="polite"></section>
+
+      <section class="voice-shell" id="voiceShell" hidden>
+        <div class="voice-heading">
+          <div>
+            <p class="eyebrow">CONVERSA LOCAL CONGELADA</p>
+            <h2>Fale com o sistema</h2>
+          </div>
+          <span class="pill" id="voiceState">aguardando</span>
+        </div>
+        <iframe
+          id="voiceFrame"
+          title="Duplex Lab em avaliação"
+          src="/?evaluation=0026"
+          allow="microphone"
+        ></iframe>
+      </section>
+
+      <footer>
+        <span id="sessionReceipt">sessão não vinculada</span>
+        <button class="link-button" id="withdrawButton" hidden>
+          Retirar consentimento e apagar dados
+        </button>
+      </footer>
+    </main>
+    <script type="module" src="/exp-0026/app.mjs"></script>
+  </body>
+</html>

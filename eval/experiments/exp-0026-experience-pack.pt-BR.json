@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "exp-0026-experience-pack-v1",
+  "packId": "exp-0026-experience-pack-ptbr-v0.1",
+  "language": "pt-BR",
+  "fitEligibility": "evaluation-only",
+  "guidedSceneCount": 6,
+  "participantCount": 6,
+  "orders": [
+    ["S1", "S2", "S3", "S4", "S5", "S6"],
+    ["S2", "S3", "S4", "S5", "S6", "S1"],
+    ["S3", "S4", "S5", "S6", "S1", "S2"],
+    ["S4", "S5", "S6", "S1", "S2", "S3"],
+    ["S5", "S6", "S1", "S2", "S3", "S4"],
+    ["S6", "S1", "S2", "S3", "S4", "S5"]
+  ],
+  "categories": [
+    {
+      "id": "ENTENDIMENTO_DO_QUE_EU_DISSE",
+      "label": "Entendimento do que eu disse"
+    },
+    {
+      "id": "RITMO_E_TROCA_DE_TURNO",
+      "label": "Ritmo e troca de turno"
+    },
+    {
+      "id": "QUALIDADE_DA_RESPOSTA",
+      "label": "Qualidade da resposta"
+    },
+    {
+      "id": "VOZ_E_ENTREGA",
+      "label": "Voz e forma de falar"
+    },
+    {
+      "id": "TAREFA_E_CONTINUIDADE",
+      "label": "Tarefa e continuidade"
+    },
+    {
+      "id": "OUTRO",
+      "label": "Outro problema"
+    },
+    {
+      "id": "NENHUM_PROBLEMA_MATERIAL",
+      "label": "Nenhum problema material"
+    }
+  ],
+  "severity": [
+    { "value": 0, "label": "Nenhum problema material" },
+    { "value": 1, "label": "Perceptível, mas não atrapalhou" },
+    { "value": 2, "label": "Atrapalhou o ritmo ou exigiu repetição" },
+    { "value": 3, "label": "Impediu ou alterou materialmente o objetivo" },
+    { "value": 4, "label": "Quebrou a sessão, criou risco ou ação incorreta" }
+  ],
+  "scenes": [
+    {
+      "id": "S1",
+      "title": "Conversa e seguimento",
+      "capacity": "entendimento, início da resposta e naturalidade",
+      "variants": [
+        "Peça uma ideia de jantar simples para hoje e faça uma pergunta espontânea de seguimento.",
+        "Pergunte como organizar uma manhã livre e depois aprofunde um ponto da resposta.",
+        "Peça uma sugestão de lanche rápido e em seguida pergunte por uma alternativa.",
+        "Converse sobre uma atividade tranquila para o fim de semana e faça um seguimento natural.",
+        "Peça uma ideia para aproveitar vinte minutos livres e depois tire uma dúvida sobre ela.",
+        "Pergunte por uma maneira simples de começar o dia e faça uma segunda pergunta relacionada."
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Hesitação e mudança de ideia",
+      "capacity": "ASR incremental e endpoint sem cortar o usuário",
+      "variants": [
+        "Diga: ‘Quero organizar isso para sábado…’ pause naturalmente, continue ‘depois do almoço…’ e então corrija: ‘não, melhor domingo de manhã’.",
+        "Comece pedindo algo para terça, hesite por um instante, acrescente que seria à tarde e mude para quinta cedo.",
+        "Comece escolhendo a opção azul, faça uma pausa como se pensasse, acrescente um detalhe e mude para a verde.",
+        "Diga que quer marcar às nove, hesite, explique brevemente o motivo e corrija para onze e meia.",
+        "Comece pedindo três unidades, pause, continue a frase e mude de ideia para cinco unidades.",
+        "Comece escolhendo a rota mais curta, hesite, acrescente uma condição e troque para a rota mais tranquila."
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Sinal curto de escuta",
+      "capacity": "manter o piso diante de backchannel",
+      "variants": [
+        "Peça uma explicação em três pontos. Enquanto o assistente fala, diga apenas ‘aham’ uma vez como sinal de escuta e deixe-o continuar.",
+        "Peça que explique um assunto cotidiano em algumas frases. Durante a resposta, diga só ‘sim’ em tom de acompanhamento, sem tomar o turno.",
+        "Peça uma explicação curta com começo, meio e fim. No meio, diga apenas ‘entendi’ como sinal de escuta e aguarde.",
+        "Peça duas ou três dicas comentadas. Durante a fala, use um único ‘certo’ de acompanhamento e não acrescente uma pergunta.",
+        "Peça uma resposta um pouco detalhada. No meio dela, diga somente ‘uhum’ para mostrar que acompanha e deixe o assistente terminar.",
+        "Peça que compare duas opções em algumas frases. Durante a comparação, diga apenas ‘tá’ como backchannel e não tente assumir o piso."
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Interrupção com correção",
+      "capacity": "parar, incorporar correção e retomar",
+      "variants": [
+        "Peça uma sugestão para sexta. Quando a resposta já estiver sendo falada, interrompa: ‘espera, eu quis dizer domingo’.",
+        "Peça orientação para uma viagem de manhã. Durante a resposta, interrompa e corrija para o período da noite.",
+        "Peça uma recomendação pensando em duas pessoas. Quando o assistente falar, interrompa e corrija para cinco pessoas.",
+        "Peça uma ideia que custe até cem reais. Durante a resposta, interrompa e corrija o limite para cinquenta reais.",
+        "Peça uma opção rápida. Depois que a resposta começar, interrompa e diga que prefere uma opção mais tranquila.",
+        "Peça uma sugestão para ambiente aberto. Durante a resposta, interrompa e corrija para um lugar coberto."
+      ]
+    },
+    {
+      "id": "S5",
+      "title": "Dados críticos sob ruído branco",
+      "capacity": "captura, ASR e confirmação segura",
+      "variants": [
+        "Com o ruído branco já iniciado pelo facilitador, diga: ‘O nome é Laura Mendes, a data é 18 de setembro e o valor é 247 reais e 50 centavos. Repita os três dados antes de confirmar’.",
+        "Com o ruído branco ativo, informe: ‘O nome é Bruno Tavares, a data é 7 de outubro e o valor é 318 reais. Repita tudo antes de confirmar’.",
+        "Com o ruído branco ativo, informe: ‘O nome é Camila Nogueira, a data é 22 de novembro e o valor é 164 reais e 90 centavos. Confirme os três dados’.",
+        "Com o ruído branco ativo, informe: ‘O nome é Diego Martins, a data é 14 de agosto e o valor é 426 reais. Repita antes de confirmar’.",
+        "Com o ruído branco ativo, informe: ‘O nome é Elisa Barros, a data é 3 de dezembro e o valor é 289 reais e 30 centavos. Confirme cada dado’.",
+        "Com o ruído branco ativo, informe: ‘O nome é Fábio Rocha, a data é 26 de julho e o valor é 375 reais. Repita os três dados antes de confirmar’."
+      ]
+    },
+    {
+      "id": "S6",
+      "title": "Tarefa, mudança e cancelamento",
+      "capacity": "delegação assíncrona, obsolescência e resultado",
+      "variants": [
+        "Peça: ‘Pesquise e compare duas formas de ir de São Paulo a Campinas’. Logo após a confirmação curta, altere para Santos; se a tarefa antiga continuar, cancele-a explicitamente.",
+        "Peça que pesquise e compare duas opções de cafeteira. Depois da confirmação curta, mude a busca para chaleiras e cancele a pesquisa anterior.",
+        "Peça que investigue duas opções de passeio em Curitiba. Depois da confirmação, troque a cidade para Recife e cancele a primeira tarefa.",
+        "Peça que compare dois planos fictícios de internet. Depois da confirmação curta, diga que não precisa mais e cancele a tarefa.",
+        "Peça que pesquise uma comparação entre ônibus e trem para uma viagem. Depois da confirmação, altere o destino e invalide a busca anterior.",
+        "Peça que analise duas opções fictícias de curso. Depois da confirmação curta, troque o tema do curso e cancele a análise anterior."
+      ]
+    }
+  ],
+  "spontaneous": {
+    "id": "F0",
+    "title": "Conversa espontânea",
+    "durationMs": 120000,
+    "instruction": "Converse livremente sobre qualquer assunto por dois minutos. Faça perguntas, mude de direção ou interrompa quando isso surgir naturalmente; não tente provocar um erro específico."
+  },
+  "noise": {
+    "kind": "seeded-white-noise",
+    "speechPresent": false,
+    "seed": 260026,
+    "sampleRate": 16000,
+    "channels": 1,
+    "durationMs": 45000,
+    "targetRms": 0.05,
+    "sha256": "c487403496d1af901ed8cad12d7c8cca54e219946c6588e9e8b9d863e45c72b1",
+    "artifactPath": "eval/generated/exp-0026/stimuli/s5-white-noise-v0.1.wav"
+  }
+}

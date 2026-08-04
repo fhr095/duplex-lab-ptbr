@@ -41,6 +41,8 @@ const pageParameters = new URLSearchParams(window.location.search);
 const automationEnabled =
   pageParameters.get("automation") === "1" &&
   ["localhost", "127.0.0.1"].includes(window.location.hostname);
+const evaluationEnabled = pageParameters.get("evaluation") === "0026";
+let evaluationDryRun = false;
 const contextRelevanceExperimentEnabled =
   automationEnabled && pageParameters.get("experiment") === "0019";
 const localAudioReflexMode =
@@ -413,7 +415,7 @@ function log(type, detail = "") {
     detail
   });
   session.trace = session.trace.slice(
-    automationEnabled ? -5_000 : -500
+    automationEnabled || evaluationEnabled ? -5_000 : -500
   );
 
   const item = document.createElement("li");
@@ -3572,6 +3574,11 @@ async function loadHealth() {
   try {
     const response = await fetch("/api/health");
     const health = await response.json();
+    evaluationDryRun =
+      evaluationEnabled &&
+      health.evaluation?.exp0026?.role === "dry-run" &&
+      health.evaluation?.exp0026?.analysisEligibility ===
+        "excluded-dry-run";
     const runtimeFingerprint =
       health.process?.runtimeFingerprint?.sha256;
     if (/^[a-f0-9]{64}$/iu.test(runtimeFingerprint ?? "")) {
@@ -3705,6 +3712,53 @@ if (automationEnabled) {
     })
   });
   log("automation.ready", "localhost");
+}
+
+if (evaluationEnabled) {
+  Object.defineProperty(window, "__duplexEvaluation", {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: Object.freeze({
+      async start() {
+        await startSession();
+        return automationSnapshot();
+      },
+      async stop() {
+        await stopSession();
+        return automationSnapshot();
+      },
+      mediaStream() {
+        return session.mediaStream;
+      },
+      snapshot: automationSnapshot,
+      isolationSnapshot() {
+        return {
+          historyLength: session.history.length,
+          interactionSessionId: session.interactionSessionId,
+          localStorageKeys: Object.keys(localStorage),
+          sessionStorageKeys: Object.keys(sessionStorage),
+          traceLength: session.trace.length
+        };
+      },
+      injectDryRunSpeech(text, options = {}) {
+        if (!evaluationDryRun) {
+          throw new Error("injeção é exclusiva do dry-run excluído");
+        }
+        return injectAutomationSpeech(text, options);
+      },
+      activateDryRun() {
+        if (!evaluationDryRun) {
+          throw new Error("ativação é exclusiva do dry-run excluído");
+        }
+        session.active = true;
+        setListeningStatus();
+        log("evaluation.dry-run.activated", "sem captura acústica");
+        return automationSnapshot();
+      }
+    })
+  });
+  log("evaluation.ready", "EXP-0026");
 }
 
 healthPromise = loadHealth();

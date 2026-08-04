@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "exp-0026-instrument-dry-run-v1",
+  "experimentId": "EXP-0026",
+  "status": "PASS_EXCLUDED_DRY_RUN",
+  "analysisEligibility": "excluded-dry-run",
+  "fitEligibility": "evaluation-only",
+  "sessionId": "exp0026-dec3c534-8bab-4e42-b43c-869db9e93d2f",
+  "startedAt": "2026-08-03T23:56:19.360Z",
+  "completedAt": "2026-08-03T23:58:38.187Z",
+  "runtimeAtPreflight": {
+    "processRunId": "5601c4c3-9990-4637-8436-d03e96c79283",
+    "runtimeFingerprint": {
+      "algorithm": "sha256-source-tree-v1",
+      "sha256": "c71632328b01c5a873d138d0c622632d265ee29a3c2c032a20dd2d226de64043",
+      "fileCount": 135,
+      "roots": [
+        "src",
+        "web",
+        "eval/experiments/exp-0026-experience-pack.pt-BR.json",
+        "package.json",
+        "package-lock.json",
+        "requirements-asr.txt"
+      ]
+    },
+    "provider": "openai",
+    "interactionModel": "gpt-5.6-luna",
+    "taskModel": "gpt-5.6-luna",
+    "requests": 0,
+    "requestLimit": 25,
+    "activeKernelSessions": 0,
+    "asrState": "ready",
+    "ttsState": "ready"
+  },
+  "executionEvidence": {
+    "blocksCompleted": 7,
+    "traceArtifacts": 7,
+    "traceHashesVerified": 7,
+    "committedTurns": 11,
+    "successfulProviderStarts": 10,
+    "providerRequestUpperBound": 11,
+    "hardProcessLimit": 25,
+    "top2Sealed": true,
+    "audioPersisted": false,
+    "commercialEvaluated": false,
+    "f0AcceptedByServerGuard": true,
+    "adjacentF0WindowMs": 120144
+  },
+  "gates": {
+    "lifecycleIsolationSmokePassed": true,
+    "runtimeFreshAtPreflight": true,
+    "exactEconomicBrain": true,
+    "healthReady": true,
+    "sevenBlocksCompleted": true,
+    "sevenTraceArtifactsVerified": true,
+    "f0TwoMinuteGuardAccepted": true,
+    "audioDeclineHonored": true,
+    "top2SealedOnce": true,
+    "callBudgetStructurallyRespected": true,
+    "analysisExcluded": true
+  },
+  "operationalPostMortem": {
+    "scientificProtocolCompletedBeforeFailure": true,
+    "peripheralFailure": "Page.captureScreenshot excedeu o timeout depois de sessão, top-2, health e asserts finais concluídos.",
+    "disposition": "Screenshot removida do caminho crítico; sessão preservada; nenhum segundo dry-run e nenhuma chamada adicional.",
+    "prospectiveCorrection": "Novas anotações persistem startedAt, completedAt e elapsedMs; a API passou a exigir token efêmero por processo; e o upload de áudio consentido passou a anteceder a liberação do MediaStream, com retry idempotente pelo mesmo hash. O dry-run original foi aceito pelo guard de 120000 ms, mas antecede essas correções operacionais.",
+    "constructOrDominanceGateChanged": false
+  },
+  "limitations": [
+    "Dry-run operacional automatizado; não contém julgamento humano.",
+    "Fala foi injetada no browser sob papel dry-run; não sustenta alegação sobre captura acústica ou ASR.",
+    "O upper bound de chamadas é o número de turnos comprometidos; o adaptador executa no máximo uma requisição por turno e possui hard cap 25.",
+    "S5 validou contrato, estímulo e persistência; a reprodução física no segundo dispositivo pertence às sessões humanas.",
+    "O módulo Live comercial permaneceu indisponível e não foi avaliado."
+  ],
+  "pass": true
+}

@@ -203,7 +203,7 @@ test("índice canônico real referencia evidências existentes", async () => {
 
   const exp0026 = index.entries.at(-1);
   assert.equal(exp0026.id, "EXP-0026");
-  assert.equal(exp0026.status, "planned");
+  assert.equal(exp0026.status, "active");
   assert.equal(exp0026.canonicalReport, null);
   assert.equal(exp0026.evidenceCommit, null);
   assert.equal(exp0026.authority, "none");
@@ -214,6 +214,11 @@ test("índice canônico real referencia evidências existentes", async () => {
   );
   assert.deepEqual(exp0026.cleanCloneChecks, [
     "node --test tests/exp-0026-preregistration.test.mjs",
+    "node --test tests/exp-0026-instrument.test.mjs",
+    "node --test tests/exp-0026-session-store.test.mjs",
+    "node --test tests/exp-0026-blind-analysis.test.mjs",
+    "node --test tests/exp-0026-freeze.test.mjs",
+    "node --test tests/exp-0026-qualification-reports.test.mjs",
     "node --test tests/experiment-index.test.mjs",
     "node --test tests/documentation-consistency.test.mjs"
   ]);

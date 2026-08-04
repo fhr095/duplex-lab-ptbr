@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "exp-0026-private-roster-v1",
+  "exampleOnly": true,
+  "fitEligibility": "evaluation-only",
+  "instructions": "Copie para fora do Git, remova exampleOnly/instructions e preencha apenas por autorrelato. Não registre nome, contato ou documento.",
+  "participants": [
+    { "alias": "P01", "ageBand": "18-34", "accentExposureGroup": "GRUPO_A", "voiceUse": "weekly", "socialCluster": "CIRCULO_1" },
+    { "alias": "P02", "ageBand": "18-34", "accentExposureGroup": "GRUPO_A", "voiceUse": "weekly", "socialCluster": "CIRCULO_1" },
+    { "alias": "P03", "ageBand": "35+", "accentExposureGroup": "GRUPO_B", "voiceUse": "rare-never", "socialCluster": "CIRCULO_2" },
+    { "alias": "P04", "ageBand": "35+", "accentExposureGroup": "GRUPO_B", "voiceUse": "rare-never", "socialCluster": "CIRCULO_2" },
+    { "alias": "P05", "ageBand": "18-34", "accentExposureGroup": "GRUPO_C", "voiceUse": "monthly", "socialCluster": "CIRCULO_3" },
+    { "alias": "P06", "ageBand": "35+", "accentExposureGroup": "GRUPO_C", "voiceUse": "monthly", "socialCluster": "CIRCULO_3" }
+  ]
+}

@@ -17,6 +17,8 @@ import {
 } from "../audio/silero-vad-shadow.mjs";
 import { createCpuStreamingAsr } from "../asr/index.mjs";
 import { createSourceFingerprint } from "../eval/source-fingerprint.mjs";
+import { createExp0026SessionStore } from
+  "../eval/exp-0026-session-store.mjs";
 import {
   closeWindowsSpeechSynthesizer,
   prewarmWindowsSpeech,
@@ -36,7 +38,14 @@ const WEB_ROOT = resolve(PROJECT_ROOT, "web");
 const processRunId = randomUUID();
 const processStartedAt = new Date().toISOString();
 const runtimeFingerprint = await createSourceFingerprint(PROJECT_ROOT, {
-  roots: ["src", "web", "package.json", "package-lock.json", "requirements-asr.txt"]
+  roots: [
+    "src",
+    "web",
+    "eval/experiments/exp-0026-experience-pack.pt-BR.json",
+    "package.json",
+    "package-lock.json",
+    "requirements-asr.txt"
+  ]
 });
 const localBrain = createLocalBrain();
 const turnCoordinator = createTurnCoordinator({ planner: localBrain });
@@ -272,8 +281,48 @@ if (
 }
 await ttsWarmup;
 
+const exp0026Enabled = process.env.EXP0026_INSTRUMENT === "1";
+const exp0026Store = exp0026Enabled
+  ? await createExp0026SessionStore({
+      projectRoot: PROJECT_ROOT,
+      packPath: "eval/experiments/exp-0026-experience-pack.pt-BR.json",
+      dataRoot:
+        process.env.EXP0026_DATA_ROOT ??
+        "eval/generated/exp-0026/private",
+      role: process.env.EXP0026_SESSION_ROLE,
+      participantAlias: process.env.EXP0026_PARTICIPANT_ALIAS,
+      orderIndex: Number.parseInt(
+        process.env.EXP0026_ORDER_INDEX ?? "",
+        10
+      ),
+      commercialAvailable:
+        process.env.EXP0026_COMMERCIAL_AVAILABLE === "1",
+      processRunId,
+      accessToken: process.env.EXP0026_ACCESS_TOKEN,
+      runtimeSnapshot() {
+        const usage = brain.getUsage();
+        return {
+          processRunId,
+          runtimeFingerprint,
+          brain: configuredBrain.provider,
+          interactionModel: brain.interactionModel,
+          taskModel: brain.taskModel,
+          requests: usage.requests,
+          requestLimit: brain.requestLimit,
+          activeKernelSessions: turnCoordinator.sessionCount,
+          asr: asrHealth,
+          tts: ttsHealth
+        };
+      }
+    })
+  : null;
+
 const STATIC_ROUTES = new Map([
   ["/", "index.html"],
+  ["/exp-0026", "exp-0026/index.html"],
+  ["/exp-0026/", "exp-0026/index.html"],
+  ["/exp-0026/app.mjs", "exp-0026/app.mjs"],
+  ["/exp-0026/styles.css", "exp-0026/styles.css"],
   ["/acoustic-reflex-checkpoint.json", "acoustic-reflex-checkpoint.json"],
   ["/acoustic-reflex-shadow.mjs", "acoustic-reflex-shadow.mjs"],
   [
@@ -309,7 +358,8 @@ const CONTENT_TYPES = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
-  ".mjs": "text/javascript; charset=utf-8"
+  ".mjs": "text/javascript; charset=utf-8",
+  ".webm": "audio/webm"
 };
 
 function findPrivateIpv4() {
@@ -484,6 +534,15 @@ const server = createServer(async (request, response) => {
   try {
     const url = new URL(request.url, `http://${request.headers.host ?? host}`);
 
+    if (url.pathname.startsWith("/api/exp-0026/")) {
+      if (!exp0026Store) {
+        sendJson(response, 404, { error: "exp0026_instrument_disabled" });
+        return;
+      }
+      await exp0026Store.handle(request, response, url);
+      return;
+    }
+
     if (request.method === "GET" && STATIC_ROUTES.has(url.pathname)) {
       const filename = STATIC_ROUTES.get(url.pathname);
       const body = await readFile(resolve(WEB_ROOT, filename));
@@ -529,7 +588,18 @@ const server = createServer(async (request, response) => {
           prefinalPolicy,
           vad: vadConfig
         },
-        tts: ttsHealth
+        tts: ttsHealth,
+        evaluation: exp0026Store === null
+          ? { exp0026: { enabled: false } }
+          : {
+              exp0026: {
+                enabled: true,
+                sessionId: exp0026Store.session.sessionId,
+                role: exp0026Store.session.role,
+                analysisEligibility:
+                  exp0026Store.session.analysisEligibility
+              }
+            }
       });
       return;
     }

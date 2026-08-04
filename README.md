@@ -451,9 +451,11 @@ pt-BR nem alegação contra o modelo. A frente foi cortada sem sexta alocação,
 holdout, troca de provider/modelo ou autoridade; a consulta final confirmou
 zero Pods ativos e o custo cumulativo conservador ficou abaixo de US$ 1,39.
 
-O caminho crítico atual é o EXP-0026, ainda apenas pré-registrado: um dry-run
-interno será excluído e seis participantes externos usarão a mesma condição
-congelada. O diagnóstico só prioriza uma família quando ela aparecer no top-2
+O caminho crítico atual é o EXP-0026. O instrumento e o único dry-run interno
+excluído já passaram; seis lifecycles provaram isolamento real e a ordem cega
+de análise foi exercitada. A coleta externa permanece em zero e bloqueada até
+o freeze de roster e estação. Depois disso, seis participantes externos usarão
+a mesma condição congelada. O diagnóstico só prioriza uma família quando ela aparecer no top-2
 de pelo menos 4/6 pessoas, tiver severidade material e uma falha técnica
 reproduzível. A referência Live comercial, se viável, serve apenas para
 calibrar distância percebida; nenhum output vira treino. DuplexCascade,

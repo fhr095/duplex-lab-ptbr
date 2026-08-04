@@ -150,9 +150,10 @@ confirmou zero Pods, o custo cumulativo conservador ficou abaixo de US$ 1,39 e
 alocação, troca de provider/modelo ou holdout. ASR/TTS não entram na política
 e backbones end-to-end continuam fora.
 
-O EXP-0026 é o caminho crítico planejado depois desse corte. Ele usa humanos
-como sensor de prioridade, não como depurador de componentes: um dry-run
-interno é excluído e seis sessões externas compartilham a mesma condição
+O EXP-0026 é o caminho crítico ativo depois desse corte. O instrumento e o
+único dry-run interno excluído passaram; seis lifecycles reais e a abertura
+cega também passaram. A coleta externa segue em zero até o freeze de roster e
+estação. Depois dele, seis sessões externas compartilharão a mesma condição
 congelada. Uma família só domina com pelo menos 4/6 top-2, severidade material
 e falha técnica reproduzida. Sem isso, o ciclo registra
 `NO_DOMINANT_BOTTLENECK` em vez de abrir três frentes. A pergunta DuplexCascade

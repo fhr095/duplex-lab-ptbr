@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "exp-0026-lifecycle-smoke-v1",
+  "experimentId": "EXP-0026",
+  "analysisEligibility": "excluded-technical-smoke",
+  "fitEligibility": "evaluation-only",
+  "startedAt": "2026-08-04T00:18:06.941Z",
+  "completedAt": "2026-08-04T00:18:17.929Z",
+  "browser": {
+    "product": "Chrome/150.0.7871.187",
+    "protocolVersion": "1.3",
+    "isolatedContexts": true
+  },
+  "gates": {
+    "sixDistinctProcesses": true,
+    "sixDistinctBrowserContexts": true,
+    "usageStartsAtZeroOf25": true,
+    "historyStartsEmpty": true,
+    "storageStartsEmpty": true,
+    "kernelStartsEmpty": true,
+    "eachPriorCycleWasContaminated": true,
+    "cleanShutdown": true
+  },
+  "observations": [
+    {
+      "cycle": 1,
+      "processRunId": "30cccbff-2548-4b6b-ab57-6b4dd745a93a",
+      "browserContextId": "C619271D8F962D98AA37FBC92B6508DD",
+      "sessionId": "exp0026-b0987144-cc0c-460a-a16e-d999a47b2757",
+      "usageAtStart": {
+        "requests": 0,
+        "requestLimit": 25
+      },
+      "activeKernelSessionsAtStart": 0,
+      "historyLengthAtStart": 0,
+      "parentStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "voiceStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "contaminatedBeforeShutdown": {
+        "historyLength": 2,
+        "requests": 1,
+        "activeKernelSessions": 1
+      },
+      "processStoppedCleanly": true
+    },
+    {
+      "cycle": 2,
+      "processRunId": "e62d413e-7384-419b-9f8a-fcb1a5579bad",
+      "browserContextId": "361881F05CBCD47C426F4B82E628B553",
+      "sessionId": "exp0026-7ef04e06-5c15-4449-94f2-106263d21289",
+      "usageAtStart": {
+        "requests": 0,
+        "requestLimit": 25
+      },
+      "activeKernelSessionsAtStart": 0,
+      "historyLengthAtStart": 0,
+      "parentStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "voiceStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "contaminatedBeforeShutdown": {
+        "historyLength": 2,
+        "requests": 1,
+        "activeKernelSessions": 1
+      },
+      "processStoppedCleanly": true
+    },
+    {
+      "cycle": 3,
+      "processRunId": "9204f03f-1960-47b1-8852-5a96300bd75d",
+      "browserContextId": "053C83A033F153958CFE742DF062565F",
+      "sessionId": "exp0026-cdfe7ad3-fee3-4eca-8553-5d164124dd91",
+      "usageAtStart": {
+        "requests": 0,
+        "requestLimit": 25
+      },
+      "activeKernelSessionsAtStart": 0,
+      "historyLengthAtStart": 0,
+      "parentStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "voiceStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "contaminatedBeforeShutdown": {
+        "historyLength": 2,
+        "requests": 1,
+        "activeKernelSessions": 1
+      },
+      "processStoppedCleanly": true
+    },
+    {
+      "cycle": 4,
+      "processRunId": "14a754b6-cc2c-4293-96ea-b4a5c07dd2eb",
+      "browserContextId": "67DFDC87E235FB3CA44E95ED26E5CDAD",
+      "sessionId": "exp0026-10e70890-b693-4251-abaf-a38764692114",
+      "usageAtStart": {
+        "requests": 0,
+        "requestLimit": 25
+      },
+      "activeKernelSessionsAtStart": 0,
+      "historyLengthAtStart": 0,
+      "parentStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "voiceStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "contaminatedBeforeShutdown": {
+        "historyLength": 2,
+        "requests": 1,
+        "activeKernelSessions": 1
+      },
+      "processStoppedCleanly": true
+    },
+    {
+      "cycle": 5,
+      "processRunId": "500e5a1a-6ab6-4866-95e6-83acf73aced2",
+      "browserContextId": "6529AE4E6D906B0BD7B9A2505FE69B96",
+      "sessionId": "exp0026-831bed16-0d82-4641-ae1a-b99189c837b2",
+      "usageAtStart": {
+        "requests": 0,
+        "requestLimit": 25
+      },
+      "activeKernelSessionsAtStart": 0,
+      "historyLengthAtStart": 0,
+      "parentStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "voiceStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "contaminatedBeforeShutdown": {
+        "historyLength": 2,
+        "requests": 1,
+        "activeKernelSessions": 1
+      },
+      "processStoppedCleanly": true
+    },
+    {
+      "cycle": 6,
+      "processRunId": "44ca325c-1394-4606-8e65-7ab5dc6bf664",
+      "browserContextId": "EAA3616A24216349DC85F52B9F9EFCF2",
+      "sessionId": "exp0026-3868f15f-c6b5-4eb2-b2d4-4b1c6557f7eb",
+      "usageAtStart": {
+        "requests": 0,
+        "requestLimit": 25
+      },
+      "activeKernelSessionsAtStart": 0,
+      "historyLengthAtStart": 0,
+      "parentStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "voiceStorageKeysAtStart": {
+        "localStorageKeys": [],
+        "sessionStorageKeys": []
+      },
+      "contaminatedBeforeShutdown": {
+        "historyLength": 2,
+        "requests": 1,
+        "activeKernelSessions": 1
+      },
+      "processStoppedCleanly": true
+    }
+  ],
+  "pass": true
+}

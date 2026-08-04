@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "exp-0026-blind-order-smoke-v1",
+  "experimentId": "EXP-0026",
+  "analysisEligibility": "excluded-technical-smoke",
+  "fitEligibility": "evaluation-only",
+  "completedAt": "2026-08-04T00:03:48.951Z",
+  "bundleSha256": "sha256:d4f533746259b2c75b0688b0d3a97908dfca344940c8a1d16a6ca94b59b8ca36",
+  "codingSha256": "sha256:1ebe457699858afbe5710343c2744e4e2604a24874ab71ce5f7f1bcf37cf50a5",
+  "technicalSealSha256": "sha256:f507574982eb8b52e04f71aefeb3f3f2c5853e31178dad2bf78b59ff5a7e6337",
+  "joinSha256": "sha256:8ebd20d9cfb1c61928a2a2bedca3001a9ad937758292d5e2f1721e8433f55d34",
+  "gates": {
+    "humanFieldsAbsentFromTechnicalBundle": true,
+    "openBlockedBeforeTechnicalSeal": true,
+    "technicalCodingCoveredEveryBlock": true,
+    "hashesVerifiedBeforeJoin": true,
+    "humanDataOpenedOnlyAfterSeal": true
+  },
+  "pass": true
+}
