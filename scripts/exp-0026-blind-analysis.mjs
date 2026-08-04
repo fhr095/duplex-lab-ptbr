@@ -12,10 +12,14 @@ import { dirname, resolve } from "node:path";
 
 import {
   assertExp0026TechnicalBundleBlind,
+  assertExp0026FreshCoder,
   createExp0026TechnicalBundle,
   joinExp0026HumanAfterTechnicalSeal,
   sealExp0026TechnicalCoding
 } from "../src/eval/exp-0026-blind-analysis.mjs";
+import {
+  analyzeExp0026HumanTechnicalJoin
+} from "../src/eval/exp-0026-analysis.mjs";
 
 const projectRoot = resolve(import.meta.dirname, "..");
 const command = process.argv[2];
@@ -72,6 +76,18 @@ async function loadSessions(sessionsRoot, role, expectedCount) {
   return sessions;
 }
 
+async function loadAnalysisInvalidations(dataRoot) {
+  const root = resolve(dataRoot, "analysis-invalidations");
+  const entries = await readdir(root, { withFileTypes: true })
+    .catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+  const values = [];
+  for (const entry of entries) {
+    if (!entry.isFile() || !entry.name.endsWith(".json")) continue;
+    values.push(JSON.parse(await readFile(resolve(root, entry.name), "utf8")));
+  }
+  return values;
+}
+
 function paths(analysisRoot) {
   return {
     state: resolve(analysisRoot, "analysis-state.private.json"),
@@ -79,7 +95,8 @@ function paths(analysisRoot) {
     mapping: resolve(analysisRoot, "human-sealed", "mapping.private.json"),
     coding: resolve(analysisRoot, "technical-coding.sealed.json"),
     seal: resolve(analysisRoot, "technical-coding-seal.json"),
-    join: resolve(analysisRoot, "human-sealed", "human-technical-join.private.json")
+    join: resolve(analysisRoot, "human-sealed", "human-technical-join.private.json"),
+    analysis: resolve(analysisRoot, "human-sealed", "deterministic-analysis.private.json")
   };
 }
 
@@ -92,6 +109,10 @@ async function prepare({ sessionsRoot, analysisRoot, role, expectedCount }) {
     }
   );
   const inputs = await loadSessions(sessionsRoot, role, expectedCount);
+  const invalidations = await loadAnalysisInvalidations(dirname(sessionsRoot));
+  const forbiddenCoderIds = [...new Set(invalidations
+    .filter((item) => item.freshCoderRequired === true && item.invalidatedCoderId)
+    .map((item) => item.invalidatedCoderId))].sort();
   const created = createExp0026TechnicalBundle(inputs, {
     salt: randomBytes(32).toString("hex"),
     analysisMode: role === "external" ? "external-six" : "excluded-dry-run",
@@ -107,7 +128,10 @@ async function prepare({ sessionsRoot, analysisRoot, role, expectedCount }) {
     technicalSealSha256: null,
     humanDataOpenedAt: null,
     role,
-    expectedCount
+    expectedCount,
+    invalidationCount: invalidations.length,
+    forbiddenCoderIds,
+    freshCoderRequired: forbiddenCoderIds.length > 0
   });
   return { file, inputs, bundle: created.bundle };
 }
@@ -121,6 +145,7 @@ async function seal({ analysisRoot, codingPath }) {
   ]);
   assert.equal(state.phase, "TECHNICAL_BUNDLE_SEALED");
   assert.equal(state.humanDataOpenedAt, null);
+  assertExp0026FreshCoder(coding.coderId, state.forbiddenCoderIds ?? []);
   const sealed = sealExp0026TechnicalCoding(bundle, coding);
   await atomicJson(file.coding, sealed.coding);
   await atomicJson(file.seal, sealed.seal);
@@ -215,7 +240,12 @@ async function smoke() {
       status: block.evidenceStatus === "AVAILABLE_CONSENTED"
         ? "NO_OBSERVED_VIOLATION"
         : "INSUFFICIENT_EVIDENCE",
-      primaryStage: null,
+      primaryStage: block.evidenceStatus === "AVAILABLE_CONSENTED"
+        ? null
+        : "UNATTRIBUTED",
+      signatureId: block.evidenceStatus === "AVAILABLE_CONSENTED"
+        ? "NONE"
+        : "UNATTRIBUTED_NO_SUFFICIENT_EVIDENCE",
       signature: "",
       confidence: 3,
       reproduction: block.evidenceStatus === "AVAILABLE_CONSENTED"
@@ -226,6 +256,8 @@ async function smoke() {
   await atomicJson(codingPath, {
     schemaVersion: "exp-0026-technical-coding-v1",
     bundleSha256: prepared.bundle.bundleSha256,
+    signatureVocabularySha256:
+      prepared.bundle.signatureVocabularySha256,
     coderId: "excluded-smoke-coder",
     records
   });
@@ -302,7 +334,28 @@ if (command === "smoke") {
       joinPath: result.file.join,
       joinSha256: result.joined.joinSha256
     }, null, 2)}\n`);
+  } else if (command === "analyze") {
+    const file = paths(analysisRoot);
+    const state = JSON.parse(await readFile(file.state, "utf8"));
+    if (state.phase !== "HUMAN_OPENED") {
+      throw new Error("análise determinística exige abertura humana selada");
+    }
+    const joined = JSON.parse(await readFile(file.join, "utf8"));
+    const analysis = analyzeExp0026HumanTechnicalJoin(joined);
+    await atomicJson(file.analysis, analysis);
+    await atomicJson(file.state, {
+      ...state,
+      phase: "ANALYSIS_COMPLETE",
+      analysisSha256: analysis.analysisSha256,
+      decision: analysis.decision
+    });
+    process.stdout.write(`${JSON.stringify({
+      phase: "ANALYSIS_COMPLETE",
+      analysisPath: file.analysis,
+      analysisSha256: analysis.analysisSha256,
+      decision: analysis.decision
+    }, null, 2)}\n`);
   } else {
-    throw new Error("uso: exp-0026-blind-analysis.mjs prepare|seal|open|smoke");
+    throw new Error("uso: exp-0026-blind-analysis.mjs prepare|seal|open|analyze|smoke");
   }
 }

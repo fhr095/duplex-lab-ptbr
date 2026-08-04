@@ -7,8 +7,9 @@ invalidações instrumentais dos EXP-0020/0021/0022, passe instrumental do
 EXP-0023, invalidação instrumental do EXP-0024, corte terminal do EXP-0025 e
 corte do EXP-0025-R local e externo: 4/4 sentinelas oficiais, mas
 `D=NOT_EVALUATED_ENVIRONMENT_BLOCKED` após tentativas terminais pré-inferência;
-EXP-0026 ativo: instrumento e dry-run excluído qualificados, coleta externa
-ainda bloqueada pelo freeze de roster/estação**
+EXP-0026 ativo: instrumento e dry-run excluído qualificados; coleta externa
+ainda bloqueada pela emenda terminal de prontidão e pelo freeze posterior de
+roster/estação**
 
 O resultado e seus limites estão resumidos no
 [closeout do EXP-0019](experiments/EXP-0019-closeout.md); o plano original
@@ -54,8 +55,10 @@ Não há retry, holdout ou autoridade. A questão técnica do DuplexCascade não
 refutada: está `UNRESOLVED — DEFERRED BY PRODUCT PRIORITY`. O
 [EXP-0026](experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md)
 é o único caminho crítico ativo. Seu instrumento, lifecycle e ordem cega já
-passaram; ele decidirá, depois do freeze pendente, com seis sessões congeladas,
-qual capacidade merece o próximo experimento ou se não há dominante.
+passaram. Antes do freeze, uma emenda terminal qualifica uma única vez a cadeia
+acústica real e fecha analyzer, retirada e reservas; só então seis sessões
+congeladas decidirão qual capacidade merece o próximo experimento ou se não há
+dominante.
 
 ## Tese
 
@@ -195,7 +198,10 @@ O estado atual ainda não prova:
 ### Caminho crítico atual: medir antes de escolher componente
 
 O EXP-0026 é um screen formativo, não uma validação final de produto. Seu único
-dry-run interno já foi executado e excluído; depois do freeze físico pendente,
+dry-run interno já foi executado e excluído. A
+[emenda terminal](experiments/EXP-0026-operational-readiness-amendment.md)
+fecha uma execução acústica de existência/observabilidade e três proteções
+operacionais sem alterar o constructo; depois do freeze físico pendente,
 seis participantes externos usarão o mesmo cérebro, prompt/parâmetros, TTS,
 dispositivo e ruído congelados. Cada
 cena preserva categoria, severidade e comentário opcional, enquanto o top-2 é
@@ -474,9 +480,10 @@ Esta referência preserva apenas a lógica macro:
     resultado em `D`; as tentativas terminais pré-inferência mantêm
     `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED` e cortam a frente sem nova alocação,
     provider/modelo alternativo, H, ASR/TTS na política ou autoridade;
-17. executar o EXP-0026 somente depois de um dry-run interno excluído e freeze
-    da sessão; escolher no máximo um próximo experimento por prevalência,
-    severidade e reprodução, sem forçar consenso;
+17. executar o EXP-0026 somente depois de um dry-run interno excluído, uma
+    emenda terminal de prontidão e o freeze da sessão; escolher no máximo um
+    próximo experimento por prevalência, severidade e reprodução, sem forçar
+    consenso;
 18. conceder autoridade somente se houver ganho percebido sem regressão dos
     guardrails;
 19. manter backbones nativos end-to-end no ledger até existir um teto local que

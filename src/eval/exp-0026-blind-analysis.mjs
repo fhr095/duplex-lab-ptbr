@@ -1,4 +1,32 @@
+import { readFileSync } from "node:fs";
+
 import { canonicalSha256 } from "./factory/canonical-hash.mjs";
+
+const SIGNATURE_VOCABULARY = JSON.parse(readFileSync(new URL(
+  "../../eval/experiments/exp-0026-technical-signatures-v0.1.json",
+  import.meta.url
+), "utf8"));
+const SIGNATURE_VOCABULARY_SHA256 =
+  `sha256:${canonicalSha256(SIGNATURE_VOCABULARY)}`;
+const SIGNATURES_BY_ID = new Map(
+  SIGNATURE_VOCABULARY.signatures.map((item) => [item.id, item])
+);
+
+export const EXP0026_SIGNATURE_VOCABULARY = Object.freeze(
+  structuredClone(SIGNATURE_VOCABULARY)
+);
+export const EXP0026_SIGNATURE_VOCABULARY_SHA256 =
+  SIGNATURE_VOCABULARY_SHA256;
+
+export function assertExp0026FreshCoder(coderId, forbiddenCoderIds = []) {
+  invariant(typeof coderId === "string" && coderId.trim().length > 0, "coderId opaco é obrigatório");
+  invariant(Array.isArray(forbiddenCoderIds), "forbiddenCoderIds inválido");
+  invariant(
+    !forbiddenCoderIds.includes(coderId),
+    "coderId foi exposto a dados humanos em análise invalidada; codificador novo é obrigatório"
+  );
+  return true;
+}
 
 export const EXP0026_TECHNICAL_STAGES = Object.freeze([
   "AUDIO",
@@ -107,6 +135,7 @@ export function createExp0026TechnicalBundle(inputs, options = {}) {
     experimentId: "EXP-0026",
     analysisMode: options.analysisMode ?? "external-six",
     fitEligibility: "evaluation-only",
+    signatureVocabularySha256: SIGNATURE_VOCABULARY_SHA256,
     humanFormAccess: "SEALED_NOT_EXPOSED",
     createdAt: options.createdAt ?? new Date().toISOString(),
     sessions: technicalSessions
@@ -136,8 +165,19 @@ export function sealExp0026TechnicalCoding(bundle, coding, options = {}) {
   assertExp0026TechnicalBundleBlind(bundle);
   invariant(coding?.schemaVersion === "exp-0026-technical-coding-v1", "schema de coding inválido");
   invariant(coding.bundleSha256 === bundle.bundleSha256, "coding aponta para outro bundle");
+  invariant(
+    bundle.signatureVocabularySha256 === SIGNATURE_VOCABULARY_SHA256 &&
+      coding.signatureVocabularySha256 === SIGNATURE_VOCABULARY_SHA256,
+    "coding não está ligado ao vocabulário congelado"
+  );
   invariant(Array.isArray(coding.records), "records técnicos ausentes");
   const expected = expectedCodingKeys(bundle).sort();
+  const blocksByKey = new Map(bundle.sessions.flatMap((session) =>
+    session.blocks.map((block) => [
+      `${session.technicalSessionId}:${block.blockId}`,
+      block
+    ])
+  ));
   const observed = [];
   for (const record of coding.records) {
     const key = `${record.technicalSessionId}:${record.blockId}`;
@@ -166,12 +206,48 @@ export function sealExp0026TechnicalCoding(bundle, coding, options = {}) {
       REPRODUCTION_STATUSES.has(record.reproduction),
       `${key} tem reprodução inválida`
     );
+    const frozenSignature = SIGNATURES_BY_ID.get(record.signatureId);
+    invariant(
+      record.signatureId === "NONE" || frozenSignature !== undefined,
+      `${key} usa signatureId fora do vocabulário congelado`
+    );
+    if (record.status === "NO_OBSERVED_VIOLATION") {
+      invariant(record.primaryStage === null, `${key} sem violação não aceita estágio`);
+      invariant(record.signatureId === "NONE", `${key} sem violação exige signatureId NONE`);
+      invariant(record.signature === "", `${key} sem violação exige descrição vazia`);
+      invariant(record.reproduction === "NOT_ATTEMPTED", `${key} sem violação não aceita replay`);
+    } else if (record.status === "INSUFFICIENT_EVIDENCE") {
+      invariant(record.primaryStage === "UNATTRIBUTED", `${key} insuficiente precisa ser UNATTRIBUTED`);
+      invariant(
+        record.signatureId === "UNATTRIBUTED_NO_SUFFICIENT_EVIDENCE",
+        `${key} insuficiente precisa da assinatura congelada UNATTRIBUTED`
+      );
+      invariant(record.reproduction === "NOT_REPLAYABLE", `${key} insuficiente não é replayable`);
+    } else {
+      invariant(
+        record.primaryStage !== "UNATTRIBUTED" &&
+          frozenSignature?.stage === record.primaryStage,
+        `${key} tem signatureId incompatível com estágio`
+      );
+      invariant(record.signatureId !== "NONE", `${key} incidente precisa de signatureId`);
+    }
+    if (record.reproduction === "REPRODUCED_2_OF_2") {
+      invariant(record.status === "INCIDENT", `${key} replay 2/2 exige incidente`);
+      invariant(frozenSignature?.rEligible !== false, `${key} assinatura não pode satisfazer R`);
+    }
+    if (blocksByKey.get(key)?.evidenceStatus === "NOT_AVAILABLE_NO_CONSENT") {
+      invariant(
+        record.status === "INSUFFICIENT_EVIDENCE",
+        `${key} sem evidência consentida precisa ser insuficiente`
+      );
+    }
   }
   invariant(new Set(observed).size === observed.length, "coding contém duplicatas");
   invariant(JSON.stringify(observed.sort()) === JSON.stringify(expected), "coding não cobre exatamente o bundle");
   const codingCore = {
     schemaVersion: coding.schemaVersion,
     bundleSha256: coding.bundleSha256,
+    signatureVocabularySha256: SIGNATURE_VOCABULARY_SHA256,
     coderId: String(coding.coderId ?? "").trim(),
     records: coding.records
   };
@@ -184,6 +260,7 @@ export function sealExp0026TechnicalCoding(bundle, coding, options = {}) {
     schemaVersion: "exp-0026-technical-coding-seal-v1",
     experimentId: "EXP-0026",
     bundleSha256: bundle.bundleSha256,
+    signatureVocabularySha256: SIGNATURE_VOCABULARY_SHA256,
     codingSha256: normalizedCoding.codingSha256,
     sealedAt: options.sealedAt ?? new Date().toISOString(),
     humanAggregateOpened: false
@@ -208,6 +285,7 @@ export function joinExp0026HumanAfterTechnicalSeal(
   const codingCore = {
     schemaVersion: coding.schemaVersion,
     bundleSha256: coding.bundleSha256,
+    signatureVocabularySha256: coding.signatureVocabularySha256,
     coderId: coding.coderId,
     records: coding.records
   };
@@ -216,11 +294,16 @@ export function joinExp0026HumanAfterTechnicalSeal(
     schemaVersion: seal.schemaVersion,
     experimentId: seal.experimentId,
     bundleSha256: seal.bundleSha256,
+    signatureVocabularySha256: seal.signatureVocabularySha256,
     codingSha256: seal.codingSha256,
     sealedAt: seal.sealedAt,
     humanAggregateOpened: false
   };
   invariant(sha(sealCore) === seal.sealSha256, "hash do selo divergiu");
+  invariant(
+    seal.signatureVocabularySha256 === SIGNATURE_VOCABULARY_SHA256,
+    "selo aponta para outro vocabulário"
+  );
   invariant(mapping.bundleSha256 === bundle.bundleSha256, "mapping divergiu");
   const sessionsById = new Map(sessions.map((session) => [session.sessionId, session]));
   const recordsByTechnical = new Map();
@@ -247,6 +330,7 @@ export function joinExp0026HumanAfterTechnicalSeal(
     experimentId: "EXP-0026",
     bundleSha256: bundle.bundleSha256,
     codingSha256: coding.codingSha256,
+    signatureVocabularySha256: SIGNATURE_VOCABULARY_SHA256,
     technicalSealSha256: seal.sealSha256,
     openedAt: options.openedAt ?? new Date().toISOString(),
     rows

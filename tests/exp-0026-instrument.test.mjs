@@ -40,6 +40,7 @@ function session(options = {}) {
     participantAlias: "DRY-001",
     orderIndex: 0,
     processRunId: "process-1",
+    withdrawalReceiptHash: "f".repeat(64),
     idFactory: () => "session-1",
     now: () => "2026-08-03T12:00:00.000Z",
     ...options

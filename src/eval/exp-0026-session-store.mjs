@@ -1,11 +1,5 @@
 import { createHash } from "node:crypto";
-import {
-  mkdir,
-  readFile,
-  rename,
-  rm,
-  writeFile
-} from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import {
@@ -19,6 +13,10 @@ import {
   startExp0026Block,
   withdrawExp0026Session
 } from "./exp-0026-instrument.mjs";
+import {
+  hashExp0026WithdrawalCode,
+  withdrawExp0026PersistedSession
+} from "./exp-0026-data-lifecycle.mjs";
 
 const JSON_LIMIT_BYTES = 8 * 1024 * 1024;
 const AUDIO_LIMIT_BYTES = 32 * 1024 * 1024;
@@ -94,6 +92,9 @@ export async function createExp0026SessionStore(options) {
   ) {
     throw new TypeError("accessToken privado do instrumento é obrigatório");
   }
+  const withdrawalReceiptHash = hashExp0026WithdrawalCode(
+    options.withdrawalCode
+  );
   const projectRoot = resolve(options.projectRoot);
   const packPath = resolve(projectRoot, options.packPath);
   const pack = JSON.parse(await readFile(packPath, "utf8"));
@@ -107,6 +108,8 @@ export async function createExp0026SessionStore(options) {
     participantAlias: options.participantAlias,
     orderIndex: options.orderIndex,
     processRunId: options.processRunId,
+    rosterSlotId: options.rosterSlotId,
+    withdrawalReceiptHash,
     commercialAvailable: options.commercialAvailable,
     idFactory: options.idFactory,
     now: options.now
@@ -124,12 +127,13 @@ export async function createExp0026SessionStore(options) {
 
   await persist();
   await atomicJson(receiptPath, {
-    schemaVersion: "exp-0026-session-receipt-v1",
+    schemaVersion: "exp-0026-session-receipt-v2",
     sessionId: session.sessionId,
     processRunId: session.processRunId,
     role: session.role,
     analysisEligibility: session.analysisEligibility,
     fitEligibility: "evaluation-only",
+    withdrawalReceiptHash,
     packPath: options.packPath,
     createdAt: session.createdAt
   });
@@ -137,6 +141,15 @@ export async function createExp0026SessionStore(options) {
   function accessAuthorized(request, url) {
     return request.headers["x-exp0026-access-token"] === options.accessToken ||
       url.searchParams.get("token") === options.accessToken;
+  }
+
+  function publicState() {
+    return {
+      ...publicExp0026Session(session, pack, runtimeSnapshot()),
+      // O recibo bruto só cruza a API protegida pelo token efêmero e nunca é
+      // persistido. O armazenamento contém apenas seu hash.
+      withdrawalReceiptCode: options.withdrawalCode
+    };
   }
 
   function mutationAuthorized(request) {
@@ -173,11 +186,7 @@ export async function createExp0026SessionStore(options) {
           sendJson(response, 403, { error: "instrument_access_required" });
           return true;
         }
-        sendJson(response, 200, publicExp0026Session(
-          session,
-          pack,
-          runtimeSnapshot()
-        ));
+        sendJson(response, 200, publicState());
         return true;
       }
       if (!accessAuthorized(request, url) || !mutationAuthorized(request)) {
@@ -249,11 +258,7 @@ export async function createExp0026SessionStore(options) {
             session.audio.bytes !== bytes.length ||
             session.audio.sha256 !== digest
           ) throw new TypeError("áudio divergente já foi persistido");
-          sendJson(response, 200, publicExp0026Session(
-            session,
-            pack,
-            runtimeSnapshot()
-          ));
+          sendJson(response, 200, publicState());
           return true;
         }
         const extension = request.headers["content-type"]?.includes("ogg")
@@ -270,34 +275,22 @@ export async function createExp0026SessionStore(options) {
         };
         await persist();
       } else if (request.method === "POST" && url.pathname === "/api/exp-0026/withdraw") {
-        withdrawExp0026Session(session, { now: options.now });
-        await rm(sessionRoot, { recursive: true, force: true });
-        const tombstoneRoot = resolve(dataRoot, "withdrawn-tombstones");
-        await mkdir(tombstoneRoot, { recursive: true, mode: 0o700 });
-        await atomicJson(resolve(tombstoneRoot, `${session.sessionId}.json`), {
-          schemaVersion: "exp-0026-withdrawal-tombstone-v1",
-          sessionId: session.sessionId,
-          participantHash: session.participantHash,
-          processRunId: session.processRunId,
-          fitEligibility: "none-withdrawn",
-          withdrawnAt: session.withdrawnAt
+        const withdrawnAt = (options.now ?? (() => new Date().toISOString()))();
+        await withdrawExp0026PersistedSession({
+          dataRoot,
+          code: options.withdrawalCode,
+          withdrawnAt,
+          projectRoot
         });
-        sendJson(response, 200, publicExp0026Session(
-          session,
-          pack,
-          runtimeSnapshot()
-        ));
+        withdrawExp0026Session(session, { now: () => withdrawnAt });
+        sendJson(response, 200, publicState());
         return true;
       } else {
         sendJson(response, 404, { error: "exp0026_route_not_found" });
         return true;
       }
 
-      sendJson(response, 200, publicExp0026Session(
-        session,
-        pack,
-        runtimeSnapshot()
-      ));
+      sendJson(response, 200, publicState());
       return true;
     } catch (error) {
       sendJson(response, 422, {

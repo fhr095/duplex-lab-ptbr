@@ -4,6 +4,9 @@ import { createServer } from "node:net";
 import { networkInterfaces } from "node:os";
 import { resolve } from "node:path";
 
+import { createExp0026WithdrawalCode } from
+  "../../src/eval/exp-0026-data-lifecycle.mjs";
+
 export function privateIpv4() {
   for (const addresses of Object.values(networkInterfaces())) {
     for (const address of addresses ?? []) {
@@ -47,6 +50,8 @@ export async function startExp0026Server(options = {}) {
   const projectRoot = resolve(options.projectRoot ?? import.meta.dirname, options.projectRoot ? "" : "../..");
   const port = options.port ?? await reservePort();
   const accessToken = options.accessToken ?? randomBytes(32).toString("hex");
+  const withdrawalCode = options.withdrawalCode ??
+    createExp0026WithdrawalCode();
   const fullRuntime = options.runtime !== "lifecycle";
   const environment = {
     ...process.env,
@@ -65,7 +70,9 @@ export async function startExp0026Server(options = {}) {
     EXP0026_SESSION_ROLE: options.role,
     EXP0026_PARTICIPANT_ALIAS: options.participantAlias,
     EXP0026_ORDER_INDEX: String(options.orderIndex),
+    EXP0026_ROSTER_SLOT_ID: options.rosterSlotId ?? "",
     EXP0026_ACCESS_TOKEN: accessToken,
+    EXP0026_WITHDRAWAL_CODE: withdrawalCode,
     EXP0026_DATA_ROOT:
       options.dataRoot ?? "eval/generated/exp-0026/private",
     EXP0026_COMMERCIAL_AVAILABLE:
@@ -118,6 +125,7 @@ export async function startExp0026Server(options = {}) {
     child,
     port,
     accessToken,
+    withdrawalCode,
     health,
     healthUrl,
     localUrl: `http://127.0.0.1:${port}`,

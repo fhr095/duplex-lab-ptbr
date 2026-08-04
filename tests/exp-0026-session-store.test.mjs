@@ -51,6 +51,7 @@ async function fixture(t, alias) {
     participantAlias: alias,
     orderIndex: 0,
     processRunId: "process-store-test",
+    withdrawalCode: "wd-" + "w".repeat(32),
     accessToken: "a".repeat(64),
     idFactory: () => alias.toLowerCase(),
     runtimeSnapshot: runtime

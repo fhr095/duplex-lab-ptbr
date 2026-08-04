@@ -87,14 +87,27 @@ if (sha256(noiseBytes) !== `sha256:${pack.noise.sha256}`) {
 const qualificationPaths = [
   "eval/reports/exp-0026-lifecycle-smoke-v0.1.json",
   "eval/reports/exp-0026-instrument-dry-run-v0.1.json",
-  "eval/reports/exp-0026-blind-order-smoke-v0.1.json"
+  "eval/reports/exp-0026-blind-order-smoke-v0.1.json",
+  "eval/reports/exp-0026-operational-readiness-v0.1.json"
 ];
 const qualification = [];
+let operationalReadinessReport = null;
 for (const path of qualificationPaths) {
   const bytes = await readFile(resolve(projectRoot, path));
   const report = JSON.parse(bytes);
   if (report.pass !== true) throw new Error(`${path} não passou`);
+  if (path.includes("operational-readiness")) {
+    operationalReadinessReport = { report, fileSha256: sha256(bytes) };
+  }
   qualification.push({ path, fileSha256: sha256(bytes), pass: true });
+}
+if (
+  station.operationalReadiness?.reportFileSha256 !==
+    operationalReadinessReport?.fileSha256 ||
+  station.operationalReadiness?.acousticQualificationSha256 !==
+    operationalReadinessReport?.report?.acousticQualificationSha256
+) {
+  throw new Error("manifest da estação não está ligado à qualificação acústica terminal");
 }
 
 const runtimeBinding = await createSourceFingerprint(projectRoot, {
@@ -144,5 +157,6 @@ process.stdout.write(`${JSON.stringify({
   outputPath,
   freezeSha256: freeze.freezeSha256,
   closesAt: freeze.closesAt,
-  participantAliases: freeze.roster.participantAliases
+  participantAliases: freeze.roster.participantAliases,
+  reserveAliases: freeze.roster.reserveAliases
 }, null, 2)}\n`);

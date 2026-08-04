@@ -19,61 +19,159 @@ function counts(values) {
   return result;
 }
 
+const ADMIN_REPLACEMENT_REASONS = Object.freeze([
+  "PRE_SESSION_NO_SHOW",
+  "PRE_SESSION_SCHEDULING_CONFLICT",
+  "PRE_SESSION_TECHNICAL_INELIGIBILITY",
+  "CONSENT_WITHDRAWN"
+]);
+
+function validatePerson(participant, prefix, errors) {
+  if (
+    !nonEmpty(participant?.alias, 64) ||
+    !/^[A-Za-z0-9][A-Za-z0-9_-]{1,63}$/u.test(participant.alias)
+  ) errors.push(`${prefix}.alias precisa ser opaco e seguro`);
+  if (!AGE_BANDS.has(participant?.ageBand)) errors.push(`${prefix}.ageBand inválida`);
+  if (!nonEmpty(participant?.accentExposureGroup, 80)) errors.push(`${prefix}.accentExposureGroup ausente`);
+  if (!VOICE_USE.has(participant?.voiceUse)) errors.push(`${prefix}.voiceUse inválido`);
+  if (!nonEmpty(participant?.socialCluster, 80)) errors.push(`${prefix}.socialCluster ausente`);
+  const forbidden = ["name", "email", "phone", "document", "address"]
+    .filter((key) => key in (participant ?? {}));
+  if (forbidden.length) errors.push(`${prefix} contém identificador civil proibido: ${forbidden.join(", ")}`);
+}
+
+function diversitySummary(participants) {
+  const age = counts(participants.map((item) => item.ageBand));
+  const accents = counts(participants.map((item) => item.accentExposureGroup));
+  const representedAccents = Object.values(accents).filter((count) => count >= 2);
+  const usage = counts(participants.map((item) => item.voiceUse));
+  const clusters = counts(participants.map((item) => item.socialCluster));
+  return {
+    participantCount: participants.length,
+    participantAliases: participants.map((item) => item.alias),
+    ageBandCounts: age,
+    accentExposureGroupCount: Object.keys(accents).length,
+    accentGroupsWithAtLeastTwo: representedAccents.length,
+    voiceUseCounts: usage,
+    largestSocialCluster: Math.max(...Object.values(clusters)),
+    valid:
+      (age["18-34"] ?? 0) >= 2 &&
+      (age["35+"] ?? 0) >= 2 &&
+      representedAccents.length >= 2 &&
+      (usage.weekly ?? 0) >= 2 &&
+      (usage["rare-never"] ?? 0) >= 2 &&
+      Object.values(clusters).every((count) => count <= 2)
+  };
+}
+
+function replacementCombinations(slots, reserves) {
+  const singles = reserves.flatMap((reserve) => reserve.allowedSlotIds.map((slotId) => ([{
+    slotId,
+    reserveAlias: reserve.alias
+  }])));
+  const doubles = [];
+  for (let left = 0; left < singles.length; left += 1) {
+    for (let right = left + 1; right < singles.length; right += 1) {
+      const a = singles[left][0];
+      const b = singles[right][0];
+      if (a.slotId !== b.slotId && a.reserveAlias !== b.reserveAlias) {
+        doubles.push([a, b].sort((x, y) => x.slotId.localeCompare(y.slotId)));
+      }
+    }
+  }
+  const unique = new Map(
+    [[], ...singles, ...doubles].map((mapping) => [JSON.stringify(mapping), mapping])
+  );
+  return [...unique.values()];
+}
+
 export function validateExp0026Roster(roster) {
   const errors = [];
   if (roster?.exampleOnly === true) errors.push("template de roster precisa ser copiado e preenchido");
-  if (roster?.schemaVersion !== "exp-0026-private-roster-v1") {
+  if (roster?.schemaVersion !== "exp-0026-private-roster-v2") {
     errors.push("schemaVersion do roster é inválida");
   }
-  if (!Array.isArray(roster?.participants) || roster.participants.length !== 6) {
-    errors.push("roster precisa conter exatamente seis participantes");
+  if (!Array.isArray(roster?.slots) || roster.slots.length !== 6) {
+    errors.push("roster precisa conter exatamente seis slots primários");
     return { valid: false, errors, summary: null };
   }
-  const aliases = [];
-  for (const [index, participant] of roster.participants.entries()) {
-    const prefix = `participants[${index}]`;
+  const slotIds = [];
+  const orderIndices = [];
+  const primary = [];
+  for (const [index, slot] of roster.slots.entries()) {
+    const prefix = `slots[${index}]`;
+    if (!/^SLOT-[1-6]$/u.test(slot?.slotId ?? "")) errors.push(`${prefix}.slotId inválido`);
+    else slotIds.push(slot.slotId);
+    if (!Number.isSafeInteger(slot?.orderIndex) || slot.orderIndex < 0 || slot.orderIndex > 5) {
+      errors.push(`${prefix}.orderIndex inválido`);
+    } else orderIndices.push(slot.orderIndex);
+    validatePerson(slot?.primary, `${prefix}.primary`, errors);
+    if (slot?.primary) primary.push(slot.primary);
+  }
+  if (new Set(slotIds).size !== 6) errors.push("slotIds precisam ser SLOT-1 a SLOT-6 únicos");
+  if (new Set(orderIndices).size !== 6) errors.push("orderIndex precisa cobrir 0 a 5 uma vez");
+  if (!Array.isArray(roster?.reserves) || roster.reserves.length !== 2) {
+    errors.push("roster precisa conter exatamente duas reservas");
+    return { valid: false, errors, summary: null };
+  }
+  for (const [index, reserve] of roster.reserves.entries()) {
+    const prefix = `reserves[${index}]`;
+    validatePerson(reserve, prefix, errors);
     if (
-      !nonEmpty(participant.alias, 64) ||
-      !/^[A-Za-z0-9][A-Za-z0-9_-]{1,63}$/u.test(participant.alias)
-    ) errors.push(`${prefix}.alias precisa ser opaco e seguro`);
-    else aliases.push(participant.alias);
-    if (!AGE_BANDS.has(participant.ageBand)) errors.push(`${prefix}.ageBand inválida`);
-    if (!nonEmpty(participant.accentExposureGroup, 80)) errors.push(`${prefix}.accentExposureGroup ausente`);
-    if (!VOICE_USE.has(participant.voiceUse)) errors.push(`${prefix}.voiceUse inválido`);
-    if (!nonEmpty(participant.socialCluster, 80)) errors.push(`${prefix}.socialCluster ausente`);
-    const forbidden = ["name", "email", "phone", "document", "address"]
-      .filter((key) => key in participant);
-    if (forbidden.length) errors.push(`${prefix} contém identificador civil proibido: ${forbidden.join(", ")}`);
+      !Array.isArray(reserve?.allowedSlotIds) ||
+      reserve.allowedSlotIds.length === 0 ||
+      new Set(reserve.allowedSlotIds).size !== reserve.allowedSlotIds.length ||
+      reserve.allowedSlotIds.some((slotId) => !slotIds.includes(slotId))
+    ) errors.push(`${prefix}.allowedSlotIds inválido`);
   }
-  if (new Set(aliases).size !== aliases.length) errors.push("aliases precisam ser únicos");
-  const age = counts(roster.participants.map((item) => item.ageBand));
-  if ((age["18-34"] ?? 0) < 2 || (age["35+"] ?? 0) < 2) {
-    errors.push("cada faixa etária precisa ter ao menos duas pessoas");
+  const allAliases = [...primary, ...roster.reserves]
+    .map((participant) => participant.alias);
+  if (new Set(allAliases).size !== allAliases.length) errors.push("aliases primários e reservas precisam ser únicos");
+  if (
+    roster?.replacementPolicy?.maxActivations !== 2 ||
+    roster?.replacementPolicy?.startedSessionReplacementRequiresWithdrawal !== true ||
+    JSON.stringify(roster?.replacementPolicy?.allowedReasons) !==
+      JSON.stringify(ADMIN_REPLACEMENT_REASONS)
+  ) errors.push("replacementPolicy diverge da política administrativa congelada");
+  const mappings = errors.length === 0
+    ? replacementCombinations(roster.slots, roster.reserves)
+    : [];
+  if (!mappings.some((mapping) => mapping.length === 2)) {
+    errors.push("reservas precisam permitir ao menos uma composição válida com duas reposições");
   }
-  const accents = counts(roster.participants.map((item) => item.accentExposureGroup));
-  const representedAccents = Object.values(accents).filter((count) => count >= 2);
-  if (representedAccents.length < 2) {
-    errors.push("ao menos dois grupos de exposição de sotaque precisam ter duas pessoas");
+  const bySlot = new Map(roster.slots.map((slot) => [slot.slotId, slot.primary]));
+  const byReserve = new Map(roster.reserves.map((item) => [item.alias, item]));
+  const summaries = mappings.map((mapping) => {
+    const selected = new Map(bySlot);
+    for (const replacement of mapping) {
+      selected.set(replacement.slotId, byReserve.get(replacement.reserveAlias));
+    }
+    return { mapping, diversity: diversitySummary([...selected.values()]) };
+  });
+  for (const item of summaries.filter((candidate) => !candidate.diversity.valid)) {
+    errors.push(`reposição permitida rompe diversidade: ${JSON.stringify(item.mapping)}`);
   }
-  const usage = counts(roster.participants.map((item) => item.voiceUse));
-  if ((usage.weekly ?? 0) < 2 || (usage["rare-never"] ?? 0) < 2) {
-    errors.push("uso de voz precisa ter ao menos dois weekly e dois rare-never");
-  }
-  const clusters = counts(roster.participants.map((item) => item.socialCluster));
-  if (Object.values(clusters).some((count) => count > 2)) {
-    errors.push("um círculo social/domicílio não pode fornecer mais de duas pessoas");
-  }
+  const primarySummary = summaries.find((item) => item.mapping.length === 0)?.diversity ??
+    diversitySummary(primary);
+  if (!primarySummary.valid) errors.push("composição primária rompe diversidade mínima");
   return {
     valid: errors.length === 0,
     errors,
     summary: {
-      participantCount: roster.participants.length,
-      participantAliases: aliases,
-      ageBandCounts: age,
-      accentExposureGroupCount: Object.keys(accents).length,
-      accentGroupsWithAtLeastTwo: representedAccents.length,
-      voiceUseCounts: usage,
-      largestSocialCluster: Math.max(...Object.values(clusters))
+      ...primarySummary,
+      primaryAliases: primary.map((item) => item.alias),
+      reserveAliases: roster.reserves.map((item) => item.alias),
+      slots: roster.slots.map((slot) => ({
+        slotId: slot.slotId,
+        orderIndex: slot.orderIndex,
+        primaryAlias: slot.primary.alias,
+        allowedReserveAliases: roster.reserves
+          .filter((item) => item.allowedSlotIds.includes(slot.slotId))
+          .map((item) => item.alias)
+      })),
+      reachableReplacementCompositions: summaries.length,
+      everyReachableCompositionPreservesDiversity:
+        summaries.every((item) => item.diversity.valid)
     }
   };
 }
@@ -81,7 +179,7 @@ export function validateExp0026Roster(roster) {
 export function validateExp0026Station(station) {
   const errors = [];
   if (station?.exampleOnly === true) errors.push("template de estação precisa ser copiado e preenchido");
-  if (station?.schemaVersion !== "exp-0026-private-station-v1") {
+  if (station?.schemaVersion !== "exp-0026-private-station-v2") {
     errors.push("schemaVersion da estação é inválida");
   }
   for (const field of [
@@ -123,6 +221,14 @@ export function validateExp0026Station(station) {
     station?.tts?.rate !== 1 ||
     !qualifiedText(station?.tts?.format)
   ) errors.push("TTS da estação diverge da condição congelada");
+  if (
+    !/^sha256:[a-f0-9]{64}$/u.test(
+      station?.operationalReadiness?.reportFileSha256 ?? ""
+    ) ||
+    !/^sha256:[a-f0-9]{64}$/u.test(
+      station?.operationalReadiness?.acousticQualificationSha256 ?? ""
+    )
+  ) errors.push("estação não está ligada à qualificação acústica terminal");
   return { valid: errors.length === 0, errors };
 }
 
@@ -133,7 +239,7 @@ export function createExp0026SessionFreeze(input) {
     throw new TypeError([...roster.errors, ...station.errors].join("; "));
   }
   const core = {
-    schemaVersion: "exp-0026-session-freeze-v1",
+    schemaVersion: "exp-0026-session-freeze-v2",
     experimentId: "EXP-0026",
     status: "OPEN_FOR_SIX_EXTERNAL_SESSIONS",
     createdAt: input.createdAt,
@@ -173,11 +279,25 @@ export function createExp0026SessionFreeze(input) {
         roomId: input.station.roomId,
         networkCondition: input.station.networkCondition,
         clockSynchronization: input.station.clockSynchronization
-      })}`
+      })}`,
+      operationalReadiness: {
+        ...input.station.operationalReadiness
+      }
     },
     roster: {
       manifestSha256: input.rosterManifestSha256,
-      participantAliases: roster.summary.participantAliases,
+      participantAliases: roster.summary.primaryAliases,
+      reserveAliases: roster.summary.reserveAliases,
+      slots: roster.summary.slots,
+      replacementPolicy: {
+        maxActivations: 2,
+        allowedReasons: [...ADMIN_REPLACEMENT_REASONS],
+        startedSessionReplacementRequiresWithdrawal: true,
+        reachableCompositionCount:
+          roster.summary.reachableReplacementCompositions,
+        everyReachableCompositionPreservesDiversity:
+          roster.summary.everyReachableCompositionPreservesDiversity
+      },
       diversityGate: {
         participantCount: roster.summary.participantCount,
         ageBandsSatisfied:

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "exp-0026-private-station-v1",
+  "schemaVersion": "exp-0026-private-station-v2",
   "exampleOnly": true,
   "instructions": "Copie para fora do Git, remova exampleOnly/instructions e substitua todos os valores REPLACE_* depois de medir a estação física.",
   "stationId": "REPLACE_OPAQUE_STATION_ID",
@@ -9,6 +9,10 @@
   "roomId": "REPLACE_OPAQUE_ROOM_ID",
   "networkCondition": "REPLACE_NETWORK_CONDITION",
   "clockSynchronization": "performance.now browser + server ISO; REPLACE_QUALIFICATION_NOTE",
+  "operationalReadiness": {
+    "reportFileSha256": "REPLACE_SHA256_OF_OPERATIONAL_READINESS_REPORT",
+    "acousticQualificationSha256": "REPLACE_ACOUSTIC_QUALIFICATION_SHA256_FROM_REPORT"
+  },
   "microphone": {
     "opaqueId": "REPLACE_MIC_ID",
     "model": "REPLACE_MIC_MODEL",

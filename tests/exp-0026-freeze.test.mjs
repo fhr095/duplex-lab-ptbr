@@ -8,22 +8,49 @@ import {
 } from "../src/eval/exp-0026-freeze.mjs";
 
 function roster() {
+  const people = [
+    ["P01", "18-34", "A", "weekly", "C1"],
+    ["P02", "18-34", "A", "weekly", "C1"],
+    ["P03", "35+", "B", "rare-never", "C2"],
+    ["P04", "35+", "B", "rare-never", "C2"],
+    ["P05", "18-34", "C", "monthly", "C3"],
+    ["P06", "35+", "C", "monthly", "C3"]
+  ].map(([alias, ageBand, accentExposureGroup, voiceUse, socialCluster]) => ({
+    alias,
+    ageBand,
+    accentExposureGroup,
+    voiceUse,
+    socialCluster
+  }));
   return {
-    schemaVersion: "exp-0026-private-roster-v1",
-    participants: [
-      ["P01", "18-34", "A", "weekly", "C1"],
-      ["P02", "18-34", "A", "weekly", "C1"],
-      ["P03", "35+", "B", "rare-never", "C2"],
-      ["P04", "35+", "B", "rare-never", "C2"],
-      ["P05", "18-34", "C", "monthly", "C3"],
-      ["P06", "35+", "C", "monthly", "C3"]
-    ].map(([alias, ageBand, accentExposureGroup, voiceUse, socialCluster]) => ({
-      alias,
-      ageBand,
-      accentExposureGroup,
-      voiceUse,
-      socialCluster
-    }))
+    schemaVersion: "exp-0026-private-roster-v2",
+    slots: people.map((primary, index) => ({
+      slotId: `SLOT-${index + 1}`,
+      orderIndex: index,
+      primary
+    })),
+    reserves: [
+      {
+        alias: "R01", ageBand: "18-34", accentExposureGroup: "A",
+        voiceUse: "weekly", socialCluster: "C4",
+        allowedSlotIds: ["SLOT-1", "SLOT-2", "SLOT-5", "SLOT-6"]
+      },
+      {
+        alias: "R02", ageBand: "35+", accentExposureGroup: "B",
+        voiceUse: "rare-never", socialCluster: "C5",
+        allowedSlotIds: ["SLOT-3", "SLOT-4", "SLOT-5", "SLOT-6"]
+      }
+    ],
+    replacementPolicy: {
+      maxActivations: 2,
+      allowedReasons: [
+        "PRE_SESSION_NO_SHOW",
+        "PRE_SESSION_SCHEDULING_CONFLICT",
+        "PRE_SESSION_TECHNICAL_INELIGIBILITY",
+        "CONSENT_WITHDRAWN"
+      ],
+      startedSessionReplacementRequiresWithdrawal: true
+    }
   };
 }
 
@@ -35,7 +62,7 @@ function station() {
     position: `${id}-position`
   });
   return {
-    schemaVersion: "exp-0026-private-station-v1",
+    schemaVersion: "exp-0026-private-station-v2",
     stationId: "station-a",
     windowsBuild: "windows-build",
     wslBuild: "wsl-build",
@@ -43,6 +70,10 @@ function station() {
     roomId: "room-a",
     networkCondition: "wired-stable",
     clockSynchronization: "performance.now + server ISO",
+    operationalReadiness: {
+      reportFileSha256: `sha256:${"f".repeat(64)}`,
+      acousticQualificationSha256: `sha256:${"e".repeat(64)}`
+    },
     microphone: {
       ...device("mic-a"),
       sampleRate: 48_000,
@@ -68,17 +99,18 @@ test("roster exige diversidade mínima sem identificador civil", () => {
   assert.equal(valid.valid, true);
   assert.equal(valid.summary.participantCount, 6);
   assert.equal(valid.summary.accentGroupsWithAtLeastTwo, 3);
+  assert.equal(valid.summary.reserveAliases.length, 2);
+  assert.equal(valid.summary.everyReachableCompositionPreservesDiversity, true);
   const invalid = roster();
-  invalid.participants[0].name = "Nome civil proibido";
-  invalid.participants.forEach((participant) => {
+  invalid.slots[0].primary.name = "Nome civil proibido";
+  invalid.slots.forEach(({ primary: participant }) => {
     participant.ageBand = "18-34";
     participant.socialCluster = "mesmo-circulo";
   });
   const result = validateExp0026Roster(invalid);
   assert.equal(result.valid, false);
   assert.match(result.errors.join(" "), /identificador civil proibido/iu);
-  assert.match(result.errors.join(" "), /faixa etária/iu);
-  assert.match(result.errors.join(" "), /mais de duas/iu);
+  assert.match(result.errors.join(" "), /diversidade/iu);
 });
 
 test("templates e estação divergente falham fechado", () => {
@@ -109,11 +141,17 @@ test("freeze público preserva aliases e gates, não metadados brutos", () => {
     qualification: [{ path: "report", pass: true }]
   });
   assert.equal(value.status, "OPEN_FOR_SIX_EXTERNAL_SESSIONS");
+  assert.equal(value.schemaVersion, "exp-0026-session-freeze-v2");
   assert.deepEqual(value.roster.participantAliases, [
     "P01", "P02", "P03", "P04", "P05", "P06"
   ]);
   assert.equal(Object.values(value.roster.diversityGate).every(Boolean), true);
   assert.equal(value.roster.rawDiversityMetadataCommitted, false);
+  assert.deepEqual(value.roster.reserveAliases, ["R01", "R02"]);
+  assert.equal(
+    value.roster.replacementPolicy.everyReachableCompositionPreservesDiversity,
+    true
+  );
   assert.equal(JSON.stringify(value).includes("accentExposureGroup"), false);
   assert.match(value.freezeSha256, /^sha256:[a-f0-9]{64}$/u);
 });

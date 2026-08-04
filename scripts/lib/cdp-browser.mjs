@@ -12,10 +12,20 @@ export function discoverCdpOrigin(environment = process.env) {
   return `http://${gateway}:9223`;
 }
 
+export function normalizeCdpWebSocketUrl(webSocketDebuggerUrl, origin) {
+  const websocket = new URL(webSocketDebuggerUrl);
+  const endpoint = new URL(origin);
+  websocket.protocol = endpoint.protocol === "https:" ? "wss:" : "ws:";
+  websocket.hostname = endpoint.hostname;
+  websocket.port = endpoint.port;
+  return websocket.toString();
+}
+
 export async function connectCdpBrowser(options = {}) {
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const origin = options.origin ?? discoverCdpOrigin(options.environment);
   const versionResponse = await fetch(`${origin}/json/version`, {
+    headers: { connection: "close" },
     signal: AbortSignal.timeout(timeoutMs)
   });
   if (!versionResponse.ok) {
@@ -25,7 +35,10 @@ export async function connectCdpBrowser(options = {}) {
   if (!version.webSocketDebuggerUrl) {
     throw new Error("CDP não expôs WebSocket do browser");
   }
-  const socket = new WebSocket(version.webSocketDebuggerUrl);
+  const socket = new WebSocket(normalizeCdpWebSocketUrl(
+    version.webSocketDebuggerUrl,
+    origin
+  ));
   await new Promise((resolve, reject) => {
     const timer = setTimeout(
       () => reject(new Error("timeout ao conectar ao browser CDP")),

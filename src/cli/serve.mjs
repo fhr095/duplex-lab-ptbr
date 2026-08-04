@@ -295,10 +295,12 @@ const exp0026Store = exp0026Enabled
         process.env.EXP0026_ORDER_INDEX ?? "",
         10
       ),
+      rosterSlotId: process.env.EXP0026_ROSTER_SLOT_ID || null,
       commercialAvailable:
         process.env.EXP0026_COMMERCIAL_AVAILABLE === "1",
       processRunId,
       accessToken: process.env.EXP0026_ACCESS_TOKEN,
+      withdrawalCode: process.env.EXP0026_WITHDRAWAL_CODE,
       runtimeSnapshot() {
         const usage = brain.getUsage();
         return {

@@ -42,6 +42,8 @@ const automationEnabled =
   pageParameters.get("automation") === "1" &&
   ["localhost", "127.0.0.1"].includes(window.location.hostname);
 const evaluationEnabled = pageParameters.get("evaluation") === "0026";
+const operationalReadinessEnabled =
+  evaluationEnabled && pageParameters.get("readiness") === "1";
 let evaluationDryRun = false;
 const contextRelevanceExperimentEnabled =
   automationEnabled && pageParameters.get("experiment") === "0019";
@@ -3729,7 +3731,7 @@ if (evaluationEnabled) {
         return automationSnapshot();
       },
       mediaStream() {
-        return session.mediaStream;
+        return session.mediaStream ?? session.capture?.stream ?? null;
       },
       snapshot: automationSnapshot,
       isolationSnapshot() {
@@ -3755,7 +3757,23 @@ if (evaluationEnabled) {
         setListeningStatus();
         log("evaluation.dry-run.activated", "sem captura acústica");
         return automationSnapshot();
-      }
+      },
+      ...(operationalReadinessEnabled ? {
+        speakReadiness(text, options = {}) {
+          session.active = true;
+          if (options.loop === true) {
+            speakLoopingStandalone(String(text), "operational-readiness");
+          } else {
+            speakStandalone(String(text), "operational-readiness");
+          }
+          return automationSnapshot();
+        },
+        stopReadinessSpeech() {
+          releaseAssistantAudio();
+          setListeningStatus();
+          return automationSnapshot();
+        }
+      } : {})
     })
   });
   log("evaluation.ready", "EXP-0026");

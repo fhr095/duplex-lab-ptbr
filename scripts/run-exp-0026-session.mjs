@@ -4,6 +4,10 @@ import { resolve } from "node:path";
 
 import { connectCdpBrowser } from "./lib/cdp-browser.mjs";
 import { startExp0026Server } from "./lib/exp-0026-process.mjs";
+import {
+  createExp0026ReplacementLedger,
+  validateExp0026ReplacementLedger
+} from "../src/eval/exp-0026-replacements.mjs";
 
 const projectRoot = resolve(import.meta.dirname, "..");
 const argument = (name) => {
@@ -24,6 +28,7 @@ if (!Number.isSafeInteger(orderIndex) || orderIndex < 0 || orderIndex > 5) {
   throw new Error("--order precisa estar entre 0 e 5");
 }
 let externalFreeze = null;
+let rosterSlot = null;
 {
   const freezePath = resolve(
     projectRoot,
@@ -65,10 +70,24 @@ let externalFreeze = null;
   if (dirty !== "") {
     throw new Error("sessão externa bloqueada: worktree não está limpa");
   }
-  if (!freeze.roster?.participantAliases?.includes(participantAlias)) {
-    throw new Error("alias não pertence ao roster congelado");
+  const ledgerPath = resolve(
+    projectRoot,
+    "eval/generated/exp-0026/private/replacement-ledger.private.json"
+  );
+  const ledger = await readFile(ledgerPath, "utf8")
+    .then(JSON.parse)
+    .catch((error) => error.code === "ENOENT"
+      ? createExp0026ReplacementLedger(freeze)
+      : Promise.reject(error));
+  const ledgerValidation = validateExp0026ReplacementLedger(freeze, ledger);
+  if (!ledgerValidation.valid) {
+    throw new Error(`ledger de reposições inválido: ${ledgerValidation.errors.join("; ")}`);
   }
-  if (freeze.roster.participantAliases.indexOf(participantAlias) !== orderIndex) {
+  rosterSlot = ledger.slots.find((slot) => slot.activeAlias === participantAlias);
+  if (!rosterSlot) {
+    throw new Error("alias não está ativo no roster congelado");
+  }
+  if (rosterSlot.orderIndex !== orderIndex) {
     throw new Error("order não corresponde à posição congelada do alias");
   }
   const sessionsRoot = resolve(
@@ -84,9 +103,9 @@ let externalFreeze = null;
     ));
     if (
       existing.role === "external" &&
-      existing.participantAlias === participantAlias &&
+      existing.rosterSlotId === rosterSlot.slotId &&
       existing.phase !== "WITHDRAWN"
-    ) throw new Error("alias já possui sessão externa; retry automático proibido");
+    ) throw new Error("slot já possui sessão externa; retry ou substituição por resultado é proibido");
   }
   externalFreeze = freeze;
 }
@@ -102,6 +121,7 @@ const server = await startExp0026Server({
   role,
   participantAlias,
   orderIndex,
+  rosterSlotId: rosterSlot.slotId,
   dataRoot: "eval/generated/exp-0026/private",
   commercialAvailable: externalFreeze.commercialReference.available,
   mirrorLogs: true
@@ -169,7 +189,9 @@ try {
   process.stdout.write(
     `\nEXP-0026 aberto no Chrome isolado.\n` +
     `Sessão: ${server.health.evaluation.exp0026.sessionId}\n` +
-    `Papel: ${role}; ordem: ${orderIndex}; orçamento: 0/25.\n` +
+    `Papel: ${role}; slot: ${rosterSlot.slotId}; ordem: ${orderIndex}; orçamento: 0/25.\n` +
+    `Recibo de retirada: ${server.withdrawalCode}\n` +
+    `Guarde-o por 30 dias: ele permite apagar os dados mesmo após o servidor fechar.\n` +
     `Mantenha este terminal aberto até a confirmação de conclusão.\n\n`
   );
   let phase = "CONSENT";

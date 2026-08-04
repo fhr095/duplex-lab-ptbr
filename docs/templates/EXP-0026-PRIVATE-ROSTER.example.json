@@ -1,14 +1,28 @@
 {
-  "schemaVersion": "exp-0026-private-roster-v1",
+  "schemaVersion": "exp-0026-private-roster-v2",
   "exampleOnly": true,
   "fitEligibility": "evaluation-only",
-  "instructions": "Copie para fora do Git, remova exampleOnly/instructions e preencha apenas por autorrelato. Não registre nome, contato ou documento.",
-  "participants": [
-    { "alias": "P01", "ageBand": "18-34", "accentExposureGroup": "GRUPO_A", "voiceUse": "weekly", "socialCluster": "CIRCULO_1" },
-    { "alias": "P02", "ageBand": "18-34", "accentExposureGroup": "GRUPO_A", "voiceUse": "weekly", "socialCluster": "CIRCULO_1" },
-    { "alias": "P03", "ageBand": "35+", "accentExposureGroup": "GRUPO_B", "voiceUse": "rare-never", "socialCluster": "CIRCULO_2" },
-    { "alias": "P04", "ageBand": "35+", "accentExposureGroup": "GRUPO_B", "voiceUse": "rare-never", "socialCluster": "CIRCULO_2" },
-    { "alias": "P05", "ageBand": "18-34", "accentExposureGroup": "GRUPO_C", "voiceUse": "monthly", "socialCluster": "CIRCULO_3" },
-    { "alias": "P06", "ageBand": "35+", "accentExposureGroup": "GRUPO_C", "voiceUse": "monthly", "socialCluster": "CIRCULO_3" }
-  ]
+  "instructions": "Copie para fora do Git, remova exampleOnly/instructions e preencha apenas por autorrelato. Não registre nome, contato ou documento. allowedSlotIds deve listar somente composições que preservem a diversidade; o validador testa todas as combinações alcançáveis.",
+  "slots": [
+    { "slotId": "SLOT-1", "orderIndex": 0, "primary": { "alias": "P01", "ageBand": "18-34", "accentExposureGroup": "GRUPO_A", "voiceUse": "weekly", "socialCluster": "CIRCULO_1" } },
+    { "slotId": "SLOT-2", "orderIndex": 1, "primary": { "alias": "P02", "ageBand": "18-34", "accentExposureGroup": "GRUPO_A", "voiceUse": "weekly", "socialCluster": "CIRCULO_1" } },
+    { "slotId": "SLOT-3", "orderIndex": 2, "primary": { "alias": "P03", "ageBand": "35+", "accentExposureGroup": "GRUPO_B", "voiceUse": "rare-never", "socialCluster": "CIRCULO_2" } },
+    { "slotId": "SLOT-4", "orderIndex": 3, "primary": { "alias": "P04", "ageBand": "35+", "accentExposureGroup": "GRUPO_B", "voiceUse": "rare-never", "socialCluster": "CIRCULO_2" } },
+    { "slotId": "SLOT-5", "orderIndex": 4, "primary": { "alias": "P05", "ageBand": "18-34", "accentExposureGroup": "GRUPO_C", "voiceUse": "monthly", "socialCluster": "CIRCULO_3" } },
+    { "slotId": "SLOT-6", "orderIndex": 5, "primary": { "alias": "P06", "ageBand": "35+", "accentExposureGroup": "GRUPO_C", "voiceUse": "monthly", "socialCluster": "CIRCULO_3" } }
+  ],
+  "reserves": [
+    { "alias": "R01", "ageBand": "18-34", "accentExposureGroup": "GRUPO_A", "voiceUse": "weekly", "socialCluster": "CIRCULO_4", "allowedSlotIds": ["SLOT-1", "SLOT-2", "SLOT-5", "SLOT-6"] },
+    { "alias": "R02", "ageBand": "35+", "accentExposureGroup": "GRUPO_B", "voiceUse": "rare-never", "socialCluster": "CIRCULO_5", "allowedSlotIds": ["SLOT-3", "SLOT-4", "SLOT-5", "SLOT-6"] }
+  ],
+  "replacementPolicy": {
+    "maxActivations": 2,
+    "allowedReasons": [
+      "PRE_SESSION_NO_SHOW",
+      "PRE_SESSION_SCHEDULING_CONFLICT",
+      "PRE_SESSION_TECHNICAL_INELIGIBILITY",
+      "CONSENT_WITHDRAWN"
+    ],
+    "startedSessionReplacementRequiresWithdrawal": true
+  }
 }

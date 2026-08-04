@@ -394,7 +394,7 @@ function renderCommercial() {
 
 function renderComplete() {
   voiceShell.hidden = true;
-  instrument.innerHTML = `<h2>Sessão concluída</h2><p>Obrigado. A escolha humana foi selada e continuará separada da primeira codificação técnica.</p><div class="summary"><div><small>PAPEL</small><strong>${escapeHtml(state.role)}</strong></div><div><small>ELEGIBILIDADE</small><strong>${escapeHtml(state.analysisEligibility)}</strong></div><div><small>BLOCOS</small><strong>7/7</strong></div><div><small>TOP-2</small><strong>selado</strong></div></div>`;
+  instrument.innerHTML = `<h2>Sessão concluída</h2><p>Obrigado. A escolha humana foi selada e continuará separada da primeira codificação técnica.</p><p class="muted">Guarde o recibo de retirada por 30 dias: <code>${escapeHtml(state.withdrawalReceiptCode)}</code>. Ele permite solicitar exclusão mesmo depois que esta janela fechar.</p><div class="summary"><div><small>PAPEL</small><strong>${escapeHtml(state.role)}</strong></div><div><small>ELEGIBILIDADE</small><strong>${escapeHtml(state.analysisEligibility)}</strong></div><div><small>BLOCOS</small><strong>7/7</strong></div><div><small>TOP-2</small><strong>selado</strong></div></div>`;
   setStatus(state.role === "dry-run" ? "dry-run excluído" : "concluída", "ready");
 }
 
@@ -406,8 +406,8 @@ function renderWithdrawn() {
 }
 
 function render() {
-  receipt.textContent = state ? `${state.sessionId} · ${state.role} · ${state.analysisEligibility}` : "sessão não vinculada";
-  withdrawButton.hidden = !state || ["CONSENT", "COMPLETE", "WITHDRAWN"].includes(state.phase);
+  receipt.textContent = state ? `${state.sessionId} · recibo ${state.withdrawalReceiptCode} · ${state.role} · ${state.analysisEligibility}` : "sessão não vinculada";
+  withdrawButton.hidden = !state || ["CONSENT", "WITHDRAWN"].includes(state.phase);
   if (!state) return;
   setStatus(state.phase.toLowerCase(), state.phase === "CAMPAIGN" ? "busy" : "ready");
   if (state.phase === "CONSENT") renderConsent();

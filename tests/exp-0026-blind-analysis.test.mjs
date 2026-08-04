@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  assertExp0026FreshCoder,
   assertExp0026TechnicalBundleBlind,
   createExp0026TechnicalBundle,
   joinExp0026HumanAfterTechnicalSeal,
@@ -65,12 +66,15 @@ test("junção humana só aceita coding completo e selo íntegro", () => {
   const codingInput = {
     schemaVersion: "exp-0026-technical-coding-v1",
     bundleSha256: created.bundle.bundleSha256,
+    signatureVocabularySha256:
+      created.bundle.signatureVocabularySha256,
     coderId: "coder-opaque-1",
     records: ["S1", "F0"].map((blockId) => ({
       technicalSessionId,
       blockId,
       status: "NO_OBSERVED_VIOLATION",
       primaryStage: null,
+      signatureId: "NONE",
       signature: "",
       confidence: 3,
       reproduction: "NOT_ATTEMPTED"
@@ -109,4 +113,12 @@ test("junção humana só aceita coding completo e selo íntegro", () => {
   );
   assert.deepEqual(joined.rows[0].top2, ["RITMO_E_TROCA_DE_TURNO"]);
   assert.equal(joined.rows[0].technicalCoding.length, 2);
+});
+
+test("retirada após abertura exige coderId que não viu o agregado invalidado", () => {
+  assert.equal(assertExp0026FreshCoder("CODER-NOVO", ["CODER-ANTIGO"]), true);
+  assert.throws(
+    () => assertExp0026FreshCoder("CODER-ANTIGO", ["CODER-ANTIGO"]),
+    /codificador novo/iu
+  );
 });

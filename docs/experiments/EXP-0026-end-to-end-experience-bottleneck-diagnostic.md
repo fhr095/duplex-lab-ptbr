@@ -2,9 +2,13 @@
 
 Status: **ativo; pré-registro emendado prospectivamente em 2026-08-03;
 instrumento implementado e qualificado por um dry-run interno excluído; zero
-sessão humana externa e zero bloco comercial executados; freeze final aguarda
-roster e qualificação física; zero GPU, runner externo ou mudança de runtime
-autorizados**
+sessão humana externa e zero bloco comercial executados; freeze final bloqueado
+pela emenda terminal de prontidão operacional; zero GPU, runner externo ou
+mudança de runtime autorizados**
+
+A [emenda terminal de prontidão operacional](EXP-0026-operational-readiness-amendment.md)
+fecha, antes do freeze, cadeia acústica, análise determinística, retirada/
+retenção pós-processo e reservas. Ela não altera este constructo nem seus gates.
 
 ## Decisão que este experimento desbloqueia
 
@@ -165,13 +169,13 @@ de dominância e não entram no agregado público. Se a estratégia não estiver
 cumprida, novas sessões externas não são abertas; podem-se recrutar até os
 limites administrativos já definidos.
 
-Só são exclusões válidas antes do início da primeira cena: freeze divergente,
-consentimento de participação ausente ou impossibilidade física de aplicar o
-protocolo. Uma quebra depois do início é experiência observada e permanece na
-sessão, inclusive quando impede completá-la. Retirada de consentimento apaga a
-sessão e permite reposição por uma nova pessoa sob o mesmo protocolo; no
-máximo duas reposições administrativas são permitidas. Se seis sessões válidas
-não forem obtidas dentro desse limite, o resultado é
+As únicas reposições administrativas sem retirada são no-show, conflito de
+agenda ou inelegibilidade técnica descobertos **antes de qualquer sessão do
+slot ser criada**. Depois que uma sessão existe, falha, nota, incompletude ou
+resultado desfavorável permanecem observados e nunca autorizam troca. Somente
+retirada de consentimento apaga essa sessão e permite ativar uma reserva
+pré-congelada sob o mesmo slot e ordem. No máximo duas reservas podem ser
+ativadas. Se seis sessões válidas não forem obtidas dentro desse limite, o resultado é
 `NOT_EVALUATED_SAMPLE_INCOMPLETE`.
 
 ## Cenas congeladas

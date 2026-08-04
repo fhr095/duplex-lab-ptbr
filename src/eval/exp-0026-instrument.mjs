@@ -86,6 +86,18 @@ export function createExp0026Session(pack, options = {}) {
   const orderIndex = Number(options.orderIndex);
   invariant(Number.isSafeInteger(orderIndex) && orderIndex >= 0 && orderIndex < 6, "orderIndex precisa estar entre 0 e 5");
   const processRunId = cleanText(options.processRunId, 100, "processRunId");
+  invariant(
+    typeof options.withdrawalReceiptHash === "string" &&
+      /^[a-f0-9]{64}$/u.test(options.withdrawalReceiptHash),
+    "withdrawalReceiptHash privado é obrigatório"
+  );
+  const rosterSlotId = options.rosterSlotId ?? null;
+  invariant(
+    role === "dry-run"
+      ? rosterSlotId === null
+      : /^SLOT-[1-6]$/u.test(rosterSlotId),
+    "sessão externa exige rosterSlotId congelado"
+  );
   const idFactory = options.idFactory ?? randomUUID;
   const now = options.now ?? (() => new Date().toISOString());
   const guided = pack.orders[orderIndex].map((sceneId) => {
@@ -102,7 +114,9 @@ export function createExp0026Session(pack, options = {}) {
     sessionId: `exp0026-${idFactory()}`,
     participantHash: sha256Text(`exp0026:${participantAlias}`),
     participantAlias,
+    withdrawalReceiptHash: options.withdrawalReceiptHash,
     role,
+    rosterSlotId,
     analysisEligibility: role === "dry-run" ? "excluded-dry-run" : "candidate",
     fitEligibility: "evaluation-only",
     processRunId,

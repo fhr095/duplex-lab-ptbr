@@ -391,6 +391,7 @@ kernel/evaluator ainda precisam entrar no mesmo contrato.
 - [EXP-0025-R — fechamento das sentinelas externas](docs/experiments/EXP-0025-R-external-sentinel-closeout.md)
 - [EXP-0025-R — fechamento terminal da referência externa](docs/experiments/EXP-0025-R-external-terminal-closeout.md)
 - [EXP-0026 — diagnóstico formativo dos gargalos ponta a ponta](docs/experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md)
+- [EXP-0026 — emenda terminal de prontidão operacional](docs/experiments/EXP-0026-operational-readiness-amendment.md)
 - [External Challenger Runner — desenho não implementado](docs/research/EXTERNAL_CHALLENGER_RUNNER_DESIGN.md)
 - [Baseline de desenvolvimento v0.3](eval/baselines/runtime-baseline-v0.3.json)
 
@@ -453,8 +454,11 @@ zero Pods ativos e o custo cumulativo conservador ficou abaixo de US$ 1,39.
 
 O caminho crítico atual é o EXP-0026. O instrumento e o único dry-run interno
 excluído já passaram; seis lifecycles provaram isolamento real e a ordem cega
-de análise foi exercitada. A coleta externa permanece em zero e bloqueada até
-o freeze de roster e estação. Depois disso, seis participantes externos usarão
+de análise foi exercitada. Uma emenda terminal fecha, uma única vez, a cadeia
+acústica real, o analyzer determinístico, a retirada pós-processo e as duas
+reservas sem substituição por resultado. A coleta externa permanece em zero e
+o freeze de roster/estação só poderá ocorrer se os quatro gates passarem.
+Depois disso, seis participantes externos usarão
 a mesma condição congelada. O diagnóstico só prioriza uma família quando ela aparecer no top-2
 de pelo menos 4/6 pessoas, tiver severidade material e uma falha técnica
 reproduzível. A referência Live comercial, se viável, serve apenas para

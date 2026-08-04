@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "exp-0026-technical-signatures-v1",
+  "experimentId": "EXP-0026",
+  "frozenBeforeExternalData": true,
+  "fitEligibility": "evaluation-only",
+  "unknownDisposition": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "primaryStage": "UNATTRIBUTED",
+    "signatureId": "UNATTRIBUTED_NO_SUFFICIENT_EVIDENCE",
+    "reproduction": "NOT_REPLAYABLE",
+    "rEligible": false
+  },
+  "categories": [
+    {
+      "id": "RITMO_E_TROCA_DE_TURNO",
+      "tieBreakPriority": 1,
+      "rationale": "reutiliza harnesses de endpoint, barge-in e STOP já existentes"
+    },
+    {
+      "id": "ENTENDIMENTO_DO_QUE_EU_DISSE",
+      "tieBreakPriority": 2,
+      "rationale": "reutiliza áudio, ASR e datasets pt-BR já existentes"
+    },
+    {
+      "id": "TAREFA_E_CONTINUIDADE",
+      "tieBreakPriority": 3,
+      "rationale": "reutiliza lifecycle de tarefas e stubs determinísticos"
+    },
+    {
+      "id": "QUALIDADE_DA_RESPOSTA",
+      "tieBreakPriority": 4,
+      "rationale": "exige novo probe semântico, mas não infraestrutura de áudio"
+    },
+    {
+      "id": "VOZ_E_ENTREGA",
+      "tieBreakPriority": 5,
+      "rationale": "exige avaliação perceptiva e possível novo candidato TTS"
+    },
+    {
+      "id": "OUTRO",
+      "tieBreakPriority": 6,
+      "rationale": "precisa primeiro de atribuição antes de estimar reutilização"
+    }
+  ],
+  "signatures": [
+    { "id": "AUDIO_NO_INPUT", "stage": "AUDIO" },
+    { "id": "AUDIO_CLIPPED_OR_CORRUPT", "stage": "AUDIO" },
+    { "id": "AUDIO_NOISE_MASKED_SPEECH", "stage": "AUDIO" },
+    { "id": "AUDIO_ECHO_OR_FEEDBACK", "stage": "AUDIO" },
+    { "id": "ASR_PARTIAL_SLOT_INSTABILITY", "stage": "ASR_PARTIAL" },
+    { "id": "ASR_PARTIAL_SEMANTIC_DRIFT", "stage": "ASR_PARTIAL" },
+    { "id": "ASR_FINAL_OMISSION", "stage": "ASR_FINAL" },
+    { "id": "ASR_FINAL_SUBSTITUTION", "stage": "ASR_FINAL" },
+    { "id": "ASR_FINAL_CRITICAL_SLOT_ERROR", "stage": "ASR_FINAL" },
+    { "id": "ENDPOINT_PREMATURE_COMMIT", "stage": "ENDPOINT" },
+    { "id": "ENDPOINT_LATE_COMMIT", "stage": "ENDPOINT" },
+    { "id": "ENDPOINT_MISSED_COMMIT", "stage": "ENDPOINT" },
+    { "id": "BRAIN_INCORRECT_OR_IRRELEVANT", "stage": "BRAIN" },
+    { "id": "BRAIN_CONTEXT_LOSS", "stage": "BRAIN" },
+    { "id": "BRAIN_UNSAFE_UNCONFIRMED_ACTION", "stage": "BRAIN" },
+    { "id": "BRAIN_OVERLONG_OR_UNHELPFUL", "stage": "BRAIN" },
+    { "id": "TTS_NO_AUDIBLE_OUTPUT", "stage": "TTS" },
+    { "id": "TTS_ONSET_OR_GAP", "stage": "TTS" },
+    { "id": "TTS_PROSODY_OR_PRONUNCIATION", "stage": "TTS" },
+    { "id": "TTS_AUDIO_ARTIFACT", "stage": "TTS" },
+    { "id": "INTERRUPTION_FALSE_TAKEOVER", "stage": "INTERRUPTION" },
+    { "id": "INTERRUPTION_MISSED_BARGE_IN", "stage": "INTERRUPTION" },
+    { "id": "INTERRUPTION_LATE_STOP", "stage": "INTERRUPTION" },
+    { "id": "INTERRUPTION_BAD_RESUMPTION", "stage": "INTERRUPTION" },
+    { "id": "TASK_NOT_DELEGATED", "stage": "TASK" },
+    { "id": "TASK_STALE_RESULT_SURFACED", "stage": "TASK" },
+    { "id": "TASK_CANCEL_FAILED", "stage": "TASK" },
+    { "id": "TASK_RESULT_NOT_REINTEGRATED", "stage": "TASK" },
+    { "id": "MULTI_STAGE_UNRESOLVED_CHAIN", "stage": "MULTI_STAGE" },
+    {
+      "id": "UNATTRIBUTED_NO_SUFFICIENT_EVIDENCE",
+      "stage": "UNATTRIBUTED",
+      "rEligible": false
+    }
+  ]
+}
