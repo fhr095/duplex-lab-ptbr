@@ -64,14 +64,15 @@ histórico, esta carteira prevalece.
   e da inferência. `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`; a frente foi cortada
   sem sexta alocação, holdout, troca de provider/modelo ou alegação de
   qualidade PT-BR. A confirmação posterior fechou zero Pods ativos.
-- **Ativo/caminho crítico — EXP-0026:** instrumento e único dry-run interno
-  excluído concluídos; seis lifecycles e a abertura cega passaram. O screen
-  formativo ainda terá seis sessões externas, uma pessoa por unidade.
-  Antes do freeze, uma emenda terminal qualifica uma única vez a cadeia
-  acústica real e fecha analyzer, retirada e reservas sem abrir nova linhagem.
+- **Ativo, bloqueado antes do freeze — EXP-0026:** instrumento e único dry-run
+  interno excluído concluídos; seis lifecycles e a abertura cega passaram. Na
+  emenda terminal, analyzer, retirada e reservas passaram, mas a cadeia
+  acústica não foi observada: a tentativa consumida expirou em um prompt
+  durante pausa operacional. `NOT_READY_FOR_FREEZE_TERMINAL` não refuta a
+  cadeia, porém proíbe rerun, freeze e coleta sob esta emenda.
   Cérebro, prompts/parâmetros, ASR, TTS, dispositivos, ruído e janela de coleta
-  serão congelados no freeze final, condicionado aos quatro gates dessa emenda
-  e depois ao roster e à estação física.
+  só poderão ser congelados após nova decisão prospectiva sob outro ID
+  operacional.
   Uma família só domina com top-2 em pelo
   menos 4/6 participantes, severidade material e falha técnica reproduzida.
   Zero sessão externa foi aberta; não há runner externo, GPU ou mudança de runtime.
@@ -513,7 +514,7 @@ card de dados e splits por família, gerador e pessoa.
 | 23 | EXP-0025-R local: microturnos de 600 ms — **`KEEP_BASELINE_AND_CUT_MICROTURN_CHALLENGER`** | holdout selado de 24 pares: 9→4 tomadas prematuras, 5 correções, 0 introduções, 2 sessões melhoradas e 0 misses | p95 `L=1.200 ms` falhou o limite de 800 ms; `L=A0@600`, sem resíduo semântico, `L2`, runtime ou autoridade |
 | 24 | EXP-0025-R externo: sentinelas oficiais — **`DO_NOT_CUT_E_DO_NOT_CLAIM_D_GAIN`** | 4/4 transições válidas sob o `server.py` fixado; tokens brutos preservados; carregamento validado por 112/112 tensores base idênticos | adaptador congelado parou antes de `D`; zero observações pt-BR/H; 35,12 GiB e US$ 0,9581 consumidos; `D`-only depende de uma alocação final e teto cumulativo de 70 GiB |
 | 25 | EXP-0025-R externo terminal — **`CUT_EXTERNAL_MICROTURN_FRONT_ENVIRONMENT_BLOCKED`** | duas alocações `D`-only terminaram antes de download/inferência; recovery GraphQL confirmou zero Pods; gasto cumulativo conservador ≤US$ 1,3864 e 28,8 min | `E=NOT_EVALUATED_ENVIRONMENT_BLOCKED`; nenhuma conclusão PT-BR, sexta alocação, troca de provider/modelo, holdout ou autoridade |
-| 26 | EXP-0026: diagnóstico formativo ponta a ponta — **`PENDING_END_TO_END_BOTTLENECK_DIAGNOSIS`** | concluir uma única qualificação terminal de prontidão; depois preencher roster/estação, congelar a condição e executar seis sessões externas | ativo; instrumento, dry-run excluído, seis lifecycles e ordem cega passaram; zero sessão externa; emenda fecha cadeia acústica, analyzer, retirada e reservas sem GPU/runner/DuplexCascade |
+| 26 | EXP-0026: diagnóstico formativo ponta a ponta — **`BLOCKED_BY_TERMINAL_OPERATIONAL_READINESS`** | preservar o fechamento; qualquer nova qualificação exige outro ID e decisão prospectiva antes de roster/estação | B/C/D passaram; OQ-A não observada após timeout operacional em tentativa consumida; `NOT_READY_FOR_FREEZE_TERMINAL`; zero sessão externa, rerun, GPU/runner/DuplexCascade |
 
 O EXP-0019 está terminal e cortado. O EXP-0020 foi invalidado pelo coletor antes
 de produzir evidência física. EXP-0021 e EXP-0022 também estão terminais: suas
@@ -530,11 +531,12 @@ das tentativas terminais iniciou `D`; portanto não há placar pt-BR. O kill
 criterion foi acionado e a frente externa foi cortada sem nova alocação,
 troca de provider/modelo ou holdout. Nenhum resultado concede autoridade.
 
-O EXP-0026 é o único caminho crítico ativo. Seu instrumento e dry-run estão
-qualificados, mas ele não tenta confirmar que o produto está pronto: usará as
-seis sessões externas ainda pendentes para ordenar ou recusar gargalos. Se
-gestão de piso dominar e for reproduzida, DuplexCascade volta somente sob novo
-ID e com o runner qualificado; caso contrário a pergunta permanece
+O EXP-0026 continua como caminho crítico, porém bloqueado antes do freeze. Seu
+instrumento e dry-run estão qualificados, mas a emenda terminal não observou a
+cadeia física depois de uma interrupção operacional. Portanto as seis sessões
+externas não podem ser abertas. Se uma qualificação futura sob novo ID liberar
+o freeze e, depois, gestão de piso dominar e for reproduzida, DuplexCascade
+volta somente sob novo ID e com o runner qualificado; caso contrário a pergunta permanece
 `UNRESOLVED — DEFERRED BY PRODUCT PRIORITY`.
 
 Depois do veto M4b, ASR, TTS, cérebro local, loopback ou backbone nativo entram

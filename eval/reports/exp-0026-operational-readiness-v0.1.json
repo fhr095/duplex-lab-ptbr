@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "exp-0026-operational-readiness-v1",
+  "experimentId": "EXP-0026",
+  "amendment": {
+    "path": "docs/experiments/EXP-0026-operational-readiness-amendment.md",
+    "fileSha256": "sha256:9c1e3f7fc23b80a123f61028dc1f293bb22f027a630ebceff0879f6a2ce537fc"
+  },
+  "sourceCommit": "347d0d58ef04c691ee5b8ff46a41129a14c5f72e",
+  "openingCommitment": {
+    "path": "eval/commitments/exp-0026-operational-readiness-opening-v0.1.json",
+    "sha256": "sha256:9ab7e249f376a71822cf747ed2d4108a79e3f99fe2ddeb0a7a53ca9d756bd1ad",
+    "commitmentSha256": "sha256:e14155ffeb24c0b999cc8f18ccb8ce629a3848e4e8c2460e8da413798ff11173"
+  },
+  "completedAt": "2026-08-04T02:25:51.028Z",
+  "executionDisposition": "EXECUTION_EXCEPTION_AFTER_CONSUMPTION",
+  "timebox": {
+    "wallMinutes": 4.98,
+    "physicalAttempts": 1,
+    "externalLlmRequests": 0,
+    "withinBudget": true
+  },
+  "gates": {
+    "OQ_A_PHYSICAL_CHAIN": false,
+    "OQ_B_FROZEN_ANALYSIS": true,
+    "OQ_C_WITHDRAWAL_AND_RETENTION": true,
+    "OQ_D_RESERVES": true
+  },
+  "acousticQualificationSha256": "sha256:8a37db667a8291113dbe9fcfabddc9b85ee670d216811e939678ff8dab278c9e",
+  "automatedEvidence": [
+    {
+      "path": "eval/generated/exp-0026/operational-readiness-preflight-v0.1.json",
+      "fileSha256": "sha256:d45c83c65e68b258b07a4aa10501fca136cab8728addbae85a007663ead61d9e",
+      "preflightSha256": "sha256:d005e98b1f16cb4dde9c47ad83920f6e0eeecf1a67df75964e2589dc7b68a03b",
+      "pass": true
+    }
+  ],
+  "pass": false,
+  "decision": "NOT_READY_FOR_FREEZE_TERMINAL",
+  "limitations": [
+    "uma estação e uma execução; não estima confiabilidade populacional",
+    "audibilidade é confirmação binária do operador, não teste de naturalidade ou volume",
+    "overlap prova observabilidade da cadeia, não acerto da política de interrupção"
+  ],
+  "prohibitedScopeRemainedClosed": true,
+  "reportSha256": "sha256:040478480100a628defceed61a2bb6bdf5f0f7bec975dfb8c907fccd02cf5b92"
+}
