@@ -141,6 +141,12 @@ export const EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT =
   "41926aaf21043658f7e8b7dc62ffad9830e10896";
 export const EXP0025_R_EXTERNAL_TERMINAL_CLOSEOUT_PATH =
   "docs/experiments/EXP-0025-R-external-terminal-closeout.md";
+export const EXP0026_OPERATIONAL_READINESS_REPORT_PATH =
+  "eval/reports/exp-0026-operational-readiness-v0.1.json";
+export const EXP0026_OPERATIONAL_READINESS_CLOSEOUT_PATH =
+  "docs/experiments/EXP-0026-operational-readiness-closeout.md";
+export const EXP0026_OPERATIONAL_READINESS_EVIDENCE_COMMIT =
+  "0a5def900f583ffeb6e8b9ba9366d23d0c5bc771";
 
 const EXP0025_R_EXTERNAL_EVIDENCE_PATHS = Object.freeze([
   "eval/evidence/exp-0025-r-external-development-raw-v0.1.journal.ndjson",
@@ -163,6 +169,14 @@ const EXP0025_R_EXTERNAL_TERMINAL_IMMUTABLE_PATHS = Object.freeze([
   EXP0025_R_EXTERNAL_TERMINAL_CLOSEOUT_PATH,
   "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5-termination-recovery.json",
   "eval/evidence/exp-0025-r-external-runpod-allocation-v0.5.json"
+]);
+
+const EXP0026_OPERATIONAL_READINESS_EVIDENCE_PATHS = Object.freeze([
+  "README.md",
+  "docs/PROJECT_REFERENCE.md",
+  "docs/ROADMAP.md",
+  EXP0026_OPERATIONAL_READINESS_CLOSEOUT_PATH,
+  EXP0026_OPERATIONAL_READINESS_REPORT_PATH
 ]);
 
 const EXP0023_C0_COMMIT =
@@ -2434,6 +2448,100 @@ async function assertCanonicalReport(entry, projectRoot, index) {
   }
 }
 
+async function assertExp0026OperationalReadinessEvidence(entry, projectRoot) {
+  const result = entry.operationalReadiness;
+  assertObject(result, "EXP-0026 operationalReadiness");
+  assert(
+    result.status === "not-ready-terminal" &&
+      result.decision === "NOT_READY_FOR_FREEZE_TERMINAL" &&
+      result.physicalChainEvaluated === false &&
+      result.externalSessionsOpened === 0 &&
+      result.rerunAuthorized === false,
+    "EXP-0026 readiness perdeu decisão, limite ou zero rerun"
+  );
+  assert(
+    result.report === EXP0026_OPERATIONAL_READINESS_REPORT_PATH &&
+      result.closeout === EXP0026_OPERATIONAL_READINESS_CLOSEOUT_PATH &&
+      result.evidenceCommit === EXP0026_OPERATIONAL_READINESS_EVIDENCE_COMMIT,
+    "EXP-0026 readiness perdeu paths ou evidenceCommit canônicos"
+  );
+  const [reportBytes, closeoutBytes] = await Promise.all([
+    readFile(resolveRepositoryPath(
+      projectRoot,
+      result.report,
+      "EXP-0026 operational readiness report"
+    )),
+    readFile(resolveRepositoryPath(
+      projectRoot,
+      result.closeout,
+      "EXP-0026 operational readiness closeout"
+    ))
+  ]);
+  const report = JSON.parse(reportBytes);
+  const reportCore = structuredClone(report);
+  delete reportCore.reportSha256;
+  assert(
+    report.reportSha256 === `sha256:${canonicalSha256(reportCore)}` &&
+      result.reportSha256 === report.reportSha256,
+    "EXP-0026 readiness report perdeu hash canônico"
+  );
+  assert(
+    report.decision === result.decision &&
+      report.pass === false &&
+      report.executionDisposition ===
+        "EXECUTION_EXCEPTION_AFTER_CONSUMPTION" &&
+      report.gates?.OQ_A_PHYSICAL_CHAIN === false &&
+      report.gates?.OQ_B_FROZEN_ANALYSIS === true &&
+      report.gates?.OQ_C_WITHDRAWAL_AND_RETENTION === true &&
+      report.gates?.OQ_D_RESERVES === true &&
+      report.timebox?.physicalAttempts === 1 &&
+      report.timebox?.externalLlmRequests === 0,
+    "EXP-0026 readiness report perdeu fatos terminais"
+  );
+  assert(
+    closeoutBytes.toString("utf8").includes(
+      "OQ-A — cadeia física | **FAIL / não observada**"
+    ),
+    "EXP-0026 readiness closeout transformou ausência em falha física"
+  );
+  const [committedPaths, headCommit] = await Promise.all([
+    changedPathsAtCommit(
+      projectRoot,
+      EXP0026_OPERATIONAL_READINESS_EVIDENCE_COMMIT
+    ),
+    gitText(projectRoot, "rev-parse", "HEAD")
+  ]);
+  assert(
+    isDeepStrictEqual(
+      committedPaths,
+      [...EXP0026_OPERATIONAL_READINESS_EVIDENCE_PATHS].toSorted()
+    ),
+    "EXP-0026 readiness evidenceCommit perdeu isolamento"
+  );
+  await Promise.all([
+    assertGitFileMatches(
+      projectRoot,
+      EXP0026_OPERATIONAL_READINESS_EVIDENCE_COMMIT,
+      result.report,
+      reportBytes,
+      "EXP-0026 operational readiness report"
+    ),
+    assertGitFileMatches(
+      projectRoot,
+      EXP0026_OPERATIONAL_READINESS_EVIDENCE_COMMIT,
+      result.closeout,
+      closeoutBytes,
+      "EXP-0026 operational readiness closeout"
+    ),
+    assertGitAncestor(
+      projectRoot,
+      EXP0026_OPERATIONAL_READINESS_EVIDENCE_COMMIT,
+      headCommit,
+      "EXP-0026 readiness evidenceCommit→HEAD"
+    )
+  ]);
+}
+
 function validateEntryShape(entry, index) {
   assertObject(entry, `entries[${index}]`);
   assert(
@@ -2856,6 +2964,9 @@ export async function validateExperimentIndex(index, options = {}) {
       await assertFileExists(testPath, `${entry.id}.cleanCloneChecks`);
     }
     await assertCanonicalReport(entry, projectRoot, index);
+    if (entry.id === "EXP-0026") {
+      await assertExp0026OperationalReadinessEvidence(entry, projectRoot);
+    }
   }
 
   return index;

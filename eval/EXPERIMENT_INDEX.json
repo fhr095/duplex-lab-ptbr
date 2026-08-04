@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-08-03T19:58:03-03:00",
+  "updatedAt": "2026-08-03T23:30:00-03:00",
   "transitionState": "active",
   "coverage": {
     "canonicalDecisionEntriesFrom": "EXP-0007",
@@ -465,34 +465,53 @@
     {
       "id": "EXP-0026",
       "status": "active",
-      "decision": "PENDING_END_TO_END_BOTTLENECK_DIAGNOSIS",
+      "decision": "BLOCKED_BY_TERMINAL_OPERATIONAL_READINESS",
       "preRegistration": "docs/experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md",
       "canonicalReport": null,
       "evidenceCommit": null,
       "authority": "none",
       "criticalPath": true,
+      "operationalReadiness": {
+        "status": "not-ready-terminal",
+        "decision": "NOT_READY_FOR_FREEZE_TERMINAL",
+        "report": "eval/reports/exp-0026-operational-readiness-v0.1.json",
+        "reportSha256": "sha256:040478480100a628defceed61a2bb6bdf5f0f7bec975dfb8c907fccd02cf5b92",
+        "closeout": "docs/experiments/EXP-0026-operational-readiness-closeout.md",
+        "evidenceCommit": "0a5def900f583ffeb6e8b9ba9366d23d0c5bc771",
+        "physicalChainEvaluated": false,
+        "externalSessionsOpened": 0,
+        "rerunAuthorized": false
+      },
       "cleanCloneChecks": [
+        "node --test tests/exp-0026-analysis.test.mjs",
         "node --test tests/exp-0026-preregistration.test.mjs",
         "node --test tests/exp-0026-instrument.test.mjs",
         "node --test tests/exp-0026-session-store.test.mjs",
         "node --test tests/exp-0026-blind-analysis.test.mjs",
+        "node --test tests/exp-0026-data-lifecycle.test.mjs",
         "node --test tests/exp-0026-freeze.test.mjs",
+        "node --test tests/exp-0026-operational-readiness.test.mjs",
         "node --test tests/exp-0026-qualification-reports.test.mjs",
+        "node --test tests/exp-0026-replacements.test.mjs",
         "node --test tests/experiment-index.test.mjs",
         "node --test tests/documentation-consistency.test.mjs"
       ],
       "localReproductionCommands": [
+        "node --test tests/exp-0026-analysis.test.mjs",
         "node --test tests/exp-0026-preregistration.test.mjs",
         "node --test tests/exp-0026-instrument.test.mjs",
         "node --test tests/exp-0026-session-store.test.mjs",
         "node --test tests/exp-0026-blind-analysis.test.mjs",
+        "node --test tests/exp-0026-data-lifecycle.test.mjs",
         "node --test tests/exp-0026-freeze.test.mjs",
+        "node --test tests/exp-0026-operational-readiness.test.mjs",
         "node --test tests/exp-0026-qualification-reports.test.mjs",
+        "node --test tests/exp-0026-replacements.test.mjs",
         "npm run eval:exp:0026:stimuli:check",
         "npm run eval:index:check"
       ],
       "supersedes": [],
-      "nextDecision": "Não repetir o dry-run: preencher roster diverso e condição física, materializar o freeze final e então coletar seis participantes externos para escolher no máximo um próximo experimento."
+      "nextDecision": "Preservar o fechamento terminal e não congelar roster/estação nem abrir coleta. Qualquer nova qualificação da cadeia física exige outro ID e decisão prospectiva; esta emenda não autoriza rerun."
     }
   ]
 }

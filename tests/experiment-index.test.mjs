@@ -19,6 +19,9 @@ import {
   EXP0025_R_EXTERNAL_TERMINAL_EVIDENCE_COMMIT,
   EXP0025_R_LOCAL_CANONICAL_REPORT_PATH,
   EXP0025_R_LOCAL_EVIDENCE_COMMIT,
+  EXP0026_OPERATIONAL_READINESS_CLOSEOUT_PATH,
+  EXP0026_OPERATIONAL_READINESS_EVIDENCE_COMMIT,
+  EXP0026_OPERATIONAL_READINESS_REPORT_PATH,
   readExperimentIndex,
   validateExp0018HistoricalOutcome,
   validateExperimentIndex
@@ -209,16 +212,36 @@ test("índice canônico real referencia evidências existentes", async () => {
   assert.equal(exp0026.authority, "none");
   assert.equal(exp0026.criticalPath, true);
   assert.equal(
+    exp0026.decision,
+    "BLOCKED_BY_TERMINAL_OPERATIONAL_READINESS"
+  );
+  assert.deepEqual(exp0026.operationalReadiness, {
+    status: "not-ready-terminal",
+    decision: "NOT_READY_FOR_FREEZE_TERMINAL",
+    report: EXP0026_OPERATIONAL_READINESS_REPORT_PATH,
+    reportSha256:
+      "sha256:040478480100a628defceed61a2bb6bdf5f0f7bec975dfb8c907fccd02cf5b92",
+    closeout: EXP0026_OPERATIONAL_READINESS_CLOSEOUT_PATH,
+    evidenceCommit: EXP0026_OPERATIONAL_READINESS_EVIDENCE_COMMIT,
+    physicalChainEvaluated: false,
+    externalSessionsOpened: 0,
+    rerunAuthorized: false
+  });
+  assert.equal(
     exp0026.preRegistration,
     "docs/experiments/EXP-0026-end-to-end-experience-bottleneck-diagnostic.md"
   );
   assert.deepEqual(exp0026.cleanCloneChecks, [
+    "node --test tests/exp-0026-analysis.test.mjs",
     "node --test tests/exp-0026-preregistration.test.mjs",
     "node --test tests/exp-0026-instrument.test.mjs",
     "node --test tests/exp-0026-session-store.test.mjs",
     "node --test tests/exp-0026-blind-analysis.test.mjs",
+    "node --test tests/exp-0026-data-lifecycle.test.mjs",
     "node --test tests/exp-0026-freeze.test.mjs",
+    "node --test tests/exp-0026-operational-readiness.test.mjs",
     "node --test tests/exp-0026-qualification-reports.test.mjs",
+    "node --test tests/exp-0026-replacements.test.mjs",
     "node --test tests/experiment-index.test.mjs",
     "node --test tests/documentation-consistency.test.mjs"
   ]);
@@ -368,6 +391,16 @@ test("índice canônico real referencia evidências existentes", async () => {
   assert.equal(
     index.entries.find(({ id }) => id === "EXP-0017").canonicalReport,
     "eval/reports/exp-0017-summary-v0.1.json"
+  );
+});
+
+test("EXP-0026 não pode ganhar rerun nem transformar ausência em passe", async () => {
+  const index = await fixture();
+  const readiness = index.entries.at(-1).operationalReadiness;
+  readiness.rerunAuthorized = true;
+  await assert.rejects(
+    validateExperimentIndex(index, { projectRoot }),
+    /readiness perdeu decisão, limite ou zero rerun/u
   );
 });
 
