@@ -430,11 +430,42 @@ function validateTurn(body) {
 async function streamTurn(request, response, body) {
   validateTurn(body);
 
-  const plan = turnCoordinator.planTurn({
-    sessionId: body.sessionId,
-    turnId: body.turnId,
-    text: body.text
-  });
+  // Estágios do challenger de resposta especulativa (exp/caminho-ouro):
+  //  - "speculative": planeja sobre snapshot sem avançar o kernel e gera a
+  //    resposta; o estado autoritativo só muda no commit.
+  //  - "commit": avança o kernel (idempotente por turnId) sem gerar resposta,
+  //    usado quando o stream especulativo é adotado pela final confirmada.
+  //  - default: comportamento original (dispatch + resposta).
+  const stage = body.stage === "speculative" || body.stage === "commit"
+    ? body.stage
+    : "full";
+
+  if (stage === "commit") {
+    const interaction = turnCoordinator.commitTurn({
+      sessionId: body.sessionId,
+      turnId: body.turnId,
+      text: body.text
+    });
+    response.writeHead(200, {
+      "content-type": "application/x-ndjson; charset=utf-8",
+      "cache-control": "no-store"
+    });
+    sendNdjson(response, { type: "committed", interaction });
+    response.end();
+    return;
+  }
+
+  const plan = stage === "speculative"
+    ? turnCoordinator.planTurnSpeculative({
+        sessionId: body.sessionId,
+        turnId: body.turnId,
+        text: body.text
+      })
+    : turnCoordinator.planTurn({
+        sessionId: body.sessionId,
+        turnId: body.turnId,
+        text: body.text
+      });
   const mode = plan.mode;
   const controller = new AbortController();
   const abortUpstream = () => controller.abort();

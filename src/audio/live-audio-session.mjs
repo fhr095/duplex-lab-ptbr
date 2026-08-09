@@ -419,6 +419,28 @@ export class LiveAudioSession {
         acousticFixed ? turn.pauseSampleStart : null,
       audioSnapshot: turn.asr.preparedFinalSnapshot ?? null
     });
+    // Challenger exp/caminho-ouro: publica o texto da final preparada assim
+    // que o engine final resolve, ainda durante a janela de silêncio. Permite
+    // especular a resposta com texto de qualidade final antes do endpoint.
+    // Emite mesmo após o endpoint: a final publicada ainda espera o commit
+    // grace (220–1100 ms), que continua sendo antecedência aproveitável.
+    void preparation.then((ready) => {
+      if (
+        this.#closed ||
+        turn.cancelled ||
+        turn.emitted ||
+        !ready?.ok ||
+        !ready.result?.text
+      ) {
+        return;
+      }
+      this.#emit("endpoint.prefinal.text", performance.now(), {
+        turnId: turn.id,
+        text: ready.result.text,
+        inferenceMs: ready.result.inferenceMs ?? null,
+        trigger
+      });
+    });
     return true;
   }
 
