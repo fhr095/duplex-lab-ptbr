@@ -172,7 +172,19 @@ let asrHealth = {
   model: asrEnabled ? asrFinalModel : null
 };
 let ttsHealth = { state: "starting" };
-const ttsWarmup = prewarmWindowsSpeech().then(
+const ttsProviderEnv = process.env.TTS_PROVIDER?.trim().toLowerCase() ||
+  "windows";
+const ttsWarmup = ttsProviderEnv !== "windows"
+  ? Promise.resolve().then(() => {
+      ttsHealth = {
+        state: "ready",
+        engine: `${ttsProviderEnv}-sidecar`,
+        voice: ttsProviderEnv === "pocket" ? "rafael" : "pt_BR-faber",
+        culture: "pt-BR",
+        primed: false
+      };
+    })
+  : prewarmWindowsSpeech().then(
   (status) => {
     ttsHealth = {
       state: "ready",
@@ -349,6 +361,7 @@ const STATIC_ROUTES = new Map([
   ["/pcm-capture.mjs", "pcm-capture.mjs"],
   ["/pcm-dsp.mjs", "pcm-dsp.mjs"],
   ["/pcm-wire.mjs", "pcm-wire.mjs"],
+  ["/speculative-turn.mjs", "speculative-turn.mjs"],
   ["/stream-utils.mjs", "stream-utils.mjs"],
   ["/training-trace-recorder.mjs", "training-trace-recorder.mjs"],
   ["/turn-taking.mjs", "turn-taking.mjs"],
@@ -521,6 +534,73 @@ async function streamTurn(request, response, body) {
   }
 }
 
+// Challenger exp/caminho-ouro: TTS plugável. windows = worker SAPI original;
+// pocket/piper = sidecars HTTP locais (Pocket TTS Kyutai transmite o WAV em
+// streaming; repassamos os bytes assim que chegam).
+const ttsProvider = process.env.TTS_PROVIDER?.trim().toLowerCase() ||
+  "windows";
+const ttsSidecarUrl = process.env.TTS_SIDECAR_URL?.trim() ||
+  (ttsProvider === "pocket"
+    ? "http://127.0.0.1:8321/tts"
+    : "http://127.0.0.1:8331");
+
+async function proxySidecarTts(request, response, body, controller) {
+  let upstream;
+  if (ttsProvider === "pocket") {
+    const form = new FormData();
+    form.set("text", body.text);
+    upstream = await fetch(ttsSidecarUrl, {
+      method: "POST",
+      body: form,
+      signal: controller.signal
+    });
+  } else {
+    upstream = await fetch(ttsSidecarUrl, {
+      method: "POST",
+      headers: { "content-type": "text/plain; charset=utf-8" },
+      body: body.text,
+      signal: controller.signal
+    });
+  }
+  if (!upstream.ok) {
+    throw new Error(`TTS sidecar retornou HTTP ${upstream.status}`);
+  }
+  // O cliente atual consome o blob completo antes de tocar, então bufferizar
+  // aqui não custa latência percebida — e permite corrigir os tamanhos RIFF
+  // que sidecars de streaming deixam abertos (0/0xFFFFFFFF), mantendo o WAV
+  // compatível com decodeWaveToPcm16 e com os harnesses.
+  const chunks = [];
+  for await (const chunk of upstream.body) {
+    if (controller.signal.aborted) {
+      return;
+    }
+    chunks.push(chunk);
+  }
+  const audio = Buffer.concat(chunks);
+  if (audio.length >= 44 && audio.toString("ascii", 0, 4) === "RIFF") {
+    audio.writeUInt32LE(audio.length - 8, 4);
+    let offset = 12;
+    while (offset + 8 <= audio.length) {
+      const id = audio.toString("ascii", offset, offset + 4);
+      const declared = audio.readUInt32LE(offset + 4);
+      if (id === "data") {
+        audio.writeUInt32LE(audio.length - offset - 8, offset + 4);
+        break;
+      }
+      offset += 8 + declared + (declared % 2);
+    }
+  }
+  if (response.destroyed || response.writableEnded) {
+    return;
+  }
+  response.writeHead(200, {
+    "content-type": "audio/wav",
+    "content-length": audio.length,
+    "cache-control": "no-store"
+  });
+  response.end(audio);
+}
+
 async function synthesizeTts(request, response, body) {
   const controller = new AbortController();
   const abortSynthesis = () => controller.abort();
@@ -536,6 +616,10 @@ async function synthesizeTts(request, response, body) {
   }
 
   try {
+    if (ttsProvider !== "windows") {
+      await proxySidecarTts(request, response, body, controller);
+      return;
+    }
     const audio = await synthesizeWindowsSpeech(body.text, {
       rate: body.rate,
       signal: controller.signal

@@ -166,6 +166,34 @@ O tempo morto real com cérebro externo é dominado por TTFT 0,7–2,4s + piso
 4. **Detector de turno PT-BR próprio** (dados + finetune) — trilha média.
 5. **Referência nativa em GPU** (H4) — só com autorização de custo.
 
+## Ciclo 2 — voz neural + challenger integrado (2026-08-09, tarde)
+
+### Hardware real desta máquina (fato novo importante)
+Ryzen 5 7430U, **7–8 GB de RAM visível no WSL, sem GPU** — abaixo do piso de
+16 GB do produto. Tudo que rodar aqui roda no cliente final.
+
+### H2 (voz) — probes concluídos nesta CPU
+- **Kokoro-82M int8: RTF 1,6–2,3 → CORTADO nesta máquina** (benchmarks de
+  referência com RTF ~0,5 não se reproduzem neste hardware).
+- **Pocket TTS Kyutai `portuguese_24l` quantizado: RTF ~0,35 quente, TTFB
+  ~2ms (streaming HTTP real), "Aham, entendi." em 181ms** — voz de qualidade
+  viável em CPU; é preview não-destilado (o final tende a melhorar). Voz
+  "rafael"; sotaque PT-BR a confirmar de ouvido.
+- **Piper faber/edresson: 1º chunk 34–64ms, RTF 0,04–0,07** — piso garantido;
+  prosódia sintética. Licenças: piper código GPL-3.0 (uso server-side ok),
+  vozes com cards próprios; Pocket pesos CC-BY-4.0 (verificar atribuição).
+- Amostras para audição em `notes/audicao/*.wav`.
+
+### Challenger integrado (servidor + cliente)
+- `TTS_PROVIDER=windows|pocket|piper` no serve.mjs com pass-through de
+  streaming dos sidecars; health adaptado; 889/889 testes passam.
+- Cliente: `?spec=1` adota stream especulado quando a final confirma a
+  preparada (commit idempotente no kernel antes de adotar); `?ack=1` fala
+  "Hum..." quando TTFT >700ms; higiene de especulação órfã em
+  rejected/cancelled/final-vazia (gap conhecido: branches de backchannel
+  dismiss não abortam — inócuo, substituída no próximo prefinal).
+- Guia completo do A/B humano em `notes/DEMO.md`.
+
 ## Custo externo consumido (sessão 2026-08-09)
 - ~24 chamadas gpt-5.6-luna (probes de latência e especulação; caps do repo
   respeitados) ≈ US$ 0,005. RunPod: zero.

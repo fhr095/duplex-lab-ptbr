@@ -34,6 +34,10 @@ import {
   classifyPotentialBargeIn,
   isExplicitTaskCancellation
 } from "/turn-taking.mjs";
+import {
+  SpeculativeTurn,
+  speculationMatches
+} from "/speculative-turn.mjs";
 
 const Recognition =
   window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
@@ -41,6 +45,11 @@ const pageParameters = new URLSearchParams(window.location.search);
 const automationEnabled =
   pageParameters.get("automation") === "1" &&
   ["localhost", "127.0.0.1"].includes(window.location.hostname);
+// Challenger exp/caminho-ouro: ?spec=1 especula a resposta na final preparada
+// do ASR; ?ack=1 fala um ack curto quando o cérebro demora a responder.
+const speculationEnabled = pageParameters.get("spec") === "1";
+const fastAckEnabled = pageParameters.get("ack") === "1";
+const FAST_ACKS = ["Hum...", "Tá.", "Deixa eu ver..."];
 const evaluationEnabled = pageParameters.get("evaluation") === "0026";
 const operationalReadinessEnabled =
   evaluationEnabled && pageParameters.get("readiness") === "1";
@@ -150,6 +159,8 @@ const session = {
   endpointTimer: null,
   earlyBackchannelTurnIds: new Set(),
   finalText: "",
+  speculation: null,
+  speculationSequence: 0,
   finishCurrentAudio: null,
   history: [],
   backchannelCount: 0,
@@ -1954,22 +1965,72 @@ async function processTurn() {
   log("turn.committed", text);
   setStatus("pensando e ouvindo", "speaking");
 
+  // Challenger: adota o stream especulado quando a final confirma o texto.
+  const speculation = session.speculation;
+  session.speculation = null;
+  const adopted = speculation && !speculation.aborted &&
+    speculationMatches(text, speculation.provisionalText)
+    ? speculation
+    : null;
+  if (speculation && !adopted) {
+    speculation.abort();
+    log("speculation.miss", speculation.provisionalText);
+  }
+  if (adopted) {
+    controller.signal.addEventListener(
+      "abort",
+      () => adopted.abort(),
+      { once: true }
+    );
+  }
+
   let completed = false;
+  let ackTimer = null;
 
   try {
-    const response = await fetch("/api/turn", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        text,
-        history,
-        sessionId: session.interactionSessionId,
-        turnId
-      }),
-      signal: controller.signal
-    });
+    let events;
+    if (adopted) {
+      await adopted.commit();
+      log(
+        "speculation.adopted",
+        `lead ${Math.round(performance.now() - adopted.startedAtMs)}ms`
+      );
+      events = adopted.events();
+    } else {
+      if (fastAckEnabled) {
+        ackTimer = setTimeout(() => {
+          if (
+            generation === session.responseGeneration &&
+            !session.responseAudioStarted &&
+            !session.assistantSpeaking &&
+            !session.assistantPreparing &&
+            context.mode !== "delegate"
+          ) {
+            log("fast-ack.spoken", "cérebro demorou >700ms");
+            enqueueSpeech(
+              FAST_ACKS[
+                session.interactionTurnSequence % FAST_ACKS.length
+              ],
+              "backchannel"
+            );
+          }
+        }, 700);
+      }
+      const response = await fetch("/api/turn", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          text,
+          history,
+          sessionId: session.interactionSessionId,
+          turnId
+        }),
+        signal: controller.signal
+      });
+      events = readNdjson(response);
+    }
 
-    for await (const event of readNdjson(response)) {
+    for await (const event of events) {
       const ownsFlow = context.mode === "delegate"
         ? session.activeTask === context
         : generation === session.responseGeneration;
@@ -2035,6 +2096,10 @@ async function processTurn() {
       }
 
       if (event.type === "delta") {
+        if (ackTimer !== null) {
+          clearTimeout(ackTimer);
+          ackTimer = null;
+        }
         if (context.mode === "delegate") {
           context.resultText += event.delta;
         } else {
@@ -2101,6 +2166,9 @@ async function processTurn() {
         log("turn.error", error.message);
     }
   } finally {
+    if (ackTimer !== null) {
+      clearTimeout(ackTimer);
+    }
     if (
       context.mode !== "delegate" &&
       generation === session.responseGeneration
@@ -2546,6 +2614,38 @@ function handleLocalAudioEvent(event) {
     setListeningStatus();
     return;
   }
+  if (event.type === "endpoint.prefinal.text") {
+    if (!speculationEnabled || !session.active) {
+      return;
+    }
+    const prepared = String(event.text ?? "").trim();
+    if (!prepared || session.pendingConfirmation) {
+      return;
+    }
+    const previous = session.speculation;
+    if (previous && !previous.settled &&
+        speculationMatches(prepared, previous.provisionalText)) {
+      return;
+    }
+    previous?.abort();
+    session.speculationSequence += 1;
+    session.speculation = new SpeculativeTurn({
+      history: session.history.slice(),
+      sessionId: session.interactionSessionId,
+      text: prepared,
+      turnId: `spec-${session.speculationSequence}`
+    });
+    log("speculation.started", prepared);
+    return;
+  }
+  if (event.type === "endpoint.prefinal.cancelled") {
+    if (session.speculation && !session.speculation.settled) {
+      session.speculation.abort();
+      log("speculation.aborted", "fala retomada");
+    }
+    session.speculation = null;
+    return;
+  }
   if (event.type === "transcript.final") {
     const text = String(event.text ?? "").trim();
     const reflexTransition = dispatchLocalAudioReflex({
@@ -2625,15 +2725,22 @@ function handleLocalAudioEvent(event) {
     }
     if (text && handleExplicitTaskCancellation(text)) {
       session.finalText = "";
+      session.speculation?.abort();
+      session.speculation = null;
       return;
     }
     if (text) {
       session.finalText = text;
       void processTurn();
+    } else {
+      session.speculation?.abort();
+      session.speculation = null;
     }
     return;
   }
   if (event.type === "transcript.rejected") {
+    session.speculation?.abort();
+    session.speculation = null;
     if (event.turnId) {
       session.earlyBackchannelTurnIds.delete(event.turnId);
     }
@@ -2664,6 +2771,8 @@ function handleLocalAudioEvent(event) {
     return;
   }
   if (event.type === "transcript.cancelled") {
+    session.speculation?.abort();
+    session.speculation = null;
     if (event.turnId) {
       session.earlyBackchannelTurnIds.delete(event.turnId);
     }
