@@ -50,6 +50,10 @@ env $BASE TTS_PROVIDER=piper BRAIN_PROVIDER=openai node src/cli/serve.mjs
     log `fast-ack.skipped`).
   - `ttsstream=1` — playback progressivo (só com sidecar): o áudio começa
     antes da síntese da frase terminar.
+  - Servidor com `FAST_PATH=1` (já ativo no processo que deixei rodando):
+    saudação/agradecimento/despedida/hora/data respondem em 19–52ms pela
+    camada rápida (modelo `fast-path-v0` no log), sem chamar o luna; todo o
+    resto passa (PASS) para o fluxo normal.
 
 Métricas no log (medem coisas DIFERENTES — não misturar):
 - `assistant.response.audible` (fim→voz) = primeira fala SEMÂNTICA renderizada
