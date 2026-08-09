@@ -25,6 +25,10 @@ import {
   synthesizeWindowsSpeech
 } from "../tts/windows-system-tts.mjs";
 import {
+  classifyFastPath,
+  FAST_PATH_VERSION
+} from "../interaction/fast-path.mjs";
+import {
   INTERACTION_KERNEL_VERSION
 } from "../interaction/interaction-kernel.mjs";
 import {
@@ -56,6 +60,7 @@ const host = process.env.HOST ?? "0.0.0.0";
 const prefinalPolicy = normalizePrefinalPolicy(
   process.env.PREFINAL_POLICY
 );
+const fastPathEnabled = process.env.FAST_PATH === "1";
 const endpointConfig = {
   completeSilenceMs: Number.parseInt(
     process.env.ENDPOINT_COMPLETE_MS ?? "520",
@@ -482,16 +487,24 @@ async function streamTurn(request, response, body) {
     : "full";
 
   if (stage === "commit") {
-    const interaction = turnCoordinator.commitTurn({
+    const commit = turnCoordinator.commitTurn({
       sessionId: body.sessionId,
       turnId: body.turnId,
-      text: body.text
+      text: body.text,
+      expectedPreviousVersion: body.expectedPreviousVersion
     });
     response.writeHead(200, {
       "content-type": "application/x-ndjson; charset=utf-8",
       "cache-control": "no-store"
     });
-    sendNdjson(response, { type: "committed", interaction });
+    sendNdjson(response, commit.ok
+      ? { type: "committed", ok: true, interaction: commit.transition }
+      : {
+          type: "committed",
+          ok: false,
+          reason: commit.reason,
+          currentVersion: commit.currentVersion
+        });
     response.end();
     return;
   }
@@ -508,6 +521,14 @@ async function streamTurn(request, response, body) {
         text: body.text
       });
   const mode = plan.mode;
+  // Arbitragem da camada rápida (FAST_PATH=1): decisão pura ANTES de acionar
+  // o reasoner — custo zero de latência serial. Abstenção (PASS) mantém o
+  // fluxo original; LOCAL_FINAL responde localmente e nem chama o provider.
+  const fastPath = fastPathEnabled &&
+    mode === "direct" &&
+    !plan.safety
+    ? classifyFastPath(plan.effectiveText ?? body.text)
+    : null;
   const controller = new AbortController();
   const abortUpstream = () => controller.abort();
 
@@ -531,10 +552,32 @@ async function streamTurn(request, response, body) {
     semantic: plan.semantic ?? null,
     safety: plan.safety ?? null,
     interaction: plan.interaction,
+    fastPath: fastPath
+      ? { action: fastPath.action, class: fastPath.class }
+      : null,
     acknowledgment: mode === "delegate" ? plan.acknowledgment : null,
     taskId: mode === "delegate" ? plan.task.id : null,
     query: mode === "delegate" ? plan.task.query : null
   });
+
+  if (fastPath?.action === "LOCAL_FINAL") {
+    sendNdjson(response, {
+      type: "started",
+      responseId: null,
+      model: FAST_PATH_VERSION
+    });
+    if (!controller.signal.aborted) {
+      sendNdjson(response, { type: "delta", delta: fastPath.response });
+      sendNdjson(response, {
+        type: "done",
+        responseId: null,
+        model: FAST_PATH_VERSION,
+        usage: null
+      });
+    }
+    response.end();
+    return;
+  }
 
   try {
     // Contrato do challenger: um turno especulativo NUNCA pode disparar

@@ -186,6 +186,9 @@ const session = {
   speculation: null,
   speculationSequence: 0,
   ackCache: new Map(),
+  assistantSpeakingKind: null,
+  pendingTtsElements: new Set(),
+  renderConfrontationLogged: false,
   finishCurrentAudio: null,
   history: [],
   backchannelCount: 0,
@@ -595,6 +598,22 @@ const assistantRenderProbe = new BrowserAudioRenderProbe({
         event.type,
         `${event.mapping} · quantum não silencioso`
       );
+      // Confronto onplaying × primeiro quantum não silencioso: mede quanto o
+      // fim→voz baseado em onplaying subestima o áudio realmente audível.
+      if (
+        !session.renderConfrontationLogged &&
+        session.assistantSpeaking &&
+        session.lastSpeechEndedAt !== null &&
+        Number.isFinite(event.activeAtMs)
+      ) {
+        session.renderConfrontationLogged = true;
+        log(
+          "assistant.render.first-audible",
+          `fim→render ${formatMs(
+            event.activeAtMs - session.lastSpeechEndedAt
+          )}`
+        );
+      }
     }
   }
 });
@@ -635,6 +654,7 @@ function cleanupCurrentAudio() {
   const source = session.assistantAudioSource;
   session.assistantAudio = null;
   session.assistantAudioSource = null;
+  session.assistantSpeakingKind = null;
 
   if (audio) {
     audio.onplaying = null;
@@ -697,6 +717,13 @@ function releaseAssistantAudio() {
     controller.abort();
   }
   session.ttsAbortControllers.clear();
+  // Downloads progressivos de itens ainda na fila não têm AbortController —
+  // o cancelamento explícito é derrubar o src de cada elemento pendente.
+  for (const audio of session.pendingTtsElements) {
+    audio.removeAttribute("src");
+    audio.load();
+  }
+  session.pendingTtsElements.clear();
   session.audioQueue = [];
   cleanupCurrentAudio();
   session.audioPumpActive = false;
@@ -730,11 +757,13 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
     }
     if (ttsStreamEnabled && options.loop !== true) {
       // Download progressivo: o elemento começa a baixar já na preparação
-      // (preload) e o playback inicia antes da síntese completa.
+      // (preload) e o playback inicia antes da síntese completa. Registrado
+      // para cancelamento explícito se a época avançar (interrupção).
       const audio = new Audio(
         `/api/tts?stream=1&text=${encodeURIComponent(text)}`
       );
       audio.preload = "auto";
+      session.pendingTtsElements.add(audio);
       return {
         audioElement: audio,
         blob: null,
@@ -798,6 +827,9 @@ async function playPreparedSpeech(item) {
     ? null
     : URL.createObjectURL(item.blob);
   const audio = item.audioElement ?? new Audio(audioUrl);
+  if (item.audioElement) {
+    session.pendingTtsElements.delete(item.audioElement);
+  }
   audio.loop = item.loop === true;
   let audioSource = null;
   try {
@@ -818,6 +850,7 @@ async function playPreparedSpeech(item) {
   session.assistantAudio = audio;
   session.assistantAudioSource = audioSource;
   session.assistantAudioUrl = audioUrl;
+  session.assistantSpeakingKind = item.kind;
   session.assistantPreparing = false;
 
   await new Promise((resolve, reject) => {
@@ -1024,14 +1057,29 @@ function enqueueSpeech(text, kind = "direct", options = {}) {
 
   const epoch = session.audioEpoch;
   session.assistantPreparing = true;
+  const preparation = prepareSpeech(normalized, kind, epoch, options).then(
+    (value) => ({ value }),
+    (error) => ({ error })
+  );
+  if (!["fast-ack", "backchannel"].includes(kind)) {
+    // Conteúdo semântico pronto encerra um ack que ainda estiver tocando:
+    // o filler perdeu a corrida e só atrasaria a resposta.
+    void preparation.then((result) => {
+      if (
+        !result.error &&
+        epoch === session.audioEpoch &&
+        session.assistantSpeakingKind === "fast-ack"
+      ) {
+        log("fast-ack.cut", "conteúdo pronto durante o ack");
+        session.finishCurrentAudio?.();
+      }
+    });
+  }
   session.audioQueue.push({
     kind,
     taskId: options.taskId ?? null,
     taskResultDelivery: options.taskResultDelivery ?? null,
-    preparation: prepareSpeech(normalized, kind, epoch, options).then(
-      (value) => ({ value }),
-      (error) => ({ error })
-    )
+    preparation
   });
   void pumpSpeechQueue(epoch);
 }
@@ -2083,15 +2131,21 @@ async function processTurn() {
   let ackTimer = null;
 
   try {
-    let events;
+    let events = null;
     if (adopted) {
-      await adopted.commit();
-      log(
-        "speculation.adopted",
-        `lead ${Math.round(performance.now() - adopted.startedAtMs)}ms`
-      );
-      events = adopted.events();
-    } else {
+      const commit = await adopted.commit();
+      if (commit.ok) {
+        log(
+          "speculation.adopted",
+          `lead ${Math.round(performance.now() - adopted.startedAtMs)}ms`
+        );
+        events = adopted.events();
+      } else {
+        adopted.abort();
+        log("speculation.commit-rejected", commit.reason);
+      }
+    }
+    if (events === null) {
       if (fastAckEnabled) {
         ackTimer = setTimeout(() => {
           if (
@@ -2705,6 +2759,7 @@ function handleLocalAudioEvent(event) {
     session.lastSpeechEndedAt =
       session.lastEndpointCommittedAt -
       Math.max(0, Number(event.silenceMs) || 0);
+    session.renderConfrontationLogged = false;
     log("user.speech.ended", audioEventDetail(event));
     setListeningStatus();
     return;

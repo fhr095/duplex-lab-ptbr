@@ -41,6 +41,7 @@ export class SpeculativeTurn {
   provisionalText;
   sessionId;
   startedAtMs;
+  baseStateVersion = null;
   firstDeltaAtMs = null;
   firstEventAtMs = null;
   turnId;
@@ -82,6 +83,12 @@ export class SpeculativeTurn {
       }
       for await (const event of readNdjson(response)) {
         this.firstEventAtMs ??= performance.now();
+        if (event.type === "route") {
+          // Versão-base sobre a qual o plano foi especulado; o commit é
+          // condicionado a ela (descarta se o runtime avançou no meio).
+          this.baseStateVersion =
+            event.interaction?.previousStateVersion ?? null;
+        }
         if (event.type === "delta" && this.firstDeltaAtMs === null) {
           this.firstDeltaAtMs = performance.now();
         }
@@ -136,6 +143,8 @@ export class SpeculativeTurn {
 
   // Comete o turno no kernel autoritativo (idempotente por turnId) usando o
   // MESMO texto planejado especulativamente — obrigatório antes de adotar.
+  // Retorna { ok, interaction?, reason? }; ok:false significa que o estado
+  // avançou desde a especulação e a adoção deve ser abandonada.
   async commit() {
     const response = await this.#fetchImpl(`${this.#baseUrl}/api/turn`, {
       method: "POST",
@@ -144,7 +153,8 @@ export class SpeculativeTurn {
         text: this.provisionalText,
         sessionId: this.sessionId,
         turnId: this.turnId,
-        stage: "commit"
+        stage: "commit",
+        expectedPreviousVersion: this.baseStateVersion ?? undefined
       })
     });
     if (!response.ok) {
@@ -152,7 +162,9 @@ export class SpeculativeTurn {
     }
     for await (const event of readNdjson(response)) {
       if (event.type === "committed") {
-        return event.interaction;
+        return event.ok === false
+          ? { ok: false, reason: event.reason ?? "commit-rejected" }
+          : { ok: true, interaction: event.interaction };
       }
     }
     throw new Error("commit terminou sem evento committed");

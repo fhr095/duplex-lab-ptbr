@@ -226,6 +226,38 @@ Correções assumidas:
   (sem conteúdo/segredos — limpeza documentada em DEMO.md; fora do alcance
   desta worktree isolada).
 
+## Ciclo 4 — contrato de arbitragem fast-path (o ativo é o contrato)
+
+Reenquadramento da revisão do Felipe, adotado: o ativo proprietário é o
+CONTRATO talker-reasoner (arbitragem + abstenção + handoff), não o ocupante
+do slot rápido. Implementado:
+- `src/interaction/fast-path.mjs`: função pura, schema fechado
+  (LOCAL_FINAL | PASS; BRIDGE/CLARIFY reservados no contrato), abstenção
+  por default, whitelist estreita (saudação, agradecimento, despedida,
+  hora/data/dia — os três últimos são skills determinísticas, nem LLM
+  precisam). Decisão ANTES de acionar o reasoner → zero latência serial.
+- Medido E2E com FAST_PATH=1: elegível responde em **19–52ms vs 1.759ms do
+  luna** no mesmo processo; cobertura no corpus do lab: 4,2% (corpus
+  enviesado para correções; fração fática em conversa real é maior), **zero
+  falso LOCAL_FINAL** ("Espera", "Aham", "Entendi" abstêm corretamente).
+- Especulação agora é vinculada à versão-base do estado: commit recusado se
+  o runtime avançou (`speculation.commit-rejected` → fallback ao caminho
+  completo). `effectsAllowed=false` descrito honestamente: **contrato
+  preparado**, garantido estruturalmente só quando um effect broker exigir
+  capability de commit (não há ferramentas hoje).
+- Fechamentos técnicos da revisão: ack já tocando é cortado quando o
+  conteúdo fica pronto (`fast-ack.cut`); elementos TTS pré-carregados têm
+  cancelamento explícito por época (`pendingTtsElements`); confronto
+  onplaying × primeiro quantum não silencioso logado por turno
+  (`assistant.render.first-audible`).
+
+Próximo (combinado): comparação sob CARGA COMPLETA (ASR+Pocket residentes)
+entre planner determinístico (controle), um Qwen3 pequeno e SmolLM3 —
+medindo cobertura segura ADICIONAL, primeiro conteúdo útil, coerência de
+handoff (BRIDGE com prefixo injetado) e interferência no stack (latência de
+parciais do ASR e RTF do TTS durante geração). Um 1–3B só se justifica pelo
+que adiciona sobre o controle.
+
 ## Custo externo consumido (sessão 2026-08-09)
 - ~24 chamadas gpt-5.6-luna (probes de latência e especulação; caps do repo
   respeitados) ≈ US$ 0,005. RunPod: zero.

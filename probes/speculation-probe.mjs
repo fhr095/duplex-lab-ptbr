@@ -182,7 +182,10 @@ async function probeFile(options, file, mode, sessionSeq) {
   };
 
   const adoptSpeculation = async (speculation, finalAtMs) => {
-    await speculation.commit();
+    const commit = await speculation.commit();
+    if (!commit.ok) {
+      throw new Error(`commit rejeitado: ${commit.reason}`);
+    }
     let text = "";
     for await (const event of speculation.events()) {
       if (event.type === "delta") {
