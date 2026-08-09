@@ -21,15 +21,21 @@ depois fica rápido. Se a máquina estiver com pouca RAM, rode só um dos dois.
 
 ## 2. Servidor
 
+Atenção: `npm start` fixa `BRAIN_PROVIDER=local` dentro do script — para o
+cérebro real use o comando explícito:
+
 ```bash
-# BASELINE (como sempre foi): cérebro real + voz Maria
-BRAIN_PROVIDER=openai npm start
+BASE="VAD_CONTROL=silero VAD_SHADOW=silero SILERO_VAD_THRESHOLD=0.85 SILERO_VAD_ONSET_WINDOWS=1"
 
-# CHALLENGER voz: cérebro real + Pocket TTS
-TTS_PROVIDER=pocket BRAIN_PROVIDER=openai npm start
+# BASELINE (voz Maria + cérebro real)
+env $BASE BRAIN_PROVIDER=openai node src/cli/serve.mjs
 
-# CHALLENGER voz rápida: cérebro real + Piper
-TTS_PROVIDER=piper BRAIN_PROVIDER=openai npm start
+# CHALLENGER (voz Pocket + cérebro real)  ← já deixei este rodando
+env $BASE TTS_PROVIDER=pocket BRAIN_PROVIDER=openai \
+  OPENAI_MAX_REQUESTS_PER_PROCESS=60 node src/cli/serve.mjs
+
+# CHALLENGER voz rápida (Piper)
+env $BASE TTS_PROVIDER=piper BRAIN_PROVIDER=openai node src/cli/serve.mjs
 ```
 
 ## 3. Navegador (Chrome no Windows)
