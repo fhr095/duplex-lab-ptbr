@@ -293,6 +293,49 @@ Fechamento pedido na revisão, entregue e medido:
   nas variações faladas). Ambos são candidatos a próximo incremento formal
   do kernel.
 
+## MARCO MACRO (2026-08-09, noite) — A/B comparado + veredicto do ocupante
+
+### A/B ponta a ponta (mesma conversa de 5 turnos em áudio, ambiente limpo)
+| Turno | Baseline | Challenger | Caminho |
+| --- | ---: | ---: | --- |
+| saudação | 3.484ms | 2.530ms | LOCAL_FINAL |
+| informa valor | 2.981ms | 3.104ms | PASS |
+| corrige valor | 2.964ms | 2.194ms | BRIDGE «Entendi: R$ 400.» |
+| pergunta conteúdo | 3.004ms | 2.812ms | PASS |
+| agradece | 2.885ms | 2.187ms | LOCAL_FINAL |
+| **média** | **3.064ms** | **2.565ms** | **−16% geral; −24–27% nos cobertos** |
+
+Vieses anotados: Pocket re-aquece após ociosidade (uso contínuo ≈ −1s nos
+turnos rápidos); o runner não exercita a especulação do cliente (corta mais
+~150–300ms dos PASS no navegador). Métrica: fim-da-fala→primeiro byte de
+áudio semântico, como cada config entrega de verdade.
+
+### Escada de ocupantes do slot rápido (hardware-alvo, 8GB CPU)
+| Ocupante | Acurácia (43 rotulados) | Latência | Veredicto |
+| --- | ---: | ---: | --- |
+| Determinístico (contrato v0) | 83,7% | ~0ms | **vence** |
+| Qwen3-0.6B Q4 zero-shot | 27,9% (+2 JSON quebrados) | p50 482ms | janela cabe; qualidade inutilizável |
+| Qwen3-1.7B Q4 zero-shot | 16,3% (colapso em CLARIFY*) | p50 1.069ms | não cabe na janela; morto 2× |
+
+*Caveat: possível interação template/grammar no llama-server; irrelevante
+para o veredicto — a latência sozinha desqualifica o 1.7B no cliente.
+Pontes geradas pelos LLMs têm PT-BR quebrado ("o valor correu de 400
+reais"). **Descoberta que muda investimento**: a janela especulativa é
+REAL para 0.6B (p50 <500ms) — um 0.6B FINETUNADO com dados próprios herda a
+latência com acurácia de verdade; zero-shot está descartado no cliente.
+
+### TTFT do reasoner (luna): flat vs contexto
+Mediana ~960ms em histórico 0/1KB/2KB — jitter do provider domina; cortar
+contexto não compra nada. O piso dos PASS (~820ms endpoint + ~960ms TTFT)
+é ESTRUTURAL na configuração atual: romper exige reasoner mais rápido
+(provider/GPU — decisão de investimento) ou mais cobertura da camada
+rápida (dados próprios).
+
+### Rotas descartadas com evidência nesta frente
+Kokoro CPU (RTF 1,6+); Smart Turn drop-in (AUC 0,60, hipótese preservada
+p/ finetune); microturnos fixos (histórico EXP-0025-R); ocupante LLM
+zero-shot no cliente (bakeoff acima); cortar contexto do luna (flat).
+
 ## Custo externo consumido (sessão 2026-08-09)
 - ~24 chamadas gpt-5.6-luna (probes de latência e especulação; caps do repo
   respeitados) ≈ US$ 0,005. RunPod: zero.
