@@ -129,10 +129,13 @@ Onde minha leitura diverge ou o histórico subestima:
     completos 10/11, incompletos 1/7. Diz "completo" em quase toda pausa
     interna espontânea. Rótulos ruidosos (monólogo≠diálogo), mas inviabiliza
     encurtar o silêncio de 520ms com ele hoje.
-- Decisão: drop-in **cortado**; rota re-priorizada para **detector PT-BR
-  próprio** (finetune do Smart Turn com dado conversacional PT-BR — receita e
-  treino abertos; não existe modelo nem corpus público de turno PT-BR → o dado
-  é o fosso). Trilha média, não quick win.
+- Decisão (reformulada na revisão do Felipe): **não promovido; hipótese
+  preservada**. 18 pontos com rótulos derivados de pausa energética em
+  material não-diádico não refutam o modelo — apenas não justificam promoção.
+  Julgamento definitivo exige um pequeno conjunto diádico PT-BR rotulado
+  (a construir). Rota paralela: detector PT-BR próprio via finetune (receita
+  aberta; não existe modelo nem corpus público de turno PT-BR → o dado é o
+  fosso). Trilha média, não quick win.
 
 ### Integração do mapa SOTA (3 relatórios em notes/research/)
 - **Não existe full-duplex nativo aberto que fale PT-BR** (ago/2026) — a
@@ -193,6 +196,35 @@ Ryzen 5 7430U, **7–8 GB de RAM visível no WSL, sem GPU** — abaixo do piso d
   rejected/cancelled/final-vazia (gap conhecido: branches de backchannel
   dismiss não abortam — inócuo, substituída no próximo prefinal).
 - Guia completo do A/B humano em `notes/DEMO.md`.
+
+## Ciclo 3 — rigor de métricas (revisão do Felipe incorporada)
+
+Correções assumidas:
+- **TTFB 2ms do Pocket ≠ áudio audível.** Com proxy bufferizado, o Pocket
+  chegava ao primeiro áudio DEPOIS da Maria (0,2–1,4s vs 40–200ms); o ganho
+  era só naturalidade/taxa de fala. Agora existem três instantes distintos e
+  logados: `tts.first-byte` (resource timing), `assistant.response.audible`
+  (primeiro quantum renderizado de fala SEMÂNTICA, via onplaying) e
+  `assistant.ack.audible` (fillers, métrica separada).
+- **Fast-ack era enganoso**: tocava na frente do conteúdo mesmo com delta já
+  chegado e capturava a métrica fim→voz. Agora: pré-sintetizado no início da
+  sessão (custo ~0ms), cancelável na fila (descartado se houver fala
+  semântica atrás — `fast-ack.skipped`) e excluído da métrica semântica
+  (backchannels idem).
+- **Aritmética honesta do orçamento**: com luna (TTFT 0,7–2,4s), o piso
+  realista da mediana hoje é ~2,1–2,7s; especulação (auxiliar) tira 150–250ms
+  quando acerta; **1–1,5s exige fast-path semântico local** — próxima grande
+  frente (materialização talker-reasoner).
+- **Invariante estrutural**: estágio especulativo propaga
+  `speculative:true / effectsAllowed:false` até o cérebro; ferramentas/efeitos
+  só pós-commit. Codificado antes de existirem ferramentas.
+- **Playback progressivo entregue** (`?ttsstream=1`, GET /api/tts?stream=1
+  com pass-through): o streaming do Pocket vira primeiro áudio real; POST
+  segue bufferizado+RIFF corrigido para os harnesses.
+- **Higiene**: health real dos sidecars no startup (nunca "ready" por
+  suposição); `.claude/` no .gitignore; main recebeu gitlink em 8bb829e
+  (sem conteúdo/segredos — limpeza documentada em DEMO.md; fora do alcance
+  desta worktree isolada).
 
 ## Custo externo consumido (sessão 2026-08-09)
 - ~24 chamadas gpt-5.6-luna (probes de latência e especulação; caps do repo

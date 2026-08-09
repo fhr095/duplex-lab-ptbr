@@ -41,13 +41,35 @@ env $BASE TTS_PROVIDER=piper BRAIN_PROVIDER=openai node src/cli/serve.mjs
 ## 3. Navegador (Chrome no Windows)
 
 - Baseline pura: `http://localhost:4173/`
-- Challenger completo: `http://localhost:4173/?spec=1&ack=1`
+- Challenger completo: `http://localhost:4173/?spec=1&ack=1&ttsstream=1`
   - `spec=1` — resposta especulativa: o cérebro começa a responder durante a
     janela de silêncio, usando a final preparada do ASR; se a final confirmar,
     a resposta já está pronta (log `speculation.adopted · lead Nms`).
-  - `ack=1` — se o cérebro demorar >700ms sem falar, solta um "Hum..." curto.
+  - `ack=1` — se o cérebro demorar >700ms mudo, solta um "Hum..." curto
+    (pré-sintetizado; descartado se o conteúdo chegar antes de tocar —
+    log `fast-ack.skipped`).
+  - `ttsstream=1` — playback progressivo (só com sidecar): o áudio começa
+    antes da síntese da frase terminar.
 
-A métrica fim→voz aparece no painel (e no log `assistant.response.audible`).
+Métricas no log (medem coisas DIFERENTES — não misturar):
+- `assistant.response.audible` (fim→voz) = primeira fala SEMÂNTICA renderizada
+  (onplaying). Acks e backchannels NÃO contam aqui.
+- `assistant.ack.audible` (fim→ack) = primeiro filler renderizado.
+- `tts.first-byte` = primeiro byte HTTP do TTS (só com ttsstream=1) — é
+  componente, não experiência.
+- `speculation.adopted/miss/aborted` = contabilidade da especulação.
+
+## Limpeza pendente na main (fora do alcance desta worktree)
+
+A main (local e origin) tem o commit `8bb829e` que adiciona o gitlink
+`.claude/worktrees/frente-caminho-ouro` (só um ponteiro; sem conteúdo nem
+segredos — verificado arquivo a arquivo). Para limpar, no checkout principal:
+
+```bash
+git rm --cached .claude/worktrees/frente-caminho-ouro
+git commit -m "remove gitlink de worktree da main"
+git push
+```
 
 ## 4. Roteiro de escuta (2–3 min por condição)
 

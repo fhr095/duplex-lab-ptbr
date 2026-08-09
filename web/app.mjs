@@ -49,7 +49,31 @@ const automationEnabled =
 // do ASR; ?ack=1 fala um ack curto quando o cérebro demora a responder.
 const speculationEnabled = pageParameters.get("spec") === "1";
 const fastAckEnabled = pageParameters.get("ack") === "1";
+// ?ttsstream=1 (exige sidecar): toca o WAV progressivamente via <audio src>,
+// sem esperar a síntese completa da frase.
+const ttsStreamEnabled = pageParameters.get("ttsstream") === "1";
 const FAST_ACKS = ["Hum...", "Tá.", "Deixa eu ver..."];
+
+if (ttsStreamEnabled && "PerformanceObserver" in window) {
+  new PerformanceObserver((entries) => {
+    for (const entry of entries.getEntries()) {
+      if (!entry.name.includes("/api/tts")) {
+        continue;
+      }
+      const firstByteMs = entry.responseStart - entry.startTime;
+      const sinceSpeechEnd = session.lastSpeechEndedAt === null
+        ? null
+        : entry.responseStart - session.lastSpeechEndedAt;
+      log(
+        "tts.first-byte",
+        `req→byte ${Math.round(firstByteMs)}ms` +
+          (sinceSpeechEnd === null
+            ? ""
+            : ` · fim→byte ${Math.round(sinceSpeechEnd)}ms`)
+      );
+    }
+  }).observe({ type: "resource", buffered: false });
+}
 const evaluationEnabled = pageParameters.get("evaluation") === "0026";
 const operationalReadinessEnabled =
   evaluationEnabled && pageParameters.get("readiness") === "1";
@@ -161,6 +185,7 @@ const session = {
   finalText: "",
   speculation: null,
   speculationSequence: 0,
+  ackCache: new Map(),
   finishCurrentAudio: null,
   history: [],
   backchannelCount: 0,
@@ -684,6 +709,49 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
   session.ttsAbortControllers.add(controller);
 
   try {
+    // Acks pré-sintetizados custam ~0ms; sem cache, síntese normal.
+    const cached = kind === "fast-ack"
+      ? session.ackCache.get(text)
+      : null;
+    if (cached) {
+      return {
+        blob: cached,
+        epoch,
+        kind,
+        loop: false,
+        taskId: null,
+        taskResultDelivery: null,
+        taskResultChunkCount: null,
+        taskResultChunkIndex: null,
+        taskResultReadyAt: null,
+        semantic: null,
+        text
+      };
+    }
+    if (ttsStreamEnabled && options.loop !== true) {
+      // Download progressivo: o elemento começa a baixar já na preparação
+      // (preload) e o playback inicia antes da síntese completa.
+      const audio = new Audio(
+        `/api/tts?stream=1&text=${encodeURIComponent(text)}`
+      );
+      audio.preload = "auto";
+      return {
+        audioElement: audio,
+        blob: null,
+        epoch,
+        kind,
+        loop: false,
+        taskId: options.taskId ?? null,
+        taskResultDelivery: options.taskResultDelivery ?? null,
+        taskResultChunkCount: options.taskResultChunkCount ?? null,
+        taskResultChunkIndex: options.taskResultChunkIndex ?? null,
+        taskResultReadyAt: options.taskResultReadyAt ?? null,
+        semantic: session.semanticState === null
+          ? null
+          : { ...session.semanticState },
+        text
+      };
+    }
     const response = await fetch("/api/tts", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -726,8 +794,10 @@ async function playPreparedSpeech(item) {
     }
   }
 
-  const audioUrl = URL.createObjectURL(item.blob);
-  const audio = new Audio(audioUrl);
+  const audioUrl = item.audioElement
+    ? null
+    : URL.createObjectURL(item.blob);
+  const audio = item.audioElement ?? new Audio(audioUrl);
   audio.loop = item.loop === true;
   let audioSource = null;
   try {
@@ -737,7 +807,12 @@ async function playPreparedSpeech(item) {
   }
   if (item.epoch !== session.audioEpoch) {
     assistantRenderProbe.disconnectSource(audioSource);
-    URL.revokeObjectURL(audioUrl);
+    if (audioUrl !== null) {
+      URL.revokeObjectURL(audioUrl);
+    } else {
+      audio.removeAttribute("src");
+      audio.load();
+    }
     return;
   }
   session.assistantAudio = audio;
@@ -818,6 +893,17 @@ async function playPreparedSpeech(item) {
             `${formatMs(startedAt - item.taskResultReadyAt)}`
         );
       } else if (
+        ["fast-ack", "backchannel"].includes(item.kind) &&
+        session.lastSpeechEndedAt !== null
+      ) {
+        // Fillers têm métrica própria e NÃO contam como resposta semântica.
+        log(
+          "assistant.ack.audible",
+          `${item.kind} · fim→ack ` +
+            `${formatMs(startedAt - session.lastSpeechEndedAt)}`
+        );
+      } else if (
+        !["fast-ack", "backchannel"].includes(item.kind) &&
         !session.responseAudioStarted &&
         session.lastSpeechEndedAt !== null
       ) {
@@ -854,6 +940,15 @@ async function pumpSpeechQueue(epoch) {
   try {
     while (epoch === session.audioEpoch && session.audioQueue.length > 0) {
       const queued = session.audioQueue.shift();
+      // Ack é filler: se já existe fala semântica atrás dele na fila, o
+      // conteúdo venceu a corrida e o ack só atrasaria — descarta.
+      if (
+        queued.kind === "fast-ack" &&
+        session.audioQueue.some((item) => item.kind !== "fast-ack")
+      ) {
+        log("fast-ack.skipped", "conteúdo chegou antes do ack tocar");
+        continue;
+      }
       session.assistantPreparing = true;
       setStatus("preparando voz", "speaking");
 
@@ -2011,7 +2106,7 @@ async function processTurn() {
               FAST_ACKS[
                 session.interactionTurnSequence % FAST_ACKS.length
               ],
-              "backchannel"
+              "fast-ack"
             );
           }
         }, 700);
@@ -3255,9 +3350,27 @@ async function startBrowserRecognitionSession() {
 
 let healthPromise;
 
+function prefetchAckCache() {
+  if (!fastAckEnabled || session.ackCache.size > 0) {
+    return;
+  }
+  for (const text of FAST_ACKS) {
+    void fetch("/api/tts", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ text })
+    }).then(async (response) => {
+      if (response.ok) {
+        session.ackCache.set(text, await response.blob());
+      }
+    }).catch(() => {});
+  }
+}
+
 async function startSession() {
   elements.startButton.disabled = true;
   await healthPromise;
+  prefetchAckCache();
 
   if (session.asrAvailable) {
     try {

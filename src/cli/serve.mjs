@@ -175,15 +175,43 @@ let ttsHealth = { state: "starting" };
 const ttsProviderEnv = process.env.TTS_PROVIDER?.trim().toLowerCase() ||
   "windows";
 const ttsWarmup = ttsProviderEnv !== "windows"
-  ? Promise.resolve().then(() => {
-      ttsHealth = {
-        state: "ready",
-        engine: `${ttsProviderEnv}-sidecar`,
-        voice: ttsProviderEnv === "pocket" ? "rafael" : "pt_BR-faber",
-        culture: "pt-BR",
-        primed: false
-      };
-    })
+  ? (async () => {
+      // Health real: sem sidecar respondendo, o estado é error — nunca
+      // "ready" por suposição.
+      const sidecarUrl = process.env.TTS_SIDECAR_URL?.trim() ||
+        (ttsProviderEnv === "pocket"
+          ? "http://127.0.0.1:8321/tts"
+          : "http://127.0.0.1:8331");
+      const healthUrl = ttsProviderEnv === "pocket"
+        ? sidecarUrl.replace(/\/tts\/?$/u, "/health")
+        : sidecarUrl;
+      try {
+        const probe = await fetch(healthUrl, {
+          signal: AbortSignal.timeout(5_000)
+        });
+        if (!probe.ok) {
+          throw new Error(`sidecar retornou HTTP ${probe.status}`);
+        }
+        ttsHealth = {
+          state: "ready",
+          engine: `${ttsProviderEnv}-sidecar`,
+          voice: ttsProviderEnv === "pocket" ? "rafael" : "pt_BR-faber",
+          culture: "pt-BR",
+          sidecarUrl,
+          primed: false
+        };
+      } catch (error) {
+        ttsHealth = {
+          state: "error",
+          engine: `${ttsProviderEnv}-sidecar`,
+          code: "tts_sidecar_unreachable",
+          message: `${healthUrl}: ${error.message}`
+        };
+        console.error(
+          `TTS sidecar ${ttsProviderEnv} indisponível: ${error.message}`
+        );
+      }
+    })()
   : prewarmWindowsSpeech().then(
   (status) => {
     ttsHealth = {
@@ -509,12 +537,18 @@ async function streamTurn(request, response, body) {
   });
 
   try {
+    // Contrato do challenger: um turno especulativo NUNCA pode disparar
+    // efeitos externos (ferramentas, ações, side-effects). Hoje os cérebros
+    // só geram texto; quando ferramentas existirem, este flag é a autoridade
+    // que as desabilita até o commit/adoção.
     for await (const event of brain.streamTurn({
       text: plan.effectiveText ?? body.text,
       history: body.history,
       mode,
       signal: controller.signal,
-      turnPlan: plan
+      turnPlan: plan,
+      speculative: stage === "speculative",
+      effectsAllowed: stage !== "speculative"
     })) {
       sendNdjson(response, event);
     }
@@ -565,10 +599,29 @@ async function proxySidecarTts(request, response, body, controller) {
   if (!upstream.ok) {
     throw new Error(`TTS sidecar retornou HTTP ${upstream.status}`);
   }
-  // O cliente atual consome o blob completo antes de tocar, então bufferizar
-  // aqui não custa latência percebida — e permite corrigir os tamanhos RIFF
-  // que sidecars de streaming deixam abertos (0/0xFFFFFFFF), mantendo o WAV
-  // compatível com decodeWaveToPcm16 e com os harnesses.
+  // Modo streaming (GET ?stream=1): repassa os bytes do sidecar assim que
+  // chegam — o navegador toca o WAV progressivamente e o primeiro áudio
+  // audível deixa de esperar a síntese completa.
+  if (body.stream) {
+    if (response.destroyed || response.writableEnded) {
+      return;
+    }
+    response.writeHead(200, {
+      "content-type": "audio/wav",
+      "cache-control": "no-store"
+    });
+    for await (const chunk of upstream.body) {
+      if (response.destroyed || controller.signal.aborted) {
+        break;
+      }
+      response.write(chunk);
+    }
+    response.end();
+    return;
+  }
+  // Modo bufferizado (POST): acumula e corrige os tamanhos RIFF que sidecars
+  // de streaming deixam abertos (0/0xFFFFFFFF), mantendo o WAV compatível
+  // com decodeWaveToPcm16 e com os harnesses.
   const chunks = [];
   for await (const chunk of upstream.body) {
     if (controller.signal.aborted) {
@@ -730,6 +783,25 @@ const server = createServer(async (request, response) => {
     if (request.method === "POST" && url.pathname === "/api/tts") {
       const body = await readJsonBody(request);
       await synthesizeTts(request, response, body);
+      return;
+    }
+
+    // GET permite <audio src> com download progressivo (playback começa
+    // antes da síntese terminar). Disponível apenas para sidecars.
+    if (request.method === "GET" && url.pathname === "/api/tts") {
+      const text = (url.searchParams.get("text") ?? "").trim();
+      if (!text || text.length > 700) {
+        sendJson(response, 400, { error: "invalid_text" });
+        return;
+      }
+      if (ttsProvider === "windows") {
+        sendJson(response, 400, { error: "stream_requires_sidecar" });
+        return;
+      }
+      await synthesizeTts(request, response, {
+        text,
+        stream: url.searchParams.get("stream") === "1"
+      });
       return;
     }
 

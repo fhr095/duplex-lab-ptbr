@@ -67,3 +67,6 @@ eval/reports/*
 !eval/reports/exp-0026-blind-order-smoke-v0.1.json
 coverage/
 tmp/
+
+# Worktrees de sessão nunca entram no repo
+.claude/
