@@ -211,7 +211,13 @@ export function createOpenAIBrain(options = {}) {
       return { ...usage };
     },
 
-    async *streamTurn({ text, history = [], mode = "direct", signal }) {
+    async *streamTurn({
+      text,
+      history = [],
+      mode = "direct",
+      signal,
+      spokenPrefix = null
+    }) {
       const normalizedText = String(text ?? "").trim();
       if (!normalizedText) {
         throw new TypeError("O turno precisa conter texto.");
@@ -229,12 +235,19 @@ export function createOpenAIBrain(options = {}) {
       }
 
       const model = mode === "delegate" ? taskModel : interactionModel;
+      // Contrato no-repeat do BRIDGE: a camada rápida já falou a ponte; a
+      // continuação não pode repetir nem contradizer o que foi dito.
+      const instructions = mode === "delegate"
+        ? DELEGATED_INSTRUCTIONS
+        : spokenPrefix
+          ? `${DIRECT_INSTRUCTIONS}\n` +
+            `A camada de voz acabou de dizer ao usuário: «${spokenPrefix}». ` +
+            "Continue a resposta a partir daí, sem repetir essa confirmação " +
+            "e sem contradizê-la."
+          : DIRECT_INSTRUCTIONS;
       const requestBody = {
         model,
-        instructions:
-          mode === "delegate"
-            ? DELEGATED_INSTRUCTIONS
-            : DIRECT_INSTRUCTIONS,
+        instructions,
         input: [
           ...sanitizeConversation(history),
           { role: "user", content: normalizedText }

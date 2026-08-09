@@ -54,6 +54,12 @@ env $BASE TTS_PROVIDER=piper BRAIN_PROVIDER=openai node src/cli/serve.mjs
     saudação/agradecimento/despedida/hora/data respondem em 19–52ms pela
     camada rápida (modelo `fast-path-v0` no log), sem chamar o luna; todo o
     resto passa (PASS) para o fluxo normal.
+  - **BRIDGE** (novo): diga "O valor é de trezentos reais, na verdade
+    quatrocentos reais" — a ponte "Entendi: R$ 400." toca em <900ms
+    enquanto o luna continua sem repetir (logs `assistant.bridge` e
+    `turn.fast-path BRIDGE · correcao`). Os três caminhos numa conversa:
+    "Oi, tudo bem?" (LOCAL_FINAL) → correção (BRIDGE) → qualquer pergunta
+    de conteúdo (PASS).
 
 Métricas no log (medem coisas DIFERENTES — não misturar):
 - `assistant.response.audible` (fim→voz) = primeira fala SEMÂNTICA renderizada

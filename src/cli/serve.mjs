@@ -25,7 +25,7 @@ import {
   synthesizeWindowsSpeech
 } from "../tts/windows-system-tts.mjs";
 import {
-  classifyFastPath,
+  arbitrateTurn,
   FAST_PATH_VERSION
 } from "../interaction/fast-path.mjs";
 import {
@@ -522,12 +522,12 @@ async function streamTurn(request, response, body) {
       });
   const mode = plan.mode;
   // Arbitragem da camada rápida (FAST_PATH=1): decisão pura ANTES de acionar
-  // o reasoner — custo zero de latência serial. Abstenção (PASS) mantém o
-  // fluxo original; LOCAL_FINAL responde localmente e nem chama o provider.
-  const fastPath = fastPathEnabled &&
-    mode === "direct" &&
-    !plan.safety
-    ? classifyFastPath(plan.effectiveText ?? body.text)
+  // o reasoner — custo zero de latência serial. PASS mantém o fluxo original;
+  // LOCAL_FINAL responde localmente sem chamar o provider; BRIDGE fala uma
+  // ponte semântica imediata (sinal estruturado do kernel) enquanto o
+  // reasoner gera, com contrato no-repeat no prompt.
+  const fastPath = fastPathEnabled
+    ? arbitrateTurn({ text: body.text, plan })
     : null;
   const controller = new AbortController();
   const abortUpstream = () => controller.abort();
@@ -579,6 +579,17 @@ async function streamTurn(request, response, body) {
     return;
   }
 
+  // Ponte semântica imediata: falada pelo cliente enquanto o reasoner
+  // trabalha. O texto da ponte segue no request do reasoner (spokenPrefix)
+  // para que a continuação não repita nem contradiga o que já foi dito.
+  if (fastPath?.action === "BRIDGE") {
+    sendNdjson(response, {
+      type: "bridge",
+      text: fastPath.bridge,
+      class: fastPath.class
+    });
+  }
+
   try {
     // Contrato do challenger: um turno especulativo NUNCA pode disparar
     // efeitos externos (ferramentas, ações, side-effects). Hoje os cérebros
@@ -591,7 +602,10 @@ async function streamTurn(request, response, body) {
       signal: controller.signal,
       turnPlan: plan,
       speculative: stage === "speculative",
-      effectsAllowed: stage !== "speculative"
+      effectsAllowed: stage !== "speculative",
+      spokenPrefix: fastPath?.action === "BRIDGE"
+        ? fastPath.bridge
+        : null
     })) {
       sendNdjson(response, event);
     }

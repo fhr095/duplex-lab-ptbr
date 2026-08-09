@@ -258,6 +258,41 @@ handoff (BRIDGE com prefixo injetado) e interferência no stack (latência de
 parciais do ASR e RTF do TTS durante geração). Um 1–3B só se justifica pelo
 que adiciona sobre o controle.
 
+## Ciclo 5 — vertical talker-reasoner mínima (LOCAL_FINAL + BRIDGE + PASS)
+
+Fechamento pedido na revisão, entregue e medido:
+- **BRIDGE determinístico de correção**: sinal estruturado do kernel
+  (`plan.semantic.correction`) vira ponte semântica imediata ("Entendi:
+  R$ 400.") enquanto o reasoner gera com **contrato no-repeat** no prompt
+  (`spokenPrefix`). Delegação já era bridge (acknowledgment); confirmação
+  crítica/cancelamento são autoridade do kernel (CLARIFY).
+- **Arquitetura da corrida, decidida e documentada**: decisões BRIDGE
+  precisam existir no INSTANTE do disparo (o contrato no-repeat entra no
+  prompt) → vêm de sinais estruturados fire-time; um ocupante aprendido que
+  decida depois do disparo só pode LOCAL_FINAL/PASS. O lugar natural do
+  ocupante aprendido é a **janela especulativa** (prefinal→final,
+  300–700ms), onde a corrida não custa latência serial — e LOCAL_FINAL via
+  especulação já corre de graça hoje.
+- **E2E medido com áudio real** (Piper como falante, pipeline completo,
+  luna + Pocket): LOCAL_FINAL 1.336ms fim→áudio-semântico (pocket frio;
+  ~1s quente), **BRIDGE 860ms**, PASS 1.753ms. O no-repeat funcionou com o
+  luna real ("Perfeito, vou considerar o valor de R$ 400." — zero
+  repetição). ASR entregou números em dígitos e o kernel ainda capturou a
+  correção.
+- **Conjunto rotulado exploratório** (43 turnos contextualizados,
+  `probes/data/fastpath-turns.pt-BR.json`) + placar do SISTEMA
+  (`probes/fast-path-score.mjs`): LOCAL_FINAL precisão 100%/recall 82%;
+  BRIDGE precisão 100%/recall 43%; CLARIFY recall 0%; PASS recall 100%;
+  acurácia 81,4%. "Zero falso" virou medida (e ERA falso: "Oi?" pegou
+  falso positivo, corrigido). Todos os erros restantes caem na direção
+  segura (PASS).
+- **Dois limites do kernel v0.1 medidos e atribuídos** (não da arbitragem):
+  (a) correções ENTRE turnos não disparam — o kernel só aprende slot via
+  correção, afirmações simples não comitam (BRIDGE recall 43%);
+  (b) o interlock crítico tem gatilho textual estreito (CLARIFY recall 0%
+  nas variações faladas). Ambos são candidatos a próximo incremento formal
+  do kernel.
+
 ## Custo externo consumido (sessão 2026-08-09)
 - ~24 chamadas gpt-5.6-luna (probes de latência e especulação; caps do repo
   respeitados) ≈ US$ 0,005. RunPod: zero.

@@ -96,6 +96,11 @@ export function classifyFastPath(rawText, options = {}) {
   if (!text || text.length > 60) {
     return { version: FAST_PATH_VERSION, action: "PASS", class: null };
   }
+  // "Oi?"/"Alô?" isolados são estranhamento (pedido de repetição), não
+  // saudação — falso LOCAL_FINAL medido pelo conjunto rotulado v0.1.
+  if (/^(?:oi|alô|alo)\?+$/iu.test(text)) {
+    return { version: FAST_PATH_VERSION, action: "PASS", class: null };
+  }
   for (const [klass, pattern, respond] of RESPONDERS) {
     if (pattern.test(text)) {
       return {
@@ -107,4 +112,45 @@ export function classifyFastPath(rawText, options = {}) {
     }
   }
   return { version: FAST_PATH_VERSION, action: "PASS", class: null };
+}
+
+function spokenCorrectionValue(value) {
+  const normalized = String(value ?? "");
+  if (normalized.startsWith("BRL ")) {
+    return `R$ ${normalized.slice(4)}`;
+  }
+  if (/^\d{2}:\d{2}$/u.test(normalized)) {
+    const [hour, minute] = normalized.split(":");
+    return minute === "00"
+      ? `${Number.parseInt(hour, 10)} horas`
+      : `${hour}:${minute}`;
+  }
+  return normalized;
+}
+
+// Arbitragem completa do turno: LOCAL_FINAL | BRIDGE | PASS.
+//
+// BRIDGE nasce de sinais ESTRUTURADOS do turnPlan/kernel disponíveis no
+// instante do disparo do reasoner — condição necessária para o contrato
+// no-repeat entrar no prompt. Um ocupante aprendido que decida DEPOIS do
+// disparo só pode LOCAL_FINAL (abortando o reasoner) ou PASS; por isso o
+// lugar natural dele é a janela especulativa (prefinal→final), onde a
+// corrida não custa latência serial.
+export function arbitrateTurn({ text, plan, now }) {
+  if (plan?.mode !== "direct" || plan?.safety) {
+    return { version: FAST_PATH_VERSION, action: "PASS", class: null };
+  }
+
+  const correction = plan.semantic?.correction ?? null;
+  if (correction?.current) {
+    return {
+      version: FAST_PATH_VERSION,
+      action: "BRIDGE",
+      class: "correcao",
+      bridge:
+        `Entendi: ${spokenCorrectionValue(correction.current)}.`
+    };
+  }
+
+  return classifyFastPath(plan.effectiveText ?? text, { now });
 }

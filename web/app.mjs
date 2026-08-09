@@ -949,7 +949,7 @@ async function playPreparedSpeech(item) {
         elements.responseMetric.textContent = formatMs(endToResponseMs);
         log(
           "assistant.response.audible",
-          `fim→voz ${formatMs(endToResponseMs)}` +
+          `fim→voz ${formatMs(endToResponseMs)} · ${item.kind}` +
             (session.lastResponseAfterEndpointMs === null
               ? ""
               : ` · endpoint→voz ${formatMs(
@@ -2191,6 +2191,13 @@ async function processTurn() {
         context.mode =
           event.mode === "delegate" ? "delegate" : "direct";
         log("turn.routed", event.mode);
+        if (event.fastPath) {
+          log(
+            "turn.fast-path",
+            `${event.fastPath.action}` +
+              (event.fastPath.class ? ` · ${event.fastPath.class}` : "")
+          );
+        }
         const projection = projectInteractionTransition(event.interaction);
         session.interactionStateVersion = projection.stateVersion;
         session.semanticState = projection.semanticState;
@@ -2231,6 +2238,16 @@ async function processTurn() {
           }
           setListeningStatus();
         }
+        continue;
+      }
+
+      if (event.type === "bridge" && context.mode !== "delegate") {
+        // Ponte semântica da camada rápida: fala imediatamente e entra no
+        // texto/histórico — o reasoner recebeu o contrato no-repeat.
+        log("assistant.bridge", event.text);
+        session.responseText = `${event.text} `;
+        elements.assistantText.textContent = session.responseText;
+        enqueueSpeech(event.text, "bridge");
         continue;
       }
 

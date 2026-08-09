@@ -1,0 +1,53 @@
+{
+  "version": "fastpath-turns-v0.1",
+  "notes": "Conjunto EXPLORATÓRIO rotulado à mão para medir precisão/recall da arbitragem por classe. Não é holdout; serve para comparar ocupantes do slot rápido. Rótulos: LOCAL_FINAL (seguro responder localmente), BRIDGE (ponte semântica de sinal estruturado + reasoner), CLARIFY (pedir esclarecimento), PASS (só reasoner). O campo context traz o turno anterior quando a decisão depende dele.",
+  "turns": [
+    { "text": "Oi, tudo bem?", "label": "LOCAL_FINAL", "why": "saudação pura" },
+    { "text": "Bom dia!", "label": "LOCAL_FINAL", "why": "saudação" },
+    { "text": "E aí, beleza?", "label": "LOCAL_FINAL", "why": "saudação coloquial" },
+    { "text": "Boa noite", "label": "LOCAL_FINAL", "why": "saudação/despedida — ambas locais" },
+    { "text": "Obrigado, viu", "label": "LOCAL_FINAL", "why": "agradecimento" },
+    { "text": "Valeu demais!", "label": "LOCAL_FINAL", "why": "agradecimento" },
+    { "text": "Tchau, até amanhã", "label": "LOCAL_FINAL", "why": "despedida" },
+    { "text": "Que horas são?", "label": "LOCAL_FINAL", "why": "skill determinística" },
+    { "text": "Que horas são agora?", "label": "LOCAL_FINAL", "why": "skill determinística" },
+    { "text": "Que dia é hoje?", "label": "LOCAL_FINAL", "why": "skill determinística" },
+    { "text": "Que dia da semana é hoje?", "label": "LOCAL_FINAL", "why": "skill determinística" },
+
+    { "text": "Oi, tudo bem? Queria saber do meu pedido", "label": "PASS", "why": "saudação + conteúdo: o conteúdo domina" },
+    { "text": "Obrigado, mas ainda ficou uma dúvida", "label": "PASS", "why": "agradecimento + continuação de conteúdo" },
+    { "text": "Que horas abre a farmácia?", "label": "PASS", "why": "parece hora, é consulta de conhecimento" },
+    { "text": "Que dia cai o feriado de novembro?", "label": "PASS", "why": "parece data, exige conhecimento" },
+    { "text": "Bom dia pra você também, e a reunião?", "label": "PASS", "why": "saudação retribuída + pergunta" },
+
+    { "text": "Na verdade quatrocentos reais", "context": "Transfere trezentos e cinquenta reais", "label": "BRIDGE", "why": "correção de valor: kernel comita, ponte confirma, reasoner continua" },
+    { "text": "Quer dizer, sexta-feira", "context": "Marca a entrega pra quinta", "label": "BRIDGE", "why": "correção de dia" },
+    { "text": "Não, melhor às 15:00", "context": "Agenda pra às 14:00", "label": "BRIDGE", "why": "correção de horário" },
+    { "text": "Aliás, muda o nome pra Ana Paula", "context": "Reserva no nome de Ana", "label": "BRIDGE", "why": "correção de nome" },
+    { "text": "Pesquisa as três melhores opções de CDB pra mim", "label": "BRIDGE", "why": "delegação: acknowledgment imediato + tarefa assíncrona" },
+    { "text": "O valor é de trezentos reais, na verdade quatrocentos reais", "label": "BRIDGE", "why": "correção de valor na mesma fala, sem verbo efetivo" },
+    { "text": "Terça; na verdade, sexta.", "label": "BRIDGE", "why": "correção de dia na mesma fala" },
+
+    { "text": "Transfere trezentos e cinquenta reais... não, quatrocentos", "label": "CLARIFY", "why": "valor crítico instável: interlock pede confirmação (autoridade do kernel)" },
+    { "text": "Pode ser quinhentos ou seiscentos, tanto faz", "label": "CLARIFY", "why": "valor efetivo ambíguo" },
+
+    { "text": "Qual é a capital da França?", "label": "PASS", "why": "conhecimento" },
+    { "text": "Me explica o que é CDI", "label": "PASS", "why": "explicação" },
+    { "text": "Resume a última mensagem que eu te mandei", "label": "PASS", "why": "contexto da conversa" },
+    { "text": "Pode marcar a reunião pra sexta?", "label": "PASS", "why": "ação com slot; não é correção nem delegação de pesquisa" },
+    { "text": "Espera", "label": "PASS", "why": "controle de fluxo; barge-in trata, não é resposta local" },
+    { "text": "Aham", "label": "PASS", "why": "backchannel do usuário; não responder" },
+    { "text": "Entendi", "label": "PASS", "why": "backchannel do usuário" },
+    { "text": "Não, deixa pra lá", "label": "PASS", "why": "cancelamento: fluxo existente decide, não a camada rápida v0" },
+    { "text": "Tá, mas por quê?", "label": "PASS", "why": "curto porém pede raciocínio" },
+    { "text": "E aí, o que você acha?", "label": "PASS", "why": "parece saudação, é pedido de opinião" },
+    { "text": "Boa?", "label": "PASS", "why": "curtíssimo e ambíguo" },
+    { "text": "Quanto é 15% de 340?", "label": "PASS", "why": "cálculo — candidato futuro a skill, hoje PASS" },
+    { "text": "Repete, por favor", "label": "PASS", "why": "meta-pedido; precisa do contexto do que foi dito" },
+    { "text": "Fala mais devagar", "label": "PASS", "why": "meta-controle de voz; futuro skill local" },
+    { "text": "Hum, deixa eu pensar", "label": "PASS", "why": "o usuário está pensando; não tomar o turno" },
+    { "text": "É sobre a fatura do cartão", "label": "PASS", "why": "abertura de tópico" },
+    { "text": "Perfeito, obrigado, e o horário de amanhã?", "label": "PASS", "why": "agradecimento + pergunta" },
+    { "text": "Oi?", "label": "PASS", "why": "estranhamento/pedido de repetição, não saudação" }
+  ]
+}
