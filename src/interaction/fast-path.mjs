@@ -128,6 +128,34 @@ function spokenCorrectionValue(value) {
   return normalized;
 }
 
+// Memória leve da camada rápida: última menção de valor por sessão.
+// Vive FORA do kernel formal (que só comita slots via correção); permite a
+// ponte cross-turn "— O valor é de 300 reais. — Na verdade, 400." sem tocar
+// o reducer congelado. Autoridade semântica continua no kernel/reasoner.
+const CROSS_TURN_MARKER =
+  /^(?:não[,.\s]+|na verdade[,.\s]*|quer dizer[,.\s]*|aliás[,.\s]*|melhor[,.\s]+)/iu;
+
+export function createFastPathMemory(options = {}) {
+  const maxSessions = options.maxSessions ?? 512;
+  const sessions = new Map();
+
+  return {
+    observe(sessionId, text, extractAmounts) {
+      const amounts = extractAmounts(String(text ?? ""));
+      if (amounts.length === 1 && Number.isFinite(amounts[0].value)) {
+        sessions.delete(sessionId);
+        sessions.set(sessionId, { lastAmount: amounts[0].value });
+        while (sessions.size > maxSessions) {
+          sessions.delete(sessions.keys().next().value);
+        }
+      }
+    },
+    lastAmount(sessionId) {
+      return sessions.get(sessionId)?.lastAmount ?? null;
+    }
+  };
+}
+
 // Arbitragem completa do turno: LOCAL_FINAL | BRIDGE | PASS.
 //
 // BRIDGE nasce de sinais ESTRUTURADOS do turnPlan/kernel disponíveis no
@@ -136,7 +164,7 @@ function spokenCorrectionValue(value) {
 // disparo só pode LOCAL_FINAL (abortando o reasoner) ou PASS; por isso o
 // lugar natural dele é a janela especulativa (prefinal→final), onde a
 // corrida não custa latência serial.
-export function arbitrateTurn({ text, plan, now }) {
+export function arbitrateTurn({ text, plan, now, crossTurn = null }) {
   if (plan?.mode !== "direct" || plan?.safety) {
     return { version: FAST_PATH_VERSION, action: "PASS", class: null };
   }
@@ -150,6 +178,29 @@ export function arbitrateTurn({ text, plan, now }) {
       bridge:
         `Entendi: ${spokenCorrectionValue(correction.current)}.`
     };
+  }
+
+  // Correção cross-turn: marcador inicial + exatamente um valor novo +
+  // menção anterior de valor na sessão (memória da camada rápida).
+  if (crossTurn?.lastAmount !== null &&
+      crossTurn?.lastAmount !== undefined) {
+    const normalized = String(text ?? "").trim();
+    if (normalized.length <= 48 &&
+        CROSS_TURN_MARKER.test(normalized) &&
+        Array.isArray(crossTurn.amounts) &&
+        crossTurn.amounts.length === 1 &&
+        crossTurn.amounts[0] !== crossTurn.lastAmount) {
+      const value = crossTurn.amounts[0];
+      const formatted = Number.isInteger(value)
+        ? String(value)
+        : value.toFixed(2).replace(/0+$/u, "").replace(/\.$/u, "");
+      return {
+        version: FAST_PATH_VERSION,
+        action: "BRIDGE",
+        class: "correcao-cross-turn",
+        bridge: `Entendi: R$ ${formatted}.`
+      };
+    }
   }
 
   return classifyFastPath(plan.effectiveText ?? text, { now });

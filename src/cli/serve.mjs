@@ -26,8 +26,12 @@ import {
 } from "../tts/windows-system-tts.mjs";
 import {
   arbitrateTurn,
+  createFastPathMemory,
   FAST_PATH_VERSION
 } from "../interaction/fast-path.mjs";
+import {
+  extractPtBrCurrencyAmounts
+} from "../interaction/ptbr-number.mjs";
 import {
   INTERACTION_KERNEL_VERSION
 } from "../interaction/interaction-kernel.mjs";
@@ -61,6 +65,7 @@ const prefinalPolicy = normalizePrefinalPolicy(
   process.env.PREFINAL_POLICY
 );
 const fastPathEnabled = process.env.FAST_PATH === "1";
+const fastPathMemory = createFastPathMemory();
 const endpointConfig = {
   completeSilenceMs: Number.parseInt(
     process.env.ENDPOINT_COMPLETE_MS ?? "520",
@@ -527,8 +532,25 @@ async function streamTurn(request, response, body) {
   // ponte semântica imediata (sinal estruturado do kernel) enquanto o
   // reasoner gera, com contrato no-repeat no prompt.
   const fastPath = fastPathEnabled
-    ? arbitrateTurn({ text: body.text, plan })
+    ? arbitrateTurn({
+        text: body.text,
+        plan,
+        crossTurn: {
+          lastAmount: fastPathMemory.lastAmount(body.sessionId),
+          amounts: extractPtBrCurrencyAmounts(body.text)
+            .map((item) => item.value)
+            .filter(Number.isFinite)
+        }
+      })
     : null;
+  // A memória observa só no estágio full (especulação não muta nada).
+  if (fastPathEnabled && stage === "full") {
+    fastPathMemory.observe(
+      body.sessionId,
+      body.text,
+      extractPtBrCurrencyAmounts
+    );
+  }
   const controller = new AbortController();
   const abortUpstream = () => controller.abort();
 

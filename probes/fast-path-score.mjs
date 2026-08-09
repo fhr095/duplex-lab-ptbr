@@ -10,7 +10,13 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import { createLocalBrain } from "../src/brain/local-brain.mjs";
-import { arbitrateTurn } from "../src/interaction/fast-path.mjs";
+import {
+  arbitrateTurn,
+  createFastPathMemory
+} from "../src/interaction/fast-path.mjs";
+import {
+  extractPtBrCurrencyAmounts
+} from "../src/interaction/ptbr-number.mjs";
 import {
   createTurnCoordinator
 } from "../src/interaction/turn-coordinator.mjs";
@@ -24,6 +30,7 @@ function systemDecision(item, index) {
   const coordinator = createTurnCoordinator({
     planner: createLocalBrain()
   });
+  const memory = createFastPathMemory();
   const sessionId = `score-${index}`;
   if (item.context) {
     coordinator.planTurn({
@@ -31,6 +38,7 @@ function systemDecision(item, index) {
       turnId: "ctx",
       text: item.context
     });
+    memory.observe(sessionId, item.context, extractPtBrCurrencyAmounts);
   }
   const plan = coordinator.planTurn({
     sessionId,
@@ -43,7 +51,16 @@ function systemDecision(item, index) {
   if (plan.mode === "delegate") {
     return { action: "BRIDGE", class: "delegacao" };
   }
-  return arbitrateTurn({ text: item.text, plan });
+  return arbitrateTurn({
+    text: item.text,
+    plan,
+    crossTurn: {
+      lastAmount: memory.lastAmount(sessionId),
+      amounts: extractPtBrCurrencyAmounts(item.text)
+        .map((amount) => amount.value)
+        .filter(Number.isFinite)
+    }
+  });
 }
 
 const matrix = new Map();
