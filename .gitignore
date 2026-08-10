@@ -71,3 +71,7 @@ tmp/
 # Worktrees de sessão nunca entram no repo
 .claude/
 .venv-*/
+.venv
+.venv-parakeet
+node_modules
+.venv-tts
