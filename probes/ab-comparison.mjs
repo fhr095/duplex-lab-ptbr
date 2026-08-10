@@ -53,8 +53,23 @@ const CONFIGS = {
       TTS_PROVIDER: "pocket"
     },
     ttsMode: "stream"
+  },
+  // Reasoner de interação mais rápido na mesma chave (escada TTFT:
+  // 5.4-mini mediana 580ms vs luna 971ms); tarefas continuam no luna.
+  "challenger-fast": {
+    env: {
+      BRAIN_PROVIDER: "openai",
+      FAST_PATH: "1",
+      TTS_PROVIDER: "pocket",
+      OPENAI_INTERACTION_MODEL: "gpt-5.4-mini",
+      OPENAI_TASK_MODEL: "gpt-5.6-luna"
+    },
+    ttsMode: "stream"
   }
 };
+const onlyConfigs = process.argv.slice(2).filter(
+  (name) => CONFIGS[name]
+);
 
 function startServer(extraEnv) {
   const child = spawn(process.execPath, ["src/cli/serve.mjs"], {
@@ -295,7 +310,9 @@ async function runConversation(configName) {
 }
 
 const output = {};
-for (const configName of ["baseline", "challenger"]) {
+for (const configName of onlyConfigs.length
+  ? onlyConfigs
+  : ["baseline", "challenger"]) {
   console.error(`\n=== ${configName} ===`);
   output[configName] = await runConversation(configName);
   for (const row of output[configName]) {

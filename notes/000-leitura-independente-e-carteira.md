@@ -336,6 +336,47 @@ Kokoro CPU (RTF 1,6+); Smart Turn drop-in (AUC 0,60, hipótese preservada
 p/ finetune); microturnos fixos (histórico EXP-0025-R); ocupante LLM
 zero-shot no cliente (bakeoff acima); cortar contexto do luna (flat).
 
+## MARCO 2 — comparação de tetos entre famílias (2026-08-09, madrugada)
+
+### Trilha reasoner rápido (mesma chave)
+Catálogo listado: 128 modelos, incl. gpt-realtime-mini (referência nativa
+comercial acessível!). Escada TTFT: 5.4-mini 580ms vs luna 971ms. A/B N=1
+não resolveu; decomposição N=5 resolveu: **5.4-mini vence a perna PASS por
+~340ms p50 (final→áudio 915 vs 1.251ms)** — não por TTFT (empatado no
+jitter), mas por completar a 1ª frase 4× mais rápido (48 vs 198ms).
+Adotar para interação (preço a confirmar); tarefas seguem no luna.
+Lição de método: com jitter de provider ±800ms, célula N=1 não decide nada.
+
+### Trilha política discriminativa (não-LLM)
+Regressão logística char-ngrams+features, treino SÓ sintético (353 ex.),
+teste no conjunto real nunca visto: **72,1%, latência 0,04ms**; CLARIFY
+recall 100% (determinístico: 0%) mas LOCAL_FINAL precisão 62,5% (inseguro
+sozinho). Veredicto: a CLASSE é viável na janela (3 ordens de magnitude
+abaixo do 0.6B) e complementa o determinístico como ensemble gated; o que
+falta é DADO REAL (programa de dados 1), não capacidade.
+
+### Trilha navegador/escuta
+CDP do Chrome inalcançável do WSL (NAT sem portproxy ativo; setup admin do
+lado Windows — documentado). A perna de voz renderizada/escuta humana é a
+única pendente e é intrinsecamente do Felipe (fones + DEMO.md).
+
+### Trilha referência nativa
+Sem gasto. Orçamentos delimitados com pergunta exata em
+notes/ORCAMENTOS-EXPLORACAO-TETO.md (B1 PersonaPlex US$5-8; B2
+gpt-realtime-mini US$2-5; B3 programas de dados ~zero).
+
+### Síntese das famílias (a decisão pedida)
+- **Melhor caminho PRÓXIMO**: cascata + camada de arbitragem própria
+  (determinística hoje, ensemble com dado real amanhã) + 5.4-mini na
+  interação + Pocket TTS + especulação. PASS p50 → ~1,7s; cobertos ~1-2,2s;
+  roda em 8GB; LLM trocável.
+- **Melhor caminho de TETO**: dados proprietários (3 programas distintos)
+  alimentando detector de turno, ensemble e — se B1 confirmar base viva —
+  adaptação duplex nativa PT-BR (janela aberta: nenhum aberto fala PT-BR).
+- **Convergem?** Sim, em camadas: o contrato de arbitragem e os dados são
+  permanentes e servem qualquer backbone; a decisão de investimento real é
+  o RITMO do programa nativo (B1 decide com US$ 5-8).
+
 ## Custo externo consumido (sessão 2026-08-09)
 - ~24 chamadas gpt-5.6-luna (probes de latência e especulação; caps do repo
   respeitados) ≈ US$ 0,005. RunPod: zero.
