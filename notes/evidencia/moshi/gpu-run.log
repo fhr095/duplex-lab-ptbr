@@ -1,0 +1,23 @@
++ pip install -q moshi sphn soundfile
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.2.1
+[notice] To update, run: python -m pip install --upgrade pip
++ python -m moshi.run_inference --hf-repo kyutai/moshiko-pytorch-bf16 --batch-size 1 /workspace/in/convo.wav /workspace/out/reply.wav
+/usr/local/lib/python3.11/dist-packages/moshi/models/loaders.py:204: UserWarning: Repository kyutai/moshiko-pytorch-bf16 contains no config.json. Assuming this is a Moshi 7B. Support for such repository might be removed in the future.
+  warnings.warn(
+Info: starting inference, sampling: True, audio temp: 0.8, text temp: 0.7
+[1;34m[Info][0m retrieving checkpoint
+[1;34m[Info][0m loading mimi
+[1;34m[Info][0m mimi loaded
+[1;34m[Info][0m loading moshi
+[1;34m[Info][0m moshi loaded
+[1;34m[Info][0m loading input file /workspace/in/convo.wav
+ Hi there, how can I help you? Inflation. 30%.Info: processed 321 steps in 22s, 67.50ms/step
+[1;34m[Info][0m writing /workspace/out/reply.wav with duration 25.7 sec.
++ ls -la /workspace/out
+total 1208
+drwxr-xr-x 2 root root      50 Aug 10 01:27 .
+drwxr-xr-x 1 root root      39 Aug 10 01:25 ..
+-rw-r--r-- 1 root root 1232684 Aug 10 01:27 reply.wav
+-rw-r--r-- 1 root root    1399 Aug 10 01:27 run.log

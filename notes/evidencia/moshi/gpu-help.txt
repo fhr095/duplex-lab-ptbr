@@ -1,0 +1,29 @@
+usage: run_inference.py [-h] [--tokenizer TOKENIZER]
+                        [--moshi-weight MOSHI_WEIGHT]
+                        [--mimi-weight MIMI_WEIGHT] [--hf-repo HF_REPO]
+                        [--batch-size BATCH_SIZE] [--device DEVICE] [--half]
+                        [--config CONFIG] [--cfg-coef CFG_COEF]
+                        infile [outfile]
+
+positional arguments:
+  infile                Input audio file.
+  outfile               Output audio file in wav format.
+
+options:
+  -h, --help            show this help message and exit
+  --tokenizer TOKENIZER
+                        Path to a local tokenizer file.
+  --moshi-weight MOSHI_WEIGHT
+                        Path to a local checkpoint file for Moshi.
+  --mimi-weight MIMI_WEIGHT
+                        Path to a local checkpoint file for Mimi.
+  --hf-repo HF_REPO     HF repo to look into, defaults Moshiko. Use this to
+                        select a different pre-trained model.
+  --batch-size BATCH_SIZE
+                        Batch size to be used for inference.
+  --device DEVICE       Device on which to run, defaults to 'cuda'.
+  --half                Run inference with float16, not bfloat16, better for
+                        old GPUs.
+  --config CONFIG, --lm-config CONFIG
+                        The config as a json file.
+  --cfg-coef CFG_COEF   CFG coefficient.
