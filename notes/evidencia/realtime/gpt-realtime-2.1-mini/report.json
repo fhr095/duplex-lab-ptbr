@@ -1,0 +1,39 @@
+{
+ "model": "gpt-realtime-2.1-mini",
+ "scenarios": {
+  "latencia": [
+   {
+    "turn": "saudacao",
+    "endToNonSilentMs": 1197,
+    "responded": true
+   },
+   {
+    "turn": "pergunta",
+    "endToNonSilentMs": 1191,
+    "responded": true
+   },
+   {
+    "turn": "correcao",
+    "endToNonSilentMs": 1603,
+    "responded": true
+   },
+   {
+    "turn": "continuidade",
+    "endToNonSilentMs": 1585,
+    "responded": true
+   }
+  ],
+  "hesitacao": {
+   "tomadaPrematura": false,
+   "prematuraAposMs": null,
+   "respostaFinalMs": 1752
+  },
+  "interrupcao": {
+   "falaAtivaNoBackchannel": false,
+   "continuouAposBackchannel": false,
+   "falaAtivaNoBargeIn": false,
+   "bargeInStopMs": 0
+  }
+ },
+ "spentUsd": 0.0137
+}
