@@ -1,0 +1,46 @@
+{
+ "rows": [
+  {
+   "case": "515_CO_bfammn26",
+   "werOrig": 0.4583,
+   "werRecon": 0.4375
+  },
+  {
+   "case": "143276_nurc_",
+   "werOrig": 1.0,
+   "werRecon": 0.6667
+  },
+  {
+   "case": "48796_sp_",
+   "werOrig": 0.7143,
+   "werRecon": 0.8571
+  },
+  {
+   "case": "47827_sp_",
+   "werOrig": 1.3333,
+   "werRecon": 1.3333
+  },
+  {
+   "case": "aETOz3IGfG0-0121",
+   "werOrig": 0.5,
+   "werRecon": 0.5
+  },
+  {
+   "case": "80375_alip_",
+   "werOrig": 0.75,
+   "werRecon": 1.375
+  },
+  {
+   "case": "piper-correcao",
+   "werOrig": 0.3,
+   "werRecon": 0.3
+  },
+  {
+   "case": "piper-explica",
+   "werOrig": 0.3,
+   "werRecon": 0.0
+  }
+ ],
+ "meanWerOrig": 0.6695,
+ "meanWerRecon": 0.6837
+}
