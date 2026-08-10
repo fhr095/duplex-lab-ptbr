@@ -25,6 +25,14 @@ import {
   synthesizeWindowsSpeech
 } from "../tts/windows-system-tts.mjs";
 import {
+  arbitrateTurn,
+  createFastPathMemory,
+  FAST_PATH_VERSION
+} from "../interaction/fast-path.mjs";
+import {
+  extractPtBrCurrencyAmounts
+} from "../interaction/ptbr-number.mjs";
+import {
   INTERACTION_KERNEL_VERSION
 } from "../interaction/interaction-kernel.mjs";
 import {
@@ -56,6 +64,21 @@ const host = process.env.HOST ?? "0.0.0.0";
 const prefinalPolicy = normalizePrefinalPolicy(
   process.env.PREFINAL_POLICY
 );
+const fastPathEnabled = process.env.FAST_PATH === "1";
+const fastPathMemory = createFastPathMemory();
+// Programa de dados 1 (arbitragem textual): FASTPATH_LOG=arquivo.jsonl
+// acumula {texto, decisão, contexto} de uso real para rotulagem posterior.
+const fastPathLogPath = process.env.FASTPATH_LOG?.trim() || null;
+async function appendFastPathLog(entry) {
+  if (!fastPathLogPath) {
+    return;
+  }
+  const { appendFile } = await import("node:fs/promises");
+  await appendFile(
+    fastPathLogPath,
+    `${JSON.stringify(entry)}\n`
+  ).catch(() => {});
+}
 const endpointConfig = {
   completeSilenceMs: Number.parseInt(
     process.env.ENDPOINT_COMPLETE_MS ?? "520",
@@ -172,7 +195,47 @@ let asrHealth = {
   model: asrEnabled ? asrFinalModel : null
 };
 let ttsHealth = { state: "starting" };
-const ttsWarmup = prewarmWindowsSpeech().then(
+const ttsProviderEnv = process.env.TTS_PROVIDER?.trim().toLowerCase() ||
+  "windows";
+const ttsWarmup = ttsProviderEnv !== "windows"
+  ? (async () => {
+      // Health real: sem sidecar respondendo, o estado é error — nunca
+      // "ready" por suposição.
+      const sidecarUrl = process.env.TTS_SIDECAR_URL?.trim() ||
+        (ttsProviderEnv === "pocket"
+          ? "http://127.0.0.1:8321/tts"
+          : "http://127.0.0.1:8331");
+      const healthUrl = ttsProviderEnv === "pocket"
+        ? sidecarUrl.replace(/\/tts\/?$/u, "/health")
+        : sidecarUrl;
+      try {
+        const probe = await fetch(healthUrl, {
+          signal: AbortSignal.timeout(5_000)
+        });
+        if (!probe.ok) {
+          throw new Error(`sidecar retornou HTTP ${probe.status}`);
+        }
+        ttsHealth = {
+          state: "ready",
+          engine: `${ttsProviderEnv}-sidecar`,
+          voice: ttsProviderEnv === "pocket" ? "rafael" : "pt_BR-faber",
+          culture: "pt-BR",
+          sidecarUrl,
+          primed: false
+        };
+      } catch (error) {
+        ttsHealth = {
+          state: "error",
+          engine: `${ttsProviderEnv}-sidecar`,
+          code: "tts_sidecar_unreachable",
+          message: `${healthUrl}: ${error.message}`
+        };
+        console.error(
+          `TTS sidecar ${ttsProviderEnv} indisponível: ${error.message}`
+        );
+      }
+    })()
+  : prewarmWindowsSpeech().then(
   (status) => {
     ttsHealth = {
       state: "ready",
@@ -349,6 +412,7 @@ const STATIC_ROUTES = new Map([
   ["/pcm-capture.mjs", "pcm-capture.mjs"],
   ["/pcm-dsp.mjs", "pcm-dsp.mjs"],
   ["/pcm-wire.mjs", "pcm-wire.mjs"],
+  ["/speculative-turn.mjs", "speculative-turn.mjs"],
   ["/stream-utils.mjs", "stream-utils.mjs"],
   ["/training-trace-recorder.mjs", "training-trace-recorder.mjs"],
   ["/turn-taking.mjs", "turn-taking.mjs"],
@@ -430,12 +494,85 @@ function validateTurn(body) {
 async function streamTurn(request, response, body) {
   validateTurn(body);
 
-  const plan = turnCoordinator.planTurn({
-    sessionId: body.sessionId,
-    turnId: body.turnId,
-    text: body.text
-  });
+  // Estágios do challenger de resposta especulativa (exp/caminho-ouro):
+  //  - "speculative": planeja sobre snapshot sem avançar o kernel e gera a
+  //    resposta; o estado autoritativo só muda no commit.
+  //  - "commit": avança o kernel (idempotente por turnId) sem gerar resposta,
+  //    usado quando o stream especulativo é adotado pela final confirmada.
+  //  - default: comportamento original (dispatch + resposta).
+  const stage = body.stage === "speculative" || body.stage === "commit"
+    ? body.stage
+    : "full";
+
+  if (stage === "commit") {
+    const commit = turnCoordinator.commitTurn({
+      sessionId: body.sessionId,
+      turnId: body.turnId,
+      text: body.text,
+      expectedPreviousVersion: body.expectedPreviousVersion
+    });
+    response.writeHead(200, {
+      "content-type": "application/x-ndjson; charset=utf-8",
+      "cache-control": "no-store"
+    });
+    sendNdjson(response, commit.ok
+      ? { type: "committed", ok: true, interaction: commit.transition }
+      : {
+          type: "committed",
+          ok: false,
+          reason: commit.reason,
+          currentVersion: commit.currentVersion
+        });
+    response.end();
+    return;
+  }
+
+  const plan = stage === "speculative"
+    ? turnCoordinator.planTurnSpeculative({
+        sessionId: body.sessionId,
+        turnId: body.turnId,
+        text: body.text
+      })
+    : turnCoordinator.planTurn({
+        sessionId: body.sessionId,
+        turnId: body.turnId,
+        text: body.text
+      });
   const mode = plan.mode;
+  // Arbitragem da camada rápida (FAST_PATH=1): decisão pura ANTES de acionar
+  // o reasoner — custo zero de latência serial. PASS mantém o fluxo original;
+  // LOCAL_FINAL responde localmente sem chamar o provider; BRIDGE fala uma
+  // ponte semântica imediata (sinal estruturado do kernel) enquanto o
+  // reasoner gera, com contrato no-repeat no prompt.
+  const fastPath = fastPathEnabled
+    ? arbitrateTurn({
+        text: body.text,
+        plan,
+        crossTurn: {
+          lastAmount: fastPathMemory.lastAmount(body.sessionId),
+          amounts: extractPtBrCurrencyAmounts(body.text)
+            .map((item) => item.value)
+            .filter(Number.isFinite)
+        }
+      })
+    : null;
+  // A memória observa só no estágio full (especulação não muta nada).
+  if (fastPathEnabled && stage === "full") {
+    fastPathMemory.observe(
+      body.sessionId,
+      body.text,
+      extractPtBrCurrencyAmounts
+    );
+    void appendFastPathLog({
+      at: new Date().toISOString(),
+      sessionId: body.sessionId,
+      text: body.text,
+      decision: fastPath
+        ? { action: fastPath.action, class: fastPath.class }
+        : null,
+      mode
+    });
+  }
   const controller = new AbortController();
   const abortUpstream = () => controller.abort();
 
@@ -459,18 +596,60 @@ async function streamTurn(request, response, body) {
     semantic: plan.semantic ?? null,
     safety: plan.safety ?? null,
     interaction: plan.interaction,
+    fastPath: fastPath
+      ? { action: fastPath.action, class: fastPath.class }
+      : null,
     acknowledgment: mode === "delegate" ? plan.acknowledgment : null,
     taskId: mode === "delegate" ? plan.task.id : null,
     query: mode === "delegate" ? plan.task.query : null
   });
 
+  if (fastPath?.action === "LOCAL_FINAL") {
+    sendNdjson(response, {
+      type: "started",
+      responseId: null,
+      model: FAST_PATH_VERSION
+    });
+    if (!controller.signal.aborted) {
+      sendNdjson(response, { type: "delta", delta: fastPath.response });
+      sendNdjson(response, {
+        type: "done",
+        responseId: null,
+        model: FAST_PATH_VERSION,
+        usage: null
+      });
+    }
+    response.end();
+    return;
+  }
+
+  // Ponte semântica imediata: falada pelo cliente enquanto o reasoner
+  // trabalha. O texto da ponte segue no request do reasoner (spokenPrefix)
+  // para que a continuação não repita nem contradiga o que já foi dito.
+  if (fastPath?.action === "BRIDGE") {
+    sendNdjson(response, {
+      type: "bridge",
+      text: fastPath.bridge,
+      class: fastPath.class
+    });
+  }
+
   try {
+    // Contrato do challenger: um turno especulativo NUNCA pode disparar
+    // efeitos externos (ferramentas, ações, side-effects). Hoje os cérebros
+    // só geram texto; quando ferramentas existirem, este flag é a autoridade
+    // que as desabilita até o commit/adoção.
     for await (const event of brain.streamTurn({
       text: plan.effectiveText ?? body.text,
       history: body.history,
       mode,
       signal: controller.signal,
-      turnPlan: plan
+      turnPlan: plan,
+      speculative: stage === "speculative",
+      effectsAllowed: stage !== "speculative",
+      spokenPrefix: fastPath?.action === "BRIDGE"
+        ? fastPath.bridge
+        : null
     })) {
       sendNdjson(response, event);
     }
@@ -490,6 +669,92 @@ async function streamTurn(request, response, body) {
   }
 }
 
+// Challenger exp/caminho-ouro: TTS plugável. windows = worker SAPI original;
+// pocket/piper = sidecars HTTP locais (Pocket TTS Kyutai transmite o WAV em
+// streaming; repassamos os bytes assim que chegam).
+const ttsProvider = process.env.TTS_PROVIDER?.trim().toLowerCase() ||
+  "windows";
+const ttsSidecarUrl = process.env.TTS_SIDECAR_URL?.trim() ||
+  (ttsProvider === "pocket"
+    ? "http://127.0.0.1:8321/tts"
+    : "http://127.0.0.1:8331");
+
+async function proxySidecarTts(request, response, body, controller) {
+  let upstream;
+  if (ttsProvider === "pocket") {
+    const form = new FormData();
+    form.set("text", body.text);
+    upstream = await fetch(ttsSidecarUrl, {
+      method: "POST",
+      body: form,
+      signal: controller.signal
+    });
+  } else {
+    upstream = await fetch(ttsSidecarUrl, {
+      method: "POST",
+      headers: { "content-type": "text/plain; charset=utf-8" },
+      body: body.text,
+      signal: controller.signal
+    });
+  }
+  if (!upstream.ok) {
+    throw new Error(`TTS sidecar retornou HTTP ${upstream.status}`);
+  }
+  // Modo streaming (GET ?stream=1): repassa os bytes do sidecar assim que
+  // chegam — o navegador toca o WAV progressivamente e o primeiro áudio
+  // audível deixa de esperar a síntese completa.
+  if (body.stream) {
+    if (response.destroyed || response.writableEnded) {
+      return;
+    }
+    response.writeHead(200, {
+      "content-type": "audio/wav",
+      "cache-control": "no-store"
+    });
+    for await (const chunk of upstream.body) {
+      if (response.destroyed || controller.signal.aborted) {
+        break;
+      }
+      response.write(chunk);
+    }
+    response.end();
+    return;
+  }
+  // Modo bufferizado (POST): acumula e corrige os tamanhos RIFF que sidecars
+  // de streaming deixam abertos (0/0xFFFFFFFF), mantendo o WAV compatível
+  // com decodeWaveToPcm16 e com os harnesses.
+  const chunks = [];
+  for await (const chunk of upstream.body) {
+    if (controller.signal.aborted) {
+      return;
+    }
+    chunks.push(chunk);
+  }
+  const audio = Buffer.concat(chunks);
+  if (audio.length >= 44 && audio.toString("ascii", 0, 4) === "RIFF") {
+    audio.writeUInt32LE(audio.length - 8, 4);
+    let offset = 12;
+    while (offset + 8 <= audio.length) {
+      const id = audio.toString("ascii", offset, offset + 4);
+      const declared = audio.readUInt32LE(offset + 4);
+      if (id === "data") {
+        audio.writeUInt32LE(audio.length - offset - 8, offset + 4);
+        break;
+      }
+      offset += 8 + declared + (declared % 2);
+    }
+  }
+  if (response.destroyed || response.writableEnded) {
+    return;
+  }
+  response.writeHead(200, {
+    "content-type": "audio/wav",
+    "content-length": audio.length,
+    "cache-control": "no-store"
+  });
+  response.end(audio);
+}
+
 async function synthesizeTts(request, response, body) {
   const controller = new AbortController();
   const abortSynthesis = () => controller.abort();
@@ -505,6 +770,10 @@ async function synthesizeTts(request, response, body) {
   }
 
   try {
+    if (ttsProvider !== "windows") {
+      await proxySidecarTts(request, response, body, controller);
+      return;
+    }
     const audio = await synthesizeWindowsSpeech(body.text, {
       rate: body.rate,
       signal: controller.signal
@@ -615,6 +884,25 @@ const server = createServer(async (request, response) => {
     if (request.method === "POST" && url.pathname === "/api/tts") {
       const body = await readJsonBody(request);
       await synthesizeTts(request, response, body);
+      return;
+    }
+
+    // GET permite <audio src> com download progressivo (playback começa
+    // antes da síntese terminar). Disponível apenas para sidecars.
+    if (request.method === "GET" && url.pathname === "/api/tts") {
+      const text = (url.searchParams.get("text") ?? "").trim();
+      if (!text || text.length > 700) {
+        sendJson(response, 400, { error: "invalid_text" });
+        return;
+      }
+      if (ttsProvider === "windows") {
+        sendJson(response, 400, { error: "stream_requires_sidecar" });
+        return;
+      }
+      await synthesizeTts(request, response, {
+        text,
+        stream: url.searchParams.get("stream") === "1"
+      });
       return;
     }
 

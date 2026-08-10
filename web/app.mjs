@@ -34,6 +34,10 @@ import {
   classifyPotentialBargeIn,
   isExplicitTaskCancellation
 } from "/turn-taking.mjs";
+import {
+  SpeculativeTurn,
+  speculationMatches
+} from "/speculative-turn.mjs";
 
 const Recognition =
   window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
@@ -41,6 +45,35 @@ const pageParameters = new URLSearchParams(window.location.search);
 const automationEnabled =
   pageParameters.get("automation") === "1" &&
   ["localhost", "127.0.0.1"].includes(window.location.hostname);
+// Challenger exp/caminho-ouro: ?spec=1 especula a resposta na final preparada
+// do ASR; ?ack=1 fala um ack curto quando o cérebro demora a responder.
+// Engine candidata: os mecanismos do challenger são o PADRÃO; use =0 para
+// desligar individualmente (?spec=0&ack=0&ttsstream=0 ≈ baseline clássica).
+const speculationEnabled = pageParameters.get("spec") !== "0";
+const fastAckEnabled = pageParameters.get("ack") !== "0";
+const ttsStreamEnabled = pageParameters.get("ttsstream") !== "0";
+const FAST_ACKS = ["Hum...", "Tá.", "Deixa eu ver..."];
+
+if (ttsStreamEnabled && "PerformanceObserver" in window) {
+  new PerformanceObserver((entries) => {
+    for (const entry of entries.getEntries()) {
+      if (!entry.name.includes("/api/tts")) {
+        continue;
+      }
+      const firstByteMs = entry.responseStart - entry.startTime;
+      const sinceSpeechEnd = session.lastSpeechEndedAt === null
+        ? null
+        : entry.responseStart - session.lastSpeechEndedAt;
+      log(
+        "tts.first-byte",
+        `req→byte ${Math.round(firstByteMs)}ms` +
+          (sinceSpeechEnd === null
+            ? ""
+            : ` · fim→byte ${Math.round(sinceSpeechEnd)}ms`)
+      );
+    }
+  }).observe({ type: "resource", buffered: false });
+}
 const evaluationEnabled = pageParameters.get("evaluation") === "0026";
 const operationalReadinessEnabled =
   evaluationEnabled && pageParameters.get("readiness") === "1";
@@ -150,6 +183,12 @@ const session = {
   endpointTimer: null,
   earlyBackchannelTurnIds: new Set(),
   finalText: "",
+  speculation: null,
+  speculationSequence: 0,
+  ackCache: new Map(),
+  assistantSpeakingKind: null,
+  pendingTtsElements: new Set(),
+  renderConfrontationLogged: false,
   finishCurrentAudio: null,
   history: [],
   backchannelCount: 0,
@@ -559,6 +598,22 @@ const assistantRenderProbe = new BrowserAudioRenderProbe({
         event.type,
         `${event.mapping} · quantum não silencioso`
       );
+      // Confronto onplaying × primeiro quantum não silencioso: mede quanto o
+      // fim→voz baseado em onplaying subestima o áudio realmente audível.
+      if (
+        !session.renderConfrontationLogged &&
+        session.assistantSpeaking &&
+        session.lastSpeechEndedAt !== null &&
+        Number.isFinite(event.activeAtMs)
+      ) {
+        session.renderConfrontationLogged = true;
+        log(
+          "assistant.render.first-audible",
+          `fim→render ${formatMs(
+            event.activeAtMs - session.lastSpeechEndedAt
+          )}`
+        );
+      }
     }
   }
 });
@@ -599,6 +654,7 @@ function cleanupCurrentAudio() {
   const source = session.assistantAudioSource;
   session.assistantAudio = null;
   session.assistantAudioSource = null;
+  session.assistantSpeakingKind = null;
 
   if (audio) {
     audio.onplaying = null;
@@ -661,6 +717,13 @@ function releaseAssistantAudio() {
     controller.abort();
   }
   session.ttsAbortControllers.clear();
+  // Downloads progressivos de itens ainda na fila não têm AbortController —
+  // o cancelamento explícito é derrubar o src de cada elemento pendente.
+  for (const audio of session.pendingTtsElements) {
+    audio.removeAttribute("src");
+    audio.load();
+  }
+  session.pendingTtsElements.clear();
   session.audioQueue = [];
   cleanupCurrentAudio();
   session.audioPumpActive = false;
@@ -673,6 +736,51 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
   session.ttsAbortControllers.add(controller);
 
   try {
+    // Acks pré-sintetizados custam ~0ms; sem cache, síntese normal.
+    const cached = kind === "fast-ack"
+      ? session.ackCache.get(text)
+      : null;
+    if (cached) {
+      return {
+        blob: cached,
+        epoch,
+        kind,
+        loop: false,
+        taskId: null,
+        taskResultDelivery: null,
+        taskResultChunkCount: null,
+        taskResultChunkIndex: null,
+        taskResultReadyAt: null,
+        semantic: null,
+        text
+      };
+    }
+    if (ttsStreamEnabled && session.ttsSidecar && options.loop !== true) {
+      // Download progressivo: o elemento começa a baixar já na preparação
+      // (preload) e o playback inicia antes da síntese completa. Registrado
+      // para cancelamento explícito se a época avançar (interrupção).
+      const audio = new Audio(
+        `/api/tts?stream=1&text=${encodeURIComponent(text)}`
+      );
+      audio.preload = "auto";
+      session.pendingTtsElements.add(audio);
+      return {
+        audioElement: audio,
+        blob: null,
+        epoch,
+        kind,
+        loop: false,
+        taskId: options.taskId ?? null,
+        taskResultDelivery: options.taskResultDelivery ?? null,
+        taskResultChunkCount: options.taskResultChunkCount ?? null,
+        taskResultChunkIndex: options.taskResultChunkIndex ?? null,
+        taskResultReadyAt: options.taskResultReadyAt ?? null,
+        semantic: session.semanticState === null
+          ? null
+          : { ...session.semanticState },
+        text
+      };
+    }
     const response = await fetch("/api/tts", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -715,8 +823,13 @@ async function playPreparedSpeech(item) {
     }
   }
 
-  const audioUrl = URL.createObjectURL(item.blob);
-  const audio = new Audio(audioUrl);
+  const audioUrl = item.audioElement
+    ? null
+    : URL.createObjectURL(item.blob);
+  const audio = item.audioElement ?? new Audio(audioUrl);
+  if (item.audioElement) {
+    session.pendingTtsElements.delete(item.audioElement);
+  }
   audio.loop = item.loop === true;
   let audioSource = null;
   try {
@@ -726,12 +839,18 @@ async function playPreparedSpeech(item) {
   }
   if (item.epoch !== session.audioEpoch) {
     assistantRenderProbe.disconnectSource(audioSource);
-    URL.revokeObjectURL(audioUrl);
+    if (audioUrl !== null) {
+      URL.revokeObjectURL(audioUrl);
+    } else {
+      audio.removeAttribute("src");
+      audio.load();
+    }
     return;
   }
   session.assistantAudio = audio;
   session.assistantAudioSource = audioSource;
   session.assistantAudioUrl = audioUrl;
+  session.assistantSpeakingKind = item.kind;
   session.assistantPreparing = false;
 
   await new Promise((resolve, reject) => {
@@ -807,6 +926,17 @@ async function playPreparedSpeech(item) {
             `${formatMs(startedAt - item.taskResultReadyAt)}`
         );
       } else if (
+        ["fast-ack", "backchannel"].includes(item.kind) &&
+        session.lastSpeechEndedAt !== null
+      ) {
+        // Fillers têm métrica própria e NÃO contam como resposta semântica.
+        log(
+          "assistant.ack.audible",
+          `${item.kind} · fim→ack ` +
+            `${formatMs(startedAt - session.lastSpeechEndedAt)}`
+        );
+      } else if (
+        !["fast-ack", "backchannel"].includes(item.kind) &&
         !session.responseAudioStarted &&
         session.lastSpeechEndedAt !== null
       ) {
@@ -819,7 +949,7 @@ async function playPreparedSpeech(item) {
         elements.responseMetric.textContent = formatMs(endToResponseMs);
         log(
           "assistant.response.audible",
-          `fim→voz ${formatMs(endToResponseMs)}` +
+          `fim→voz ${formatMs(endToResponseMs)} · ${item.kind}` +
             (session.lastResponseAfterEndpointMs === null
               ? ""
               : ` · endpoint→voz ${formatMs(
@@ -843,6 +973,15 @@ async function pumpSpeechQueue(epoch) {
   try {
     while (epoch === session.audioEpoch && session.audioQueue.length > 0) {
       const queued = session.audioQueue.shift();
+      // Ack é filler: se já existe fala semântica atrás dele na fila, o
+      // conteúdo venceu a corrida e o ack só atrasaria — descarta.
+      if (
+        queued.kind === "fast-ack" &&
+        session.audioQueue.some((item) => item.kind !== "fast-ack")
+      ) {
+        log("fast-ack.skipped", "conteúdo chegou antes do ack tocar");
+        continue;
+      }
       session.assistantPreparing = true;
       setStatus("preparando voz", "speaking");
 
@@ -918,14 +1057,29 @@ function enqueueSpeech(text, kind = "direct", options = {}) {
 
   const epoch = session.audioEpoch;
   session.assistantPreparing = true;
+  const preparation = prepareSpeech(normalized, kind, epoch, options).then(
+    (value) => ({ value }),
+    (error) => ({ error })
+  );
+  if (!["fast-ack", "backchannel"].includes(kind)) {
+    // Conteúdo semântico pronto encerra um ack que ainda estiver tocando:
+    // o filler perdeu a corrida e só atrasaria a resposta.
+    void preparation.then((result) => {
+      if (
+        !result.error &&
+        epoch === session.audioEpoch &&
+        session.assistantSpeakingKind === "fast-ack"
+      ) {
+        log("fast-ack.cut", "conteúdo pronto durante o ack");
+        session.finishCurrentAudio?.();
+      }
+    });
+  }
   session.audioQueue.push({
     kind,
     taskId: options.taskId ?? null,
     taskResultDelivery: options.taskResultDelivery ?? null,
-    preparation: prepareSpeech(normalized, kind, epoch, options).then(
-      (value) => ({ value }),
-      (error) => ({ error })
-    )
+    preparation
   });
   void pumpSpeechQueue(epoch);
 }
@@ -1954,22 +2108,78 @@ async function processTurn() {
   log("turn.committed", text);
   setStatus("pensando e ouvindo", "speaking");
 
+  // Challenger: adota o stream especulado quando a final confirma o texto.
+  const speculation = session.speculation;
+  session.speculation = null;
+  const adopted = speculation && !speculation.aborted &&
+    speculationMatches(text, speculation.provisionalText)
+    ? speculation
+    : null;
+  if (speculation && !adopted) {
+    speculation.abort();
+    log("speculation.miss", speculation.provisionalText);
+  }
+  if (adopted) {
+    controller.signal.addEventListener(
+      "abort",
+      () => adopted.abort(),
+      { once: true }
+    );
+  }
+
   let completed = false;
+  let ackTimer = null;
 
   try {
-    const response = await fetch("/api/turn", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        text,
-        history,
-        sessionId: session.interactionSessionId,
-        turnId
-      }),
-      signal: controller.signal
-    });
+    let events = null;
+    if (adopted) {
+      const commit = await adopted.commit();
+      if (commit.ok) {
+        log(
+          "speculation.adopted",
+          `lead ${Math.round(performance.now() - adopted.startedAtMs)}ms`
+        );
+        events = adopted.events();
+      } else {
+        adopted.abort();
+        log("speculation.commit-rejected", commit.reason);
+      }
+    }
+    if (events === null) {
+      if (fastAckEnabled) {
+        ackTimer = setTimeout(() => {
+          if (
+            generation === session.responseGeneration &&
+            !session.responseAudioStarted &&
+            !session.assistantSpeaking &&
+            !session.assistantPreparing &&
+            context.mode !== "delegate"
+          ) {
+            log("fast-ack.spoken", "cérebro demorou >700ms");
+            enqueueSpeech(
+              FAST_ACKS[
+                session.interactionTurnSequence % FAST_ACKS.length
+              ],
+              "fast-ack"
+            );
+          }
+        }, 700);
+      }
+      const response = await fetch("/api/turn", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          text,
+          history,
+          sessionId: session.interactionSessionId,
+          turnId
+        }),
+        signal: controller.signal
+      });
+      events = readNdjson(response);
+    }
 
-    for await (const event of readNdjson(response)) {
+    for await (const event of events) {
       const ownsFlow = context.mode === "delegate"
         ? session.activeTask === context
         : generation === session.responseGeneration;
@@ -1981,6 +2191,13 @@ async function processTurn() {
         context.mode =
           event.mode === "delegate" ? "delegate" : "direct";
         log("turn.routed", event.mode);
+        if (event.fastPath) {
+          log(
+            "turn.fast-path",
+            `${event.fastPath.action}` +
+              (event.fastPath.class ? ` · ${event.fastPath.class}` : "")
+          );
+        }
         const projection = projectInteractionTransition(event.interaction);
         session.interactionStateVersion = projection.stateVersion;
         session.semanticState = projection.semanticState;
@@ -2024,6 +2241,16 @@ async function processTurn() {
         continue;
       }
 
+      if (event.type === "bridge" && context.mode !== "delegate") {
+        // Ponte semântica da camada rápida: fala imediatamente e entra no
+        // texto/histórico — o reasoner recebeu o contrato no-repeat.
+        log("assistant.bridge", event.text);
+        session.responseText = `${event.text} `;
+        elements.assistantText.textContent = session.responseText;
+        enqueueSpeech(event.text, "bridge");
+        continue;
+      }
+
       if (event.type === "started") {
         log(
           "brain.started",
@@ -2035,6 +2262,10 @@ async function processTurn() {
       }
 
       if (event.type === "delta") {
+        if (ackTimer !== null) {
+          clearTimeout(ackTimer);
+          ackTimer = null;
+        }
         if (context.mode === "delegate") {
           context.resultText += event.delta;
         } else {
@@ -2101,6 +2332,9 @@ async function processTurn() {
         log("turn.error", error.message);
     }
   } finally {
+    if (ackTimer !== null) {
+      clearTimeout(ackTimer);
+    }
     if (
       context.mode !== "delegate" &&
       generation === session.responseGeneration
@@ -2542,8 +2776,41 @@ function handleLocalAudioEvent(event) {
     session.lastSpeechEndedAt =
       session.lastEndpointCommittedAt -
       Math.max(0, Number(event.silenceMs) || 0);
+    session.renderConfrontationLogged = false;
     log("user.speech.ended", audioEventDetail(event));
     setListeningStatus();
+    return;
+  }
+  if (event.type === "endpoint.prefinal.text") {
+    if (!speculationEnabled || !session.active) {
+      return;
+    }
+    const prepared = String(event.text ?? "").trim();
+    if (!prepared || session.pendingConfirmation) {
+      return;
+    }
+    const previous = session.speculation;
+    if (previous && !previous.settled &&
+        speculationMatches(prepared, previous.provisionalText)) {
+      return;
+    }
+    previous?.abort();
+    session.speculationSequence += 1;
+    session.speculation = new SpeculativeTurn({
+      history: session.history.slice(),
+      sessionId: session.interactionSessionId,
+      text: prepared,
+      turnId: `spec-${session.speculationSequence}`
+    });
+    log("speculation.started", prepared);
+    return;
+  }
+  if (event.type === "endpoint.prefinal.cancelled") {
+    if (session.speculation && !session.speculation.settled) {
+      session.speculation.abort();
+      log("speculation.aborted", "fala retomada");
+    }
+    session.speculation = null;
     return;
   }
   if (event.type === "transcript.final") {
@@ -2625,15 +2892,22 @@ function handleLocalAudioEvent(event) {
     }
     if (text && handleExplicitTaskCancellation(text)) {
       session.finalText = "";
+      session.speculation?.abort();
+      session.speculation = null;
       return;
     }
     if (text) {
       session.finalText = text;
       void processTurn();
+    } else {
+      session.speculation?.abort();
+      session.speculation = null;
     }
     return;
   }
   if (event.type === "transcript.rejected") {
+    session.speculation?.abort();
+    session.speculation = null;
     if (event.turnId) {
       session.earlyBackchannelTurnIds.delete(event.turnId);
     }
@@ -2664,6 +2938,8 @@ function handleLocalAudioEvent(event) {
     return;
   }
   if (event.type === "transcript.cancelled") {
+    session.speculation?.abort();
+    session.speculation = null;
     if (event.turnId) {
       session.earlyBackchannelTurnIds.delete(event.turnId);
     }
@@ -3146,9 +3422,27 @@ async function startBrowserRecognitionSession() {
 
 let healthPromise;
 
+function prefetchAckCache() {
+  if (!fastAckEnabled || session.ackCache.size > 0) {
+    return;
+  }
+  for (const text of FAST_ACKS) {
+    void fetch("/api/tts", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ text })
+    }).then(async (response) => {
+      if (response.ok) {
+        session.ackCache.set(text, await response.blob());
+      }
+    }).catch(() => {});
+  }
+}
+
 async function startSession() {
   elements.startButton.disabled = true;
   await healthPromise;
+  prefetchAckCache();
 
   if (session.asrAvailable) {
     try {
@@ -3598,6 +3892,8 @@ async function loadHealth() {
         : "mock local";
     elements.brainLabel.textContent = brain;
     session.asrAvailable = health.asr?.state === "ready";
+    session.ttsSidecar = String(health.tts?.engine ?? "")
+      .endsWith("-sidecar");
     session.vadShadow.health = health.vadShadow ?? {
       state: "disabled"
     };
