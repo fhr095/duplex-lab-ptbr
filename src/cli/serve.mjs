@@ -33,6 +33,10 @@ import {
   extractPtBrCurrencyAmounts
 } from "../interaction/ptbr-number.mjs";
 import {
+  fetchWeatherSummary,
+  weatherIntent
+} from "../tools/weather.mjs";
+import {
   INTERACTION_KERNEL_VERSION
 } from "../interaction/interaction-kernel.mjs";
 import {
@@ -635,10 +639,48 @@ async function streamTurn(request, response, body) {
   }
 
   try {
+    // Ferramenta real (RC v0.1): delegações com intenção de tempo executam
+    // Open-Meteo de verdade — SOMENTE fora de especulação (effectsAllowed).
+    // Especulativo cai no comportamento normal do cérebro, sem efeito.
+    if (
+      mode === "delegate" &&
+      stage !== "speculative" &&
+      weatherIntent(plan.task?.query ?? body.text)
+    ) {
+      sendNdjson(response, {
+        type: "started",
+        responseId: null,
+        model: "tool:open-meteo"
+      });
+      try {
+        const summary = await fetchWeatherSummary(
+          plan.task?.query ?? body.text,
+          { signal: controller.signal }
+        );
+        sendNdjson(response, { type: "delta", delta: summary });
+        sendNdjson(response, {
+          type: "done",
+          responseId: null,
+          model: "tool:open-meteo",
+          usage: null
+        });
+        response.end();
+        return;
+      } catch (error) {
+        if (error.name === "AbortError") {
+          response.end();
+          return;
+        }
+        sendNdjson(response, {
+          type: "delta",
+          delta: "A consulta de tempo falhou; seguindo sem a ferramenta. "
+        });
+        // cai para o cérebro normal abaixo
+      }
+    }
     // Contrato do challenger: um turno especulativo NUNCA pode disparar
-    // efeitos externos (ferramentas, ações, side-effects). Hoje os cérebros
-    // só geram texto; quando ferramentas existirem, este flag é a autoridade
-    // que as desabilita até o commit/adoção.
+    // efeitos externos (ferramentas, ações, side-effects); este flag é a
+    // autoridade que as desabilita até o commit/adoção.
     for await (const event of brain.streamTurn({
       text: plan.effectiveText ?? body.text,
       history: body.history,

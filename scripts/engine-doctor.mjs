@@ -1,4 +1,8 @@
-// Engine RC v0.1 — doctor: um comando que prova a instalação inteira.
+// Engine RC v0.1 — doctor: SMOKE DE INFRAESTRUTURA em um comando.
+// Prova áudio→ASR→turno→TTS repetidamente + um assert semântico mínimo +
+// a ferramenta real (Open-Meteo). NÃO qualifica qualidade semântica ampla
+// nem experiência de navegador/renderer — esse é o gate de experiência,
+// feito com conversa real (docs/ENGINE.md, seção demo).
 //
 //   node scripts/engine-doctor.mjs [--turns N] [--url ws://…/api/audio]
 //
@@ -121,6 +125,12 @@ for (let turn = 0; turn < TURNS; turn += 1) {
   if (!gotFinal) {
     continue;
   }
+  // assert semântico mínimo: a saudação precisa estar na transcrição
+  // (tolera o prefixo alucinado conhecido desta fixture sintética)
+  check(
+    final.text.toLocaleLowerCase("pt-BR").includes("oi, tudo bem"),
+    `turno ${turn + 1}: assert semântico da transcrição`
+  );
 
   let responseText = "";
   let fastPath = null;
@@ -199,6 +209,35 @@ for (let turn = 0; turn < TURNS; turn += 1) {
   await delay(300);
 }
 socket.close();
+
+// ferramenta real: delegação com efeito externo verdadeiro (Open-Meteo)
+{
+  let toolModel = null;
+  let toolText = "";
+  const toolResponse = await fetch(`${HTTP}/api/turn`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      text: "Pesquisa a previsão do tempo em São Paulo",
+      history: [],
+      sessionId: `doctor-tool-${process.pid}`,
+      turnId: "tool-1"
+    })
+  });
+  for await (const event of readNdjson(toolResponse)) {
+    if (event.type === "started") {
+      toolModel = event.model;
+    }
+    if (event.type === "delta") {
+      toolText += event.delta;
+    }
+  }
+  check(
+    toolModel === "tool:open-meteo" && toolText.includes("°C"),
+    "ferramenta real: previsão via Open-Meteo",
+    toolText.trim().slice(0, 60)
+  );
+}
 
 console.log(`\nresumo: ${TURNS} turnos · TTS 1º áudio ` +
   `${latencies.join("/")}ms · falhas: ${failures}`);
