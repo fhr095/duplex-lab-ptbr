@@ -5,75 +5,85 @@
   {
    "rep": 0,
    "turn": "saudacao",
-   "responseId": "resp_EBA40JZDSF1ggWnLslhKh",
+   "responseId": "resp_EBATT2Z84ia3FupeEPZM0",
    "responded": true,
-   "endToNonSilentMs": 1135
+   "endToNonSilentMs": 1119,
+   "valid": true
   },
   {
    "rep": 0,
    "turn": "pergunta",
-   "responseId": "resp_EBA44uebinFfYrSxONkoT",
+   "responseId": "resp_EBATZpWIPFMyRsGDlsfc1",
    "responded": true,
-   "endToNonSilentMs": 1121
+   "endToNonSilentMs": 999,
+   "valid": true
   },
   {
    "rep": 0,
    "turn": "correcao",
-   "responseId": "resp_EBA40JZDSF1ggWnLslhKh",
+   "responseId": "resp_EBATgQ8p30A0tkZf1BkfC",
    "responded": true,
-   "endToNonSilentMs": null
+   "endToNonSilentMs": 1174,
+   "valid": true
   },
   {
    "rep": 0,
    "turn": "continuidade",
-   "responseId": "resp_EBA40JZDSF1ggWnLslhKh",
+   "responseId": "resp_EBATlIBsAbpEArTsrEIpX",
    "responded": true,
-   "endToNonSilentMs": null
+   "endToNonSilentMs": 1056,
+   "valid": true
   },
   {
    "rep": 1,
    "turn": "saudacao",
-   "responseId": "resp_EBA4KUseVfMNvgfnI3nzr",
+   "responseId": "resp_EBATq9AFymsUZjgHc1GM1",
    "responded": true,
-   "endToNonSilentMs": 865
+   "endToNonSilentMs": 995,
+   "valid": true
   },
   {
    "rep": 1,
    "turn": "pergunta",
-   "responseId": "resp_EBA4POs4V13sEqN7TDLU5",
+   "responseId": "resp_EBATvCbCXXyHBPCmV3tPU",
    "responded": true,
-   "endToNonSilentMs": 962
+   "endToNonSilentMs": 1160,
+   "valid": true
   },
   {
    "rep": 1,
    "turn": "correcao",
-   "responseId": "resp_EBA4KUseVfMNvgfnI3nzr",
+   "responseId": "resp_EBAU3HOzLuXbikii0CR6q",
    "responded": true,
-   "endToNonSilentMs": null
+   "endToNonSilentMs": 1264,
+   "valid": true
   },
   {
    "rep": 1,
    "turn": "continuidade",
-   "responseId": "resp_EBA4KUseVfMNvgfnI3nzr",
+   "responseId": "resp_EBAU82OMnHeZJHGBYHic1",
    "responded": true,
-   "endToNonSilentMs": null
+   "endToNonSilentMs": 1280,
+   "valid": true
   }
  ],
  "dynamics": {
   "bargeIn": {
    "activeAtSend": true,
+   "valid": true,
    "generationCancelled": true,
-   "lastDeltaAfterSendMs": 208
+   "lastDeltaAfterSendMs": 276
   },
   "backchannel": {
-   "activeAtSend": false,
-   "generationCancelled": false,
-   "lastDeltaAfterSendMs": -10281
+   "activeAtSend": true,
+   "valid": true,
+   "generationCancelled": true,
+   "lastDeltaAfterSendMs": 175
   },
   "hesitacao": {
    "tomadaPrematura": false,
-   "respostaAposFimMs": 956
+   "respostaAposFimMs": 1283
   }
  },
- "spentUsd": 0.051
+ "spentUsd": 0.0396
 }

@@ -5,73 +5,81 @@
   {
    "rep": 0,
    "turn": "saudacao",
-   "responseId": "resp_EBA57WPUhSHmrnTr6klqj",
+   "responseId": "resp_EBAWQcfX17OkcKuNlQueV",
    "responded": true,
-   "endToNonSilentMs": 1472
+   "endToNonSilentMs": 1375,
+   "valid": true
   },
   {
    "rep": 0,
    "turn": "pergunta",
-   "responseId": "resp_EBA5BPDbCAazRdad99dso",
+   "responseId": "resp_EBAWWaT9SB9ZK740Np48N",
    "responded": true,
-   "endToNonSilentMs": 1369
+   "endToNonSilentMs": 1086,
+   "valid": true
   },
   {
    "rep": 0,
    "turn": "correcao",
-   "responseId": "resp_EBA57WPUhSHmrnTr6klqj",
+   "responseId": "resp_EBAWdVwueIUrRr2pg5cvj",
    "responded": true,
-   "endToNonSilentMs": null
+   "endToNonSilentMs": 1288,
+   "valid": true
   },
   {
    "rep": 0,
    "turn": "continuidade",
-   "responseId": "resp_EBA57WPUhSHmrnTr6klqj",
+   "responseId": "resp_EBAWievHe6fAkuSZbxNE4",
    "responded": true,
-   "endToNonSilentMs": null
+   "endToNonSilentMs": 1518,
+   "valid": true
   },
   {
    "rep": 1,
    "turn": "saudacao",
-   "responseId": "resp_EBA5RlT2J3C1hsjJm264o",
+   "responseId": "resp_EBAWnc4VgcHw8TOtNNgrO",
    "responded": true,
-   "endToNonSilentMs": 1687
+   "endToNonSilentMs": 1315,
+   "valid": true
   },
   {
    "rep": 1,
    "turn": "pergunta",
-   "responseId": "resp_EBA5WeyWq8DBjqvHK7vf3",
+   "responseId": "resp_EBAWtD24O6OkZhisxvtSg",
    "responded": true,
-   "endToNonSilentMs": 1438
+   "endToNonSilentMs": 1388,
+   "valid": true
   },
   {
    "rep": 1,
    "turn": "correcao",
-   "responseId": "resp_EBA5RlT2J3C1hsjJm264o",
+   "responseId": "resp_EBAX0KsSgrwAYuTpZ7OWU",
    "responded": true,
-   "endToNonSilentMs": null
+   "endToNonSilentMs": 1506,
+   "valid": true
   },
   {
    "rep": 1,
    "turn": "continuidade",
-   "responseId": "resp_EBA5RlT2J3C1hsjJm264o",
+   "responseId": "resp_EBAX6DAmg3p2ykGfB1lQN",
    "responded": true,
-   "endToNonSilentMs": null
+   "endToNonSilentMs": 1458,
+   "valid": true
   }
  ],
  "dynamics": {
   "bargeIn": {
-   "error": "resposta não iniciou"
+   "error": "resposta não iniciou",
+   "valid": false
   },
   "backchannel": {
-   "activeAtSend": false,
-   "generationCancelled": true,
-   "lastDeltaAfterSendMs": 464
+   "error": "resposta não iniciou",
+   "valid": false
   },
   "hesitacao": {
    "tomadaPrematura": false,
-   "respostaAposFimMs": 1440
+   "respostaAposFimMs": 1507
   }
  },
- "spentUsd": 0.0945
+ "spentUsd": 0.0715
 }

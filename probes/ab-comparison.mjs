@@ -111,19 +111,30 @@ async function firstSemanticAudioMs(text, sinceMs, ttsMode) {
     const response = await fetch(
       `${HTTP}/api/tts?stream=1&text=${encodeURIComponent(text)}`
     );
-    let received = 0;
+    // mesmo ponto do benchmark Realtime: primeiro áudio NÃO-SILENCIOSO
+    let buffered = Buffer.alloc(0);
+    const windowBytes = (16_000 * 20 * 2) / 1_000;
     for await (const chunk of response.body) {
-      received += chunk.length;
-      if (received > 44) {
-        const at = performance.now() - sinceMs;
-        void (async () => {
-          try {
-            for await (const rest of response.body) {
-              void rest;
-            }
-          } catch { /* abortado */ }
-        })();
-        return at;
+      buffered = Buffer.concat([buffered, chunk]);
+      let offset = 44;
+      while (offset + windowBytes <= buffered.length) {
+        let sum = 0;
+        for (let i = offset; i < offset + windowBytes; i += 2) {
+          const value = buffered.readInt16LE(i) / 32768;
+          sum += value * value;
+        }
+        if (Math.sqrt(sum / (windowBytes / 2)) > 0.012) {
+          const at = performance.now() - sinceMs;
+          void (async () => {
+            try {
+              for await (const rest of response.body) {
+                void rest;
+              }
+            } catch { /* abortado */ }
+          })();
+          return at;
+        }
+        offset += windowBytes;
       }
     }
     return null;

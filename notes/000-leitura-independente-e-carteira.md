@@ -434,6 +434,32 @@ tempo-real está evidenciada por 67,5ms/passo.
 `FASTPATH_LOG=arquivo.jsonl` no servidor acumula {texto, decisão, sessão}
 de uso real para rotulagem — dados frescos desde o primeiro demo.
 
+## v2.1 — FECHAMENTO DA COMPARAÇÃO DE FAMÍLIAS (2026-08-10)
+
+Defeitos do coletor confirmados e corrigidos (cursor persistente no
+waitFor; sessão nova por probe; IDs únicos + latência não nula exigidos;
+probe de dinâmica só vale com geração ativa). Resultado: a v2 tinha 4/8
+medições válidas por config; a v2.1 tem **8/8 válidas em todas**.
+
+| Config | fim→áudio não-silencioso (8/8) | Barge-in (ativa) | Backchannel (ativa) |
+| --- | --- | --- | --- |
+| mini + server_vad | 995–1.280ms | cancel 276ms | **cancela TAMBÉM (175ms)** — VAD puro não distingue |
+| mini + semantic | 1.119–1.477ms | n/m (resposta curta) | n/m — mas v2 mediu VÁLIDO: ignora o aham |
+| 2.1 + semantic | 1.086–1.518ms | n/m | **"aham derrubou o 2.1" RETRATADO** (probe inválido) |
+
+Caminho A no MESMO ponto (RMS): cobertos ~2,2s neste runner (viés
+conhecido: pocket re-aquece entre turnos esparsos; em operação contínua
+860–1.336ms); PASS ~2,7s com um outlier de 15s (soluço de provider; bruto
+preservado). Moshi: reclassificado — "arquitetura oficialmente capaz de
+serving em tempo real" ≠ "este runner A40 comprovou": passos v2 ficaram em
+89–112ms (>80ms/frame); o 67,5ms pertence à rodada PT anterior.
+Adaptação de idioma = **principal bloqueador observado** (não "100% do
+déficit"). FASTPATH_LOG = coleta consentida a rotular (não dataset).
+PersonaPlex servido: pendente do token no ambiente local.
+
+**Comparação de famílias ENCERRADA.** Gasto total da fase: ~US$ 0,52 de
+US$ 13–16 autorizados.
+
 ## Custo externo consumido (sessão 2026-08-09)
 - ~24 chamadas gpt-5.6-luna (probes de latência e especulação; caps do repo
   respeitados) ≈ US$ 0,005. RunPod: zero.

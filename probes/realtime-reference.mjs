@@ -166,12 +166,15 @@ class Session {
     return performance.now();
   }
 
+  // Cursor persistente: cada waitFor consome a partir do último evento já
+  // examinado — um response.done antigo nunca satisfaz um probe posterior.
+  cursor = 0;
+
   async waitFor(predicate, timeoutMs) {
     const deadline = performance.now() + timeoutMs;
-    let index = 0;
     while (performance.now() < deadline) {
-      while (index < this.events.length) {
-        const event = this.events[index++];
+      while (this.cursor < this.events.length) {
+        const event = this.events[this.cursor++];
         if (predicate(event)) {
           return event;
         }
@@ -219,11 +222,10 @@ function guardBudget() {
 const silence = (ms) => Buffer.alloc(((RATE * ms * 2) / 1000) & ~1);
 const report = { model: MODEL, vad: VAD, latency: [], dynamics: {} };
 
-// ---- Latência (2 repetições × 4 turnos, vínculo por response_id) ----
+// ---- Latência: sessão NOVA por turno; IDs únicos e latência não nula
+// exigidos para validade ----
+const seenResponseIds = new Set();
 for (let rep = 0; rep < 2; rep += 1) {
-  guardBudget();
-  const session = new Session();
-  await session.open();
   for (const [name, file] of [
     ["saudacao", "fala-saudacao.wav"],
     ["pergunta", "fala-pergunta.wav"],
@@ -231,40 +233,45 @@ for (let rep = 0; rep < 2; rep += 1) {
     ["continuidade", "fala-continuidade.wav"]
   ]) {
     guardBudget();
-    const before = session.currentResponseId;
+    const session = new Session();
+    await session.open();
     const end = await session.stream(await stimulus(file));
     await session.stream(silence(2_600));
     const done = await session.waitFor(
-      (event) => event.type === "response.done" &&
-        event.response?.id && event.response.id !== before,
+      (event) => event.type === "response.done" && event.response?.id,
       20_000
     );
-    const responseId = done?.response?.id ??
-      (session.currentResponseId !== before
-        ? session.currentResponseId
-        : null);
-    const first = session.chunks.find(
-      (chunk) => chunk.responseId === responseId &&
-        chunk.atMs >= end && chunk.rms > RMS_FLOOR
-    );
+    const responseId = done?.response?.id ?? null;
+    const first = responseId === null
+      ? null
+      : session.chunks.find(
+          (chunk) => chunk.responseId === responseId &&
+            chunk.atMs >= end && chunk.rms > RMS_FLOOR
+        );
+    const latencyMs = first ? Math.round(first.atMs - end) : null;
+    const unique = responseId !== null &&
+      !seenResponseIds.has(responseId);
+    if (responseId) {
+      seenResponseIds.add(responseId);
+    }
     report.latency.push({
       rep,
       turn: name,
       responseId,
       responded: Boolean(done),
-      endToNonSilentMs: first ? Math.round(first.atMs - end) : null
+      endToNonSilentMs: latencyMs,
+      valid: Boolean(done) && unique && latencyMs !== null
     });
-    await delay(400);
+    await session.close(`latencia-rep${rep}-${name}`);
   }
-  await session.close(`latencia-rep${rep}`);
 }
 
-// ---- Dinâmica: barge-in e backchannel DURANTE a geração ----
+// ---- Dinâmica: sessão NOVA por probe; só vale com geração ativa ----
 {
   guardBudget();
-  const session = new Session();
-  await session.open();
   const probeDynamics = async (label, interruptFile) => {
+    const session = new Session();
+    await session.open();
     const before = session.currentResponseId;
     await session.stream(await stimulus("fala-explica.wav"));
     await session.stream(silence(2_600));
@@ -274,7 +281,8 @@ for (let rep = 0; rep < 2; rep += 1) {
       20_000
     );
     if (!firstDelta) {
-      return { error: "resposta não iniciou" };
+      await session.close(`dinamica-${label}`);
+      return { error: "resposta não iniciou", valid: false };
     }
     const targetId = firstDelta.response_id ?? session.currentResponseId;
     // envia o interrupt imediatamente (geração em andamento)
@@ -299,8 +307,10 @@ for (let rep = 0; rep < 2; rep += 1) {
     const lastTargetChunk = session.chunks.findLast(
       (chunk) => chunk.responseId === targetId
     );
+    await session.close(`dinamica-${label}`);
     return {
       activeAtSend,
+      valid: activeAtSend,
       generationCancelled: Boolean(cancelled),
       lastDeltaAfterSendMs: lastTargetChunk
         ? Math.round(lastTargetChunk.atMs - sentAt)
@@ -314,7 +324,6 @@ for (let rep = 0; rep < 2; rep += 1) {
   report.dynamics.backchannel = await probeDynamics(
     "backchannel", "fala-aham.wav"
   );
-  await session.close("dinamica");
 }
 
 // ---- Hesitação ----
