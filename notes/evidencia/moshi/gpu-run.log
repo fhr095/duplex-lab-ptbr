@@ -3,7 +3,7 @@ WARNING: Running pip as the 'root' user can result in broken permissions and con
 
 [notice] A new release of pip is available: 24.2 -> 26.2.1
 [notice] To update, run: python -m pip install --upgrade pip
-+ python -m moshi.run_inference --hf-repo kyutai/moshiko-pytorch-bf16 --batch-size 1 /workspace/in/convo.wav /workspace/out/reply.wav
++ python -m moshi.run_inference --hf-repo kyutai/moshiko-pytorch-bf16 --batch-size 1 /workspace/in/moshi-en.wav /workspace/out/reply-en.wav
 /usr/local/lib/python3.11/dist-packages/moshi/models/loaders.py:204: UserWarning: Repository kyutai/moshiko-pytorch-bf16 contains no config.json. Assuming this is a Moshi 7B. Support for such repository might be removed in the future.
   warnings.warn(
 Info: starting inference, sampling: True, audio temp: 0.8, text temp: 0.7
@@ -12,12 +12,38 @@ Info: starting inference, sampling: True, audio temp: 0.8, text temp: 0.7
 [1;34m[Info][0m mimi loaded
 [1;34m[Info][0m loading moshi
 [1;34m[Info][0m moshi loaded
-[1;34m[Info][0m loading input file /workspace/in/convo.wav
- Hi there, how can I help you? Inflation. 30%.Info: processed 321 steps in 22s, 67.50ms/step
-[1;34m[Info][0m writing /workspace/out/reply.wav with duration 25.7 sec.
+[1;34m[Info][0m loading input file /workspace/in/moshi-en.wav
+ Hi there, how can I help you? Hi, I'm doing good. What's going on? capital of France is Paris.Info: processed 135 steps in 15s, 112.37ms/step
+[1;34m[Info][0m writing /workspace/out/reply-en.wav with duration 10.8 sec.
++ python -m moshi.run_inference --hf-repo kyutai/moshiko-pytorch-bf16 --batch-size 1 /workspace/in/moshi-bargein.wav /workspace/out/reply-bargein.wav
+/usr/local/lib/python3.11/dist-packages/moshi/models/loaders.py:204: UserWarning: Repository kyutai/moshiko-pytorch-bf16 contains no config.json. Assuming this is a Moshi 7B. Support for such repository might be removed in the future.
+  warnings.warn(
+Info: starting inference, sampling: True, audio temp: 0.8, text temp: 0.7
+[1;34m[Info][0m retrieving checkpoint
+[1;34m[Info][0m loading mimi
+[1;34m[Info][0m mimi loaded
+[1;34m[Info][0m loading moshi
+[1;34m[Info][0m moshi loaded
+[1;34m[Info][0m loading input file /workspace/in/moshi-bargein.wav
+ Hi there, how can I help you?Info: processed 148 steps in 13s, 89.31ms/step
+[1;34m[Info][0m writing /workspace/out/reply-bargein.wav with duration 11.8 sec.
++ python -m moshi.run_inference --hf-repo kyutai/moshiko-pytorch-bf16 --batch-size 1 /workspace/in/moshi-backchannel.wav /workspace/out/reply-backchannel.wav
+/usr/local/lib/python3.11/dist-packages/moshi/models/loaders.py:204: UserWarning: Repository kyutai/moshiko-pytorch-bf16 contains no config.json. Assuming this is a Moshi 7B. Support for such repository might be removed in the future.
+  warnings.warn(
+Info: starting inference, sampling: True, audio temp: 0.8, text temp: 0.7
+[1;34m[Info][0m retrieving checkpoint
+[1;34m[Info][0m loading mimi
+[1;34m[Info][0m mimi loaded
+[1;34m[Info][0m loading moshi
+[1;34m[Info][0m moshi loaded
+[1;34m[Info][0m loading input file /workspace/in/moshi-backchannel.wav
+ Hi there, how can I help you?Info: processed 134 steps in 13s, 93.41ms/step
+[1;34m[Info][0m writing /workspace/out/reply-backchannel.wav with duration 10.7 sec.
 + ls -la /workspace/out
-total 1208
-drwxr-xr-x 2 root root      50 Aug 10 01:27 .
-drwxr-xr-x 1 root root      39 Aug 10 01:25 ..
--rw-r--r-- 1 root root 1232684 Aug 10 01:27 reply.wav
--rw-r--r-- 1 root root    1399 Aug 10 01:27 run.log
+total 1572
+drwxr-xr-x 2 root root     95 Aug 10 02:32 .
+drwxr-xr-x 1 root root     39 Aug 10 02:30 ..
+-rw-r--r-- 1 root root 514604 Aug 10 02:32 reply-backchannel.wav
+-rw-r--r-- 1 root root 568364 Aug 10 02:32 reply-bargein.wav
+-rw-r--r-- 1 root root 518444 Aug 10 02:31 reply-en.wav
+-rw-r--r-- 1 root root   3215 Aug 10 02:32 run.log

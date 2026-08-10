@@ -1,12 +1,14 @@
-// B2 — Referência comercial nativa (OpenAI Realtime) sob o protocolo PT-BR.
+// B2 v2 — Realtime sob o protocolo PT-BR (contrato confirmatório).
 //
-// Mede, por cenário: fim-da-fala→primeiro áudio NÃO-SILENCIOSO da resposta,
-// tomada prematura em hesitação, parada sob barge-in, reação a backchannel,
-// incorporação de correção e continuidade. Salva TODO o áudio de saída e o
-// log bruto de eventos (evidência versionável). Medidor de custo com corte.
+// Correções sobre o screening v1: (1) todo chunk de áudio é vinculado ao
+// response_id ativo; (2) responded = response.done DO MESMO id; (3) matriz
+// de detecção de turno (semantic auto | semantic high | server_vad);
+// (4) repetições; (5) barge-in/backchannel enviados DURANTE a geração
+// (delta fresco <300ms), medindo cancelamento de geração via eventos.
+// Estímulos versionados em probes/data/stimuli.
 //
-// Uso: node probes/realtime-reference.mjs [modelo] [--out dir]
-//   modelo default: gpt-realtime-2.1-mini
+// Uso: node probes/realtime-reference.mjs <modelo> <vad>
+//   vad ∈ semantic | semantic-high | server
 
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -18,55 +20,54 @@ import { loadEnvFile } from "../src/config/load-env.mjs";
 import { decodeWaveToPcm16 } from "../src/asr/pcm.mjs";
 
 await loadEnvFile();
-
 const MODEL = process.argv[2] ?? "gpt-realtime-2.1-mini";
-const OUT_DIR = resolve(
+const VAD = process.argv[3] ?? "semantic";
+const STIM = resolve(import.meta.dirname, "data/stimuli");
+const OUT = resolve(
   import.meta.dirname,
-  `../notes/evidencia/realtime/${MODEL}`
+  `../notes/evidencia/realtime-v2/${MODEL}-${VAD}`
 );
-await mkdir(OUT_DIR, { recursive: true });
-const MODELS = "/tmp/claude-1000/-home-Felipe-work-duplex-lab-ptbr/" +
-  "83939f95-834c-424c-9ae0-d4d62dd9ddbd/scratchpad/models";
+await mkdir(OUT, { recursive: true });
 
 const RATE = 24_000;
 const RMS_FLOOR = 0.012;
-// Corte duro de orçamento por processo (aproximação conservadora por
-// tokens de áudio reportados em response.done; preços ver dashboard).
-const USD_CEILING = Number.parseFloat(
-  process.env.REALTIME_USD_CEILING ?? "2.5"
-);
-// preços por 1M tokens (entrada áudio / saída áudio) — conservadores
 const PRICE = MODEL.includes("mini")
   ? { in: 10, out: 20 }
   : { in: 32, out: 64 };
 let spentUsd = 0;
+const USD_CEILING = 2.0;
 
-function linearResampleTo24k(pcm16, fromRate) {
-  if (fromRate === RATE) {
-    return pcm16;
+const TURN_DETECTION = {
+  semantic: { type: "semantic_vad" },
+  "semantic-high": { type: "semantic_vad", eagerness: "high" },
+  server: { type: "server_vad", silence_duration_ms: 500 }
+}[VAD];
+
+function resample24k(pcm, from) {
+  if (from === RATE) {
+    return pcm;
   }
-  const samples = pcm16.length / 2;
-  const outSamples = Math.floor((samples * RATE) / fromRate);
-  const out = Buffer.alloc(outSamples * 2);
-  for (let i = 0; i < outSamples; i += 1) {
-    const src = (i * fromRate) / RATE;
-    const lo = Math.floor(src);
-    const hi = Math.min(samples - 1, lo + 1);
-    const frac = src - lo;
-    const value = pcm16.readInt16LE(lo * 2) * (1 - frac) +
-      pcm16.readInt16LE(hi * 2) * frac;
-    out.writeInt16LE(Math.round(value), i * 2);
+  const n = pcm.length / 2;
+  const out = Math.floor((n * RATE) / from);
+  const buffer = Buffer.alloc(out * 2);
+  for (let i = 0; i < out; i += 1) {
+    const s = (i * from) / RATE;
+    const lo = Math.floor(s);
+    const hi = Math.min(n - 1, lo + 1);
+    const f = s - lo;
+    buffer.writeInt16LE(Math.round(
+      pcm.readInt16LE(lo * 2) * (1 - f) + pcm.readInt16LE(hi * 2) * f
+    ), i * 2);
   }
-  return out;
+  return buffer;
 }
 
-async function loadStimulus(name) {
-  const wave = await readFile(`${MODELS}/${name}`);
-  const decoded = decodeWaveToPcm16(wave);
-  return linearResampleTo24k(decoded.pcm, decoded.sampleRate);
+async function stimulus(name) {
+  const decoded = decodeWaveToPcm16(await readFile(`${STIM}/${name}`));
+  return resample24k(decoded.pcm, decoded.sampleRate);
 }
 
-function rms(buffer) {
+function rmsOf(buffer) {
   let sum = 0;
   for (let offset = 0; offset < buffer.length; offset += 2) {
     const value = buffer.readInt16LE(offset) / 32768;
@@ -75,40 +76,19 @@ function rms(buffer) {
   return Math.sqrt(sum / (buffer.length / 2));
 }
 
-function wavFromPcm(pcm) {
-  const header = Buffer.alloc(44);
-  header.write("RIFF", 0);
-  header.writeUInt32LE(36 + pcm.length, 4);
-  header.write("WAVEfmt ", 8);
-  header.writeUInt32LE(16, 16);
-  header.writeUInt16LE(1, 20);
-  header.writeUInt16LE(1, 22);
-  header.writeUInt32LE(RATE, 24);
-  header.writeUInt32LE(RATE * 2, 28);
-  header.writeUInt16LE(2, 32);
-  header.writeUInt16LE(16, 34);
-  header.write("data", 36);
-  header.writeUInt32LE(pcm.length, 40);
-  return Buffer.concat([header, pcm]);
-}
-
-class RealtimeSession {
+class Session {
   events = [];
-  outputChunks = [];
+  chunks = [];
+  currentResponseId = null;
   #socket;
-  #openPromise;
 
-  constructor(label) {
-    this.label = label;
+  constructor() {
     this.#socket = new WebSocket(
       `wss://api.openai.com/v1/realtime?model=${MODEL}`,
-      {
-        headers: {
-          authorization: `Bearer ${process.env.OPENAI_API_KEY}`
-        }
-      }
+      { headers: { authorization:
+          `Bearer ${process.env.OPENAI_API_KEY}` } }
     );
-    this.#openPromise = new Promise((resolvePromise, rejectPromise) => {
+    this.ready = new Promise((resolvePromise, rejectPromise) => {
       this.#socket.once("open", resolvePromise);
       this.#socket.once("error", rejectPromise);
     });
@@ -120,75 +100,67 @@ class RealtimeSession {
         return;
       }
       event.atMs = performance.now();
-      const audioB64 = event.type?.endsWith("audio.delta")
-        ? event.delta
-        : null;
-      if (audioB64) {
-        const pcm = Buffer.from(audioB64, "base64");
-        event.delta = `<áudio ${pcm.length}B>`;
-        this.outputChunks.push({
+      if (event.type === "response.created") {
+        this.currentResponseId = event.response?.id ?? null;
+      }
+      if (event.type?.endsWith("audio.delta") && event.delta) {
+        const pcm = Buffer.from(event.delta, "base64");
+        this.chunks.push({
           atMs: event.atMs,
           pcm,
-          rms: rms(pcm),
-          responseId: event.response_id ?? null
+          rms: rmsOf(pcm),
+          responseId: event.response_id ?? this.currentResponseId
         });
+        event.delta = `<áudio ${pcm.length}B>`;
       }
-      this.events.push(event);
       if (event.type === "response.done") {
         const usage = event.response?.usage;
-        const inputAudio =
-          usage?.input_token_details?.audio_tokens ?? 0;
-        const outputAudio =
-          usage?.output_token_details?.audio_tokens ?? 0;
-        spentUsd += (inputAudio * PRICE.in +
-          outputAudio * PRICE.out) / 1_000_000;
+        spentUsd += ((usage?.input_token_details?.audio_tokens ?? 0) *
+          PRICE.in + (usage?.output_token_details?.audio_tokens ?? 0) *
+          PRICE.out) / 1_000_000;
       }
-      if (event.type === "error") {
-        console.error("API error:", JSON.stringify(event).slice(0, 300));
-      }
+      this.events.push(event);
     });
-  }
-
-  async open(instructions) {
-    await this.#openPromise;
-    this.send({
-      type: "session.update",
-      session: {
-        type: "realtime",
-        output_modalities: ["audio"],
-        instructions,
-        audio: {
-          input: {
-            format: { type: "audio/pcm", rate: RATE },
-            turn_detection: { type: "semantic_vad" }
-          },
-          output: { format: { type: "audio/pcm", rate: RATE } }
-        }
-      }
-    });
-    await delay(600);
   }
 
   send(object) {
     this.#socket.send(JSON.stringify(object));
   }
 
-  // envia PCM em ritmo de tempo real; retorna o instante do fim da fala
-  async streamAudio(pcm) {
-    const chunkMs = 40;
-    const bytesPerChunk = (RATE * chunkMs * 2) / 1000;
+  async open() {
+    await this.ready;
+    this.send({
+      type: "session.update",
+      session: {
+        type: "realtime",
+        output_modalities: ["audio"],
+        instructions: "Você é um assistente de voz em português " +
+          "brasileiro. Responda sempre em pt-BR, com uma ou duas " +
+          "frases curtas.",
+        audio: {
+          input: {
+            format: { type: "audio/pcm", rate: RATE },
+            turn_detection: TURN_DETECTION
+          },
+          output: { format: { type: "audio/pcm", rate: RATE } }
+        }
+      }
+    });
+    await delay(500);
+  }
+
+  async stream(pcm) {
+    const bytesPerChunk = (RATE * 40 * 2) / 1000;
     const startedAt = performance.now();
     for (let offset = 0; offset < pcm.length; offset += bytesPerChunk) {
-      const chunk = pcm.subarray(
-        offset, Math.min(pcm.length, offset + bytesPerChunk)
-      );
       await delay(Math.max(
-        0,
-        startedAt + (offset / 2 / RATE) * 1000 - performance.now()
+        0, startedAt + (offset / 2 / RATE) * 1000 - performance.now()
       ));
       this.send({
         type: "input_audio_buffer.append",
-        audio: chunk.toString("base64")
+        audio: pcm.subarray(
+          offset, Math.min(pcm.length, offset + bytesPerChunk)
+        ).toString("base64")
       });
     }
     return performance.now();
@@ -204,207 +176,175 @@ class RealtimeSession {
           return event;
         }
       }
-      await delay(25);
+      await delay(20);
     }
     return null;
   }
 
-  firstNonSilentAfter(sinceMs) {
-    return this.outputChunks.find(
-      (chunk) => chunk.atMs >= sinceMs && chunk.rms > RMS_FLOOR
-    ) ?? null;
-  }
-
-  lastAudioAt() {
-    return this.outputChunks.at(-1)?.atMs ?? null;
-  }
-
-  async close() {
-    this.#socket.close();
-    await delay(200);
-  }
-
-  async saveAudio(name) {
-    const pcm = Buffer.concat(
-      this.outputChunks.map((chunk) => chunk.pcm)
-    );
-    if (pcm.length > 0) {
-      await writeFile(
-        resolve(OUT_DIR, `${name}.wav`), wavFromPcm(pcm)
-      );
-    }
-  }
-
-  async saveEvents(name) {
+  async close(name) {
     await writeFile(
-      resolve(OUT_DIR, `${name}.events.jsonl`),
+      resolve(OUT, `${name}.events.jsonl`),
       this.events.map((event) => JSON.stringify(event)).join("\n")
     );
+    const pcm = Buffer.concat(this.chunks.map((chunk) => chunk.pcm));
+    if (pcm.length) {
+      const header = Buffer.alloc(44);
+      header.write("RIFF", 0);
+      header.writeUInt32LE(36 + pcm.length, 4);
+      header.write("WAVEfmt ", 8);
+      header.writeUInt32LE(16, 16);
+      header.writeUInt16LE(1, 20);
+      header.writeUInt16LE(1, 22);
+      header.writeUInt32LE(RATE, 24);
+      header.writeUInt32LE(RATE * 2, 28);
+      header.writeUInt16LE(2, 32);
+      header.writeUInt16LE(16, 34);
+      header.write("data", 36);
+      header.writeUInt32LE(pcm.length, 40);
+      await writeFile(
+        resolve(OUT, `${name}.wav`), Buffer.concat([header, pcm])
+      );
+    }
+    this.#socket.close();
+    await delay(150);
   }
 }
 
-const INSTRUCTIONS =
-  "Você é um assistente de voz em português brasileiro. Responda sempre " +
-  "em pt-BR, com uma ou duas frases curtas e naturais.";
-
-function checkBudget() {
+function guardBudget() {
   if (spentUsd >= USD_CEILING) {
-    throw new Error(
-      `teto de orçamento atingido: US$ ${spentUsd.toFixed(3)}`
-    );
+    throw new Error(`teto: US$ ${spentUsd.toFixed(3)}`);
   }
 }
 
-const report = { model: MODEL, scenarios: {}, spentUsd: null };
+const silence = (ms) => Buffer.alloc(((RATE * ms * 2) / 1000) & ~1);
+const report = { model: MODEL, vad: VAD, latency: [], dynamics: {} };
 
-// Fala um turno como um microfone real: enunciado + silêncio contínuo até
-// o VAD fechar e a resposta concluir. Retorna o instante do fim da fala.
-async function speakTurn(session, pcm, options = {}) {
-  const endOfSpeechAt = await session.streamAudio(pcm);
-  const silence = Buffer.alloc((RATE * 2 * 2_600) / 1_000 & ~1);
-  await session.streamAudio(silence);
-  if (options.waitDone !== false) {
-    await session.waitFor(
-      (event) => event.type === "response.done",
-      options.timeoutMs ?? 20_000
-    );
-  }
-  return endOfSpeechAt;
-}
-
-// ---------- Cenário 1: latência + correção + continuidade ----------
-{
-  checkBudget();
-  const session = new RealtimeSession("latencia");
-  await session.open(INSTRUCTIONS);
-  const scenario = [];
+// ---- Latência (2 repetições × 4 turnos, vínculo por response_id) ----
+for (let rep = 0; rep < 2; rep += 1) {
+  guardBudget();
+  const session = new Session();
+  await session.open();
   for (const [name, file] of [
     ["saudacao", "fala-saudacao.wav"],
     ["pergunta", "fala-pergunta.wav"],
     ["correcao", "fala-correcao.wav"],
     ["continuidade", "fala-continuidade.wav"]
   ]) {
-    checkBudget();
-    const pcm = await loadStimulus(file);
-    const doneBefore = session.events.filter(
-      (event) => event.type === "response.done"
-    ).length;
-    const endOfSpeechAt = await speakTurn(session, pcm);
-    const responded = session.events.filter(
-      (event) => event.type === "response.done"
-    ).length > doneBefore;
-    const first = session.firstNonSilentAfter(endOfSpeechAt);
-    scenario.push({
+    guardBudget();
+    const before = session.currentResponseId;
+    const end = await session.stream(await stimulus(file));
+    await session.stream(silence(2_600));
+    const done = await session.waitFor(
+      (event) => event.type === "response.done" &&
+        event.response?.id && event.response.id !== before,
+      20_000
+    );
+    const responseId = done?.response?.id ??
+      (session.currentResponseId !== before
+        ? session.currentResponseId
+        : null);
+    const first = session.chunks.find(
+      (chunk) => chunk.responseId === responseId &&
+        chunk.atMs >= end && chunk.rms > RMS_FLOOR
+    );
+    report.latency.push({
+      rep,
       turn: name,
-      endToNonSilentMs: first
-        ? Math.round(first.atMs - endOfSpeechAt)
-        : null,
-      responded
+      responseId,
+      responded: Boolean(done),
+      endToNonSilentMs: first ? Math.round(first.atMs - end) : null
     });
-    await delay(500);
+    await delay(400);
   }
-  report.scenarios.latencia = scenario;
-  await session.saveAudio("s1-conversa");
-  await session.saveEvents("s1-conversa");
-  await session.close();
+  await session.close(`latencia-rep${rep}`);
 }
 
-// ---------- Cenário 2: hesitação (tomada prematura?) ----------
+// ---- Dinâmica: barge-in e backchannel DURANTE a geração ----
 {
-  checkBudget();
-  const session = new RealtimeSession("hesitacao");
-  await session.open(INSTRUCTIONS);
-  const partA = await loadStimulus("fala-hesita-a.wav");
-  const partB = await loadStimulus("fala-hesita-b.wav");
-  const pauseMs = 900;
-  const endA = await session.streamAudio(partA);
-  // silêncio da pausa em tempo real
-  const silence = Buffer.alloc((RATE * pauseMs * 2) / 1000);
-  await session.streamAudio(silence);
-  const prematureAudio = session.firstNonSilentAfter(endA);
-  const prematureBefore = prematureAudio &&
-    prematureAudio.atMs < endA + pauseMs + 200;
-  const endB = await speakTurn(session, partB);
-  const first = session.firstNonSilentAfter(endB);
-  report.scenarios.hesitacao = {
-    tomadaPrematura: Boolean(prematureBefore),
-    prematuraAposMs: prematureAudio
-      ? Math.round(prematureAudio.atMs - endA)
-      : null,
-    respostaFinalMs: first ? Math.round(first.atMs - endB) : null
-  };
-  await session.saveAudio("s2-hesitacao");
-  await session.saveEvents("s2-hesitacao");
-  await session.close();
-}
-
-// ---------- Cenário 3: barge-in e backchannel ----------
-{
-  checkBudget();
-  const session = new RealtimeSession("interrupcao");
-  await session.open(INSTRUCTIONS +
-    " Quando pedirem uma explicação, responda MUITO longamente, com pelo " +
-    "menos vinte segundos de fala contínua, sem parar.");
-  const askPcm = await loadStimulus("fala-explica.wav");
-  await session.streamAudio(askPcm);
-  const silencePad = Buffer.alloc((RATE * 2 * 2_600) / 1_000 & ~1);
-  await session.streamAudio(silencePad);
-  await session.waitFor(
-    (event) => event.type?.endsWith("audio.delta"), 15_000
-  );
-  // garante fala ativa: >=2,5s de áudio e chunk fresco (<400ms)
-  const activeAudio = async () => {
-    for (let i = 0; i < 40; i += 1) {
-      const last = session.outputChunks.at(-1);
-      if (session.outputChunks.length > 60 && last &&
-          performance.now() - last.atMs < 400) {
-        return true;
-      }
-      await delay(200);
+  guardBudget();
+  const session = new Session();
+  await session.open();
+  const probeDynamics = async (label, interruptFile) => {
+    const before = session.currentResponseId;
+    await session.stream(await stimulus("fala-explica.wav"));
+    await session.stream(silence(2_600));
+    const firstDelta = await session.waitFor(
+      (event) => event.type?.endsWith("audio.delta") &&
+        (event.response_id ?? session.currentResponseId) !== before,
+      20_000
+    );
+    if (!firstDelta) {
+      return { error: "resposta não iniciou" };
     }
-    return false;
+    const targetId = firstDelta.response_id ?? session.currentResponseId;
+    // envia o interrupt imediatamente (geração em andamento)
+    const lastDeltaAge = () => {
+      const last = session.chunks.findLast(
+        (chunk) => chunk.responseId === targetId
+      );
+      return last ? performance.now() - last.atMs : Infinity;
+    };
+    const activeAtSend = lastDeltaAge() < 300;
+    const sentAt = performance.now();
+    await session.stream(await stimulus(interruptFile));
+    await session.stream(silence(1_500));
+    await delay(1_000);
+    const cancelled = session.events.find(
+      (event) => ["response.cancelled", "response.done"].includes(
+        event.type
+      ) && event.response?.id === targetId &&
+        event.atMs >= sentAt &&
+        ["cancelled", "incomplete"].includes(event.response?.status)
+    );
+    const lastTargetChunk = session.chunks.findLast(
+      (chunk) => chunk.responseId === targetId
+    );
+    return {
+      activeAtSend,
+      generationCancelled: Boolean(cancelled),
+      lastDeltaAfterSendMs: lastTargetChunk
+        ? Math.round(lastTargetChunk.atMs - sentAt)
+        : null
+    };
   };
-  const activeAtAham = await activeAudio();
-  // backchannel curto: deve CONTINUAR falando
-  const aham = await loadStimulus("fala-aham.wav");
-  const endAham = await session.streamAudio(aham);
-  await delay(1_600);
-  const audioAfterAham = session.outputChunks.some(
-    (chunk) => chunk.atMs > endAham + 400 && chunk.rms > RMS_FLOOR
+  report.dynamics.bargeIn = await probeDynamics(
+    "barge-in", "fala-interrompe.wav"
   );
-  // barge-in real: deve PARAR rápido
-  const activeAtInterrupt = session.outputChunks.at(-1) &&
-    performance.now() - session.outputChunks.at(-1).atMs < 600;
-  const interrupt = await loadStimulus("fala-interrompe.wav");
-  const interruptStartAt = performance.now();
-  await session.streamAudio(interrupt);
-  await session.streamAudio(
-    Buffer.alloc((RATE * 2 * 1_800) / 1_000 & ~1)
+  await delay(600);
+  report.dynamics.backchannel = await probeDynamics(
+    "backchannel", "fala-aham.wav"
   );
-  await delay(800);
-  const lastBeforeNewResponse = session.outputChunks.filter(
-    (chunk) => chunk.rms > RMS_FLOOR &&
-      chunk.atMs >= interruptStartAt &&
-      chunk.responseId === session.outputChunks.findLast(
-        (c) => c.atMs < interruptStartAt
-      )?.responseId
-  ).at(-1);
-  report.scenarios.interrupcao = {
-    falaAtivaNoBackchannel: activeAtAham,
-    continuouAposBackchannel: audioAfterAham,
-    falaAtivaNoBargeIn: Boolean(activeAtInterrupt),
-    bargeInStopMs: lastBeforeNewResponse
-      ? Math.round(lastBeforeNewResponse.atMs - interruptStartAt)
-      : 0
+  await session.close("dinamica");
+}
+
+// ---- Hesitação ----
+{
+  guardBudget();
+  const session = new Session();
+  await session.open();
+  const endA = await session.stream(await stimulus("fala-hesita-a.wav"));
+  await session.stream(silence(900));
+  const premature = session.chunks.find(
+    (chunk) => chunk.atMs >= endA && chunk.rms > RMS_FLOOR &&
+      chunk.atMs <= endA + 1_100
+  );
+  const endB = await session.stream(await stimulus("fala-hesita-b.wav"));
+  await session.stream(silence(2_600));
+  await session.waitFor(
+    (event) => event.type === "response.done", 20_000
+  );
+  const first = session.chunks.find(
+    (chunk) => chunk.atMs >= endB && chunk.rms > RMS_FLOOR
+  );
+  report.dynamics.hesitacao = {
+    tomadaPrematura: Boolean(premature),
+    respostaAposFimMs: first ? Math.round(first.atMs - endB) : null
   };
-  await session.saveAudio("s3-interrupcao");
-  await session.saveEvents("s3-interrupcao");
-  await session.close();
+  await session.close("hesitacao");
 }
 
 report.spentUsd = Number(spentUsd.toFixed(4));
 await writeFile(
-  resolve(OUT_DIR, "report.json"),
-  `${JSON.stringify(report, null, 1)}\n`
+  resolve(OUT, "report.json"), `${JSON.stringify(report, null, 1)}\n`
 );
-console.log(JSON.stringify(report, null, 1));
+console.log(JSON.stringify(report));

@@ -66,6 +66,19 @@ const prefinalPolicy = normalizePrefinalPolicy(
 );
 const fastPathEnabled = process.env.FAST_PATH === "1";
 const fastPathMemory = createFastPathMemory();
+// Programa de dados 1 (arbitragem textual): FASTPATH_LOG=arquivo.jsonl
+// acumula {texto, decisão, contexto} de uso real para rotulagem posterior.
+const fastPathLogPath = process.env.FASTPATH_LOG?.trim() || null;
+async function appendFastPathLog(entry) {
+  if (!fastPathLogPath) {
+    return;
+  }
+  const { appendFile } = await import("node:fs/promises");
+  await appendFile(
+    fastPathLogPath,
+    `${JSON.stringify(entry)}\n`
+  ).catch(() => {});
+}
 const endpointConfig = {
   completeSilenceMs: Number.parseInt(
     process.env.ENDPOINT_COMPLETE_MS ?? "520",
@@ -550,6 +563,15 @@ async function streamTurn(request, response, body) {
       body.text,
       extractPtBrCurrencyAmounts
     );
+    void appendFastPathLog({
+      at: new Date().toISOString(),
+      sessionId: body.sessionId,
+      text: body.text,
+      decision: fastPath
+        ? { action: fastPath.action, class: fastPath.class }
+        : null,
+      mode
+    });
   }
   const controller = new AbortController();
   const abortUpstream = () => controller.abort();

@@ -1,0 +1,79 @@
+{
+ "model": "gpt-realtime-2.1-mini",
+ "vad": "server",
+ "latency": [
+  {
+   "rep": 0,
+   "turn": "saudacao",
+   "responseId": "resp_EBA40JZDSF1ggWnLslhKh",
+   "responded": true,
+   "endToNonSilentMs": 1135
+  },
+  {
+   "rep": 0,
+   "turn": "pergunta",
+   "responseId": "resp_EBA44uebinFfYrSxONkoT",
+   "responded": true,
+   "endToNonSilentMs": 1121
+  },
+  {
+   "rep": 0,
+   "turn": "correcao",
+   "responseId": "resp_EBA40JZDSF1ggWnLslhKh",
+   "responded": true,
+   "endToNonSilentMs": null
+  },
+  {
+   "rep": 0,
+   "turn": "continuidade",
+   "responseId": "resp_EBA40JZDSF1ggWnLslhKh",
+   "responded": true,
+   "endToNonSilentMs": null
+  },
+  {
+   "rep": 1,
+   "turn": "saudacao",
+   "responseId": "resp_EBA4KUseVfMNvgfnI3nzr",
+   "responded": true,
+   "endToNonSilentMs": 865
+  },
+  {
+   "rep": 1,
+   "turn": "pergunta",
+   "responseId": "resp_EBA4POs4V13sEqN7TDLU5",
+   "responded": true,
+   "endToNonSilentMs": 962
+  },
+  {
+   "rep": 1,
+   "turn": "correcao",
+   "responseId": "resp_EBA4KUseVfMNvgfnI3nzr",
+   "responded": true,
+   "endToNonSilentMs": null
+  },
+  {
+   "rep": 1,
+   "turn": "continuidade",
+   "responseId": "resp_EBA4KUseVfMNvgfnI3nzr",
+   "responded": true,
+   "endToNonSilentMs": null
+  }
+ ],
+ "dynamics": {
+  "bargeIn": {
+   "activeAtSend": true,
+   "generationCancelled": true,
+   "lastDeltaAfterSendMs": 208
+  },
+  "backchannel": {
+   "activeAtSend": false,
+   "generationCancelled": false,
+   "lastDeltaAfterSendMs": -10281
+  },
+  "hesitacao": {
+   "tomadaPrematura": false,
+   "respostaAposFimMs": 956
+  }
+ },
+ "spentUsd": 0.051
+}

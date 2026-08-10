@@ -1,0 +1,27 @@
+[
+ {
+  "name": "saudacao",
+  "startMs": 1000,
+  "endMs": 2022
+ },
+ {
+  "name": "pergunta",
+  "startMs": 4522,
+  "endMs": 6135
+ },
+ {
+  "name": "hesita-a",
+  "startMs": 9135,
+  "endMs": 10772
+ },
+ {
+  "name": "hesita-b",
+  "startMs": 11672,
+  "endMs": 12764
+ },
+ {
+  "name": "correcao",
+  "startMs": 15764,
+  "endMs": 19189
+ }
+]

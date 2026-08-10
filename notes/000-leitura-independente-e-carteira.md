@@ -399,6 +399,41 @@ Leituras que decidem investimento:
 3. PersonaPlex gated no HF (token+aceite do Felipe = upgrade opcional do
    mesmo runner, já qualificado e barato).
 
+## BENCHMARK DE TETOS v2 (contrato confirmatório; v1 reclassificada como screening)
+
+Correções aplicadas: chunks vinculados a response_id; responded por id;
+matriz de VAD; repetições; barge-in/backchannel enviados DURANTE geração
+ativa comprovada; estímulos+timelines versionados em probes/data/stimuli;
+Mimi reclassificado como "sem degradação catastrófica" (não
+"transparência"); 118ms v1 reclassificado como posição na saída gerada.
+
+### Realtime (fim→áudio não-silencioso, 8/8 responded por config)
+| Config | Latências (2 reps × 4 turnos) | Barge-in (geração ativa) | Backchannel | Hesitação |
+| --- | --- | --- | --- | --- |
+| mini + semantic | 1.128–2.246ms | resposta já gerada (n/m) | **ignorado** (fluxo seguiu 2,3s) | espera; +1.320ms |
+| mini + semantic-high | 1.282–2.443ms | **cancel em 252ms** | resposta já gerada | espera; +1.236ms |
+| **mini + server_vad 500ms** | **865–1.135ms** | **cancel em 208ms** | resposta já gerada | espera; +956ms |
+| 2.1 + semantic | 1.369–1.687ms | resposta já gerada | cancelou (aham derrubou!) | espera; +1.440ms |
+
+Leitura: server_vad~500ms (config equivalente ao nosso endpoint de 520ms)
+é o modo mais rápido/estável deles — e empata com o caminho A nos turnos
+cobertos; o semantic_vad compra paciência com +300–1.100ms. Custo: US$0,22.
+
+### Moshi (A40; serving-capaz: 67,5ms/passo < frame de 80ms)
+| Estímulo | Resultado |
+| --- | --- |
+| **EN controle** | onset −15ms (sobreposição natural 58%) na saudação; **+200ms com resposta CORRETA** ("The capital of France is Paris") — a experiência completa existe no idioma nativo |
+| PT (v1) | fala esparsa/aleatória — sem semântica, a dinâmica não se expressa |
+| PT barge-in/backchannel | não-mensuráveis (modelo mudo em PT) — mensuráveis via EN ou após pós-treino de idioma |
+
+Residual honesto: sessão websocket servida (wall-clock fim-a-fim) fica
+para o upgrade PersonaPlex (gated; token do Felipe). A capacidade de
+tempo-real está evidenciada por 67,5ms/passo.
+
+### Programa de dados 1 iniciado
+`FASTPATH_LOG=arquivo.jsonl` no servidor acumula {texto, decisão, sessão}
+de uso real para rotulagem — dados frescos desde o primeiro demo.
+
 ## Custo externo consumido (sessão 2026-08-09)
 - ~24 chamadas gpt-5.6-luna (probes de latência e especulação; caps do repo
   respeitados) ≈ US$ 0,005. RunPod: zero.

@@ -65,8 +65,11 @@ sleep infinity
 const RUN_QUAL = "cp /workspace/in/convo.wav /workspace/out/reply.wav";
 const RUN_GPU = [
   "pip install -q moshi sphn soundfile",
-  "python -m moshi.run_inference --hf-repo kyutai/moshiko-pytorch-bf16 " +
-    "--batch-size 1 /workspace/in/convo.wav /workspace/out/reply.wav",
+  ...["en", "bargein", "backchannel"].map((name) =>
+    "python -m moshi.run_inference --hf-repo " +
+    "kyutai/moshiko-pytorch-bf16 --batch-size 1 " +
+    `/workspace/in/moshi-${name}.wav /workspace/out/reply-${name}.wav`
+  ),
   "ls -la /workspace/out >> /workspace/out/run.log"
 ].join(" && ");
 
@@ -143,7 +146,10 @@ try {
     throw new Error("proxy do pod não respondeu no prazo");
   }
   console.log("proxy no ar; enviando estímulo…");
-  const convo = await readFile(`${MODELS}/moshi-convo.wav`);
+  const STIM = resolve(import.meta.dirname, "data/stimuli");
+  const uploads = MODE === "gpu"
+    ? ["moshi-en.wav", "moshi-bargein.wav", "moshi-backchannel.wav"]
+    : ["convo.wav"];
   const postWithRetry = async (path, body) => {
     for (let attempt = 1; attempt <= 10; attempt += 1) {
       try {
@@ -164,13 +170,20 @@ try {
     }
     return false;
   };
-  if (!await postWithRetry("/convo.wav", convo)) {
-    throw new Error("upload do convo falhou pelo proxy");
+  for (const name of uploads) {
+    const body = await readFile(
+      MODE === "gpu"
+        ? resolve(STIM, name)
+        : `${MODELS}/moshi-convo.wav`
+    );
+    if (!await postWithRetry(`/${name}`, body)) {
+      throw new Error(`upload de ${name} falhou pelo proxy`);
+    }
   }
   if (!await postWithRetry("/GO", "go")) {
     throw new Error("GO falhou pelo proxy");
   }
-  console.log("estímulo enviado e GO confirmado");
+  console.log("estímulos enviados e GO confirmado");
 
   console.log("aguardando DONE…");
   let done = false;
@@ -186,7 +199,11 @@ try {
     } catch { /* segue */ }
     await delay(10_000);
   }
-  for (const name of ["run.log", "reply.wav", "reply-0.wav"]) {
+  const downloads = MODE === "gpu"
+    ? ["run.log", "reply-en.wav", "reply-bargein.wav",
+       "reply-backchannel.wav"]
+    : ["run.log", "reply.wav"];
+  for (const name of downloads) {
     try {
       const response = await fetch(`${proxy}/${name}`, {
         signal: AbortSignal.timeout(120_000)
