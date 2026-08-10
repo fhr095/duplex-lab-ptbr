@@ -439,7 +439,12 @@ de uso real para rotulagem — dados frescos desde o primeiro demo.
 Defeitos do coletor confirmados e corrigidos (cursor persistente no
 waitFor; sessão nova por probe; IDs únicos + latência não nula exigidos;
 probe de dinâmica só vale com geração ativa). Resultado: a v2 tinha 4/8
-medições válidas por config; a v2.1 tem **8/8 válidas em todas**.
+medições válidas por config; a v2.1 tem **8/8 válidas nas TRÊS
+configurações rerodadas** (mini+server, mini+semantic, 2.1+semantic;
+semantic-high não foi rerodada). Correção de linguagem (Felipe): a
+distinção de backchannel pelo semantic_vad é SUGESTIVA (v2), não
+confirmada na v2.1 (probes de dinâmica não iniciaram); o resultado
+robusto é que o server_vad cancela tanto interrupção quanto "aham".
 
 | Config | fim→áudio não-silencioso (8/8) | Barge-in (ativa) | Backchannel (ativa) |
 | --- | --- | --- | --- |
