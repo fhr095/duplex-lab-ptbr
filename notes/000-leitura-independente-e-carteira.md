@@ -377,6 +377,28 @@ gpt-realtime-mini US$2-5; B3 programas de dados ~zero).
   permanentes e servem qualquer backbone; a decisão de investimento real é
   o RITMO do programa nativo (B1 decide com US$ 5-8).
 
+## MARCO 3 — as três famílias EXECUTADAS no mesmo protocolo PT-BR
+
+| Família | fim-da-fala→áudio | Hesitação 900ms | Semântica PT | Custo/implantação |
+| --- | --- | --- | --- | --- |
+| **Caminho A** (cascata+arbitragem) | ~1,0–2,2s (cobertos ~1s, PASS ~1,7s) | respeita (heurística) | via LLM externo (bom) | roda em 8GB; LLM trocável |
+| **Realtime 2.1-mini / 2.1** | 1,31–2,30s / 1,47–1,73s | respeita (espera 1,0–1,8s) | nativa, boa (corrigiu R$400, continuidade) | fechado, ~US$/min, sem controle |
+| **Moshi nativo (base da família PersonaPlex)** | **onset +118ms** com 67% de sobreposição | **tomada prematura** (71% da pausa) | **ausente** (EN esparso) | 7B GPU; pesos abertos; codec PT pronto |
+
+Gasto total B1+B2: **~US$ 0,15** (tetos autorizados: 13–16).
+Evidência bruta versionada: notes/evidencia/{realtime,mimi,moshi}.
+
+Leituras que decidem investimento:
+1. **A lenda dos 500-800ms do Realtime não se materializa via API** em
+   PT-BR: 1,3–2,3s medidos. O caminho A JÁ está na faixa do teto comercial.
+2. **O mecanismo nativo é de outra classe temporal** (118ms vs 740ms nosso
+   piso vs 1300ms+ Realtime) — é o único salto estrutural observado. O que
+   falta nele é exatamente o que os programas de dados compram: semântica
+   PT (programa 3, receita provada 2×) e calibração de dinâmica para
+   prosódia PT (programa 2).
+3. PersonaPlex gated no HF (token+aceite do Felipe = upgrade opcional do
+   mesmo runner, já qualificado e barato).
+
 ## Custo externo consumido (sessão 2026-08-09)
 - ~24 chamadas gpt-5.6-luna (probes de latência e especulação; caps do repo
   respeitados) ≈ US$ 0,005. RunPod: zero.
