@@ -70,3 +70,4 @@ tmp/
 
 # Worktrees de sessão nunca entram no repo
 .claude/
+.venv-*/
