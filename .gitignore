@@ -75,3 +75,9 @@ tmp/
 .venv-parakeet
 node_modules
 .venv-tts
+.venv-obs
+
+# Gravações do observador de experiência: dados humanos, SEMPRE locais
+# (padrões com e sem barra — dir-only não cobre symlinks, lição paga 2×)
+var/
+var

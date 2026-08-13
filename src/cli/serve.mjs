@@ -42,6 +42,9 @@ import {
 import {
   createTurnCoordinator
 } from "../interaction/turn-coordinator.mjs";
+import {
+  createSessionRecorder
+} from "../observer/session-recorder.mjs";
 
 await loadEnvFile();
 
@@ -348,6 +351,42 @@ if (
 }
 await ttsWarmup;
 
+// Observador de experiência (OBSERVER=1): captura opt-in e local de uma
+// sessão real (mic, sínteses, eventos, beacons) para escuta perceptiva e
+// correlação técnica posteriores. Nunca altera o comportamento da engine.
+const observador = process.env.OBSERVER === "1"
+  ? await createSessionRecorder({
+      root: resolve(
+        PROJECT_ROOT,
+        process.env.OBSERVER_DIR ?? "var/observador"
+      ),
+      meta: {
+        processRunId,
+        runtimeFingerprint,
+        brain: configuredBrain.provider,
+        models: {
+          interaction: brain.interactionModel,
+          task: brain.taskModel
+        },
+        fastPathEnabled,
+        prefinalPolicy,
+        endpoint: endpointConfig,
+        finalCommitGraceMs,
+        effectfulFinalCommitGraceMs,
+        criticalFinalCommitGraceMs,
+        mergeWindowMs,
+        asr: asrHealth,
+        vadControl: vadControlHealth,
+        tts: ttsHealth
+      }
+    })
+  : null;
+if (observador) {
+  console.log(
+    `Observador ATIVO: gravando sessão em var/observador/${observador.pasta}`
+  );
+}
+
 const exp0026Enabled = process.env.EXP0026_INSTRUMENT === "1";
 const exp0026Store = exp0026Enabled
   ? await createExp0026SessionStore({
@@ -405,6 +444,7 @@ const STATIC_ROUTES = new Map([
   ],
   ["/context-relevance-shadow.mjs", "context-relevance-shadow.mjs"],
   ["/app.mjs", "app.mjs"],
+  ["/observador-cliente.mjs", "observador-cliente.mjs"],
   ["/critical-conflict.mjs", "critical-conflict.mjs"],
   ["/interaction-browser-adapter.mjs", "interaction-browser-adapter.mjs"],
   ["/local-audio-reflex.mjs", "local-audio-reflex.mjs"],
@@ -508,6 +548,25 @@ async function streamTurn(request, response, body) {
     ? body.stage
     : "full";
 
+  // Tee do observador: todo evento NDJSON enviado ao cliente é gravado com
+  // o mesmo payload + identidade do turno (sem alterar o que o cliente vê).
+  const emit = (event) => {
+    sendNdjson(response, event);
+    observador?.evento("turno", {
+      sessionId: body.sessionId,
+      turnId: body.turnId,
+      stage,
+      ...event
+    });
+  };
+  observador?.evento("turno", {
+    type: "requisicao",
+    sessionId: body.sessionId,
+    turnId: body.turnId,
+    stage,
+    texto: body.text
+  });
+
   if (stage === "commit") {
     const commit = turnCoordinator.commitTurn({
       sessionId: body.sessionId,
@@ -519,7 +578,7 @@ async function streamTurn(request, response, body) {
       "content-type": "application/x-ndjson; charset=utf-8",
       "cache-control": "no-store"
     });
-    sendNdjson(response, commit.ok
+    emit(commit.ok
       ? { type: "committed", ok: true, interaction: commit.transition }
       : {
           type: "committed",
@@ -594,7 +653,7 @@ async function streamTurn(request, response, body) {
     "x-content-type-options": "nosniff"
   });
 
-  sendNdjson(response, {
+  emit({
     type: "route",
     mode,
     semantic: plan.semantic ?? null,
@@ -609,14 +668,14 @@ async function streamTurn(request, response, body) {
   });
 
   if (fastPath?.action === "LOCAL_FINAL") {
-    sendNdjson(response, {
+    emit({
       type: "started",
       responseId: null,
       model: FAST_PATH_VERSION
     });
     if (!controller.signal.aborted) {
-      sendNdjson(response, { type: "delta", delta: fastPath.response });
-      sendNdjson(response, {
+      emit({ type: "delta", delta: fastPath.response });
+      emit({
         type: "done",
         responseId: null,
         model: FAST_PATH_VERSION,
@@ -631,7 +690,7 @@ async function streamTurn(request, response, body) {
   // trabalha. O texto da ponte segue no request do reasoner (spokenPrefix)
   // para que a continuação não repita nem contradiga o que já foi dito.
   if (fastPath?.action === "BRIDGE") {
-    sendNdjson(response, {
+    emit({
       type: "bridge",
       text: fastPath.bridge,
       class: fastPath.class
@@ -647,7 +706,7 @@ async function streamTurn(request, response, body) {
       stage !== "speculative" &&
       weatherIntent(plan.task?.query ?? body.text)
     ) {
-      sendNdjson(response, {
+      emit({
         type: "started",
         responseId: null,
         model: "tool:open-meteo"
@@ -657,8 +716,8 @@ async function streamTurn(request, response, body) {
           plan.task?.query ?? body.text,
           { signal: controller.signal }
         );
-        sendNdjson(response, { type: "delta", delta: summary });
-        sendNdjson(response, {
+        emit({ type: "delta", delta: summary });
+        emit({
           type: "done",
           responseId: null,
           model: "tool:open-meteo",
@@ -671,7 +730,7 @@ async function streamTurn(request, response, body) {
           response.end();
           return;
         }
-        sendNdjson(response, {
+        emit({
           type: "delta",
           delta: "A consulta de tempo falhou; seguindo sem a ferramenta. "
         });
@@ -693,13 +752,13 @@ async function streamTurn(request, response, body) {
         ? fastPath.bridge
         : null
     })) {
-      sendNdjson(response, event);
+      emit(event);
     }
 
     response.end();
   } catch (error) {
     if (error.name !== "AbortError") {
-      sendNdjson(response, {
+      emit({
         type: "error",
         code: error.code ?? "brain_error",
         message: error.message
@@ -721,7 +780,7 @@ const ttsSidecarUrl = process.env.TTS_SIDECAR_URL?.trim() ||
     ? "http://127.0.0.1:8321/tts"
     : "http://127.0.0.1:8331");
 
-async function proxySidecarTts(request, response, body, controller) {
+async function proxySidecarTts(request, response, body, controller, tee) {
   let upstream;
   if (ttsProvider === "pocket") {
     const form = new FormData();
@@ -753,12 +812,16 @@ async function proxySidecarTts(request, response, body, controller) {
       "content-type": "audio/wav",
       "cache-control": "no-store"
     });
+    let interrompido = false;
     for await (const chunk of upstream.body) {
       if (response.destroyed || controller.signal.aborted) {
+        interrompido = true;
         break;
       }
+      tee?.pedaco(chunk);
       response.write(chunk);
     }
+    tee?.concluir(null, interrompido ? { interrompido: true } : {});
     response.end();
     return;
   }
@@ -768,6 +831,7 @@ async function proxySidecarTts(request, response, body, controller) {
   const chunks = [];
   for await (const chunk of upstream.body) {
     if (controller.signal.aborted) {
+      tee?.concluir(Buffer.concat(chunks), { interrompido: true });
       return;
     }
     chunks.push(chunk);
@@ -786,6 +850,7 @@ async function proxySidecarTts(request, response, body, controller) {
       offset += 8 + declared + (declared % 2);
     }
   }
+  tee?.concluir(Buffer.from(audio));
   if (response.destroyed || response.writableEnded) {
     return;
   }
@@ -811,15 +876,27 @@ async function synthesizeTts(request, response, body) {
     abortSynthesis();
   }
 
+  // Tee do observador: arquiva o áudio sintetizado sob o uid gerado pelo
+  // cliente — a chave que os beacons de reprodução usam depois.
+  const tee = observador?.iniciarTts({
+    uid: typeof body.uid === "string" && body.uid.length <= 80
+      ? body.uid
+      : null,
+    texto: body.text,
+    stream: Boolean(body.stream),
+    provider: ttsProvider
+  }) ?? null;
+
   try {
     if (ttsProvider !== "windows") {
-      await proxySidecarTts(request, response, body, controller);
+      await proxySidecarTts(request, response, body, controller, tee);
       return;
     }
     const audio = await synthesizeWindowsSpeech(body.text, {
       rate: body.rate,
       signal: controller.signal
     });
+    tee?.concluir(Buffer.from(audio));
     if (
       controller.signal.aborted ||
       response.destroyed ||
@@ -834,6 +911,7 @@ async function synthesizeTts(request, response, body) {
     });
     response.end(audio);
   } catch (error) {
+    tee?.falhar(error);
     if (error.name !== "AbortError") {
       throw error;
     }
@@ -902,6 +980,9 @@ const server = createServer(async (request, response) => {
           vad: vadConfig
         },
         tts: ttsHealth,
+        observador: observador === null
+          ? { ativo: false }
+          : { ativo: true, pasta: observador.pasta },
         evaluation: exp0026Store === null
           ? { exp0026: { enabled: false } }
           : {
@@ -943,8 +1024,21 @@ const server = createServer(async (request, response) => {
       }
       await synthesizeTts(request, response, {
         text,
+        uid: url.searchParams.get("uid") ?? null,
         stream: url.searchParams.get("stream") === "1"
       });
+      return;
+    }
+
+    // Beacons do observador: reproduções, log da página e marcações
+    // humanas enviados pelo cliente quando OBSERVER=1 (senão, no-op).
+    if (
+      request.method === "POST" &&
+      url.pathname === "/api/observador/beacon"
+    ) {
+      const lote = await readJsonBody(request);
+      observador?.beacon(lote, Date.now());
+      sendJson(response, 200, { ok: true, ativo: observador !== null });
       return;
     }
 
@@ -973,7 +1067,8 @@ const audioWebSocket =
           vadControlMode === "silero" ? vadShadowRuntime : null,
         vadShadowRuntime:
           vadShadowMode === "silero" ? vadShadowRuntime : null,
-        vadConfig
+        vadConfig,
+        observador
       })
     : null;
 let shuttingDown = false;
@@ -984,6 +1079,7 @@ async function shutdown(signal) {
   }
   shuttingDown = true;
   console.log(`Encerrando Duplex Lab (${signal})...`);
+  await observador?.fechar().catch(() => {});
   await audioWebSocket?.close().catch(() => {});
   await asrRuntime?.close().catch(() => {});
   await vadShadowRuntime?.close().catch(() => {});

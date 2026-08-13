@@ -38,6 +38,7 @@ import {
   SpeculativeTurn,
   speculationMatches
 } from "/speculative-turn.mjs";
+import { observador } from "/observador-cliente.mjs";
 
 const Recognition =
   window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
@@ -186,6 +187,7 @@ const session = {
   speculation: null,
   speculationSequence: 0,
   ackCache: new Map(),
+  ackUids: new Map(),
   assistantSpeakingKind: null,
   pendingTtsElements: new Set(),
   renderConfrontationLogged: false,
@@ -450,6 +452,7 @@ function nowLabel(elapsed = performance.now()) {
 
 function log(type, detail = "") {
   const atMs = performance.now();
+  observador.pagina(type, detail);
   session.trace.push({
     atMs: Math.round(atMs * 100) / 100,
     type,
@@ -734,6 +737,13 @@ function releaseAssistantAudio() {
 async function prepareSpeech(text, kind, epoch, options = {}) {
   const controller = new AbortController();
   session.ttsAbortControllers.add(controller);
+  // uid do observador: liga a síntese arquivada no servidor aos beacons de
+  // reprodução deste cliente. null quando o observador está inativo.
+  const uid = observador.ativo
+    ? kind === "fast-ack" && session.ackUids.has(text)
+      ? session.ackUids.get(text)
+      : observador.uid()
+    : null;
 
   try {
     // Acks pré-sintetizados custam ~0ms; sem cache, síntese normal.
@@ -752,7 +762,8 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
         taskResultChunkIndex: null,
         taskResultReadyAt: null,
         semantic: null,
-        text
+        text,
+        uid
       };
     }
     if (ttsStreamEnabled && session.ttsSidecar && options.loop !== true) {
@@ -760,7 +771,8 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
       // (preload) e o playback inicia antes da síntese completa. Registrado
       // para cancelamento explícito se a época avançar (interrupção).
       const audio = new Audio(
-        `/api/tts?stream=1&text=${encodeURIComponent(text)}`
+        `/api/tts?stream=1&text=${encodeURIComponent(text)}` +
+          (uid ? `&uid=${encodeURIComponent(uid)}` : "")
       );
       audio.preload = "auto";
       session.pendingTtsElements.add(audio);
@@ -769,6 +781,7 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
         blob: null,
         epoch,
         kind,
+        uid,
         loop: false,
         taskId: options.taskId ?? null,
         taskResultDelivery: options.taskResultDelivery ?? null,
@@ -784,7 +797,7 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
     const response = await fetch("/api/tts", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, uid }),
       signal: controller.signal
     });
     if (!response.ok) {
@@ -795,6 +808,7 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
       blob: await response.blob(),
       epoch,
       kind,
+      uid,
       loop: options.loop === true,
       taskId: options.taskId ?? null,
       taskResultDelivery: options.taskResultDelivery ?? null,
@@ -853,6 +867,33 @@ async function playPreparedSpeech(item) {
   session.assistantSpeakingKind = item.kind;
   session.assistantPreparing = false;
 
+  // Beacons do observador: o que REALMENTE tocou e quando. O ontimeupdate
+  // preserva a última posição conhecida porque cleanupCurrentAudio zera o
+  // src (currentTime volta a 0) antes do beacon de corte.
+  let observadorTocou = false;
+  let observadorPosicao = 0;
+  let observadorFimEnviado = false;
+  if (observador.ativo) {
+    audio.ontimeupdate = () => {
+      observadorPosicao = audio.currentTime || observadorPosicao;
+    };
+  }
+  const observadorFim = (motivo) => {
+    if (!observador.ativo || observadorFimEnviado) {
+      return;
+    }
+    observadorFimEnviado = true;
+    observador.reproducao({
+      evento: "fim",
+      uid: item.uid ?? null,
+      kind: item.kind,
+      motivo,
+      tocou: observadorTocou,
+      posicaoS: audio.currentTime || observadorPosicao,
+      duracaoS: Number.isFinite(audio.duration) ? audio.duration : null
+    });
+  };
+
   await new Promise((resolve, reject) => {
     let settled = false;
     const settle = (error) => {
@@ -868,7 +909,10 @@ async function playPreparedSpeech(item) {
       }
     };
 
-    session.finishCurrentAudio = () => settle();
+    session.finishCurrentAudio = () => {
+      observadorFim("cortado");
+      settle();
+    };
     audio.onplaying = () => {
       if (
         session.potentialBargeIn?.audio === audio &&
@@ -886,6 +930,19 @@ async function playPreparedSpeech(item) {
         return;
       }
       const startedAt = performance.now();
+      if (observador.ativo) {
+        observador.reproducao({
+          evento: observadorTocou ? "retomada" : "inicio",
+          uid: item.uid ?? null,
+          kind: item.kind,
+          texto: item.text,
+          posicaoS: audio.currentTime || 0,
+          duracaoS: Number.isFinite(audio.duration)
+            ? audio.duration
+            : null
+        });
+        observadorTocou = true;
+      }
       const resumedPotential = session.potentialBargeIn;
       if (
         resumedPotential?.audio === audio &&
@@ -958,9 +1015,18 @@ async function playPreparedSpeech(item) {
         );
       }
     };
-    audio.onended = () => settle();
-    audio.onerror = () => settle(new Error("audio-playback-failed"));
-    audio.play().catch(settle);
+    audio.onended = () => {
+      observadorFim("terminou");
+      settle();
+    };
+    audio.onerror = () => {
+      observadorFim("erro");
+      settle(new Error("audio-playback-failed"));
+    };
+    audio.play().catch((error) => {
+      observadorFim("falha-play");
+      settle(error);
+    });
   });
 }
 
@@ -3427,10 +3493,14 @@ function prefetchAckCache() {
     return;
   }
   for (const text of FAST_ACKS) {
+    const uid = observador.ativo ? observador.uid() : null;
+    if (uid) {
+      session.ackUids.set(text, uid);
+    }
     void fetch("/api/tts", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ text, uid })
     }).then(async (response) => {
       if (response.ok) {
         session.ackCache.set(text, await response.blob());
@@ -3894,6 +3964,10 @@ async function loadHealth() {
     session.asrAvailable = health.asr?.state === "ready";
     session.ttsSidecar = String(health.tts?.engine ?? "")
       .endsWith("-sidecar");
+    observador.init(health, session.interactionSessionId);
+    if (observador.ativo) {
+      log("observador.ativo", `pasta ${health.observador.pasta}`);
+    }
     session.vadShadow.health = health.vadShadow ?? {
       state: "disabled"
     };

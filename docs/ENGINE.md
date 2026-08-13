@@ -57,6 +57,10 @@ ouvido** (fallbacks: `TTS_PROVIDER=piper` | `windows`).
 
 ## Dados de uso (governança)
 
+`OBSERVER=1` grava uma sessão completa (áudio do mic, sínteses, eventos,
+marcações) para o observador de experiência — opt-in, local, fora do Git;
+regras, análise em duas passagens e exclusão em **docs/OBSERVADOR.md**.
+
 `FASTPATH_LOG=caminho.jsonl` é **opt-in** e coleta {timestamp, sessionId,
 texto do turno, decisão da engine}. Antes de rotular: (1) consentimento
 explícito de quem falou; (2) pseudonimização (hash do sessionId, remoção
