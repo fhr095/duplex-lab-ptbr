@@ -60,6 +60,10 @@ export class LiveAudioSession {
   // contexto alucinavam idioma ("…qual o seu nome?" → "Also nun.").
   #finalContextMs;
   #contextoFinalAnterior = null;
+  // Texto resgatado de um turno que estourou o teto de duração: é
+  // concatenado ao PRÓXIMO final para o cérebro responder ao pensamento
+  // inteiro de uma vez (em vez de ignorar os primeiros 30 s).
+  #falaRetida = null;
   #pendingFinals = new Set();
   #prefinalPolicy;
   #preRoll = [];
@@ -239,6 +243,18 @@ export class LiveAudioSession {
           code: "turn_audio_rejected",
           message: error.message
         });
+        // Resgata o que a sessão chegou a finalizar (teto de duração):
+        // o texto fica retido e é concatenado ao próximo final.
+        const asrMorta = this.#turn.asr;
+        void Promise.resolve()
+          .then(() => asrMorta.finish())
+          .then((finalResgatado) => {
+            const texto = String(finalResgatado?.text ?? "").trim();
+            if (texto) {
+              this.#falaRetida = { texto, em: performance.now() };
+            }
+          })
+          .catch(() => {});
         this.#turn.cancelled = true;
         this.#turn = null;
       }
@@ -681,9 +697,18 @@ export class LiveAudioSession {
           });
           return;
         }
+        // Fala retida de um monólogo estourado: concatena ao final da
+        // cauda para responder ao pensamento inteiro (validade 30 s).
+        const retida =
+          this.#falaRetida &&
+          performance.now() - this.#falaRetida.em <= 30_000
+            ? this.#falaRetida.texto
+            : null;
+        this.#falaRetida = null;
         this.#emit("transcript.final", performance.now(), {
           turnId: turn.id,
-          text: final.text,
+          text: retida ? `${retida} ${final.text}` : final.text,
+          falaRetidaConcatenada: Boolean(retida),
           inferenceMs: final.inferenceMs,
           finalizationMs: final.finalizationMs,
           engine: final.engine ?? null,
