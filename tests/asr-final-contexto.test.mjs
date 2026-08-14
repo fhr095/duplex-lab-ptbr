@@ -96,6 +96,23 @@ test("sobreposição ≥4 palavras tolera 1 divergência (strip fuzzy)",
     assert.equal(final.text, "mas ao final dá certo");
   });
 
+test("enunciado longo (>2 s) NÃO recebe contexto nem strip", async () => {
+  const registros = [];
+  const sessao = sessaoComContexto({
+    contexto: { pcm: CONTEXTO_PCM, texto: "tá me ouvindo" },
+    respostaFinal: "Tá me ouvindo? Quero falar de outra coisa agora.",
+    registros
+  });
+  const longo = Buffer.alloc(3 * 16_000 * 2); // 3 s
+  sessao.pushPcm(longo, { sampleStart: 0 });
+  const final = await sessao.finish();
+  assert.equal(registros.at(-1).pcm.length, longo.length);
+  assert.equal(
+    final.text,
+    "Tá me ouvindo? Quero falar de outra coisa agora."
+  );
+});
+
 test("sem finalContexto nada muda no pedido ao worker", async () => {
   const registros = [];
   const sessao = new IncrementalAsrSession({

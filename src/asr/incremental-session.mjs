@@ -94,10 +94,24 @@ export class IncrementalAsrSession extends EventEmitter {
     });
   }
 
+  // A bateria de replays mostrou que o contexto ajuda exatamente nos
+  // enunciados CURTOS (fragmentos de continuação <2 s) e atrapalha nos
+  // longos (duplicações quando o strip não casa; merges perturbados;
+  // alucinação estendida em áudio marginal) — só aplicamos abaixo do
+  // limite.
+  static #CONTEXTO_LIMITE_MS = 2_000;
+  #contextoAplicado = false;
+
   #pcmComContexto(pcm) {
-    return this.#finalContexto
-      ? Buffer.concat([this.#finalContexto.pcm, pcm])
-      : pcm;
+    const dentroDoLimite =
+      (pcm.length / 2 / this.#config.sampleRate) * 1_000 <=
+      IncrementalAsrSession.#CONTEXTO_LIMITE_MS;
+    if (!this.#finalContexto || !dentroDoLimite) {
+      this.#contextoAplicado = false;
+      return pcm;
+    }
+    this.#contextoAplicado = true;
+    return Buffer.concat([this.#finalContexto.pcm, pcm]);
   }
 
   // Remove do início do texto decodificado o que já pertencia ao final
@@ -105,7 +119,7 @@ export class IncrementalAsrSession extends EventEmitter {
   // contexto e o prefixo do novo texto). Se sobrar vazio, mantém integral.
   #removerPrefixoDoContexto(texto) {
     const anterior = this.#finalContexto?.texto;
-    if (!anterior || !texto) {
+    if (!anterior || !texto || !this.#contextoAplicado) {
       return texto;
     }
     const normalizar = (valor) =>
