@@ -337,13 +337,15 @@ export class LiveAudioSession {
       previousTurn,
       startedAtMs: vadEvent.atMs
     };
-    // Auditoria R5: contexto só vale para CONTINUAÇÃO — se o novo turno
-    // começa >5 s depois do final anterior, o áudio guardado é de outro
-    // momento da conversa e só poluiria o decode.
+    // Auditoria R5: contexto só vale para CONTINUAÇÃO. O padrão real do
+    // defeito é "pergunta → resposta do assistente (2-8 s) → emenda":
+    // 5 s negava os casos-bandeira (gap observado 4,3-6,5 s no replay);
+    // 15 s cobre o envelope e ainda barra contexto de outro momento da
+    // conversa (silêncio longo, turno cancelado antigo).
     const contextoValido =
       this.#finalContextMs > 0 &&
       this.#contextoFinalAnterior !== null &&
-      vadEvent.atMs - this.#contextoFinalAnterior.em <= 5_000;
+      vadEvent.atMs - this.#contextoFinalAnterior.em <= 15_000;
     turn.asr = this.#asrRuntime.createSession({
       id,
       finalContexto: contextoValido
