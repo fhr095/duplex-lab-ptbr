@@ -255,6 +255,15 @@ export class LiveAudioSession {
           event.atMs,
           "speech-paused"
         );
+      } else if (
+        event.type === "user.speech.resumed" &&
+        this.#turn === null
+      ) {
+        // Fala ativa SEM turno (ex.: turno derrubado pela recuperação de
+        // sessão morta): o VAD não volta a idle sozinho e nunca mais
+        // emitiria "started" — retomada órfã vira onset de turno novo
+        // (sessão bd30: surdez de 85 s com VAD enxergando tudo).
+        this.#startTurn(event);
       } else if (event.type === "user.speech.resumed" && this.#turn) {
         const invalidatedBoundary = this.#turn.pauseSampleStart;
         this.#turn.pauseAtMs = null;
