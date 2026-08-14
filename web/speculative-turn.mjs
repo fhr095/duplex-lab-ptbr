@@ -48,7 +48,12 @@ export class SpeculativeTurn {
 
   constructor(options) {
     this.#baseUrl = options.baseUrl ?? "";
-    this.#fetchImpl = options.fetchImpl ?? fetch;
+    // No navegador o fetch nativo exige this === window/undefined; guardar
+    // a referência crua e chamá-la via this.#fetchImpl(...) invoca com
+    // this = instância → "Illegal invocation" (Node/undici não valida, por
+    // isso probes e testes nunca quebraram). Embrulhar preserva o binding.
+    this.#fetchImpl = options.fetchImpl ??
+      ((...argumentos) => fetch(...argumentos));
     this.provisionalText = options.text;
     this.sessionId = options.sessionId;
     this.turnId = options.turnId;
