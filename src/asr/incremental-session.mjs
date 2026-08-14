@@ -117,17 +117,21 @@ export class IncrementalAsrSession extends EventEmitter {
     const contexto = normalizar(anterior);
     const originais = String(texto).trim().split(/\s+/u);
     const novos = normalizar(texto);
+    // Casamento com tolerância: o decode do contexto pode sair com
+    // pequenas variações do final anterior (replay s5 mostrou repetição
+    // verbosa quando exigia igualdade exata). Sobreposições ≥4 palavras
+    // toleram 1 divergência; curtas continuam exatas.
     let casadas = 0;
     const maximo = Math.min(contexto.length, novos.length);
     for (let k = maximo; k >= 2; k -= 1) {
-      let confere = true;
-      for (let i = 0; i < k; i += 1) {
+      let divergentes = 0;
+      const tolerancia = k >= 4 ? 1 : 0;
+      for (let i = 0; i < k && divergentes <= tolerancia; i += 1) {
         if (contexto[contexto.length - k + i] !== novos[i]) {
-          confere = false;
-          break;
+          divergentes += 1;
         }
       }
-      if (confere) {
+      if (divergentes <= tolerancia) {
         casadas = k;
         break;
       }

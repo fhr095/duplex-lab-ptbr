@@ -79,6 +79,23 @@ test("sobreposição total mantém o texto integral (fallback)", async () => {
   assert.equal(final.text, "Tá me ouvindo?");
 });
 
+test("sobreposição ≥4 palavras tolera 1 divergência (strip fuzzy)",
+  async () => {
+    const registros = [];
+    const sessao = sessaoComContexto({
+      contexto: {
+        pcm: CONTEXTO_PCM,
+        texto: "tô vendo que as transcrições ficam erradas"
+      },
+      respostaFinal:
+        "que as transcrições ficam ruins mas ao final dá certo",
+      registros
+    });
+    sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+    const final = await sessao.finish();
+    assert.equal(final.text, "mas ao final dá certo");
+  });
+
 test("sem finalContexto nada muda no pedido ao worker", async () => {
   const registros = [];
   const sessao = new IncrementalAsrSession({
