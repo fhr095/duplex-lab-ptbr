@@ -180,6 +180,13 @@ const asrRuntime = asrEnabled
         stepAudioMs: Number.parseInt(
           process.env.ASR_STEP_AUDIO_MS ?? "320",
           10
+        ),
+        // Teto do enunciado: decodes fp32 longos estouram RAM/event-loop
+        // na máquina de 8 GB (sessão 091b: 12 s de queda de WS aos 138 s);
+        // com a concatenação de fala retida, tetos menores custam ~zero.
+        maxTurnMs: Number.parseInt(
+          process.env.ASR_MAX_TURN_MS ?? "30000",
+          10
         )
       }
     })
