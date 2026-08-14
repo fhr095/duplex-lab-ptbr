@@ -40,6 +40,7 @@ export class IncrementalAsrSession extends EventEmitter {
   #controller = null;
   #dirty = false;
   #eventCallback;
+  #finalContexto = null;
   #finalDeferred = null;
   #finalPcm = null;
   #finishRequestedAt = null;
@@ -80,9 +81,62 @@ export class IncrementalAsrSession extends EventEmitter {
       holdbackWords: options.holdbackWords ?? 1
     };
     validateConfig(this.#config);
+    // Ciclo 3: áudio+texto do final anterior; o PCM entra SÓ no decode de
+    // final/prepared (parciais intactas) e o texto guia a remoção do
+    // prefixo sobreposto do resultado.
+    this.#finalContexto =
+      Buffer.isBuffer(options.finalContexto?.pcm) &&
+      options.finalContexto.pcm.length > 0
+        ? options.finalContexto
+        : null;
     this.#stabilizer = new TranscriptStabilizer({
       holdbackWords: this.#config.holdbackWords
     });
+  }
+
+  #pcmComContexto(pcm) {
+    return this.#finalContexto
+      ? Buffer.concat([this.#finalContexto.pcm, pcm])
+      : pcm;
+  }
+
+  // Remove do início do texto decodificado o que já pertencia ao final
+  // anterior (maior casamento ≥2 palavras normalizadas entre o sufixo do
+  // contexto e o prefixo do novo texto). Se sobrar vazio, mantém integral.
+  #removerPrefixoDoContexto(texto) {
+    const anterior = this.#finalContexto?.texto;
+    if (!anterior || !texto) {
+      return texto;
+    }
+    const normalizar = (valor) =>
+      valor
+        .toLocaleLowerCase("pt-BR")
+        .replaceAll(/[^\p{L}\p{N}\s]/gu, " ")
+        .split(/\s+/u)
+        .filter(Boolean);
+    const contexto = normalizar(anterior);
+    const originais = String(texto).trim().split(/\s+/u);
+    const novos = normalizar(texto);
+    let casadas = 0;
+    const maximo = Math.min(contexto.length, novos.length);
+    for (let k = maximo; k >= 2; k -= 1) {
+      let confere = true;
+      for (let i = 0; i < k; i += 1) {
+        if (contexto[contexto.length - k + i] !== novos[i]) {
+          confere = false;
+          break;
+        }
+      }
+      if (confere) {
+        casadas = k;
+        break;
+      }
+    }
+    if (casadas === 0) {
+      return texto;
+    }
+    const restante = originais.slice(casadas).join(" ").trim();
+    return restante.length > 0 ? restante : texto;
   }
 
   get state() {
@@ -274,7 +328,7 @@ export class IncrementalAsrSession extends EventEmitter {
         generation,
         language: this.language,
         mode: "final",
-        pcm: snapshot.pcm,
+        pcm: this.#pcmComContexto(snapshot.pcm),
         sampleRate: this.#config.sampleRate,
         sessionId: `${this.id}:prepared-final`
       },
@@ -434,7 +488,7 @@ export class IncrementalAsrSession extends EventEmitter {
         generation,
         language: this.language,
         mode,
-        pcm,
+        pcm: mode === "final" ? this.#pcmComContexto(pcm) : pcm,
         sampleRate: this.#config.sampleRate,
         sessionId: this.id
       },
@@ -516,7 +570,9 @@ export class IncrementalAsrSession extends EventEmitter {
     if (this.#state === "closed") {
       return;
     }
-    const stabilized = this.#stabilizer.finalize(result.text);
+    const stabilized = this.#stabilizer.finalize(
+      this.#removerPrefixoDoContexto(result.text)
+    );
     this.#finalPcm = Buffer.from(context.audioPcm ?? Buffer.alloc(0));
     const event = this.#event("final", {
       ...stabilized,

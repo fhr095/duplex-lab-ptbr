@@ -1066,6 +1066,12 @@ const audioWebSocket =
         finalCommitGraceMs,
         prefinalPolicy,
         mergeWindowMs,
+        // Ciclo 3: decode do final com N ms do enunciado anterior como
+        // contexto (0 = desligado; ver var/observador/pdca-asr.md)
+        finalContextMs: Number.parseInt(
+          process.env.ASR_FINAL_CONTEXT_MS ?? "0",
+          10
+        ),
         maxPipelineFrames: audioPipelineMaxFrames,
         vadControlRuntime:
           vadControlMode === "silero" ? vadShadowRuntime : null,

@@ -94,6 +94,7 @@ export function attachAudioWebSocket(options) {
       vadConfig: options.vadConfig,
       vad: vadController,
       mergeWindowMs: options.mergeWindowMs,
+      finalContextMs: options.finalContextMs,
       onEvent: (event) => enviar(event)
     });
     const emitTelemetry = () => {

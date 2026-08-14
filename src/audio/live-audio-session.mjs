@@ -55,6 +55,11 @@ export class LiveAudioSession {
   #lastSequence = null;
   #mergeWindowMs;
   #nextTurnId = 0;
+  // Ciclo 3 do PDCA: contexto de áudio/texto do enunciado anterior para o
+  // decode do PRÓXIMO final — fragmentos de continuação decodificados sem
+  // contexto alucinavam idioma ("…qual o seu nome?" → "Also nun.").
+  #finalContextMs;
+  #contextoFinalAnterior = null;
   #pendingFinals = new Set();
   #prefinalPolicy;
   #preRoll = [];
@@ -81,6 +86,7 @@ export class LiveAudioSession {
     this.#minimumBackchannelSpeechMs =
       options.minimumBackchannelSpeechMs ?? 900;
     this.#mergeWindowMs = options.mergeWindowMs ?? 1_400;
+    this.#finalContextMs = options.finalContextMs ?? 0;
     this.#finalCommitGraceMs = options.finalCommitGraceMs ?? 0;
     this.#effectfulFinalCommitGraceMs =
       options.effectfulFinalCommitGraceMs ??
@@ -333,6 +339,8 @@ export class LiveAudioSession {
     };
     turn.asr = this.#asrRuntime.createSession({
       id,
+      finalContexto:
+        this.#finalContextMs > 0 ? this.#contextoFinalAnterior : null,
       onEvent: (event) => {
         if (this.#closed || turn.cancelled) {
           return;
@@ -512,6 +520,20 @@ export class LiveAudioSession {
         criticalInstability: reconciliation.criticalInstability ?? null
       };
       turn.finalPcm = turn.asr.finalPcmSnapshot ?? null;
+      if (
+        this.#finalContextMs > 0 &&
+        turn.finalPcm &&
+        String(final.text ?? "").trim()
+      ) {
+        const bytes = Math.min(
+          turn.finalPcm.length,
+          Math.round((this.#finalContextMs / 1_000) * 16_000) * 2
+        );
+        this.#contextoFinalAnterior = {
+          pcm: turn.finalPcm.subarray(turn.finalPcm.length - bytes),
+          texto: final.text
+        };
+      }
       const previous = turn.previousTurn;
       if (!previous?.finalPromise) {
         turn.resolvedFinal = final;
