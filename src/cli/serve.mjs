@@ -761,7 +761,15 @@ async function streamTurn(request, response, body) {
       effectsAllowed: stage !== "speculative",
       spokenPrefix: fastPath?.action === "BRIDGE"
         ? fastPath.bridge
-        : null
+        : null,
+      // Ciclo continuação/interrupção: a resposta anterior foi cortada
+      // pelo usuário — o cérebro integra o contexto interrompido.
+      respostaInterrompida:
+        body.respostaInterrompida &&
+        typeof body.respostaInterrompida.texto === "string" &&
+        body.respostaInterrompida.texto.length <= 600
+          ? body.respostaInterrompida
+          : null
     })) {
       emit(event);
     }

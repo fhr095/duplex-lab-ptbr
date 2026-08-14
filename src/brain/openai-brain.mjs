@@ -216,7 +216,8 @@ export function createOpenAIBrain(options = {}) {
       history = [],
       mode = "direct",
       signal,
-      spokenPrefix = null
+      spokenPrefix = null,
+      respostaInterrompida = null
     }) {
       const normalizedText = String(text ?? "").trim();
       if (!normalizedText) {
@@ -237,7 +238,7 @@ export function createOpenAIBrain(options = {}) {
       const model = mode === "delegate" ? taskModel : interactionModel;
       // Contrato no-repeat do BRIDGE: a camada rápida já falou a ponte; a
       // continuação não pode repetir nem contradizer o que foi dito.
-      const instructions = mode === "delegate"
+      let instructions = mode === "delegate"
         ? DELEGATED_INSTRUCTIONS
         : spokenPrefix
           ? `${DIRECT_INSTRUCTIONS}\n` +
@@ -245,6 +246,18 @@ export function createOpenAIBrain(options = {}) {
             "Continue a resposta a partir daí, sem repetir essa confirmação " +
             "e sem contradizê-la."
           : DIRECT_INSTRUCTIONS;
+      // Continuação após interrupção: o usuário cortou a resposta
+      // anterior no meio — a fala nova costuma ser continuação do mesmo
+      // assunto; a resposta deve integrar os dois contextos.
+      if (respostaInterrompida?.texto) {
+        instructions += "\nSua resposta anterior foi interrompida pelo " +
+          `usuário após ~${respostaInterrompida.faladoAteS ?? 0}s de ` +
+          `fala. O texto completo que você diria era: ` +
+          `«${respostaInterrompida.texto}». A fala nova do usuário ` +
+          "pode ser continuação do mesmo assunto: integre o que ficou " +
+          "pendente com o pedido novo e responda ao conjunto, sem " +
+          "repetir o que ele já ouviu.";
+      }
       const requestBody = {
         model,
         instructions,

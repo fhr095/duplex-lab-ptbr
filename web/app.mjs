@@ -188,6 +188,7 @@ const session = {
   speculationSequence: 0,
   ackCache: new Map(),
   ackUids: new Map(),
+  ultimaRespostaCortada: null,
   assistantSpeakingKind: null,
   pendingTtsElements: new Set(),
   renderConfrontationLogged: false,
@@ -911,6 +912,18 @@ async function playPreparedSpeech(item) {
 
     session.finishCurrentAudio = () => {
       observadorFim("cortado");
+      // Ciclo continuação/interrupção: resposta semântica cortada fica
+      // registrada para a PRÓXIMA requisição integrar o contexto
+      // ("considerar a mensagem anterior E a interrupção").
+      if (!["fast-ack", "backchannel"].includes(item.kind)) {
+        session.ultimaRespostaCortada = {
+          texto: item.text,
+          faladoAteS:
+            Math.round((audio.currentTime || observadorPosicao) * 10) /
+            10,
+          em: performance.now()
+        };
+      }
       settle();
     };
     audio.onplaying = () => {
@@ -2238,10 +2251,20 @@ async function processTurn() {
           text,
           history,
           sessionId: session.interactionSessionId,
-          turnId
+          turnId,
+          respostaInterrompida:
+            session.ultimaRespostaCortada &&
+            performance.now() - session.ultimaRespostaCortada.em <=
+              20_000
+              ? {
+                  texto: session.ultimaRespostaCortada.texto,
+                  faladoAteS: session.ultimaRespostaCortada.faladoAteS
+                }
+              : undefined
         }),
         signal: controller.signal
       });
+      session.ultimaRespostaCortada = null;
       events = readNdjson(response);
     }
 

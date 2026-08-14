@@ -108,7 +108,7 @@ def normalizar_pico(pcm):
     return numpy.clip(pcm * (0.9 / pico), -1.0, 1.0)
 
 
-def criar_reconhecedor(motor, variante, threads):
+def criar_reconhecedor(motor, variante, threads, repo=None):
     if motor == "parakeet":
         import onnx_asr
         import onnxruntime
@@ -118,7 +118,7 @@ def criar_reconhecedor(motor, variante, threads):
         opcoes.inter_op_num_threads = 1
         quantizacao = "int8" if variante.startswith("int8") else None
         modelo = onnx_asr.load_model(
-            "nemo-parakeet-tdt-0.6b-v3",
+            repo or "nemo-parakeet-tdt-0.6b-v3",
             quantization=quantizacao,
             sess_options=opcoes,
             providers=["CPUExecutionProvider"],
@@ -154,10 +154,12 @@ def main():
     parser.add_argument("--coraa", type=Path)
     parser.add_argument("--threads", type=int, default=3)
     parser.add_argument("--saida", type=Path, required=True)
+    parser.add_argument("--repo", default=None)
     argumentos = parser.parse_args()
 
     reconhecer = criar_reconhecedor(
-        argumentos.motor, argumentos.variante, argumentos.threads
+        argumentos.motor, argumentos.variante, argumentos.threads,
+        repo=argumentos.repo
     )
     com_norm = argumentos.variante.endswith("-norm")
     rotulo = f"{argumentos.motor}/{argumentos.variante}"
