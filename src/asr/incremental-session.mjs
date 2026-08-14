@@ -199,6 +199,13 @@ export class IncrementalAsrSession extends EventEmitter {
   }
 
   pushPcm(pcm, options = {}) {
+    // Enunciado no teto de duração: a sessão está finalizando o que já
+    // ouviu — frames excedentes caem em silêncio (perder a cauda é
+    // limitação registrada; jogar exceção a 31 fps ensurdecia o pipeline
+    // inteiro — bug da sessão 2026-08-14-12-37-22).
+    if (this.#state === "finishing") {
+      return;
+    }
     if (this.#state !== "open") {
       throw new Error(`sessão ASR não aceita áudio em estado ${this.#state}`);
     }
@@ -232,10 +239,12 @@ export class IncrementalAsrSession extends EventEmitter {
     this.#lastSampleEnd = sampleEnd;
     this.#totalBytes += pcm.length;
     if (this.audioMs > this.#config.maxTurnMs) {
-      this.cancel("turno excedeu duração máxima");
-      throw new RangeError(
-        `turno ASR excedeu ${this.#config.maxTurnMs} ms`
-      );
+      // Monólogo estourou o teto: FINALIZA o que foi ouvido (preserva e
+      // responde os primeiros 30 s) em vez de cancelar e perder tudo.
+      // finish() é idempotente — o commit do endpoint que vier depois
+      // recebe o mesmo final já resolvido.
+      void this.finish();
+      return;
     }
 
     if (!this.#partialsSuspended && this.#shouldRequestPartial()) {

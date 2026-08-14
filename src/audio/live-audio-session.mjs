@@ -225,10 +225,23 @@ export class LiveAudioSession {
     if (started) {
       this.#startTurn(started);
     } else if (this.#turn) {
-      this.#turn.asr.pushPcm(frame.pcm, {
-        capturedAtMs: atMs,
-        sampleStart: frame.sampleStart
-      });
+      try {
+        this.#turn.asr.pushPcm(frame.pcm, {
+          capturedAtMs: atMs,
+          sampleStart: frame.sampleStart
+        });
+      } catch (error) {
+        // Sessão de enunciado morta não pode ensurdecer o pipeline
+        // (sessão 2e22: 2.178 erros em loop e surdez até o fim).
+        // Derruba o turno; o próximo onset de fala cria um novo.
+        this.#emit("transcript.error", atMs, {
+          turnId: this.#turn.id,
+          code: "turn_audio_rejected",
+          message: error.message
+        });
+        this.#turn.cancelled = true;
+        this.#turn = null;
+      }
     }
 
     for (const event of vadEvents) {

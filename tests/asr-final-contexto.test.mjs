@@ -143,6 +143,29 @@ test("repetição legítima sem casamento fica intacta (auditoria R4)",
     assert.equal(final.text, "Você está me ouvindo agora?");
   });
 
+test("teto de duração FINALIZA o enunciado em vez de cancelar " +
+  "(bug da surdez, sessão 2e22)", async () => {
+  const registros = [];
+  const sessao = new IncrementalAsrSession({
+    id: "teste-teto",
+    partialWorker: workerFake([], []),
+    finalWorker: workerFake(["Primeiros trinta segundos."], registros),
+    initialAudioMs: 20,
+    stepAudioMs: 20,
+    maxTurnMs: 1_000
+  });
+  const bloco = Buffer.alloc(16_000); // 500 ms
+  sessao.pushPcm(bloco, { sampleStart: 0 });
+  sessao.pushPcm(bloco, { sampleStart: 8_000 });
+  // excede o teto de 1 s → auto-finish, sem exceção
+  sessao.pushPcm(bloco, { sampleStart: 16_000 });
+  assert.equal(sessao.state, "finishing");
+  // frames seguintes caem em silêncio, sem exceção
+  sessao.pushPcm(bloco, { sampleStart: 24_000 });
+  const final = await sessao.finish();
+  assert.equal(final.text, "Primeiros trinta segundos.");
+});
+
 test("sem finalContexto nada muda no pedido ao worker", async () => {
   const registros = [];
   const sessao = new IncrementalAsrSession({
