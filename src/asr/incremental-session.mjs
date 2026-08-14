@@ -153,7 +153,25 @@ export class IncrementalAsrSession extends EventEmitter {
     if (casadas === 0) {
       return texto;
     }
-    const restante = originais.slice(casadas).join(" ").trim();
+    // Auditoria R2: `casadas` conta palavras NORMALIZADAS; fatiar tokens
+    // CRUS pelo mesmo índice desalinha quando um token vira ≠1 palavra
+    // ("guarda-chuva" → 2; "…" → 0). Consome tokens crus até cobrir as
+    // palavras casadas; se a fronteira cair no MEIO de um token, corta
+    // conservadoramente antes dele (melhor sobrar eco que comer conteúdo).
+    let consumidas = 0;
+    let corte = 0;
+    for (const bruto of originais) {
+      const palavras = normalizar(bruto).length;
+      if (consumidas + palavras > casadas) {
+        break;
+      }
+      consumidas += palavras;
+      corte += 1;
+      if (consumidas === casadas) {
+        break;
+      }
+    }
+    const restante = originais.slice(corte).join(" ").trim();
     return restante.length > 0 ? restante : texto;
   }
 

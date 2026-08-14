@@ -113,6 +113,36 @@ test("enunciado longo (>2 s) NÃO recebe contexto nem strip", async () => {
   );
 });
 
+test("token com hífen não desalinha o corte (auditoria R2)", async () => {
+  const registros = [];
+  const sessao = sessaoComContexto({
+    contexto: {
+      pcm: CONTEXTO_PCM,
+      texto: "vou pegar o guarda chuva azul"
+    },
+    respostaFinal: "guarda-chuva azul é bonito",
+    registros
+  });
+  sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+  const final = await sessao.finish();
+  // "guarda-chuva"(2 palavras)+"azul"(1) cobrem o casamento de 3; o "é"
+  // não pode ser comido
+  assert.equal(final.text, "é bonito");
+});
+
+test("repetição legítima sem casamento fica intacta (auditoria R4)",
+  async () => {
+    const registros = [];
+    const sessao = sessaoComContexto({
+      contexto: { pcm: CONTEXTO_PCM, texto: "Also nun." },
+      respostaFinal: "Você está me ouvindo agora?",
+      registros
+    });
+    sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+    const final = await sessao.finish();
+    assert.equal(final.text, "Você está me ouvindo agora?");
+  });
+
 test("sem finalContexto nada muda no pedido ao worker", async () => {
   const registros = [];
   const sessao = new IncrementalAsrSession({

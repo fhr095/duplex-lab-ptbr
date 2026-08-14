@@ -337,10 +337,18 @@ export class LiveAudioSession {
       previousTurn,
       startedAtMs: vadEvent.atMs
     };
+    // Auditoria R5: contexto só vale para CONTINUAÇÃO — se o novo turno
+    // começa >5 s depois do final anterior, o áudio guardado é de outro
+    // momento da conversa e só poluiria o decode.
+    const contextoValido =
+      this.#finalContextMs > 0 &&
+      this.#contextoFinalAnterior !== null &&
+      vadEvent.atMs - this.#contextoFinalAnterior.em <= 5_000;
     turn.asr = this.#asrRuntime.createSession({
       id,
-      finalContexto:
-        this.#finalContextMs > 0 ? this.#contextoFinalAnterior : null,
+      finalContexto: contextoValido
+        ? this.#contextoFinalAnterior
+        : null,
       onEvent: (event) => {
         if (this.#closed || turn.cancelled) {
           return;
@@ -531,7 +539,8 @@ export class LiveAudioSession {
         );
         this.#contextoFinalAnterior = {
           pcm: turn.finalPcm.subarray(turn.finalPcm.length - bytes),
-          texto: final.text
+          texto: final.text,
+          em: performance.now()
         };
       }
       const previous = turn.previousTurn;

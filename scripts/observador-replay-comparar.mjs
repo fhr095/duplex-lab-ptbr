@@ -57,10 +57,11 @@ function divergencia(referencia, hipotese) {
       anterior = atual;
     }
   }
+  // Normaliza pelo tamanho da REFERÊNCIA (WER clássico): hipóteses
+  // verbosas são penalizadas, não amortecidas (achado F2 da auditoria).
   return (
-    Math.round(
-      (tabela[b.length] / Math.max(a.length, b.length, 1)) * 1_000
-    ) / 1_000
+    Math.round((tabela[b.length] / Math.max(a.length, 1)) * 1_000) /
+    1_000
   );
 }
 
@@ -103,9 +104,30 @@ for (const ref of referencias) {
   );
 }
 console.log(
-  `\nmédia divergência: antiga ${(somaAntiga / casos).toFixed(3)} → ` +
-    `nova ${(somaNova / casos).toFixed(3)} (${casos} falas)`
+  `\nmédia divergência (norm. pela ref): antiga ` +
+    `${(somaAntiga / casos).toFixed(3)} → nova ` +
+    `${(somaNova / casos).toFixed(3)} (${casos} falas)`
 );
 console.log(
   `finais emitidos: antiga ${antigos.length} · replay ${novos.length}`
 );
+
+// Anti-junção (achado F3): finais sem referência próxima = candidatos a
+// fantasma/espúrio — o modo de falha dominante precisa ser visível.
+const semRef = (lista, rotulo) => {
+  const orfaos = lista.filter(
+    (f) =>
+      !referencias.some((r) => Math.abs(f.trel - r.fim) < 6) &&
+      !referencias.some((r) => Math.abs(f.trel - r.inicio) < 6)
+  );
+  console.log(
+    `finais sem referência (±6 s) — ${rotulo}: ${orfaos.length}` +
+      (orfaos.length
+        ? ` → ${orfaos
+            .map((f) => `«${f.texto.slice(0, 25)}»`)
+            .join(" · ")}`
+        : "")
+  );
+};
+semRef(antigos, "antiga");
+semRef(novos, "replay");
