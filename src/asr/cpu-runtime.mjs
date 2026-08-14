@@ -25,7 +25,12 @@ export function createCpuStreamingAsr(options = {}) {
   });
   const finalWorker = new PersistentAsrWorker({
     cacheDir: options.cacheDir,
-    computeType: options.computeType ?? "int8",
+    // PDCA ASR ciclo 1 (2026-08-14): no CORAA (verdade humana) o final
+    // parakeet fp32 caiu de 0,452→0,322 de divergência média (p50
+    // 0,294→0,167) por +135 ms de latência — a quantização int8 era uma
+    // causa dominante do "texto errado com confiança" em PT espontâneo.
+    computeType:
+      options.finalComputeType ?? options.computeType ?? "int8",
     engine: options.finalEngine ?? "whisper",
     model: options.finalModel ?? options.model ?? "base",
     requestTimeoutMs: options.requestTimeoutMs,

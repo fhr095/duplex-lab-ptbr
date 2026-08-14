@@ -151,6 +151,10 @@ const asrRuntime = asrEnabled
   ? createCpuStreamingAsr({
       finalEngine: asrFinalEngine,
       finalModel: asrFinalModel,
+      // ASR_FINAL_COMPUTE=fp32 remove a quantização SÓ da perna final
+      // (parciais tiny continuam int8) — ver PDCA ASR ciclo 1.
+      finalComputeType:
+        process.env.ASR_FINAL_COMPUTE?.trim() || undefined,
       partialModel: asrPartialModel,
       finalThreads: Number.parseInt(
         process.env.ASR_FINAL_THREADS ?? "3",
