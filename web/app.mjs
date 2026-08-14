@@ -2811,7 +2811,24 @@ function handleLocalAudioEvent(event) {
         30_000
       );
     }
-    elements.userText.textContent = event.text || "Estou ouvindo…";
+    // Feedback gravado do usuário (sessões f064/fa4c): o "chute" instável
+    // exibido com confiança contamina o diálogo — ele lê o lixo em voz
+    // alta. A parte estável (committed) fica normal; o trecho instável
+    // aparece atenuado/itálico como rascunho.
+    if (event.committedText !== undefined && event.unstableText) {
+      elements.userText.replaceChildren();
+      if (event.committedText) {
+        elements.userText.append(
+          document.createTextNode(event.committedText + " ")
+        );
+      }
+      const instavel = document.createElement("span");
+      instavel.style.cssText = "opacity:.45;font-style:italic";
+      instavel.textContent = event.unstableText;
+      elements.userText.append(instavel);
+    } else {
+      elements.userText.textContent = event.text || "Estou ouvindo…";
+    }
     log("user.transcript.partial", event.text ?? "");
     const potential = session.potentialBargeIn;
     if (
