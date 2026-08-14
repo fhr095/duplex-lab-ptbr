@@ -32,6 +32,37 @@ function pcmRms(pcm) {
   return Math.sqrt(sumSquares / samples);
 }
 
+// Heurística barata de idioma para o portão da fala retida: compara
+// palavras funcionais PT × EN. Não é detector geral — só barra o modo de
+// falha conhecido (decode longo derivando para inglês).
+const PALAVRAS_PT = new Set([
+  "que", "não", "de", "da", "do", "para", "pra", "uma", "um", "com",
+  "você", "voce", "eu", "ele", "ela", "mas", "por", "mais", "quando",
+  "isso", "está", "tá", "falar", "fala", "então", "aqui", "agora"
+]);
+const PALAVRAS_EN = new Set([
+  "the", "you", "that", "not", "going", "know", "what", "this", "was",
+  "i'm", "don't", "but", "and", "to", "of", "it", "is", "for", "follow"
+]);
+function pareceTextoPtBr(texto) {
+  const palavras = texto
+    .toLocaleLowerCase("pt-BR")
+    .split(/\s+/u)
+    .map((p) => p.replaceAll(/[^\p{L}']/gu, ""))
+    .filter(Boolean);
+  let pt = 0;
+  let en = 0;
+  for (const palavra of palavras) {
+    if (PALAVRAS_PT.has(palavra)) {
+      pt += 1;
+    }
+    if (PALAVRAS_EN.has(palavra)) {
+      en += 1;
+    }
+  }
+  return pt >= en;
+}
+
 function requiredInteger(value, name) {
   if (!Number.isSafeInteger(value) || value < 0) {
     throw new TypeError(`${name} precisa ser inteiro não negativo`);
@@ -250,7 +281,11 @@ export class LiveAudioSession {
           .then(() => asrMorta.finish())
           .then((finalResgatado) => {
             const texto = String(finalResgatado?.text ?? "").trim();
-            if (texto) {
+            // Portão de idioma: o decode de 30 s às vezes deriva para
+            // inglês (sessão f064: "I told you that I follow Hop Fool")
+            // — reter e concatenar lixo envenena a conversa inteira;
+            // melhor descartar o começo do que entregar garbage.
+            if (texto && pareceTextoPtBr(texto)) {
               this.#falaRetida = { texto, em: performance.now() };
             }
           })
