@@ -3,7 +3,9 @@
 # integral, arranque pelo PERFIL da candidata e doctor. Recibo por etapa.
 # Branch por env: CLEANROOM_BRANCH (default engine/candidata-v1).
 set -uo pipefail
-ROOM="${1:-/tmp/claude-1000/engine-clean-room}"
+# Default em DISCO: /tmp é tmpfs (RAM) nesta máquina — torch+modelos não
+# cabem (falha real do 1º run do gate v1: ENOSPC aos 2,5 GB).
+ROOM="${1:-$HOME/.cache/duplex-clean-room}"
 BRANCH="${CLEANROOM_BRANCH:-engine/candidata-v1}"
 RECEIPT="$ROOM/recibo.txt"
 rm -rf "$ROOM"; mkdir -p "$ROOM"
