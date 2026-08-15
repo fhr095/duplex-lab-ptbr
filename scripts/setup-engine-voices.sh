@@ -30,8 +30,33 @@ fi
 uv pip install --python .venv-tts/bin/python --quiet \
   -r requirements-tts.txt
 
+# Supertonic-3 (voz da candidata v1; MIT+OpenRAIL-M com cláusula de
+# disclosure — o lede da página declara voz sintética). O pip supertonic
+# 1.3.1 pina a revisão dos pesos; o cache ~/.cache/supertonic3 é
+# compartilhado com o exp-0019 — auto_download fica DESLIGADO no sidecar
+# (ver scripts/tts-sidecar-supertonic.py) para nunca clobberar o cache.
+if [ ! -x .venv-teste-supertonic/bin/python ]; then
+  uv venv --python 3.12 .venv-teste-supertonic
+fi
+uv pip install --python .venv-teste-supertonic/bin/python --quiet \
+  "supertonic==1.3.1" soundfile
+.venv-teste-supertonic/bin/python - <<'PY'
+import os
+os.environ.setdefault("HF_HUB_OFFLINE", "0")
+cache = os.path.expanduser("~/.cache/supertonic3")
+if not os.path.isdir(cache):
+    from supertonic import TTS
+    TTS(model="supertonic-3", auto_download=True)
+    print("pesos do supertonic baixados")
+else:
+    print("cache do supertonic já presente (não tocado)")
+PY
+
 cat <<'EOF'
-Pronto. Sidecars (terminais separados):
+Pronto. Sidecars (terminais separados; start-engine.sh sobe sozinho o do
+TTS_PROVIDER escolhido):
+  .venv-teste-supertonic/bin/python scripts/tts-sidecar-supertonic.py \
+    --host 127.0.0.1 --port 8341
   .venv-tts/bin/pocket-tts serve --host 127.0.0.1 --port 8321 \
     --language portuguese --quantize
   .venv-tts/bin/python -m piper.http_server --host 127.0.0.1 --port 8331 \
