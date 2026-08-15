@@ -143,6 +143,10 @@ const asrFinalEngine =
   process.env.ASR_FINAL_ENGINE?.trim() || "parakeet";
 const asrPartialModel =
   process.env.ASR_PARTIAL_MODEL?.trim() || "tiny";
+// ASR_PARTIAL_ENGINE=kroko troca a perna de parciais para o transducer
+// streaming PT (modelo local em KROKO_MODEL_DIR; venv em KROKO_PYTHON).
+const asrPartialEngine =
+  process.env.ASR_PARTIAL_ENGINE?.trim() || "whisper";
 const asrFinalModel =
   process.env.ASR_FINAL_MODEL?.trim() ||
   (asrFinalEngine === "parakeet"
@@ -156,7 +160,10 @@ const asrRuntime = asrEnabled
       // (parciais tiny continuam int8) — ver PDCA ASR ciclo 1.
       finalComputeType:
         process.env.ASR_FINAL_COMPUTE?.trim() || undefined,
+      partialEngine: asrPartialEngine,
       partialModel: asrPartialModel,
+      krokoModelDir: process.env.KROKO_MODEL_DIR?.trim() || undefined,
+      krokoPython: process.env.KROKO_PYTHON?.trim() || undefined,
       finalThreads: Number.parseInt(
         process.env.ASR_FINAL_THREADS ?? "3",
         10
