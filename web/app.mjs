@@ -2400,7 +2400,9 @@ async function processTurn() {
       }
 
       if (event.type === "error") {
-        throw new Error(event.message ?? "Falha no cérebro externo.");
+        const falha = new Error(event.message ?? "Falha no cérebro externo.");
+        falha.code = event.code ?? null;
+        throw falha;
       }
     }
 
@@ -2427,8 +2429,15 @@ async function processTurn() {
       generation === session.responseGeneration
     ) {
         releaseAssistantAudio();
-        elements.assistantText.textContent =
-          "Não consegui concluir esta resposta. Pode tentar de novo?";
+        // Falha do cérebro NÃO pode ser muda: o TTS é local e continua
+        // vivo — sem voz o usuário conclui que travou tudo e encerra
+        // (sessão 36ed: budget esgotado → 4 turnos de silêncio → saiu).
+        const fala = error.code === "request_budget_exhausted"
+          ? "Cheguei no limite de chamadas do cérebro neste processo. " +
+            "Reinicie a engine para continuar."
+          : "Opa, tive uma falha aqui do meu lado. Pode repetir?";
+        elements.assistantText.textContent = fala;
+        enqueueSpeech(fala, "direct");
         log("turn.error", error.message);
     }
   } finally {

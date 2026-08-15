@@ -1,7 +1,12 @@
 const DEFAULT_API_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_INTERACTION_MODEL = "gpt-5.6-luna";
 const DEFAULT_TASK_MODEL = DEFAULT_INTERACTION_MODEL;
-const DEFAULT_MAX_REQUESTS = 25;
+// Guarda anti-runaway POR PROCESSO, não cota de sessão: com especulação
+// cada turno consome até 2 chamadas — 25 matava a conversa real em ~12
+// turnos (sessão 36ed: mudo aos 07:17 com o usuário encerrando em
+// frustração). 400 ≈ 3h de conversa contínua; OPENAI_MAX_REQUESTS_PER_
+// PROCESS aperta quando precisar.
+const DEFAULT_MAX_REQUESTS = 400;
 const MAX_HISTORY_ITEMS = 12;
 const MAX_MESSAGE_CHARS = 4_000;
 const MAX_HISTORY_CHARS = 16_000;
