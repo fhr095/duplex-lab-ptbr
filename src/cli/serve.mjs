@@ -150,7 +150,11 @@ const asrPartialEngine =
 const asrFinalModel =
   process.env.ASR_FINAL_MODEL?.trim() ||
   (asrFinalEngine === "parakeet"
-    ? "nemo-parakeet-tdt-0.6b-v3"
+    // Promovido na candidata v1: TAGARELA int8 mediu 0,109 de divergência
+    // média no CORAA (verdade humana) contra 0,322 do parakeet fp32 e
+    // 0,452 do int8 genérico — além de matar o EN-drift e a crise de RAM.
+    // O v3 genérico segue disponível por env (baseline v0.3 congelada).
+    ? "calneymgp/parakeet-tdt-0.6b-v3-ptBR-TAGARELA-onnx-int8"
     : asrModel);
 const asrRuntime = asrEnabled
   ? createCpuStreamingAsr({

@@ -21,10 +21,20 @@ bash scripts/setup-engine-voices.sh   # Pocket TTS PT + Piper pt-BR (SHA pinado)
 cp .env.example .env     # + OPENAI_API_KEY
 ```
 
-## Configuração principal (a engine)
+## Configuração principal (candidata v1 — ver docs/CANDIDATA-V1.md)
+
+```bash
+bash scripts/setup-kroko.sh   # 1ª vez: modelo de parciais streaming PT
+ASR_PARTIAL_ENGINE=kroko TTS_PROVIDER=supertonic bash scripts/start-engine.sh
+```
+
+O manifesto da candidata (docs/CANDIDATA-V1.md) registra o ledger de
+mecanismos, a régua de evidência e as licenças. Config da RC v0.1
+(baseline congelada v0.3) segue disponível por env:
 
 ```bash
 FAST_PATH=1 TTS_PROVIDER=pocket BRAIN_PROVIDER=openai \
+ASR_FINAL_MODEL=nemo-parakeet-tdt-0.6b-v3 \
 OPENAI_INTERACTION_MODEL=gpt-5.4-mini OPENAI_TASK_MODEL=gpt-5.6-luna \
 VAD_CONTROL=silero VAD_SHADOW=silero SILERO_VAD_THRESHOLD=0.85 \
 SILERO_VAD_ONSET_WINDOWS=1 node src/cli/serve.mjs
