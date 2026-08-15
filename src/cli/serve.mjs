@@ -782,7 +782,11 @@ async function streamTurn(request, response, body) {
         : null,
       // Ciclo continuação/interrupção: a resposta anterior foi cortada
       // pelo usuário — o cérebro integra o contexto interrompido.
+      // FLAG até T4 (validação viva): a política pode confundir
+      // complemento×correção×rejeição×cancelamento; sem exercício vivo,
+      // fica fora do perfil da candidata (régua docs/CANDIDATA-V1.md §2).
       respostaInterrompida:
+        process.env.CONTINUACAO_POS_INTERRUPCAO === "1" &&
         body.respostaInterrompida &&
         typeof body.respostaInterrompida.texto === "string" &&
         body.respostaInterrompida.texto.length <= 600

@@ -11,15 +11,21 @@ observação e produto.
 ## 1. A candidata, inequivocamente
 
 ```bash
-# setup (uma vez): deps de ASR/TTS + modelos
+# setup (uma vez)
 bash scripts/setup-kroko.sh          # parciais streaming PT (CC-BY-SA)
-# TAGARELA (final) baixa sozinho do HF no 1º arranque; Supertonic usa o
-# cache pinado do pip supertonic (venv .venv-teste-supertonic)
+bash scripts/setup-engine-voices.sh  # Supertonic pinado + fallbacks
+cp .env.example .env                 # + OPENAI_API_KEY (segredos/opt-ins)
 
-# arranque da candidata v1
-ASR_PARTIAL_ENGINE=kroko TTS_PROVIDER=supertonic bash scripts/start-engine.sh
-# (com observador: prefixar OBSERVER=1; porta: PORT=4173)
+# arranque — PERFIL ÚNICO (toda a config da candidata vive nele)
+bash scripts/start-candidata.sh
+# com observador: OBSERVER=1 bash scripts/start-candidata.sh
 ```
+
+**Contrato de configuração**: o perfil (`start-candidata.sh`) pina o que
+difere do default de código; `.env` guarda somente segredos e opt-ins e
+NÃO redefine política da candidata (o loader não sobrescreve env real,
+mas preenche o que faltar — por isso o `.env.example` não pina valores de
+política). Evidência versionada: `eval/evidencia/candidata-v1/`.
 
 Defaults já promovidos no código (não precisam de env): final ASR =
 **TAGARELA int8** (`calneymgp/parakeet-tdt-0.6b-v3-ptBR-TAGARELA-onnx-int8`),
@@ -63,10 +69,11 @@ fase — usuário primário é o espec — e está flaggeada onde há parâmetro
 | Kroko 64-L nas parciais | troca de peça | **T1** (CORAA 0,387 vs 0,71 do tiny — ~2× melhor em vozes independentes) + T2 + T4 (36ed sem queixa de parciais) | promovido (via env na config candidata) |
 | Teto de enunciado 20 s | mitigação obsoleta | motivada pela crise fp32, dissolvida pelo TAGARELA | **revertido para 30 s default** (bateria confirma) |
 | Contexto do final (ASR_FINAL_CONTEXT_MS) | experimental | T5 — replay revelou inversão/duplicação/vazamento | **OFF por default** (flag existe; requer strip por decode) |
-| Continuação pós-interrupção | política | testes de unidade; **sem exercício vivo ainda** (36ed não teve interrupção) | ligado (ativa só em interrupção), pendente T4 |
+| Continuação pós-interrupção | política | testes de unidade; **sem exercício vivo** (36ed não teve interrupção); risco de confundir complemento×correção×rejeição×cancelamento | **atrás de flag, OFF na candidata** (`CONTINUACAO_POS_INTERRUPCAO=1` só em sessão de roda, até T4) |
 | Números→extenso | normalização | 13 testes + assert semântico (TAGARELA sobre o WAV) + doctor | promovido (todos os providers) |
 | Supertonic F4 + seletor | troca de peça | RTF 0,26–0,28 medido; screening objetivo 10 vozes; ouvido do dono (F4/M1) | promovido-provisório (voz é gosto; pocket/piper/windows seguem por env) |
-| Erro de turno falado + budget 400 | correção causal | T4 pendente (36ed motivou; próxima sessão valida) + T3 (natureza estrutural) | promovido |
+| Erro de turno FALADO (falha do cérebro não é muda) | correção estrutural | T3 (TTS local sempre vivo; caminho de erro determinístico) | promovido |
+| Guarda anti-runaway 400 chamadas/processo | **política operacional/custo** (separada da correção acima) | dimensionamento: 2 chamadas/turno × ~3h de conversa; env ajusta | promovido como default; `.env.example` NÃO pina valor baixo (25 matou a 36ed) |
 | Observador/escuta cega/replay/minerador | instrumentação | — (não toca o caminho de conversa; OBSERVER=1 opt-in) | promovido como ferramenta |
 
 ## 4. Comparação v0 → v1 (as pernas medidas)

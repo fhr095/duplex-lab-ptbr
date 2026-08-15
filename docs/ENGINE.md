@@ -1,8 +1,8 @@
-# Engine candidata v0 — instalação, configuração principal e demo
+# Engine candidata v1 — instalação, configuração principal e demo
 
-Branch `engine/candidata-v0`: extração seletiva dos mecanismos que
-sobreviveram à exploração (`exp/caminho-ouro`, onde ficam probes, WAVs e
-evidências). Mecanismos: TTS plugável com streaming progressivo; contrato
+Branch `engine/candidata-v1` (manifesto e ledger de evidência:
+docs/CANDIDATA-V1.md; a v0 é histórica — PR #1 fechado, baseline
+congelada v0.3 reproduzível por env). Mecanismos: TTS plugável com streaming progressivo; contrato
 de arbitragem (LOCAL_FINAL/BRIDGE/PASS, abstencionista); fast-path
 determinístico com skills de hora/data; bridge de correção (in-turn e
 cross-turn) com no-repeat no reasoner; especulação segura (kernel puro,

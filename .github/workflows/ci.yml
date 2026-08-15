@@ -1,0 +1,22 @@
+# CI mínimo da engine: suíte de unidade/integração leve (sem modelos —
+# workers reais são substituídos por fakes nos testes). Gates pesados
+# (doctor E2E, bateria de replays, CORAA) rodam na máquina local com os
+# modelos e as gravações; seus resultados versionam em eval/evidencia/.
+name: ci
+on:
+  push:
+    branches: [main, "engine/candidata-*"]
+  pull_request:
+    branches: [main]
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node --test

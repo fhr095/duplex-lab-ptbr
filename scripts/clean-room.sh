@@ -1,14 +1,16 @@
 #!/bin/bash
-# RC v0.1 — clean-room release gate: clone externo novo, instalação
-# integral, arranque supervisionado e doctor. Gera recibo com cada etapa.
+# Clean-room release gate (candidata v1): clone externo novo, instalação
+# integral, arranque pelo PERFIL da candidata e doctor. Recibo por etapa.
+# Branch por env: CLEANROOM_BRANCH (default engine/candidata-v1).
 set -uo pipefail
 ROOM="${1:-/tmp/claude-1000/engine-clean-room}"
+BRANCH="${CLEANROOM_BRANCH:-engine/candidata-v1}"
 RECEIPT="$ROOM/recibo.txt"
 rm -rf "$ROOM"; mkdir -p "$ROOM"
 log() { echo "[$(date +%H:%M:%S)] $*" | tee -a "$RECEIPT"; }
 
-log "clone…"
-git clone --quiet --branch engine/candidata-v0 \
+log "clone ($BRANCH)…"
+git clone --quiet --branch "$BRANCH" \
   https://github.com/fhr095/duplex-lab-ptbr.git "$ROOM/repo" \
   || { log "FALHA clone"; exit 1; }
 cd "$ROOM/repo"
@@ -23,12 +25,15 @@ npm run setup:vad >>"$RECEIPT" 2>&1 || { log "FALHA setup:vad"; exit 1; }
 log "setup-engine-voices…"
 bash scripts/setup-engine-voices.sh >>"$RECEIPT" 2>&1 \
   || { log "FALHA voices"; exit 1; }
+log "setup-kroko…"
+bash scripts/setup-kroko.sh >>"$RECEIPT" 2>&1 \
+  || { log "FALHA kroko"; exit 1; }
 
 cp "${ENV_SOURCE:-$HOME/work/duplex-lab-ptbr/.env}" .env \
   || { log "FALHA .env"; exit 1; }
 
-log "start-engine (cérebro local p/ gate)…"
-BRAIN_PROVIDER=local PORT=4199 bash scripts/start-engine.sh \
+log "start-candidata (perfil único; cérebro local p/ gate)…"
+BRAIN_PROVIDER=local PORT=4199 bash scripts/start-candidata.sh \
   >>"$RECEIPT" 2>&1 &
 ENGINE=$!
 trap 'kill $ENGINE 2>/dev/null' EXIT
