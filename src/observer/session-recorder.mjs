@@ -248,7 +248,7 @@ export async function createSessionRecorder(options) {
 
     // Uma síntese TTS = um WAV arquivado por uid (o cliente gera o uid e
     // o repete nos beacons de reprodução — é a chave de junção).
-    iniciarTts({ uid, texto, stream, provider }) {
+    iniciarTts({ uid, texto, textoFalado, stream, provider }) {
       sinteses += 1;
       const id = uid || `sem-uid-${sinteses}`;
       const inicio = Date.now();
@@ -258,6 +258,11 @@ export async function createSessionRecorder(options) {
         linha("assistente.jsonl", {
           uid: id,
           texto,
+          // Registrado só quando a normalização mudou algo — a escuta cega
+          // ouve o que foi FALADO, a correlação compara com o original.
+          ...(typeof textoFalado === "string" && textoFalado !== texto
+            ? { textoFalado }
+            : {}),
           provider,
           stream: Boolean(stream),
           tInicio: inicio,

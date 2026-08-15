@@ -22,6 +22,12 @@ if [ "${TTS_PROVIDER:-pocket}" = "pocket" ]; then
   PIDS+=($!)
   echo "aguardando Pocket TTS (carrega ~1-2min no 1º uso)…"
   wait_http http://127.0.0.1:8321/health 90
+elif [ "${TTS_PROVIDER:-}" = "supertonic" ]; then
+  .venv-teste-supertonic/bin/python scripts/tts-sidecar-supertonic.py \
+    --host 127.0.0.1 --port 8341 >/tmp/supertonic-tts.log 2>&1 &
+  PIDS+=($!)
+  echo "aguardando Supertonic (carga ~5-10s)…"
+  wait_http http://127.0.0.1:8341/ 30
 elif [ "${TTS_PROVIDER:-}" = "piper" ]; then
   .venv-tts/bin/python -m piper.http_server --host 127.0.0.1 --port 8331 \
     -m eval/generated/tts-models/pt_BR-faber-medium.onnx \

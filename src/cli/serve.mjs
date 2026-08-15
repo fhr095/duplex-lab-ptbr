@@ -24,6 +24,7 @@ import {
   prewarmWindowsSpeech,
   synthesizeWindowsSpeech
 } from "../tts/windows-system-tts.mjs";
+import { normalizarTextoParaFala } from "../tts/normalizar-texto-pt.mjs";
 import {
   arbitrateTurn,
   createFastPathMemory,
@@ -222,7 +223,9 @@ const ttsWarmup = ttsProviderEnv !== "windows"
       const sidecarUrl = process.env.TTS_SIDECAR_URL?.trim() ||
         (ttsProviderEnv === "pocket"
           ? "http://127.0.0.1:8321/tts"
-          : "http://127.0.0.1:8331");
+          : ttsProviderEnv === "supertonic"
+            ? "http://127.0.0.1:8341"
+            : "http://127.0.0.1:8331");
       const healthUrl = ttsProviderEnv === "pocket"
         ? sidecarUrl.replace(/\/tts\/?$/u, "/health")
         : sidecarUrl;
@@ -236,7 +239,11 @@ const ttsWarmup = ttsProviderEnv !== "windows"
         ttsHealth = {
           state: "ready",
           engine: `${ttsProviderEnv}-sidecar`,
-          voice: ttsProviderEnv === "pocket" ? "rafael" : "pt_BR-faber",
+          voice: ttsProviderEnv === "pocket"
+            ? "rafael"
+            : ttsProviderEnv === "supertonic"
+              ? process.env.SUPERTONIC_VOICE?.trim() || "F4"
+              : "pt_BR-faber",
           culture: "pt-BR",
           sidecarUrl,
           primed: false
@@ -797,7 +804,9 @@ const ttsProvider = process.env.TTS_PROVIDER?.trim().toLowerCase() ||
 const ttsSidecarUrl = process.env.TTS_SIDECAR_URL?.trim() ||
   (ttsProvider === "pocket"
     ? "http://127.0.0.1:8321/tts"
-    : "http://127.0.0.1:8331");
+    : ttsProvider === "supertonic"
+      ? "http://127.0.0.1:8341"
+      : "http://127.0.0.1:8331");
 
 async function proxySidecarTts(request, response, body, controller, tee) {
   let upstream;
@@ -882,6 +891,9 @@ async function proxySidecarTts(request, response, body, controller, tee) {
 }
 
 async function synthesizeTts(request, response, body) {
+  // Números→extenso SÓ no texto falado; o texto exibido na UI e o campo
+  // `texto` do observador continuam originais (dígitos).
+  const textoFalado = normalizarTextoParaFala(body.text);
   const controller = new AbortController();
   const abortSynthesis = () => controller.abort();
   const abortOnClose = () => {
@@ -902,16 +914,23 @@ async function synthesizeTts(request, response, body) {
       ? body.uid
       : null,
     texto: body.text,
+    textoFalado,
     stream: Boolean(body.stream),
     provider: ttsProvider
   }) ?? null;
 
   try {
     if (ttsProvider !== "windows") {
-      await proxySidecarTts(request, response, body, controller, tee);
+      await proxySidecarTts(
+        request,
+        response,
+        { ...body, text: textoFalado },
+        controller,
+        tee
+      );
       return;
     }
-    const audio = await synthesizeWindowsSpeech(body.text, {
+    const audio = await synthesizeWindowsSpeech(textoFalado, {
       rate: body.rate,
       signal: controller.signal
     });
