@@ -10,7 +10,10 @@ DESTINO="${KROKO_MODEL_DIR:-var/observador/testes/kroko/modelos/pt-64L}"
 DATA_DIR="$(dirname "$DESTINO")"
 ARQUIVO="Kroko-PT-Community-64-L-Streaming-001.data"
 URL="https://huggingface.co/Banafo/Kroko-ASR/resolve/main/$ARQUIVO"
-SHA_ESPERADO="36c4a92fbd9d21b83a54c574e5c15d6800321dae51e4bfda164451af25e70cb1"
+# sha256 INTEGRAL medido do artefato validado localmente (o relatório de
+# teste registrava só o prefixo; o 1º run do gate pegou um pin inventado
+# além da 8ª casa — este valor foi conferido contra o download do HF).
+SHA_ESPERADO="36c4a92f25c9243cbd8f007cfc624b09986debf2919a1e397891e62e063d0e61"
 
 if [ -f "$DESTINO/encoder.onnx" ]; then
   echo "modelo já desempacotado em $DESTINO"
