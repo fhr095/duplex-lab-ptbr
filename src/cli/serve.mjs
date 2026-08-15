@@ -819,7 +819,13 @@ async function proxySidecarTts(request, response, body, controller, tee) {
       signal: controller.signal
     });
   } else {
-    upstream = await fetch(ttsSidecarUrl, {
+    // Voz por requisição (seletor da plataforma): só o supertonic entende
+    // ?voz=; valores fora de F1..F5/M1..M5 caem na voz padrão do sidecar.
+    const alvo = ttsProvider === "supertonic" &&
+      typeof body.voz === "string" && /^[FM][1-5]$/u.test(body.voz)
+      ? `${ttsSidecarUrl}?voz=${body.voz}`
+      : ttsSidecarUrl;
+    upstream = await fetch(alvo, {
       method: "POST",
       headers: { "content-type": "text/plain; charset=utf-8" },
       body: body.text,
@@ -916,7 +922,10 @@ async function synthesizeTts(request, response, body) {
     texto: body.text,
     textoFalado,
     stream: Boolean(body.stream),
-    provider: ttsProvider
+    provider: ttsProvider,
+    voz: typeof body.voz === "string" && /^[FM][1-5]$/u.test(body.voz)
+      ? body.voz
+      : null
   }) ?? null;
 
   try {
@@ -1063,7 +1072,8 @@ const server = createServer(async (request, response) => {
       await synthesizeTts(request, response, {
         text,
         uid: url.searchParams.get("uid") ?? null,
-        stream: url.searchParams.get("stream") === "1"
+        stream: url.searchParams.get("stream") === "1",
+        voz: url.searchParams.get("voz") ?? null
       });
       return;
     }

@@ -248,7 +248,7 @@ export async function createSessionRecorder(options) {
 
     // Uma síntese TTS = um WAV arquivado por uid (o cliente gera o uid e
     // o repete nos beacons de reprodução — é a chave de junção).
-    iniciarTts({ uid, texto, textoFalado, stream, provider }) {
+    iniciarTts({ uid, texto, textoFalado, stream, provider, voz }) {
       sinteses += 1;
       const id = uid || `sem-uid-${sinteses}`;
       const inicio = Date.now();
@@ -263,6 +263,7 @@ export async function createSessionRecorder(options) {
           ...(typeof textoFalado === "string" && textoFalado !== texto
             ? { textoFalado }
             : {}),
+          ...(voz ? { voz } : {}),
           provider,
           stream: Boolean(stream),
           tInicio: inicio,

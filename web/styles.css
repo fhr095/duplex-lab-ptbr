@@ -172,6 +172,24 @@ h1 span {
   background: transparent;
 }
 
+.voice-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #bdc6d0;
+  font-size: 0.9rem;
+}
+
+.voice-picker select {
+  min-height: 46px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  background: #20262d;
+  cursor: pointer;
+}
+
 .conversation {
   overflow: hidden;
   border: 1px solid var(--line);

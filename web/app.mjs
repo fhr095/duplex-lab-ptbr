@@ -153,8 +153,18 @@ const elements = {
   statusDot: document.querySelector("#statusDot"),
   stopButton: document.querySelector("#stopButton"),
   stopMetric: document.querySelector("#stopMetric"),
-  userText: document.querySelector("#userText")
+  userText: document.querySelector("#userText"),
+  voicePicker: document.querySelector("#voicePicker"),
+  voiceSelect: document.querySelector("#voiceSelect")
 };
+
+// Voz do assistente escolhida na plataforma (só faz efeito com sidecar
+// supertonic; vazio = padrão do servidor). Persistida por navegador.
+let ttsVoice = /^[FM][1-5]$/u.test(
+  localStorage.getItem("duplex.ttsVoice") ?? ""
+)
+  ? localStorage.getItem("duplex.ttsVoice")
+  : "";
 
 const session = {
   active: false,
@@ -773,7 +783,8 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
       // para cancelamento explícito se a época avançar (interrupção).
       const audio = new Audio(
         `/api/tts?stream=1&text=${encodeURIComponent(text)}` +
-          (uid ? `&uid=${encodeURIComponent(uid)}` : "")
+          (uid ? `&uid=${encodeURIComponent(uid)}` : "") +
+          (ttsVoice ? `&voz=${ttsVoice}` : "")
       );
       audio.preload = "auto";
       session.pendingTtsElements.add(audio);
@@ -798,7 +809,7 @@ async function prepareSpeech(text, kind, epoch, options = {}) {
     const response = await fetch("/api/tts", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ text, uid }),
+      body: JSON.stringify({ text, uid, voz: ttsVoice || undefined }),
       signal: controller.signal
     });
     if (!response.ok) {
@@ -3540,7 +3551,7 @@ function prefetchAckCache() {
     void fetch("/api/tts", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ text, uid })
+      body: JSON.stringify({ text, uid, voz: ttsVoice || undefined })
     }).then(async (response) => {
       if (response.ok) {
         session.ackCache.set(text, await response.blob());
@@ -4004,6 +4015,31 @@ async function loadHealth() {
     session.asrAvailable = health.asr?.state === "ready";
     session.ttsSidecar = String(health.tts?.engine ?? "")
       .endsWith("-sidecar");
+    // Seletor de voz: só o sidecar supertonic entende ?voz= por
+    // requisição. Troca vale a partir da PRÓXIMA fala e re-sintetiza os
+    // fast-acks (senão os acks em cache tocariam na voz antiga).
+    if (
+      health.tts?.engine === "supertonic-sidecar" &&
+      elements.voicePicker &&
+      elements.voiceSelect
+    ) {
+      const padrao = health.tts?.voice ?? "F4";
+      elements.voiceSelect.replaceChildren(
+        new Option(`padrão do servidor (${padrao})`, ""),
+        ...["F1", "F2", "F3", "F4", "F5", "M1", "M2", "M3", "M4", "M5"]
+          .map((voz) => new Option(voz, voz))
+      );
+      elements.voiceSelect.value = ttsVoice;
+      elements.voicePicker.hidden = false;
+      elements.voiceSelect.addEventListener("change", () => {
+        ttsVoice = elements.voiceSelect.value;
+        localStorage.setItem("duplex.ttsVoice", ttsVoice);
+        session.ackCache.clear();
+        session.ackUids.clear();
+        prefetchAckCache();
+        log("tts.voice", ttsVoice || `padrão (${padrao})`);
+      });
+    }
     observador.init(health, session.interactionSessionId);
     if (observador.ativo) {
       log("observador.ativo", `pasta ${health.observador.pasta}`);
