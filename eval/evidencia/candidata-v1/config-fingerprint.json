@@ -1,0 +1,36 @@
+{
+ "gitCommit": "e2a3754",
+ "perfil": "scripts/start-candidata.sh",
+ "runtimeFingerprint": {
+  "algorithm": "sha256-source-tree-v1",
+  "sha256": "c169c6ad9ec1bf234d48fbd07dca6fb45fb76b6fb0f4538136abc9790af6a898",
+  "fileCount": 147,
+  "roots": [
+   "src",
+   "web",
+   "eval/experiments/exp-0026-experience-pack.pt-BR.json",
+   "package.json",
+   "package-lock.json",
+   "requirements-asr.txt"
+  ]
+ },
+ "asr": {
+  "final": "calneymgp/parakeet-tdt-0.6b-v3-ptBR-TAGARELA-onnx-int8",
+  "partial": "kroko-pt-64L/greedy_search",
+  "engine": "parakeet"
+ },
+ "tts": {
+  "engine": "supertonic-sidecar",
+  "voice": "F4"
+ },
+ "vad": {
+  "engine": "silero-vad",
+  "threshold": 0.85
+ },
+ "brain": "openai",
+ "models": {
+  "interaction": "gpt-5.4-mini",
+  "task": "gpt-5.6-luna"
+ },
+ "continuacaoPosInterrupcao": false
+}
