@@ -37,6 +37,14 @@ com TTS windows o streaming desliga sozinho). Racional dos modelos:
 segue nas delegações. Voz padrão pocket/rafael **pendente do veredicto de
 ouvido** (fallbacks: `TTS_PROVIDER=piper` | `windows`).
 
+`TTS_PROVIDER=supertonic` liga o Supertonic-3 local (sidecar na 8341, voz
+via `SUPERTONIC_VOICE`, F1..F5/M1..M5, padrão F4; `SUPERTONIC_STEPS=4`
+dobra a velocidade com qualidade a validar). Antes de QUALQUER provider a
+engine converte números→extenso PT no texto falado
+(`src/tts/normalizar-texto-pt.mjs`): horas, datas, R$, %, graus, ordinais,
+faixas e decimais; o texto exibido continua original. Licença OpenRAIL-M
+do Supertonic exige deixar claro ao usuário que a voz é sintética.
+
 ## Demo de 10–15 min (comportamentos principais)
 
 1. "Oi, tudo bem?" → LOCAL_FINAL (~50ms de rota; voz em ~1s).
