@@ -1,5 +1,11 @@
 import { extractSpeechChunks, readNdjson } from "/stream-utils.mjs";
 import {
+  criarAbsorcao,
+  falaRetomada,
+  finalChegou,
+  turnoDisparado
+} from "/absorcao-turno.mjs";
+import {
   BrowserAudioRenderProbe,
   BrowserPcmCapture
 } from "/pcm-capture.mjs";
@@ -247,6 +253,8 @@ const session = {
   tentativePauseCount: 0,
   taskDeliveryTimer: null,
   trace: [],
+  absorcao: criarAbsorcao(),
+  contextoTurnoAtual: null,
   lastEmptyFinalNoticeAt: -100_000,
   ttsAbortControllers: new Set(),
   turnAbortController: null,
@@ -1265,6 +1273,40 @@ function appendHistory(role, content) {
   session.history = session.history.slice(-12);
 }
 
+// Commit revisável: o fragmento absorvido volta no PRÓXIMO turno
+// concatenado — a entrada de histórico do turno abortado sai para não
+// duplicar o texto do usuário.
+function removerUltimaFalaDoHistorico(texto) {
+  const ultima = session.history.at(-1);
+  if (ultima?.role === "user" && ultima.content === texto) {
+    session.history.pop();
+  }
+}
+
+function tentarAbsorverTurnoEmVoo(origem) {
+  const decisao = falaRetomada(session.absorcao, {
+    atMs: performance.now(),
+    respostaAtiva: session.responseActive,
+    audioJaTocou: session.responseAudioStarted,
+    modo: session.contextoTurnoAtual?.mode ?? null
+  });
+  session.absorcao = decisao.estado;
+  if (!decisao.absorver) {
+    return;
+  }
+  // Cláusulas 1-2: cancelador canônico (aborta cérebro/stream, avança
+  // generation — resultados atrasados morrem na guarda existente) +
+  // limpeza de acks ainda não audíveis (não falar por cima da retomada).
+  cancelActiveResponse("absorvido por retomada de fala");
+  releaseAssistantAudio();
+  removerUltimaFalaDoHistorico(decisao.fragmento);
+  log(
+    "turno.absorvido",
+    `retomada ${Math.round(decisao.deltaMs)}ms após commit (${origem}); ` +
+      `fragmento retido: «${decisao.fragmento.slice(0, 60)}»`
+  );
+}
+
 function cancelActiveResponse(reason) {
   if (!session.responseActive) {
     return;
@@ -2196,6 +2238,13 @@ async function processTurn() {
   session.speechBuffer = "";
   const turnId = `turn-${++session.interactionTurnSequence}`;
   appendHistory("user", text);
+  // Commit revisável: registra o turno em voo; retomada rápida sem
+  // áudio tocado pode absorvê-lo (fragmento volta concatenado).
+  session.absorcao = turnoDisparado(session.absorcao, {
+    texto: text,
+    atMs: performance.now()
+  });
+  session.contextoTurnoAtual = context;
   log("turn.committed", text);
   setStatus("pensando e ouvindo", "speaking");
 
@@ -2787,6 +2836,7 @@ function handleLocalAudioEvent(event) {
     startAutomationPcmAuditClip(event);
     clearTimeout(session.endpointTimer);
     session.userSpeaking = true;
+    tentarAbsorverTurnoEmVoo("started");
     observeSpeakerRelevanceStart(event);
     dispatchLocalAudioReflex({
       type: "USER_SPEECH_STARTED",
@@ -2828,6 +2878,7 @@ function handleLocalAudioEvent(event) {
   }
   if (event.type === "user.speech.resumed") {
     session.userSpeaking = true;
+    tentarAbsorverTurnoEmVoo("resumed");
     observeSpeakerRelevanceStart(event);
     if (event.turnId) {
       session.earlyBackchannelTurnIds.delete(event.turnId);
@@ -3024,7 +3075,24 @@ function handleLocalAudioEvent(event) {
       return;
     }
     if (text) {
-      session.finalText = text;
+      // Commit revisável: fragmento absorvido volta concatenado — um
+      // pensamento, um turno (endpoints brutos seguem no trace acima).
+      const juncao = finalChegou(session.absorcao, {
+        texto: text,
+        atMs: performance.now()
+      });
+      session.absorcao = juncao.estado;
+      if (juncao.absorvido) {
+        elements.userText.textContent = juncao.texto;
+        log(
+          "turno.absorvido.concatenado",
+          `${juncao.fragmentos.length} fragmento(s) + final → ` +
+            `«${juncao.texto.slice(0, 80)}»`
+        );
+      } else if (juncao.descartado) {
+        log("turno.absorvido.descartado", juncao.descartado);
+      }
+      session.finalText = juncao.texto;
       void processTurn();
     } else {
       session.speculation?.abort();
