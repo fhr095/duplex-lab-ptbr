@@ -40,6 +40,7 @@ export class IncrementalAsrSession extends EventEmitter {
   #controller = null;
   #dirty = false;
   #eventCallback;
+  #finalContexto = null;
   #finalDeferred = null;
   #finalPcm = null;
   #finishRequestedAt = null;
@@ -80,9 +81,98 @@ export class IncrementalAsrSession extends EventEmitter {
       holdbackWords: options.holdbackWords ?? 1
     };
     validateConfig(this.#config);
+    // Ciclo 3: áudio+texto do final anterior; o PCM entra SÓ no decode de
+    // final/prepared (parciais intactas) e o texto guia a remoção do
+    // prefixo sobreposto do resultado.
+    this.#finalContexto =
+      Buffer.isBuffer(options.finalContexto?.pcm) &&
+      options.finalContexto.pcm.length > 0
+        ? options.finalContexto
+        : null;
     this.#stabilizer = new TranscriptStabilizer({
       holdbackWords: this.#config.holdbackWords
     });
+  }
+
+  // A bateria de replays mostrou que o contexto ajuda exatamente nos
+  // enunciados CURTOS (fragmentos de continuação <2 s) e atrapalha nos
+  // longos (duplicações quando o strip não casa; merges perturbados;
+  // alucinação estendida em áudio marginal) — só aplicamos abaixo do
+  // limite.
+  static #CONTEXTO_LIMITE_MS = 2_000;
+  #contextoAplicado = false;
+
+  #pcmComContexto(pcm) {
+    const dentroDoLimite =
+      (pcm.length / 2 / this.#config.sampleRate) * 1_000 <=
+      IncrementalAsrSession.#CONTEXTO_LIMITE_MS;
+    if (!this.#finalContexto || !dentroDoLimite) {
+      this.#contextoAplicado = false;
+      return pcm;
+    }
+    this.#contextoAplicado = true;
+    return Buffer.concat([this.#finalContexto.pcm, pcm]);
+  }
+
+  // Remove do início do texto decodificado o que já pertencia ao final
+  // anterior (maior casamento ≥2 palavras normalizadas entre o sufixo do
+  // contexto e o prefixo do novo texto). Se sobrar vazio, mantém integral.
+  #removerPrefixoDoContexto(texto) {
+    const anterior = this.#finalContexto?.texto;
+    if (!anterior || !texto || !this.#contextoAplicado) {
+      return texto;
+    }
+    const normalizar = (valor) =>
+      valor
+        .toLocaleLowerCase("pt-BR")
+        .replaceAll(/[^\p{L}\p{N}\s]/gu, " ")
+        .split(/\s+/u)
+        .filter(Boolean);
+    const contexto = normalizar(anterior);
+    const originais = String(texto).trim().split(/\s+/u);
+    const novos = normalizar(texto);
+    // Casamento com tolerância: o decode do contexto pode sair com
+    // pequenas variações do final anterior (replay s5 mostrou repetição
+    // verbosa quando exigia igualdade exata). Sobreposições ≥4 palavras
+    // toleram 1 divergência; curtas continuam exatas.
+    let casadas = 0;
+    const maximo = Math.min(contexto.length, novos.length);
+    for (let k = maximo; k >= 2; k -= 1) {
+      let divergentes = 0;
+      const tolerancia = k >= 4 ? 1 : 0;
+      for (let i = 0; i < k && divergentes <= tolerancia; i += 1) {
+        if (contexto[contexto.length - k + i] !== novos[i]) {
+          divergentes += 1;
+        }
+      }
+      if (divergentes <= tolerancia) {
+        casadas = k;
+        break;
+      }
+    }
+    if (casadas === 0) {
+      return texto;
+    }
+    // Auditoria R2: `casadas` conta palavras NORMALIZADAS; fatiar tokens
+    // CRUS pelo mesmo índice desalinha quando um token vira ≠1 palavra
+    // ("guarda-chuva" → 2; "…" → 0). Consome tokens crus até cobrir as
+    // palavras casadas; se a fronteira cair no MEIO de um token, corta
+    // conservadoramente antes dele (melhor sobrar eco que comer conteúdo).
+    let consumidas = 0;
+    let corte = 0;
+    for (const bruto of originais) {
+      const palavras = normalizar(bruto).length;
+      if (consumidas + palavras > casadas) {
+        break;
+      }
+      consumidas += palavras;
+      corte += 1;
+      if (consumidas === casadas) {
+        break;
+      }
+    }
+    const restante = originais.slice(corte).join(" ").trim();
+    return restante.length > 0 ? restante : texto;
   }
 
   get state() {
@@ -109,6 +199,13 @@ export class IncrementalAsrSession extends EventEmitter {
   }
 
   pushPcm(pcm, options = {}) {
+    // Enunciado no teto de duração: a sessão está finalizando o que já
+    // ouviu — frames excedentes caem em silêncio (perder a cauda é
+    // limitação registrada; jogar exceção a 31 fps ensurdecia o pipeline
+    // inteiro — bug da sessão 2026-08-14-12-37-22).
+    if (this.#state === "finishing") {
+      return;
+    }
     if (this.#state !== "open") {
       throw new Error(`sessão ASR não aceita áudio em estado ${this.#state}`);
     }
@@ -142,10 +239,12 @@ export class IncrementalAsrSession extends EventEmitter {
     this.#lastSampleEnd = sampleEnd;
     this.#totalBytes += pcm.length;
     if (this.audioMs > this.#config.maxTurnMs) {
-      this.cancel("turno excedeu duração máxima");
-      throw new RangeError(
-        `turno ASR excedeu ${this.#config.maxTurnMs} ms`
-      );
+      // Monólogo estourou o teto: FINALIZA o que foi ouvido (preserva e
+      // responde os primeiros 30 s) em vez de cancelar e perder tudo.
+      // finish() é idempotente — o commit do endpoint que vier depois
+      // recebe o mesmo final já resolvido.
+      void this.finish();
+      return;
     }
 
     if (!this.#partialsSuspended && this.#shouldRequestPartial()) {
@@ -274,7 +373,7 @@ export class IncrementalAsrSession extends EventEmitter {
         generation,
         language: this.language,
         mode: "final",
-        pcm: snapshot.pcm,
+        pcm: this.#pcmComContexto(snapshot.pcm),
         sampleRate: this.#config.sampleRate,
         sessionId: `${this.id}:prepared-final`
       },
@@ -434,7 +533,7 @@ export class IncrementalAsrSession extends EventEmitter {
         generation,
         language: this.language,
         mode,
-        pcm,
+        pcm: mode === "final" ? this.#pcmComContexto(pcm) : pcm,
         sampleRate: this.#config.sampleRate,
         sessionId: this.id
       },
@@ -516,7 +615,9 @@ export class IncrementalAsrSession extends EventEmitter {
     if (this.#state === "closed") {
       return;
     }
-    const stabilized = this.#stabilizer.finalize(result.text);
+    const stabilized = this.#stabilizer.finalize(
+      this.#removerPrefixoDoContexto(result.text)
+    );
     this.#finalPcm = Buffer.from(context.audioPcm ?? Buffer.alloc(0));
     const event = this.#event("final", {
       ...stabilized,

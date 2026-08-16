@@ -1,0 +1,394 @@
+{
+ "frases": {
+  "p1-clima": "Em São Paulo: dezessete graus Celsius agora, céu limpo. Amanhã: máxima de vinte e dois graus Celsius.",
+  "p2-hora": "Agora são vinte horas e quatorze minutos.",
+  "p3-preco": "Custa três reais e cinquenta centavos, e o total fica em mil duzentos e trinta e quatro reais.",
+  "p4-conversa": "Entendi. Você quer que eu considere a fala anterior e essa juntas, certo?"
+ },
+ "resultados": [
+  {
+   "voz": "F1",
+   "frase": "p1-clima",
+   "divergencia": 0.235,
+   "ouvido": "Em São Paulo, 17 graus celsius agora, céu limpo. Amanhã, máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F1",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F1",
+   "frase": "p3-preco",
+   "divergencia": 0,
+   "ouvido": "Custa três reais e cinquenta centavos e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F1",
+   "frase": "p4-conversa",
+   "divergencia": 0.077,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essa junta, certo?",
+   "divergenciaJusta": 0.077
+  },
+  {
+   "voz": "F2",
+   "frase": "p1-clima",
+   "divergencia": 0.235,
+   "ouvido": "Em São Paulo, 17 graus celsius agora, céu limpo. Amanhã, máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F2",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F2",
+   "frase": "p3-preco",
+   "divergencia": 0,
+   "ouvido": "Custa três reais e cinquenta centavos e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F2",
+   "frase": "p4-conversa",
+   "divergencia": 0,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essa juntas, certo?",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F3",
+   "frase": "p1-clima",
+   "divergencia": 0.235,
+   "ouvido": "Em São Paulo, 17 graus celsius agora céu limpo. Amanhã, máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F3",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F3",
+   "frase": "p3-preco",
+   "divergencia": 0,
+   "ouvido": "Custa três reais e cinquenta centavos e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F3",
+   "frase": "p4-conversa",
+   "divergencia": 0,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essa juntas, certo?",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F4",
+   "frase": "p1-clima",
+   "divergencia": 0.176,
+   "ouvido": "Em São Paulo, dezessete graus celsius agora, céu limpo. Amanhã máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F4",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F4",
+   "frase": "p3-preco",
+   "divergencia": 0,
+   "ouvido": "Custa três reais e cinquenta centavos e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F4",
+   "frase": "p4-conversa",
+   "divergencia": 0.077,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essas juntas, certo?",
+   "divergenciaJusta": 0.077
+  },
+  {
+   "voz": "F5",
+   "frase": "p1-clima",
+   "divergencia": 0.176,
+   "ouvido": "Em São Paulo, dezessete graus celsius agora, céu limpo. Amanhã, máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F5",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F5",
+   "frase": "p3-preco",
+   "divergencia": 0,
+   "ouvido": "Custa três reais e cinquenta centavos, e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "F5",
+   "frase": "p4-conversa",
+   "divergencia": 0,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essa juntas, certo?",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M1",
+   "frase": "p1-clima",
+   "divergencia": 0.235,
+   "ouvido": "Em São Paulo, 17 graus celsius agora, céu limpo. Amanhã, máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M1",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M1",
+   "frase": "p3-preco",
+   "divergencia": 0,
+   "ouvido": "Custa três reais e cinquenta centavos e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M1",
+   "frase": "p4-conversa",
+   "divergencia": 0.077,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essas juntas, certo?",
+   "divergenciaJusta": 0.077
+  },
+  {
+   "voz": "M2",
+   "frase": "p1-clima",
+   "divergencia": 0.235,
+   "ouvido": "Em São Paulo, 17 graus celsius agora, céu limpo. Amanhã, máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M2",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M2",
+   "frase": "p3-preco",
+   "divergencia": 0,
+   "ouvido": "Custa três reais e cinquenta centavos, e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M2",
+   "frase": "p4-conversa",
+   "divergencia": 0.077,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essa junta, certo?",
+   "divergenciaJusta": 0.077
+  },
+  {
+   "voz": "M3",
+   "frase": "p1-clima",
+   "divergencia": 0.235,
+   "ouvido": "Em São Paulo, 17 graus celsius agora, céu limpo. Amanhã máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M3",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M3",
+   "frase": "p3-preco",
+   "divergencia": 0,
+   "ouvido": "Custa três reais e cinquenta centavos e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M3",
+   "frase": "p4-conversa",
+   "divergencia": 0,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essa juntas, certo?",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M4",
+   "frase": "p1-clima",
+   "divergencia": 0.176,
+   "ouvido": "Em São Paulo, dezessete graus celsius agora, céu limpo. Amanhã, máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M4",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M4",
+   "frase": "p3-preco",
+   "divergencia": 0,
+   "ouvido": "Custa três reais e cinquenta centavos e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M4",
+   "frase": "p4-conversa",
+   "divergencia": 0,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essa juntas, certo?",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M5",
+   "frase": "p1-clima",
+   "divergencia": 0.235,
+   "ouvido": "Em São Paulo, 17 graus celsius agora, céu limpo. Amanhã máxima de 22 graus celsius.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M5",
+   "frase": "p2-hora",
+   "divergencia": 0,
+   "ouvido": "Agora são vinte horas e quatorze minutos.",
+   "divergenciaJusta": 0
+  },
+  {
+   "voz": "M5",
+   "frase": "p3-preco",
+   "divergencia": 0.056,
+   "ouvido": "Custa três reais e cinta centavos e o total fica em mil duzentos e trinta e quatro reais.",
+   "divergenciaJusta": 0.056
+  },
+  {
+   "voz": "M5",
+   "frase": "p4-conversa",
+   "divergencia": 0.077,
+   "ouvido": "Entendi. Você quer que eu considere a fala anterior e essas juntas, certo?",
+   "divergenciaJusta": 0.077
+  }
+ ],
+ "ranking_media_max": [
+  [
+   "F5",
+   0.044,
+   0.176
+  ],
+  [
+   "M4",
+   0.044,
+   0.176
+  ],
+  [
+   "F2",
+   0.059,
+   0.235
+  ],
+  [
+   "F3",
+   0.059,
+   0.235
+  ],
+  [
+   "M3",
+   0.059,
+   0.235
+  ],
+  [
+   "F4",
+   0.063,
+   0.176
+  ],
+  [
+   "F1",
+   0.078,
+   0.235
+  ],
+  [
+   "M1",
+   0.078,
+   0.235
+  ],
+  [
+   "M2",
+   0.078,
+   0.235
+  ],
+  [
+   "M5",
+   0.092,
+   0.235
+  ]
+ ],
+ "ranking_justo_pos_dobra_numerica": [
+  [
+   "F2",
+   0,
+   0
+  ],
+  [
+   "F3",
+   0,
+   0
+  ],
+  [
+   "F5",
+   0,
+   0
+  ],
+  [
+   "M3",
+   0,
+   0
+  ],
+  [
+   "M4",
+   0,
+   0
+  ],
+  [
+   "F1",
+   0.019,
+   0.077
+  ],
+  [
+   "F4",
+   0.019,
+   0.077
+  ],
+  [
+   "M1",
+   0.019,
+   0.077
+  ],
+  [
+   "M2",
+   0.019,
+   0.077
+  ],
+  [
+   "M5",
+   0.033,
+   0.077
+  ]
+ ]
+}

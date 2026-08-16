@@ -67,3 +67,17 @@ eval/reports/*
 !eval/reports/exp-0026-blind-order-smoke-v0.1.json
 coverage/
 tmp/
+
+# Worktrees de sessão nunca entram no repo
+.claude/
+.venv-*/
+.venv
+.venv-parakeet
+node_modules
+.venv-tts
+.venv-obs
+
+# Gravações do observador de experiência: dados humanos, SEMPRE locais
+# (padrões com e sem barra — dir-only não cobre symlinks, lição paga 2×)
+var/
+var

@@ -164,9 +164,15 @@ def create_parakeet_transcriber(args):
     )
 
     model_started = time.perf_counter()
+    # fp32 = modelo sem quantização (onnx_asr espera None nesse caso)
+    quantization = (
+        None
+        if args.compute_type in ("fp32", "float32", "none")
+        else args.compute_type
+    )
     model = onnx_asr.load_model(
         args.model,
-        quantization=args.compute_type,
+        quantization=quantization,
         sess_options=session_options,
         providers=["CPUExecutionProvider"],
     )

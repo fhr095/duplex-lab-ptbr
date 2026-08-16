@@ -1,0 +1,71 @@
+{
+ "resumo": {
+  "n": 12,
+  "media": 0.71,
+  "p50": 0.647,
+  "max": 1.5,
+  "ruins_acima_0_5": 9
+ },
+ "resultados": [
+  {
+   "id": "test/CORAL/515_CO_bfammn26",
+   "tiny": "Eu sou católica, trabalho na comunidade na paróque, né, de venda nova,  sentanto, em venda nova, trabalho na relação à crise mática,  e tem um grupo de evangelização que a gente ia fazer no condomil que eu morro,  e fiquei devolto nascentas graças, né.",
+   "divergencia": 0.438
+  },
+  {
+   "id": "test/NURC_RE/NURC_RE_EF/NURC_RE_EF_332/143276_nurc_",
+   "tiny": "Igual da...",
+   "divergencia": 1.0
+  },
+  {
+   "id": "test/sp/48796_sp_",
+   "tiny": "Messe desse pastel e no sops.",
+   "divergencia": 0.714
+  },
+  {
+   "id": "test/sp/47827_sp_",
+   "tiny": "Não, não, não, não.",
+   "divergencia": 1.333
+  },
+  {
+   "id": "test/Ted_part1/aETOz3IGfG0-0121",
+   "tiny": "de que? de que a sociedade e passar a gente vem da ele?  passar a gente vem da algenda?",
+   "divergencia": 0.625
+  },
+  {
+   "id": "test/alip/80375_alip_",
+   "tiny": "que nós estamos em lá, até vina lá.",
+   "divergencia": 0.625
+  },
+  {
+   "id": "test/CORAL/15752_CO_bfammn12",
+   "tiny": "E aí, vai, vai, vai, vai!",
+   "divergencia": 0.857
+  },
+  {
+   "id": "test/NURC_RE/NURC_RE_EF/NURC_RE_EF_332/142911_nurc_",
+   "tiny": "e o modo de...",
+   "divergencia": 0.0
+  },
+  {
+   "id": "test/sp/71194_sp_",
+   "tiny": "Não, não é isso.",
+   "divergencia": 1.5
+  },
+  {
+   "id": "test/Ted_part1/A0dfeodJL8Q-0015",
+   "tiny": "que se real nessa década que a gente vive.  Eles criVeu isso.  Educação, é feita.",
+   "divergencia": 0.2
+  },
+  {
+   "id": "test/alip/9890_alip_",
+   "tiny": "e estou começando muito feba ter um escondor.",
+   "divergencia": 0.583
+  },
+  {
+   "id": "test/Ted_part1/aETOz3IGfG0-0087",
+   "tiny": "Já vim geniago de um tento que não tem essa mesma pretenda, como é a pretenda?",
+   "divergencia": 0.647
+  }
+ ]
+}

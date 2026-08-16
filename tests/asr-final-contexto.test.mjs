@@ -1,0 +1,182 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import { IncrementalAsrSession } from "../src/asr/incremental-session.mjs";
+
+// Ciclo 3 do PDCA (fala rápida): fragmentos de continuação decodificados
+// sem contexto alucinavam idioma ("…qual o seu nome?" em 1 s → "Also
+// nun."). Com finalContexto, o PCM do final anterior é prepended SÓ no
+// decode do final e o prefixo sobreposto sai do texto.
+
+function workerFake(respostas, registros) {
+  return {
+    start: async () => ({}),
+    close: async () => {},
+    transcribe: async (pedido) => {
+      registros.push(pedido);
+      return {
+        engine: "fake",
+        text: respostas.shift() ?? "",
+        elapsedMs: 1,
+        segments: []
+      };
+    }
+  };
+}
+
+function sessaoComContexto({ contexto, respostaFinal, registros }) {
+  return new IncrementalAsrSession({
+    id: "teste-contexto",
+    partialWorker: workerFake([], []),
+    finalWorker: workerFake([respostaFinal], registros),
+    initialAudioMs: 20,
+    stepAudioMs: 20,
+    finalContexto: contexto
+  });
+}
+
+const FRAGMENTO = Buffer.alloc(16_000); // 500 ms de PCM16 @16 kHz
+const CONTEXTO_PCM = Buffer.alloc(80_000, 1); // 2,5 s
+
+test("final decodifica com o PCM do contexto prepended e remove o " +
+  "prefixo sobreposto", async () => {
+  const registros = [];
+  const sessao = sessaoComContexto({
+    contexto: { pcm: CONTEXTO_PCM, texto: "Tá me ouvindo?" },
+    respostaFinal: "tá me ouvindo qual o seu nome?",
+    registros
+  });
+  sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+  const final = await sessao.finish();
+  assert.equal(
+    registros.at(-1).pcm.length,
+    CONTEXTO_PCM.length + FRAGMENTO.length
+  );
+  assert.equal(final.text, "qual o seu nome?");
+});
+
+test("sem sobreposição o texto fica intacto", async () => {
+  const registros = [];
+  const sessao = sessaoComContexto({
+    contexto: { pcm: CONTEXTO_PCM, texto: "Tá me ouvindo?" },
+    respostaFinal: "Qual o seu nome?",
+    registros
+  });
+  sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+  const final = await sessao.finish();
+  assert.equal(final.text, "Qual o seu nome?");
+});
+
+test("sobreposição total mantém o texto integral (fallback)", async () => {
+  const registros = [];
+  const sessao = sessaoComContexto({
+    contexto: { pcm: CONTEXTO_PCM, texto: "tá me ouvindo" },
+    respostaFinal: "Tá me ouvindo?",
+    registros
+  });
+  sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+  const final = await sessao.finish();
+  assert.equal(final.text, "Tá me ouvindo?");
+});
+
+test("sobreposição ≥4 palavras tolera 1 divergência (strip fuzzy)",
+  async () => {
+    const registros = [];
+    const sessao = sessaoComContexto({
+      contexto: {
+        pcm: CONTEXTO_PCM,
+        texto: "tô vendo que as transcrições ficam erradas"
+      },
+      respostaFinal:
+        "que as transcrições ficam ruins mas ao final dá certo",
+      registros
+    });
+    sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+    const final = await sessao.finish();
+    assert.equal(final.text, "mas ao final dá certo");
+  });
+
+test("enunciado longo (>2 s) NÃO recebe contexto nem strip", async () => {
+  const registros = [];
+  const sessao = sessaoComContexto({
+    contexto: { pcm: CONTEXTO_PCM, texto: "tá me ouvindo" },
+    respostaFinal: "Tá me ouvindo? Quero falar de outra coisa agora.",
+    registros
+  });
+  const longo = Buffer.alloc(3 * 16_000 * 2); // 3 s
+  sessao.pushPcm(longo, { sampleStart: 0 });
+  const final = await sessao.finish();
+  assert.equal(registros.at(-1).pcm.length, longo.length);
+  assert.equal(
+    final.text,
+    "Tá me ouvindo? Quero falar de outra coisa agora."
+  );
+});
+
+test("token com hífen não desalinha o corte (auditoria R2)", async () => {
+  const registros = [];
+  const sessao = sessaoComContexto({
+    contexto: {
+      pcm: CONTEXTO_PCM,
+      texto: "vou pegar o guarda chuva azul"
+    },
+    respostaFinal: "guarda-chuva azul é bonito",
+    registros
+  });
+  sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+  const final = await sessao.finish();
+  // "guarda-chuva"(2 palavras)+"azul"(1) cobrem o casamento de 3; o "é"
+  // não pode ser comido
+  assert.equal(final.text, "é bonito");
+});
+
+test("repetição legítima sem casamento fica intacta (auditoria R4)",
+  async () => {
+    const registros = [];
+    const sessao = sessaoComContexto({
+      contexto: { pcm: CONTEXTO_PCM, texto: "Also nun." },
+      respostaFinal: "Você está me ouvindo agora?",
+      registros
+    });
+    sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+    const final = await sessao.finish();
+    assert.equal(final.text, "Você está me ouvindo agora?");
+  });
+
+test("teto de duração FINALIZA o enunciado em vez de cancelar " +
+  "(bug da surdez, sessão 2e22)", async () => {
+  const registros = [];
+  const sessao = new IncrementalAsrSession({
+    id: "teste-teto",
+    partialWorker: workerFake([], []),
+    finalWorker: workerFake(["Primeiros trinta segundos."], registros),
+    initialAudioMs: 20,
+    stepAudioMs: 20,
+    maxTurnMs: 1_000
+  });
+  const bloco = Buffer.alloc(16_000); // 500 ms
+  sessao.pushPcm(bloco, { sampleStart: 0 });
+  sessao.pushPcm(bloco, { sampleStart: 8_000 });
+  // excede o teto de 1 s → auto-finish, sem exceção
+  sessao.pushPcm(bloco, { sampleStart: 16_000 });
+  assert.equal(sessao.state, "finishing");
+  // frames seguintes caem em silêncio, sem exceção
+  sessao.pushPcm(bloco, { sampleStart: 24_000 });
+  const final = await sessao.finish();
+  assert.equal(final.text, "Primeiros trinta segundos.");
+});
+
+test("sem finalContexto nada muda no pedido ao worker", async () => {
+  const registros = [];
+  const sessao = new IncrementalAsrSession({
+    id: "teste-sem-contexto",
+    partialWorker: workerFake([], []),
+    finalWorker: workerFake(["Oi, tudo bem?"], registros),
+    initialAudioMs: 20,
+    stepAudioMs: 20
+  });
+  sessao.pushPcm(FRAGMENTO, { sampleStart: 0 });
+  const final = await sessao.finish();
+  assert.equal(registros.at(-1).pcm.length, FRAGMENTO.length);
+  assert.equal(final.text, "Oi, tudo bem?");
+});

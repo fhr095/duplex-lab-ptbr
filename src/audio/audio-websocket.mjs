@@ -67,11 +67,18 @@ export function attachAudioWebSocket(options) {
     let flushing = false;
     let processedFramesSinceTelemetry = 0;
     const pendingFlushes = new Map();
+    // Observador (OBSERVER=1): grava os frames PCM como chegam e espelha
+    // todo evento enviado ao cliente — tee passivo, nunca altera o fluxo.
+    const gravador = options.observador?.iniciarConexaoWs() ?? null;
+    const enviar = (value) => {
+      gravador?.evento(value);
+      safeSend(socket, value);
+    };
     const pipeline = new FramePipelineTelemetry({
       maxDepth: options.maxPipelineFrames ?? 16
     });
     const vadShadow = options.vadShadowRuntime?.createStream({
-      onEvent: (event) => safeSend(socket, event)
+      onEvent: (event) => enviar(event)
     }) ?? null;
     const vadController =
       options.vadControlRuntime?.createController() ?? null;
@@ -87,16 +94,17 @@ export function attachAudioWebSocket(options) {
       vadConfig: options.vadConfig,
       vad: vadController,
       mergeWindowMs: options.mergeWindowMs,
-      onEvent: (event) => safeSend(socket, event)
+      finalContextMs: options.finalContextMs,
+      onEvent: (event) => enviar(event)
     });
     const emitTelemetry = () => {
       if (vadController) {
-        safeSend(socket, {
+        enviar({
           type: "vad.control.telemetry",
           snapshot: vadController.snapshot
         });
       }
-      safeSend(socket, {
+      enviar({
         type: "audio.pipeline.telemetry",
         snapshot: pipeline.snapshot()
       });
@@ -132,7 +140,7 @@ export function attachAudioWebSocket(options) {
             (firstReceivedSampleStart ?? 0) +
             Math.floor(coveredSamples / 512) * 512;
           if (!transportContiguous) {
-            safeSend(socket, {
+            enviar({
               type: "audio.error",
               code: "audio_flush_non_contiguous",
               message:
@@ -142,7 +150,7 @@ export function attachAudioWebSocket(options) {
             pendingFlushes.delete(request.requestId);
             continue;
           }
-          safeSend(socket, {
+          enviar({
             type: "audio.flushed",
             requestId: request.requestId,
             watermark: {
@@ -172,7 +180,7 @@ export function attachAudioWebSocket(options) {
         }
       })().catch((error) => {
         for (const request of ready) {
-          safeSend(socket, {
+          enviar({
             type: "audio.error",
             code: error.code ?? "audio_flush_error",
             message: error.message,
@@ -186,7 +194,7 @@ export function attachAudioWebSocket(options) {
       });
     };
 
-    safeSend(socket, {
+    enviar({
       type: "audio.ready",
       protocol: PCM_WIRE_PROTOCOL,
       vadShadow: options.vadShadowRuntime?.health ?? {
@@ -207,7 +215,7 @@ export function attachAudioWebSocket(options) {
           const message = JSON.parse(data.toString("utf8"));
           if (message.type === "audio.start") {
             started = true;
-            safeSend(socket, {
+            enviar({
               type: "audio.started",
               sampleRate: PCM_WIRE_PROTOCOL.sampleRate
             });
@@ -217,7 +225,7 @@ export function attachAudioWebSocket(options) {
             void frameProcessing.finally(() =>
               session.close("client-stop")
             );
-            safeSend(socket, { type: "audio.stopped" });
+            enviar({ type: "audio.stopped" });
             return;
           }
           if (message.type === "audio.flush") {
@@ -247,6 +255,15 @@ export function attachAudioWebSocket(options) {
           throw new Error("audio.start precisa preceder frames PCM");
         }
         const decoded = decodePcmFrame(data);
+        gravador?.quadroMic(
+          decoded.sequence,
+          decoded.sampleStart,
+          Buffer.from(
+            decoded.pcmBytes.buffer,
+            decoded.pcmBytes.byteOffset,
+            decoded.pcmBytes.byteLength
+          )
+        );
         const frame = {
           sequence: decoded.sequence,
           sampleStart: decoded.sampleStart,
@@ -267,16 +284,16 @@ export function attachAudioWebSocket(options) {
         } catch (error) {
           const pipelineSnapshot = pipeline.snapshot();
           if (vadController) {
-            safeSend(socket, {
+            enviar({
               type: "vad.control.telemetry",
               snapshot: vadController.snapshot
             });
           }
-          safeSend(socket, {
+          enviar({
             type: "audio.pipeline.telemetry",
             snapshot: pipelineSnapshot
           });
-          safeSend(socket, {
+          enviar({
             type: "audio.error",
             code: error.code ?? "audio_pipeline_error",
             message: error.message,
@@ -329,7 +346,7 @@ export function attachAudioWebSocket(options) {
           })
           .catch((error) => {
             emitTelemetry();
-            safeSend(socket, {
+            enviar({
               type: "audio.error",
               code: error.code ?? "audio_processing_error",
               message: error.message
@@ -337,7 +354,7 @@ export function attachAudioWebSocket(options) {
           });
         drainFlushes();
       } catch (error) {
-        safeSend(socket, {
+        enviar({
           type: "audio.error",
           code: error.code ?? "audio_protocol_error",
           message: error.message
@@ -349,11 +366,13 @@ export function attachAudioWebSocket(options) {
       pendingFlushes.clear();
       vadShadow?.close("socket-closed");
       session.close("socket-closed");
+      gravador?.encerrar("socket-closed");
     });
     socket.once("error", () => {
       pendingFlushes.clear();
       vadShadow?.close("socket-error");
       session.close("socket-error");
+      gravador?.encerrar("socket-error");
     });
   });
 

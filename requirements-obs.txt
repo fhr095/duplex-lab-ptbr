@@ -1,0 +1,4 @@
+# Observador de experiência — retranscrição forte offline (CPU int8).
+faster-whisper==1.1.1
+# faster-whisper 1.1.1 usa requests sem declará-lo no pacote
+requests==2.32.4

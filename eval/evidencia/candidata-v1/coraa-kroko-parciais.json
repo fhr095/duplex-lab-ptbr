@@ -1,0 +1,95 @@
+{
+ "resumo": {
+  "n": 12,
+  "media": 0.387,
+  "p50": 0.353,
+  "max": 0.857,
+  "ruins_acima_0_5": 3
+ },
+ "resultados": [
+  {
+   "id": "test/CORAL/515_CO_bfammn26",
+   "categoria": "filled-pause",
+   "referencia": "eh eu sou católica trabalho na comunida na paróquia né de venda nova santo antônio venda nova trabalho na renovação carismática e tenho um gr um grupo de evangelização que a gente faz lá no condomínio que eu moro e fiquei devota de nossa senhora das graça né",
+   "kroko": "Eu sou católica, trabalho na paróquia, de Venda Nova, Santo Antônio Venda Nova, trabalho na renovação crismática e tenho um grupo de evangelização que a gente faz no condomínio que eu moro e fiquei devoto na senta das graças",
+   "divergencia": 0.292
+  },
+  {
+   "id": "test/NURC_RE/NURC_RE_EF/NURC_RE_EF_332/143276_nurc_",
+   "categoria": "filled-pause",
+   "referencia": "é e guardar",
+   "kroko": "E guardar",
+   "divergencia": 0.333
+  },
+  {
+   "id": "test/sp/48796_sp_",
+   "categoria": "noise",
+   "referencia": "me vê dois pastel e um chopes",
+   "kroko": "Mevi dois pastel e um chops",
+   "divergencia": 0.429
+  },
+  {
+   "id": "test/sp/47827_sp_",
+   "categoria": "second-voice",
+   "referencia": "legal gostava também",
+   "kroko": "Não cultava também",
+   "divergencia": 0.667
+  },
+  {
+   "id": "test/Ted_part1/aETOz3IGfG0-0121",
+   "categoria": "spontaneous-clean",
+   "referencia": "de que de que a sociedade passasse a respeitar ele passasse a respeitar o jeito que",
+   "kroko": "De que, de que a sociedade passasse a respeitar ele, passasse a respeitar o jeito que",
+   "divergencia": 0.0
+  },
+  {
+   "id": "test/alip/80375_alip_",
+   "categoria": "spontaneous-clean",
+   "referencia": "que nós tá morando lá perto de granada",
+   "kroko": "Que nós estar morando na pernalinada",
+   "divergencia": 0.625
+  },
+  {
+   "id": "test/CORAL/15752_CO_bfammn12",
+   "categoria": "hesitation",
+   "referencia": "e é igual eu já te falei",
+   "kroko": "E agora a gente falho",
+   "divergencia": 0.857
+  },
+  {
+   "id": "test/NURC_RE/NURC_RE_EF/NURC_RE_EF_332/142911_nurc_",
+   "categoria": "spontaneous-clean",
+   "referencia": "e o modo de",
+   "kroko": "E o modo",
+   "divergencia": 0.25
+  },
+  {
+   "id": "test/sp/71194_sp_",
+   "categoria": "spontaneous-clean",
+   "referencia": "não eu",
+   "kroko": "Não",
+   "divergencia": 0.5
+  },
+  {
+   "id": "test/Ted_part1/A0dfeodJL8Q-0015",
+   "categoria": "spontaneous-clean",
+   "referencia": "que ser real nessa década que a gente vive ele escreveu isso educação é feita",
+   "kroko": "Que ser real nessa década que a gente vive, ele escreveu isso, educação é feita",
+   "divergencia": 0.0
+  },
+  {
+   "id": "test/alip/9890_alip_",
+   "categoria": "spontaneous-clean",
+   "referencia": "eh e tão começando muito cedo a ter um uso com droga",
+   "kroko": "Estão começando muito cedo a ter um uso com dro.",
+   "divergencia": 0.333
+  },
+  {
+   "id": "test/Ted_part1/aETOz3IGfG0-0087",
+   "categoria": "spontaneous-clean",
+   "referencia": "jovens negros não tem é que não tem essa memi mesma oportunidade como é que eles vão",
+   "kroko": "Jovens negros que não tem essa mesma oportunidade, como é que",
+   "divergencia": 0.353
+  }
+ ]
+}

@@ -32,6 +32,37 @@ function pcmRms(pcm) {
   return Math.sqrt(sumSquares / samples);
 }
 
+// Heurística barata de idioma para o portão da fala retida: compara
+// palavras funcionais PT × EN. Não é detector geral — só barra o modo de
+// falha conhecido (decode longo derivando para inglês).
+const PALAVRAS_PT = new Set([
+  "que", "não", "de", "da", "do", "para", "pra", "uma", "um", "com",
+  "você", "voce", "eu", "ele", "ela", "mas", "por", "mais", "quando",
+  "isso", "está", "tá", "falar", "fala", "então", "aqui", "agora"
+]);
+const PALAVRAS_EN = new Set([
+  "the", "you", "that", "not", "going", "know", "what", "this", "was",
+  "i'm", "don't", "but", "and", "to", "of", "it", "is", "for", "follow"
+]);
+function pareceTextoPtBr(texto) {
+  const palavras = texto
+    .toLocaleLowerCase("pt-BR")
+    .split(/\s+/u)
+    .map((p) => p.replaceAll(/[^\p{L}']/gu, ""))
+    .filter(Boolean);
+  let pt = 0;
+  let en = 0;
+  for (const palavra of palavras) {
+    if (PALAVRAS_PT.has(palavra)) {
+      pt += 1;
+    }
+    if (PALAVRAS_EN.has(palavra)) {
+      en += 1;
+    }
+  }
+  return pt >= en;
+}
+
 function requiredInteger(value, name) {
   if (!Number.isSafeInteger(value) || value < 0) {
     throw new TypeError(`${name} precisa ser inteiro não negativo`);
@@ -55,6 +86,15 @@ export class LiveAudioSession {
   #lastSequence = null;
   #mergeWindowMs;
   #nextTurnId = 0;
+  // Ciclo 3 do PDCA: contexto de áudio/texto do enunciado anterior para o
+  // decode do PRÓXIMO final — fragmentos de continuação decodificados sem
+  // contexto alucinavam idioma ("…qual o seu nome?" → "Also nun.").
+  #finalContextMs;
+  #contextoFinalAnterior = null;
+  // Texto resgatado de um turno que estourou o teto de duração: é
+  // concatenado ao PRÓXIMO final para o cérebro responder ao pensamento
+  // inteiro de uma vez (em vez de ignorar os primeiros 30 s).
+  #falaRetida = null;
   #pendingFinals = new Set();
   #prefinalPolicy;
   #preRoll = [];
@@ -81,6 +121,7 @@ export class LiveAudioSession {
     this.#minimumBackchannelSpeechMs =
       options.minimumBackchannelSpeechMs ?? 900;
     this.#mergeWindowMs = options.mergeWindowMs ?? 1_400;
+    this.#finalContextMs = options.finalContextMs ?? 0;
     this.#finalCommitGraceMs = options.finalCommitGraceMs ?? 0;
     this.#effectfulFinalCommitGraceMs =
       options.effectfulFinalCommitGraceMs ??
@@ -219,10 +260,39 @@ export class LiveAudioSession {
     if (started) {
       this.#startTurn(started);
     } else if (this.#turn) {
-      this.#turn.asr.pushPcm(frame.pcm, {
-        capturedAtMs: atMs,
-        sampleStart: frame.sampleStart
-      });
+      try {
+        this.#turn.asr.pushPcm(frame.pcm, {
+          capturedAtMs: atMs,
+          sampleStart: frame.sampleStart
+        });
+      } catch (error) {
+        // Sessão de enunciado morta não pode ensurdecer o pipeline
+        // (sessão 2e22: 2.178 erros em loop e surdez até o fim).
+        // Derruba o turno; o próximo onset de fala cria um novo.
+        this.#emit("transcript.error", atMs, {
+          turnId: this.#turn.id,
+          code: "turn_audio_rejected",
+          message: error.message
+        });
+        // Resgata o que a sessão chegou a finalizar (teto de duração):
+        // o texto fica retido e é concatenado ao próximo final.
+        const asrMorta = this.#turn.asr;
+        void Promise.resolve()
+          .then(() => asrMorta.finish())
+          .then((finalResgatado) => {
+            const texto = String(finalResgatado?.text ?? "").trim();
+            // Portão de idioma: o decode de 30 s às vezes deriva para
+            // inglês (sessão f064: "I told you that I follow Hop Fool")
+            // — reter e concatenar lixo envenena a conversa inteira;
+            // melhor descartar o começo do que entregar garbage.
+            if (texto && pareceTextoPtBr(texto)) {
+              this.#falaRetida = { texto, em: performance.now() };
+            }
+          })
+          .catch(() => {});
+        this.#turn.cancelled = true;
+        this.#turn = null;
+      }
     }
 
     for (const event of vadEvents) {
@@ -236,6 +306,15 @@ export class LiveAudioSession {
           event.atMs,
           "speech-paused"
         );
+      } else if (
+        event.type === "user.speech.resumed" &&
+        this.#turn === null
+      ) {
+        // Fala ativa SEM turno (ex.: turno derrubado pela recuperação de
+        // sessão morta): o VAD não volta a idle sozinho e nunca mais
+        // emitiria "started" — retomada órfã vira onset de turno novo
+        // (sessão bd30: surdez de 85 s com VAD enxergando tudo).
+        this.#startTurn(event);
       } else if (event.type === "user.speech.resumed" && this.#turn) {
         const invalidatedBoundary = this.#turn.pauseSampleStart;
         this.#turn.pauseAtMs = null;
@@ -331,8 +410,20 @@ export class LiveAudioSession {
       previousTurn,
       startedAtMs: vadEvent.atMs
     };
+    // Auditoria R5: contexto só vale para CONTINUAÇÃO. O padrão real do
+    // defeito é "pergunta → resposta do assistente (2-8 s) → emenda":
+    // 5 s negava os casos-bandeira (gap observado 4,3-6,5 s no replay);
+    // 15 s cobre o envelope e ainda barra contexto de outro momento da
+    // conversa (silêncio longo, turno cancelado antigo).
+    const contextoValido =
+      this.#finalContextMs > 0 &&
+      this.#contextoFinalAnterior !== null &&
+      vadEvent.atMs - this.#contextoFinalAnterior.em <= 15_000;
     turn.asr = this.#asrRuntime.createSession({
       id,
+      finalContexto: contextoValido
+        ? this.#contextoFinalAnterior
+        : null,
       onEvent: (event) => {
         if (this.#closed || turn.cancelled) {
           return;
@@ -419,6 +510,28 @@ export class LiveAudioSession {
         acousticFixed ? turn.pauseSampleStart : null,
       audioSnapshot: turn.asr.preparedFinalSnapshot ?? null
     });
+    // Challenger exp/caminho-ouro: publica o texto da final preparada assim
+    // que o engine final resolve, ainda durante a janela de silêncio. Permite
+    // especular a resposta com texto de qualidade final antes do endpoint.
+    // Emite mesmo após o endpoint: a final publicada ainda espera o commit
+    // grace (220–1100 ms), que continua sendo antecedência aproveitável.
+    void preparation.then((ready) => {
+      if (
+        this.#closed ||
+        turn.cancelled ||
+        turn.emitted ||
+        !ready?.ok ||
+        !ready.result?.text
+      ) {
+        return;
+      }
+      this.#emit("endpoint.prefinal.text", performance.now(), {
+        turnId: turn.id,
+        text: ready.result.text,
+        inferenceMs: ready.result.inferenceMs ?? null,
+        trigger
+      });
+    });
     return true;
   }
 
@@ -490,6 +603,21 @@ export class LiveAudioSession {
         criticalInstability: reconciliation.criticalInstability ?? null
       };
       turn.finalPcm = turn.asr.finalPcmSnapshot ?? null;
+      if (
+        this.#finalContextMs > 0 &&
+        turn.finalPcm &&
+        String(final.text ?? "").trim()
+      ) {
+        const bytes = Math.min(
+          turn.finalPcm.length,
+          Math.round((this.#finalContextMs / 1_000) * 16_000) * 2
+        );
+        this.#contextoFinalAnterior = {
+          pcm: turn.finalPcm.subarray(turn.finalPcm.length - bytes),
+          texto: final.text,
+          em: performance.now()
+        };
+      }
       const previous = turn.previousTurn;
       if (!previous?.finalPromise) {
         turn.resolvedFinal = final;
@@ -604,9 +732,18 @@ export class LiveAudioSession {
           });
           return;
         }
+        // Fala retida de um monólogo estourado: concatena ao final da
+        // cauda para responder ao pensamento inteiro (validade 30 s).
+        const retida =
+          this.#falaRetida &&
+          performance.now() - this.#falaRetida.em <= 30_000
+            ? this.#falaRetida.texto
+            : null;
+        this.#falaRetida = null;
         this.#emit("transcript.final", performance.now(), {
           turnId: turn.id,
-          text: final.text,
+          text: retida ? `${retida} ${final.text}` : final.text,
+          falaRetidaConcatenada: Boolean(retida),
           inferenceMs: final.inferenceMs,
           finalizationMs: final.finalizationMs,
           engine: final.engine ?? null,

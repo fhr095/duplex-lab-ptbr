@@ -1,5 +1,9 @@
+import { resolve } from "node:path";
+
 import { PersistentIncrementalAsr } from "./incremental-session.mjs";
 import { PersistentAsrWorker } from "./worker-client.mjs";
+
+const PROJECT_ROOT = resolve(import.meta.dirname, "../..");
 
 export function resolveAsrWarmupDurations(options = {}) {
   return {
@@ -10,26 +14,62 @@ export function resolveAsrWarmupDurations(options = {}) {
   };
 }
 
-export function createCpuStreamingAsr(options = {}) {
-  const warmup = resolveAsrWarmupDurations(options);
-  const partialWorker = new PersistentAsrWorker({
-    cacheDir: options.cacheDir,
-    computeType: options.computeType ?? "int8",
-    engine: options.partialEngine ?? "whisper",
-    model: options.partialModel ?? options.model ?? "tiny",
+// Parciais com Kroko (zipformer2 transducer STREAMING): worker próprio que
+// fala o mesmo protocolo JSONL, decodificação incremental de verdade (só o
+// delta entra no modelo). Substitui o whisper-tiny que produzia 20-53% de
+// parciais-lixo nas sessões reais (relatório var/observador/testes/kroko/).
+function createKrokoPartialWorker(options, warmup) {
+  return new PersistentAsrWorker({
+    command: options.krokoPython ??
+      resolve(PROJECT_ROOT, ".venv-teste-kroko/bin/python"),
+    workerArgs: [
+      resolve(PROJECT_ROOT, "scripts/asr-kroko-worker.py"),
+      "--model-dir",
+      options.krokoModelDir ??
+        resolve(
+          PROJECT_ROOT,
+          "var/observador/testes/kroko/modelos/pt-64L"
+        ),
+      "--threads",
+      String(options.partialThreads ?? 1),
+      "--warmup-ms",
+      String(warmup.partial ?? 500)
+    ],
     requestTimeoutMs: options.requestTimeoutMs,
     startTimeoutMs: options.startTimeoutMs,
-    threads: options.partialThreads ?? 1,
-    workers: 1,
-    warmupMs: warmup.partial
+    spawnProcess: options.spawnProcess
   });
+}
+
+export function createCpuStreamingAsr(options = {}) {
+  const warmup = resolveAsrWarmupDurations(options);
+  const partialWorker = options.partialEngine === "kroko"
+    ? createKrokoPartialWorker(options, warmup)
+    : new PersistentAsrWorker({
+      cacheDir: options.cacheDir,
+      computeType: options.computeType ?? "int8",
+      engine: options.partialEngine ?? "whisper",
+      model: options.partialModel ?? options.model ?? "tiny",
+      requestTimeoutMs: options.requestTimeoutMs,
+      startTimeoutMs: options.startTimeoutMs,
+      spawnProcess: options.spawnProcess,
+      threads: options.partialThreads ?? 1,
+      workers: 1,
+      warmupMs: warmup.partial
+    });
   const finalWorker = new PersistentAsrWorker({
     cacheDir: options.cacheDir,
-    computeType: options.computeType ?? "int8",
+    // PDCA ASR ciclo 1 (2026-08-14): no CORAA (verdade humana) o final
+    // parakeet fp32 caiu de 0,452→0,322 de divergência média (p50
+    // 0,294→0,167) por +135 ms de latência — a quantização int8 era uma
+    // causa dominante do "texto errado com confiança" em PT espontâneo.
+    computeType:
+      options.finalComputeType ?? options.computeType ?? "int8",
     engine: options.finalEngine ?? "whisper",
     model: options.finalModel ?? options.model ?? "base",
     requestTimeoutMs: options.requestTimeoutMs,
     startTimeoutMs: options.startTimeoutMs,
+    spawnProcess: options.spawnProcess,
     threads: options.finalThreads ?? 3,
     workers: 1,
     warmupMs: warmup.final

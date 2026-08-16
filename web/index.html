@@ -19,7 +19,8 @@
           <h1>Duplex Lab <span>PT-BR</span></h1>
           <p class="lede">
             Fale naturalmente, interrompa a resposta e acompanhe os eventos que
-            formam a conversa.
+            formam a conversa. A voz do assistente é sintética, gerada por
+            máquina.
           </p>
         </div>
         <div class="status-card">
@@ -37,6 +38,10 @@
         <button class="ghost" id="demoButton">
           Ouvir resposta longa para interromper
         </button>
+        <label class="voice-picker" id="voicePicker" hidden>
+          <span>Voz</span>
+          <select id="voiceSelect" aria-label="Voz do assistente"></select>
+        </label>
       </section>
 
       <section class="conversation" aria-live="polite">

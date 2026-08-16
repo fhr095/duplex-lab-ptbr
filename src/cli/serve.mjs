@@ -24,12 +24,28 @@ import {
   prewarmWindowsSpeech,
   synthesizeWindowsSpeech
 } from "../tts/windows-system-tts.mjs";
+import { normalizarTextoParaFala } from "../tts/normalizar-texto-pt.mjs";
+import {
+  arbitrateTurn,
+  createFastPathMemory,
+  FAST_PATH_VERSION
+} from "../interaction/fast-path.mjs";
+import {
+  extractPtBrCurrencyAmounts
+} from "../interaction/ptbr-number.mjs";
+import {
+  fetchWeatherSummary,
+  weatherIntent
+} from "../tools/weather.mjs";
 import {
   INTERACTION_KERNEL_VERSION
 } from "../interaction/interaction-kernel.mjs";
 import {
   createTurnCoordinator
 } from "../interaction/turn-coordinator.mjs";
+import {
+  createSessionRecorder
+} from "../observer/session-recorder.mjs";
 
 await loadEnvFile();
 
@@ -56,6 +72,21 @@ const host = process.env.HOST ?? "0.0.0.0";
 const prefinalPolicy = normalizePrefinalPolicy(
   process.env.PREFINAL_POLICY
 );
+const fastPathEnabled = process.env.FAST_PATH === "1";
+const fastPathMemory = createFastPathMemory();
+// Programa de dados 1 (arbitragem textual): FASTPATH_LOG=arquivo.jsonl
+// acumula {texto, decisão, contexto} de uso real para rotulagem posterior.
+const fastPathLogPath = process.env.FASTPATH_LOG?.trim() || null;
+async function appendFastPathLog(entry) {
+  if (!fastPathLogPath) {
+    return;
+  }
+  const { appendFile } = await import("node:fs/promises");
+  await appendFile(
+    fastPathLogPath,
+    `${JSON.stringify(entry)}\n`
+  ).catch(() => {});
+}
 const endpointConfig = {
   completeSilenceMs: Number.parseInt(
     process.env.ENDPOINT_COMPLETE_MS ?? "520",
@@ -112,16 +143,31 @@ const asrFinalEngine =
   process.env.ASR_FINAL_ENGINE?.trim() || "parakeet";
 const asrPartialModel =
   process.env.ASR_PARTIAL_MODEL?.trim() || "tiny";
+// ASR_PARTIAL_ENGINE=kroko troca a perna de parciais para o transducer
+// streaming PT (modelo local em KROKO_MODEL_DIR; venv em KROKO_PYTHON).
+const asrPartialEngine =
+  process.env.ASR_PARTIAL_ENGINE?.trim() || "whisper";
 const asrFinalModel =
   process.env.ASR_FINAL_MODEL?.trim() ||
   (asrFinalEngine === "parakeet"
-    ? "nemo-parakeet-tdt-0.6b-v3"
+    // Promovido na candidata v1: TAGARELA int8 mediu 0,109 de divergência
+    // média no CORAA (verdade humana) contra 0,322 do parakeet fp32 e
+    // 0,452 do int8 genérico — além de matar o EN-drift e a crise de RAM.
+    // O v3 genérico segue disponível por env (baseline v0.3 congelada).
+    ? "calneymgp/parakeet-tdt-0.6b-v3-ptBR-TAGARELA-onnx-int8"
     : asrModel);
 const asrRuntime = asrEnabled
   ? createCpuStreamingAsr({
       finalEngine: asrFinalEngine,
       finalModel: asrFinalModel,
+      // ASR_FINAL_COMPUTE=fp32 remove a quantização SÓ da perna final
+      // (parciais tiny continuam int8) — ver PDCA ASR ciclo 1.
+      finalComputeType:
+        process.env.ASR_FINAL_COMPUTE?.trim() || undefined,
+      partialEngine: asrPartialEngine,
       partialModel: asrPartialModel,
+      krokoModelDir: process.env.KROKO_MODEL_DIR?.trim() || undefined,
+      krokoPython: process.env.KROKO_PYTHON?.trim() || undefined,
       finalThreads: Number.parseInt(
         process.env.ASR_FINAL_THREADS ?? "3",
         10
@@ -145,6 +191,13 @@ const asrRuntime = asrEnabled
         ),
         stepAudioMs: Number.parseInt(
           process.env.ASR_STEP_AUDIO_MS ?? "320",
+          10
+        ),
+        // Teto do enunciado: decodes fp32 longos estouram RAM/event-loop
+        // na máquina de 8 GB (sessão 091b: 12 s de queda de WS aos 138 s);
+        // com a concatenação de fala retida, tetos menores custam ~zero.
+        maxTurnMs: Number.parseInt(
+          process.env.ASR_MAX_TURN_MS ?? "30000",
           10
         )
       }
@@ -172,7 +225,53 @@ let asrHealth = {
   model: asrEnabled ? asrFinalModel : null
 };
 let ttsHealth = { state: "starting" };
-const ttsWarmup = prewarmWindowsSpeech().then(
+const ttsProviderEnv = process.env.TTS_PROVIDER?.trim().toLowerCase() ||
+  "windows";
+const ttsWarmup = ttsProviderEnv !== "windows"
+  ? (async () => {
+      // Health real: sem sidecar respondendo, o estado é error — nunca
+      // "ready" por suposição.
+      const sidecarUrl = process.env.TTS_SIDECAR_URL?.trim() ||
+        (ttsProviderEnv === "pocket"
+          ? "http://127.0.0.1:8321/tts"
+          : ttsProviderEnv === "supertonic"
+            ? "http://127.0.0.1:8341"
+            : "http://127.0.0.1:8331");
+      const healthUrl = ttsProviderEnv === "pocket"
+        ? sidecarUrl.replace(/\/tts\/?$/u, "/health")
+        : sidecarUrl;
+      try {
+        const probe = await fetch(healthUrl, {
+          signal: AbortSignal.timeout(5_000)
+        });
+        if (!probe.ok) {
+          throw new Error(`sidecar retornou HTTP ${probe.status}`);
+        }
+        ttsHealth = {
+          state: "ready",
+          engine: `${ttsProviderEnv}-sidecar`,
+          voice: ttsProviderEnv === "pocket"
+            ? "rafael"
+            : ttsProviderEnv === "supertonic"
+              ? process.env.SUPERTONIC_VOICE?.trim() || "F4"
+              : "pt_BR-faber",
+          culture: "pt-BR",
+          sidecarUrl,
+          primed: false
+        };
+      } catch (error) {
+        ttsHealth = {
+          state: "error",
+          engine: `${ttsProviderEnv}-sidecar`,
+          code: "tts_sidecar_unreachable",
+          message: `${healthUrl}: ${error.message}`
+        };
+        console.error(
+          `TTS sidecar ${ttsProviderEnv} indisponível: ${error.message}`
+        );
+      }
+    })()
+  : prewarmWindowsSpeech().then(
   (status) => {
     ttsHealth = {
       state: "ready",
@@ -281,6 +380,42 @@ if (
 }
 await ttsWarmup;
 
+// Observador de experiência (OBSERVER=1): captura opt-in e local de uma
+// sessão real (mic, sínteses, eventos, beacons) para escuta perceptiva e
+// correlação técnica posteriores. Nunca altera o comportamento da engine.
+const observador = process.env.OBSERVER === "1"
+  ? await createSessionRecorder({
+      root: resolve(
+        PROJECT_ROOT,
+        process.env.OBSERVER_DIR ?? "var/observador"
+      ),
+      meta: {
+        processRunId,
+        runtimeFingerprint,
+        brain: configuredBrain.provider,
+        models: {
+          interaction: brain.interactionModel,
+          task: brain.taskModel
+        },
+        fastPathEnabled,
+        prefinalPolicy,
+        endpoint: endpointConfig,
+        finalCommitGraceMs,
+        effectfulFinalCommitGraceMs,
+        criticalFinalCommitGraceMs,
+        mergeWindowMs,
+        asr: asrHealth,
+        vadControl: vadControlHealth,
+        tts: ttsHealth
+      }
+    })
+  : null;
+if (observador) {
+  console.log(
+    `Observador ATIVO: gravando sessão em var/observador/${observador.pasta}`
+  );
+}
+
 const exp0026Enabled = process.env.EXP0026_INSTRUMENT === "1";
 const exp0026Store = exp0026Enabled
   ? await createExp0026SessionStore({
@@ -338,6 +473,7 @@ const STATIC_ROUTES = new Map([
   ],
   ["/context-relevance-shadow.mjs", "context-relevance-shadow.mjs"],
   ["/app.mjs", "app.mjs"],
+  ["/observador-cliente.mjs", "observador-cliente.mjs"],
   ["/critical-conflict.mjs", "critical-conflict.mjs"],
   ["/interaction-browser-adapter.mjs", "interaction-browser-adapter.mjs"],
   ["/local-audio-reflex.mjs", "local-audio-reflex.mjs"],
@@ -349,6 +485,7 @@ const STATIC_ROUTES = new Map([
   ["/pcm-capture.mjs", "pcm-capture.mjs"],
   ["/pcm-dsp.mjs", "pcm-dsp.mjs"],
   ["/pcm-wire.mjs", "pcm-wire.mjs"],
+  ["/speculative-turn.mjs", "speculative-turn.mjs"],
   ["/stream-utils.mjs", "stream-utils.mjs"],
   ["/training-trace-recorder.mjs", "training-trace-recorder.mjs"],
   ["/turn-taking.mjs", "turn-taking.mjs"],
@@ -430,12 +567,104 @@ function validateTurn(body) {
 async function streamTurn(request, response, body) {
   validateTurn(body);
 
-  const plan = turnCoordinator.planTurn({
+  // Estágios do challenger de resposta especulativa (exp/caminho-ouro):
+  //  - "speculative": planeja sobre snapshot sem avançar o kernel e gera a
+  //    resposta; o estado autoritativo só muda no commit.
+  //  - "commit": avança o kernel (idempotente por turnId) sem gerar resposta,
+  //    usado quando o stream especulativo é adotado pela final confirmada.
+  //  - default: comportamento original (dispatch + resposta).
+  const stage = body.stage === "speculative" || body.stage === "commit"
+    ? body.stage
+    : "full";
+
+  // Tee do observador: todo evento NDJSON enviado ao cliente é gravado com
+  // o mesmo payload + identidade do turno (sem alterar o que o cliente vê).
+  const emit = (event) => {
+    sendNdjson(response, event);
+    observador?.evento("turno", {
+      sessionId: body.sessionId,
+      turnId: body.turnId,
+      stage,
+      ...event
+    });
+  };
+  observador?.evento("turno", {
+    type: "requisicao",
     sessionId: body.sessionId,
     turnId: body.turnId,
-    text: body.text
+    stage,
+    texto: body.text
   });
+
+  if (stage === "commit") {
+    const commit = turnCoordinator.commitTurn({
+      sessionId: body.sessionId,
+      turnId: body.turnId,
+      text: body.text,
+      expectedPreviousVersion: body.expectedPreviousVersion
+    });
+    response.writeHead(200, {
+      "content-type": "application/x-ndjson; charset=utf-8",
+      "cache-control": "no-store"
+    });
+    emit(commit.ok
+      ? { type: "committed", ok: true, interaction: commit.transition }
+      : {
+          type: "committed",
+          ok: false,
+          reason: commit.reason,
+          currentVersion: commit.currentVersion
+        });
+    response.end();
+    return;
+  }
+
+  const plan = stage === "speculative"
+    ? turnCoordinator.planTurnSpeculative({
+        sessionId: body.sessionId,
+        turnId: body.turnId,
+        text: body.text
+      })
+    : turnCoordinator.planTurn({
+        sessionId: body.sessionId,
+        turnId: body.turnId,
+        text: body.text
+      });
   const mode = plan.mode;
+  // Arbitragem da camada rápida (FAST_PATH=1): decisão pura ANTES de acionar
+  // o reasoner — custo zero de latência serial. PASS mantém o fluxo original;
+  // LOCAL_FINAL responde localmente sem chamar o provider; BRIDGE fala uma
+  // ponte semântica imediata (sinal estruturado do kernel) enquanto o
+  // reasoner gera, com contrato no-repeat no prompt.
+  const fastPath = fastPathEnabled
+    ? arbitrateTurn({
+        text: body.text,
+        plan,
+        crossTurn: {
+          lastAmount: fastPathMemory.lastAmount(body.sessionId),
+          amounts: extractPtBrCurrencyAmounts(body.text)
+            .map((item) => item.value)
+            .filter(Number.isFinite)
+        }
+      })
+    : null;
+  // A memória observa só no estágio full (especulação não muta nada).
+  if (fastPathEnabled && stage === "full") {
+    fastPathMemory.observe(
+      body.sessionId,
+      body.text,
+      extractPtBrCurrencyAmounts
+    );
+    void appendFastPathLog({
+      at: new Date().toISOString(),
+      sessionId: body.sessionId,
+      text: body.text,
+      decision: fastPath
+        ? { action: fastPath.action, class: fastPath.class }
+        : null,
+      mode
+    });
+  }
   const controller = new AbortController();
   const abortUpstream = () => controller.abort();
 
@@ -453,32 +682,124 @@ async function streamTurn(request, response, body) {
     "x-content-type-options": "nosniff"
   });
 
-  sendNdjson(response, {
+  emit({
     type: "route",
     mode,
     semantic: plan.semantic ?? null,
     safety: plan.safety ?? null,
     interaction: plan.interaction,
+    fastPath: fastPath
+      ? { action: fastPath.action, class: fastPath.class }
+      : null,
     acknowledgment: mode === "delegate" ? plan.acknowledgment : null,
     taskId: mode === "delegate" ? plan.task.id : null,
     query: mode === "delegate" ? plan.task.query : null
   });
 
+  if (fastPath?.action === "LOCAL_FINAL") {
+    emit({
+      type: "started",
+      responseId: null,
+      model: FAST_PATH_VERSION
+    });
+    if (!controller.signal.aborted) {
+      emit({ type: "delta", delta: fastPath.response });
+      emit({
+        type: "done",
+        responseId: null,
+        model: FAST_PATH_VERSION,
+        usage: null
+      });
+    }
+    response.end();
+    return;
+  }
+
+  // Ponte semântica imediata: falada pelo cliente enquanto o reasoner
+  // trabalha. O texto da ponte segue no request do reasoner (spokenPrefix)
+  // para que a continuação não repita nem contradiga o que já foi dito.
+  if (fastPath?.action === "BRIDGE") {
+    emit({
+      type: "bridge",
+      text: fastPath.bridge,
+      class: fastPath.class
+    });
+  }
+
   try {
+    // Ferramenta real (RC v0.1): delegações com intenção de tempo executam
+    // Open-Meteo de verdade — SOMENTE fora de especulação (effectsAllowed).
+    // Especulativo cai no comportamento normal do cérebro, sem efeito.
+    if (
+      mode === "delegate" &&
+      stage !== "speculative" &&
+      weatherIntent(plan.task?.query ?? body.text)
+    ) {
+      emit({
+        type: "started",
+        responseId: null,
+        model: "tool:open-meteo"
+      });
+      try {
+        const summary = await fetchWeatherSummary(
+          plan.task?.query ?? body.text,
+          { signal: controller.signal }
+        );
+        emit({ type: "delta", delta: summary });
+        emit({
+          type: "done",
+          responseId: null,
+          model: "tool:open-meteo",
+          usage: null
+        });
+        response.end();
+        return;
+      } catch (error) {
+        if (error.name === "AbortError") {
+          response.end();
+          return;
+        }
+        emit({
+          type: "delta",
+          delta: "A consulta de tempo falhou; seguindo sem a ferramenta. "
+        });
+        // cai para o cérebro normal abaixo
+      }
+    }
+    // Contrato do challenger: um turno especulativo NUNCA pode disparar
+    // efeitos externos (ferramentas, ações, side-effects); este flag é a
+    // autoridade que as desabilita até o commit/adoção.
     for await (const event of brain.streamTurn({
       text: plan.effectiveText ?? body.text,
       history: body.history,
       mode,
       signal: controller.signal,
-      turnPlan: plan
+      turnPlan: plan,
+      speculative: stage === "speculative",
+      effectsAllowed: stage !== "speculative",
+      spokenPrefix: fastPath?.action === "BRIDGE"
+        ? fastPath.bridge
+        : null,
+      // Ciclo continuação/interrupção: a resposta anterior foi cortada
+      // pelo usuário — o cérebro integra o contexto interrompido.
+      // FLAG até T4 (validação viva): a política pode confundir
+      // complemento×correção×rejeição×cancelamento; sem exercício vivo,
+      // fica fora do perfil da candidata (régua docs/CANDIDATA-V1.md §2).
+      respostaInterrompida:
+        process.env.CONTINUACAO_POS_INTERRUPCAO === "1" &&
+        body.respostaInterrompida &&
+        typeof body.respostaInterrompida.texto === "string" &&
+        body.respostaInterrompida.texto.length <= 600
+          ? body.respostaInterrompida
+          : null
     })) {
-      sendNdjson(response, event);
+      emit(event);
     }
 
     response.end();
   } catch (error) {
     if (error.name !== "AbortError") {
-      sendNdjson(response, {
+      emit({
         type: "error",
         code: error.code ?? "brain_error",
         message: error.message
@@ -490,7 +811,110 @@ async function streamTurn(request, response, body) {
   }
 }
 
+// Challenger exp/caminho-ouro: TTS plugável. windows = worker SAPI original;
+// pocket/piper = sidecars HTTP locais (Pocket TTS Kyutai transmite o WAV em
+// streaming; repassamos os bytes assim que chegam).
+const ttsProvider = process.env.TTS_PROVIDER?.trim().toLowerCase() ||
+  "windows";
+const ttsSidecarUrl = process.env.TTS_SIDECAR_URL?.trim() ||
+  (ttsProvider === "pocket"
+    ? "http://127.0.0.1:8321/tts"
+    : ttsProvider === "supertonic"
+      ? "http://127.0.0.1:8341"
+      : "http://127.0.0.1:8331");
+
+async function proxySidecarTts(request, response, body, controller, tee) {
+  let upstream;
+  if (ttsProvider === "pocket") {
+    const form = new FormData();
+    form.set("text", body.text);
+    upstream = await fetch(ttsSidecarUrl, {
+      method: "POST",
+      body: form,
+      signal: controller.signal
+    });
+  } else {
+    // Voz por requisição (seletor da plataforma): só o supertonic entende
+    // ?voz=; valores fora de F1..F5/M1..M5 caem na voz padrão do sidecar.
+    const alvo = ttsProvider === "supertonic" &&
+      typeof body.voz === "string" && /^[FM][1-5]$/u.test(body.voz)
+      ? `${ttsSidecarUrl}?voz=${body.voz}`
+      : ttsSidecarUrl;
+    upstream = await fetch(alvo, {
+      method: "POST",
+      headers: { "content-type": "text/plain; charset=utf-8" },
+      body: body.text,
+      signal: controller.signal
+    });
+  }
+  if (!upstream.ok) {
+    throw new Error(`TTS sidecar retornou HTTP ${upstream.status}`);
+  }
+  // Modo streaming (GET ?stream=1): repassa os bytes do sidecar assim que
+  // chegam — o navegador toca o WAV progressivamente e o primeiro áudio
+  // audível deixa de esperar a síntese completa.
+  if (body.stream) {
+    if (response.destroyed || response.writableEnded) {
+      return;
+    }
+    response.writeHead(200, {
+      "content-type": "audio/wav",
+      "cache-control": "no-store"
+    });
+    let interrompido = false;
+    for await (const chunk of upstream.body) {
+      if (response.destroyed || controller.signal.aborted) {
+        interrompido = true;
+        break;
+      }
+      tee?.pedaco(chunk);
+      response.write(chunk);
+    }
+    tee?.concluir(null, interrompido ? { interrompido: true } : {});
+    response.end();
+    return;
+  }
+  // Modo bufferizado (POST): acumula e corrige os tamanhos RIFF que sidecars
+  // de streaming deixam abertos (0/0xFFFFFFFF), mantendo o WAV compatível
+  // com decodeWaveToPcm16 e com os harnesses.
+  const chunks = [];
+  for await (const chunk of upstream.body) {
+    if (controller.signal.aborted) {
+      tee?.concluir(Buffer.concat(chunks), { interrompido: true });
+      return;
+    }
+    chunks.push(chunk);
+  }
+  const audio = Buffer.concat(chunks);
+  if (audio.length >= 44 && audio.toString("ascii", 0, 4) === "RIFF") {
+    audio.writeUInt32LE(audio.length - 8, 4);
+    let offset = 12;
+    while (offset + 8 <= audio.length) {
+      const id = audio.toString("ascii", offset, offset + 4);
+      const declared = audio.readUInt32LE(offset + 4);
+      if (id === "data") {
+        audio.writeUInt32LE(audio.length - offset - 8, offset + 4);
+        break;
+      }
+      offset += 8 + declared + (declared % 2);
+    }
+  }
+  tee?.concluir(Buffer.from(audio));
+  if (response.destroyed || response.writableEnded) {
+    return;
+  }
+  response.writeHead(200, {
+    "content-type": "audio/wav",
+    "content-length": audio.length,
+    "cache-control": "no-store"
+  });
+  response.end(audio);
+}
+
 async function synthesizeTts(request, response, body) {
+  // Números→extenso SÓ no texto falado; o texto exibido na UI e o campo
+  // `texto` do observador continuam originais (dígitos).
+  const textoFalado = normalizarTextoParaFala(body.text);
   const controller = new AbortController();
   const abortSynthesis = () => controller.abort();
   const abortOnClose = () => {
@@ -504,11 +928,37 @@ async function synthesizeTts(request, response, body) {
     abortSynthesis();
   }
 
+  // Tee do observador: arquiva o áudio sintetizado sob o uid gerado pelo
+  // cliente — a chave que os beacons de reprodução usam depois.
+  const tee = observador?.iniciarTts({
+    uid: typeof body.uid === "string" && body.uid.length <= 80
+      ? body.uid
+      : null,
+    texto: body.text,
+    textoFalado,
+    stream: Boolean(body.stream),
+    provider: ttsProvider,
+    voz: typeof body.voz === "string" && /^[FM][1-5]$/u.test(body.voz)
+      ? body.voz
+      : null
+  }) ?? null;
+
   try {
-    const audio = await synthesizeWindowsSpeech(body.text, {
+    if (ttsProvider !== "windows") {
+      await proxySidecarTts(
+        request,
+        response,
+        { ...body, text: textoFalado },
+        controller,
+        tee
+      );
+      return;
+    }
+    const audio = await synthesizeWindowsSpeech(textoFalado, {
       rate: body.rate,
       signal: controller.signal
     });
+    tee?.concluir(Buffer.from(audio));
     if (
       controller.signal.aborted ||
       response.destroyed ||
@@ -523,6 +973,7 @@ async function synthesizeTts(request, response, body) {
     });
     response.end(audio);
   } catch (error) {
+    tee?.falhar(error);
     if (error.name !== "AbortError") {
       throw error;
     }
@@ -591,6 +1042,9 @@ const server = createServer(async (request, response) => {
           vad: vadConfig
         },
         tts: ttsHealth,
+        observador: observador === null
+          ? { ativo: false }
+          : { ativo: true, pasta: observador.pasta },
         evaluation: exp0026Store === null
           ? { exp0026: { enabled: false } }
           : {
@@ -618,6 +1072,39 @@ const server = createServer(async (request, response) => {
       return;
     }
 
+    // GET permite <audio src> com download progressivo (playback começa
+    // antes da síntese terminar). Disponível apenas para sidecars.
+    if (request.method === "GET" && url.pathname === "/api/tts") {
+      const text = (url.searchParams.get("text") ?? "").trim();
+      if (!text || text.length > 700) {
+        sendJson(response, 400, { error: "invalid_text" });
+        return;
+      }
+      if (ttsProvider === "windows") {
+        sendJson(response, 400, { error: "stream_requires_sidecar" });
+        return;
+      }
+      await synthesizeTts(request, response, {
+        text,
+        uid: url.searchParams.get("uid") ?? null,
+        stream: url.searchParams.get("stream") === "1",
+        voz: url.searchParams.get("voz") ?? null
+      });
+      return;
+    }
+
+    // Beacons do observador: reproduções, log da página e marcações
+    // humanas enviados pelo cliente quando OBSERVER=1 (senão, no-op).
+    if (
+      request.method === "POST" &&
+      url.pathname === "/api/observador/beacon"
+    ) {
+      const lote = await readJsonBody(request);
+      observador?.beacon(lote, Date.now());
+      sendJson(response, 200, { ok: true, ativo: observador !== null });
+      return;
+    }
+
     sendJson(response, 404, { error: "not_found" });
   } catch (error) {
     sendJson(response, 400, {
@@ -638,12 +1125,19 @@ const audioWebSocket =
         finalCommitGraceMs,
         prefinalPolicy,
         mergeWindowMs,
+        // Ciclo 3: decode do final com N ms do enunciado anterior como
+        // contexto (0 = desligado; ver var/observador/pdca-asr.md)
+        finalContextMs: Number.parseInt(
+          process.env.ASR_FINAL_CONTEXT_MS ?? "0",
+          10
+        ),
         maxPipelineFrames: audioPipelineMaxFrames,
         vadControlRuntime:
           vadControlMode === "silero" ? vadShadowRuntime : null,
         vadShadowRuntime:
           vadShadowMode === "silero" ? vadShadowRuntime : null,
-        vadConfig
+        vadConfig,
+        observador
       })
     : null;
 let shuttingDown = false;
@@ -654,6 +1148,7 @@ async function shutdown(signal) {
   }
   shuttingDown = true;
   console.log(`Encerrando Duplex Lab (${signal})...`);
+  await observador?.fechar().catch(() => {});
   await audioWebSocket?.close().catch(() => {});
   await asrRuntime?.close().catch(() => {});
   await vadShadowRuntime?.close().catch(() => {});

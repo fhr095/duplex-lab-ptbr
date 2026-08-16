@@ -1,7 +1,12 @@
 const DEFAULT_API_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_INTERACTION_MODEL = "gpt-5.6-luna";
 const DEFAULT_TASK_MODEL = DEFAULT_INTERACTION_MODEL;
-const DEFAULT_MAX_REQUESTS = 25;
+// Guarda anti-runaway POR PROCESSO, não cota de sessão: com especulação
+// cada turno consome até 2 chamadas — 25 matava a conversa real em ~12
+// turnos (sessão 36ed: mudo aos 07:17 com o usuário encerrando em
+// frustração). 400 ≈ 3h de conversa contínua; OPENAI_MAX_REQUESTS_PER_
+// PROCESS aperta quando precisar.
+const DEFAULT_MAX_REQUESTS = 400;
 const MAX_HISTORY_ITEMS = 12;
 const MAX_MESSAGE_CHARS = 4_000;
 const MAX_HISTORY_CHARS = 16_000;
@@ -211,7 +216,14 @@ export function createOpenAIBrain(options = {}) {
       return { ...usage };
     },
 
-    async *streamTurn({ text, history = [], mode = "direct", signal }) {
+    async *streamTurn({
+      text,
+      history = [],
+      mode = "direct",
+      signal,
+      spokenPrefix = null,
+      respostaInterrompida = null
+    }) {
       const normalizedText = String(text ?? "").trim();
       if (!normalizedText) {
         throw new TypeError("O turno precisa conter texto.");
@@ -229,12 +241,31 @@ export function createOpenAIBrain(options = {}) {
       }
 
       const model = mode === "delegate" ? taskModel : interactionModel;
+      // Contrato no-repeat do BRIDGE: a camada rápida já falou a ponte; a
+      // continuação não pode repetir nem contradizer o que foi dito.
+      let instructions = mode === "delegate"
+        ? DELEGATED_INSTRUCTIONS
+        : spokenPrefix
+          ? `${DIRECT_INSTRUCTIONS}\n` +
+            `A camada de voz acabou de dizer ao usuário: «${spokenPrefix}». ` +
+            "Continue a resposta a partir daí, sem repetir essa confirmação " +
+            "e sem contradizê-la."
+          : DIRECT_INSTRUCTIONS;
+      // Continuação após interrupção: o usuário cortou a resposta
+      // anterior no meio — a fala nova costuma ser continuação do mesmo
+      // assunto; a resposta deve integrar os dois contextos.
+      if (respostaInterrompida?.texto) {
+        instructions += "\nSua resposta anterior foi interrompida pelo " +
+          `usuário após ~${respostaInterrompida.faladoAteS ?? 0}s de ` +
+          `fala. O texto completo que você diria era: ` +
+          `«${respostaInterrompida.texto}». A fala nova do usuário ` +
+          "pode ser continuação do mesmo assunto: integre o que ficou " +
+          "pendente com o pedido novo e responda ao conjunto, sem " +
+          "repetir o que ele já ouviu.";
+      }
       const requestBody = {
         model,
-        instructions:
-          mode === "delegate"
-            ? DELEGATED_INSTRUCTIONS
-            : DIRECT_INSTRUCTIONS,
+        instructions,
         input: [
           ...sanitizeConversation(history),
           { role: "user", content: normalizedText }
