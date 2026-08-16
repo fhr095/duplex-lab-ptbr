@@ -247,6 +247,7 @@ const session = {
   tentativePauseCount: 0,
   taskDeliveryTimer: null,
   trace: [],
+  lastEmptyFinalNoticeAt: -100_000,
   ttsAbortControllers: new Set(),
   turnAbortController: null,
   userSpeaking: false,
@@ -3028,6 +3029,24 @@ function handleLocalAudioEvent(event) {
     } else {
       session.speculation?.abort();
       session.speculation = null;
+      // Fala REAL transcrita como vazio = captação baixa/abafada (sessão
+      // a6c1: 10 s da história do avô → silêncio total e "tá me
+      // ouvindo?"). Nunca calar: pede repetição LOCALMENTE (TTS não
+      // depende do cérebro), com freio de 20 s para não virar eco.
+      const agora = performance.now();
+      if (
+        (event.audioEndMs ?? 0) >= 2_500 &&
+        !session.assistantSpeaking &&
+        agora - session.lastEmptyFinalNoticeAt > 20_000
+      ) {
+        session.lastEmptyFinalNoticeAt = agora;
+        const aviso =
+          "Você falou, mas o áudio chegou muito baixo pra mim. Pode " +
+          "repetir um pouco mais perto do microfone?";
+        elements.assistantText.textContent = aviso;
+        log("assistant.clarification", "final vazio após fala longa");
+        queueCompleteText(aviso, "repair");
+      }
     }
     return;
   }

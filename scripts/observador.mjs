@@ -666,8 +666,38 @@ async function escutar(pacote, opcoes) {
     await readFile(join(pacote, "manifesto.json"), "utf8")
   );
   const objetivo = manifesto.objetivo ?? "conversa com assistente de voz";
-  const { pcm } = decodificarWavMono(
+  const { pcm: pcmCompleto } = decodificarWavMono(
     await readFile(join(pacote, "mistura.wav"))
+  );
+  const duracaoTotalS = pcmCompleto.length / SR;
+  // Janela de escuta (--desde/--ate, "mm:ss" ou segundos): pacotes de
+  // processo longo são quase todo silêncio entre sessões — sem janela, a
+  // mistura de horas estoura o modelo de áudio (HTTP 500 real no pacote
+  // a6c1, 197 min). O recorte é só do ÁUDIO OUVIDO; todos os tempos
+  // persistidos permanecem ABSOLUTOS do pacote (correlação intacta).
+  const paraSegundos = (valor) => {
+    if (valor === undefined || valor === true) return null;
+    const texto = String(valor);
+    if (/^\d+:\d{2}(?::\d{2})?$/u.test(texto)) {
+      const partes = texto.split(":").map(Number);
+      return partes.length === 3
+        ? partes[0] * 3600 + partes[1] * 60 + partes[2]
+        : partes[0] * 60 + partes[1];
+    }
+    const n = Number(texto);
+    return Number.isFinite(n) ? n : null;
+  };
+  const desdeS = Math.max(0, paraSegundos(opcoes.desde) ?? 0);
+  const ateS = Math.min(
+    duracaoTotalS,
+    paraSegundos(opcoes.ate) ?? duracaoTotalS
+  );
+  if (ateS - desdeS < 3) {
+    throw new Error("janela --desde/--ate menor que 3 s");
+  }
+  const pcm = pcmCompleto.subarray(
+    Math.round(desdeS * SR),
+    Math.round(ateS * SR)
   );
   const duracaoS = pcm.length / SR;
   if (duracaoS < 3) {
@@ -724,8 +754,8 @@ async function escutar(pacote, opcoes) {
   usos.push(holistica.usage);
   passadas.push({
     tipo: "holistica",
-    audioDe: 0,
-    audioAte: capA / SR,
+    audioDe: desdeS,
+    audioAte: desdeS + capA / SR,
     truncada: capA < pcm.length,
     prompt: promptHolistico(objetivo, duracaoS),
     resposta: holistica.texto,
@@ -744,9 +774,9 @@ async function escutar(pacote, opcoes) {
     }
     const prompt = promptTrecho(
       objetivo,
-      inicio / SR,
-      fim / SR,
-      duracaoS
+      desdeS + inicio / SR,
+      desdeS + fim / SR,
+      desdeS + duracaoS
     );
     const trecho = await ouvir({
       chave,
@@ -758,8 +788,8 @@ async function escutar(pacote, opcoes) {
     const itens = extrairJson(trecho.texto);
     passadas.push({
       tipo: "trecho",
-      audioDe: inicio / SR,
-      audioAte: fim / SR,
+      audioDe: desdeS + inicio / SR,
+      audioAte: desdeS + fim / SR,
       prompt,
       resposta: trecho.texto,
       usage: trecho.usage,
@@ -771,12 +801,12 @@ async function escutar(pacote, opcoes) {
           ...item,
           inicioS: mmssParaSegundos(item.inicio),
           fimS: mmssParaSegundos(item.fim) ?? mmssParaSegundos(item.inicio),
-          trecho: [inicio / SR, fim / SR]
+          trecho: [desdeS + inicio / SR, desdeS + fim / SR]
         });
       }
     }
     console.log(
-      `trecho ${mmss(inicio / SR)}–${mmss(fim / SR)}: ` +
+      `trecho ${mmss(desdeS + inicio / SR)}–${mmss(desdeS + fim / SR)}: ` +
         `${Array.isArray(itens) ? itens.length : "?"} momento(s)`
     );
     if (fim === pcm.length) {
@@ -796,6 +826,7 @@ async function escutar(pacote, opcoes) {
         : "env OBSERVADOR_AUTORIZA_ENVIO=1",
     objetivo,
     duracaoS,
+    janelaOuvida: { desdeS, ateS, duracaoTotalS },
     cega:
       "esta passada usou SOMENTE mistura.wav + objetivo do manifesto; " +
       "nenhum log, transcrição ou métrica foi lida antes dela",
