@@ -51,6 +51,16 @@ for (const pacote of pacotes) {
   const t0 = manifesto.t0 ?? eventos[0]?.t ?? 0;
   const rel = (e) => ((e.t ?? 0) - t0) / 1000;
 
+  // Janelas excluídas do corpus (corpus-excluir.json no pacote): áudio
+  // que não é teste (ex.: captura de música ambiente) não vira momento.
+  const exclusoes = JSON.parse(
+    await readFile(join(base, "corpus-excluir.json"), "utf8").catch(
+      () => "[]"
+    )
+  );
+  const excluido = (t) =>
+    exclusoes.some((e) => t >= e.deS && t <= e.ateS);
+
   // Reproduções do assistente = janelas em que ELE estava falando.
   const reproducoes = (await lerJsonl(join(base, "reproducao.jsonl"))) ?? [];
   const janelasAssistente = [];
@@ -73,6 +83,7 @@ for (const pacote of pacotes) {
 
   for (let i = 0; i < fatos.length; i += 1) {
     const { e, t, tipo } = fatos[i];
+    if (excluido(t)) continue;
 
     if (tipo === "user.speech.paused") {
       // Procura o que acontece depois da pausa.

@@ -119,6 +119,16 @@ for (const pacote of pacotes) {
   }
   const { bursts } = atividadeDeFala(pcm);
 
+  // Janelas excluídas do corpus (ex.: captura de música ambiente que não
+  // é teste) — corpus-excluir.json no pacote, com [{deS, ateS, motivo}].
+  const exclusoes = JSON.parse(
+    await readFile(join(base, "corpus-excluir.json"), "utf8").catch(
+      () => "[]"
+    )
+  );
+  const excluido = (t) =>
+    exclusoes.some((e) => t >= e.deS && t <= e.ateS);
+
   // Pares inicio/fim por uid → janelas físicas de reprodução.
   const janelas = new Map();
   for (const r of reproducoes) {
@@ -169,6 +179,7 @@ for (const pacote of pacotes) {
       const inicioSobre = Math.max(ba, j.de);
       const fimSobre = Math.min(bb, j.ate + 0.2);
       if (fimSobre - inicioSobre < 0.18) continue;
+      if (excluido(inicioSobre)) continue;
       const burstDur = bb - ba;
       const usuarioLongo = burstDur >= 1.2;
       const ehCausal = causal !== null && ba === causal[0];
