@@ -457,6 +457,7 @@ const exp0026Store = exp0026Enabled
 const STATIC_ROUTES = new Map([
   ["/", "index.html"],
   ["/absorcao-turno.mjs", "absorcao-turno.mjs"],
+  ["/gate-entrada.mjs", "gate-entrada.mjs"],
   ["/exp-0026", "exp-0026/index.html"],
   ["/exp-0026/", "exp-0026/index.html"],
   ["/exp-0026/app.mjs", "exp-0026/app.mjs"],

@@ -5,6 +5,7 @@ import {
   finalChegou,
   turnoDisparado
 } from "/absorcao-turno.mjs";
+import { deveSegurarInicio } from "/gate-entrada.mjs";
 import {
   BrowserAudioRenderProbe,
   BrowserPcmCapture
@@ -255,6 +256,7 @@ const session = {
   trace: [],
   absorcao: criarAbsorcao(),
   contextoTurnoAtual: null,
+  ultimoFimDeFalaAt: Number.NEGATIVE_INFINITY,
   lastEmptyFinalNoticeAt: -100_000,
   ttsAbortControllers: new Set(),
   turnAbortController: null,
@@ -1092,6 +1094,34 @@ async function pumpSpeechQueue(epoch) {
         const prepared = preparedResult.value;
         if (epoch !== session.audioEpoch) {
           return;
+        }
+        // Gate de entrada: não COMEÇAR a falar com a cauda de fala do
+        // usuário ativa (+300ms de folga). Backchannel sobrepõe por
+        // design; epoch novo (interrupção/absorção) cancela a espera.
+        // Teto de 8s = rede de segurança (fala longa gera novo turno e
+        // troca o epoch muito antes disso).
+        const gateInicio = performance.now();
+        while (
+          epoch === session.audioEpoch &&
+          deveSegurarInicio({
+            kind: prepared.kind,
+            usuarioFalando: session.userSpeaking,
+            msDesdeFimDaFala:
+              performance.now() - session.ultimoFimDeFalaAt
+          }) &&
+          performance.now() - gateInicio < 8_000
+        ) {
+          await new Promise((resolve) => setTimeout(resolve, 60));
+        }
+        if (epoch !== session.audioEpoch) {
+          return;
+        }
+        const seguradoMs = performance.now() - gateInicio;
+        if (seguradoMs > 90) {
+          log(
+            "reproducao.gate",
+            `início segurado ${Math.round(seguradoMs)}ms (${prepared.kind})`
+          );
         }
         await playPreparedSpeech(prepared);
         if (epoch !== session.audioEpoch) {
@@ -2859,6 +2889,7 @@ function handleLocalAudioEvent(event) {
   }
   if (event.type === "user.speech.paused") {
     session.userSpeaking = false;
+    session.ultimoFimDeFalaAt = performance.now();
     dispatchLocalAudioReflex({
       type: "USER_SPEECH_PAUSED",
       turnId: event.turnId ?? null,
@@ -2955,6 +2986,10 @@ function handleLocalAudioEvent(event) {
       session.lastEndpointCommittedAt -
       Math.max(0, Number(event.silenceMs) || 0);
     session.renderConfrontationLogged = false;
+    session.ultimoFimDeFalaAt = Math.max(
+      session.ultimoFimDeFalaAt,
+      session.lastSpeechEndedAt
+    );
     log("user.speech.ended", audioEventDetail(event));
     setListeningStatus();
     return;
