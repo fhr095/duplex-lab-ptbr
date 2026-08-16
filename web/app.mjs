@@ -3040,9 +3040,14 @@ function handleLocalAudioEvent(event) {
         agora - session.lastEmptyFinalNoticeAt > 20_000
       ) {
         session.lastEmptyFinalNoticeAt = agora;
+        // Causa-neutro: pode ser voz baixa, distância OU fonte sonora
+        // perto do mic (a6c1: música na Alexa colada no microfone com o
+        // usuário falando de longe — 3 ASRs + ouvido nativo não
+        // recuperaram as palavras).
         const aviso =
-          "Você falou, mas o áudio chegou muito baixo pra mim. Pode " +
-          "repetir um pouco mais perto do microfone?";
+          "Você falou, mas não consegui entender daqui. Pode chegar " +
+          "mais perto do microfone — ou baixar algum som que esteja " +
+          "tocando perto dele?";
         elements.assistantText.textContent = aviso;
         log("assistant.clarification", "final vazio após fala longa");
         queueCompleteText(aviso, "repair");
