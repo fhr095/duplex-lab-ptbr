@@ -1,18 +1,21 @@
-// Leito de SOBREPOSIÇÃO por SINAL dos dois canais (frente percepção).
+// Leito de SOBREPOSIÇÃO v2 — dois canais NO MESMO EIXO por construção.
 //
-// Substitui o leito fraco por eventos (confiança 0,6): aqui o lado do
-// assistente vem do REGISTRO FÍSICO de reprodução (inicio/fim por uid,
-// com motivo="cortado" e posição onde parou — cedeu×completou é fato,
-// não inferência) e o lado do usuário vem da ENERGIA do canal-usuario
-// (limiar adaptativo sobre o piso de ruído da própria sessão).
+// v1 tinha bug de eixo (achado do harness MaAI): reproduções
+// posicionadas por relógio de parede (Date.parse(iniciadoEm)) contra um
+// wav cujo zero é a 1ª âncora de mic, com deriva de relógio de captura
+// (+1,9s a +17s) — 52/59 pareamentos inválidos.
 //
-// Células de confusão (revisão do Felipe):
-//   cedeu-a-burst-curto      possível corte indevido por backchannel
-//   interrupcao-atendida     cedeu a burst longo (+tempo de reação)
-//   backchannel-atravessado  completou sob burst curto (desejado)
-//   segurou-contra-piso      completou com usuário insistindo (ruim)
+// v2: usa canal-usuario.wav E canal-assistente.wav — AMBOS gerados pelo
+// empacotador com o mesmo t0 (min das conexões) e mapeamento por âncoras
+// (tDaAmostra). Atividade por energia nos DOIS; sobreposição exige
+// energia real dos dois lados (o "gate de cena" vira inerente).
+// reproducao.jsonl entra só como METADADO (kind/motivo/posição), casado
+// por proximidade temporal com tolerância — nunca como geometria.
 //
-// Só pacotes VIVOS (replays não têm reprodução — regra da linhagem).
+// Células: segurou-contra-piso · assistente-entrou-sobre-usuario ·
+// backchannel-atravessado · cedeu-a-burst-curto · interrupcao-atendida
+// · ack-substituido-por-conteudo.
+//
 // Uso: node leito-sobreposicao.mjs <dirGravacoes> <saida.jsonl>
 
 import { readFile, readdir, writeFile } from "node:fs/promises";
@@ -22,7 +25,6 @@ const [, , RAIZ, SAIDA] = process.argv;
 const SR = 16_000;
 
 function decodificarWav(buffer) {
-  // RIFF mínimo PCM16/float32 mono (canal-usuario é PCM16 16k).
   let pos = 12;
   let fmt = null;
   let bits = null;
@@ -46,10 +48,8 @@ function decodificarWav(buffer) {
   return corpo;
 }
 
-// Atividade de fala por energia com limiar adaptativo: piso = p20 dos
-// quadros de 30 ms; ativo quando RMS > max(piso*4, 0.006); junta
-// lacunas <150 ms; descarta bursts <150 ms.
-function atividadeDeFala(pcm) {
+// Segmentos ativos por energia; limiar adaptativo relativo ao piso.
+function segmentosAtivos(pcm, { fatorLimiar = 4, minimoAbs = 0.006 } = {}) {
   const quadro = Math.round(0.03 * SR);
   const n = Math.floor(pcm.length / 2 / quadro);
   const rms = new Float64Array(n);
@@ -63,20 +63,20 @@ function atividadeDeFala(pcm) {
   }
   const ordenado = [...rms].sort((a, b) => a - b);
   const piso = ordenado[Math.floor(n * 0.2)] ?? 0;
-  const limiar = Math.max(piso * 4, 0.006);
-  const ativos = [];
+  const limiar = Math.max(piso * fatorLimiar, minimoAbs);
+  const brutos = [];
   let inicio = null;
   for (let i = 0; i < n; i += 1) {
     if (rms[i] > limiar) {
       inicio ??= i;
     } else if (inicio !== null) {
-      ativos.push([inicio * 0.03, i * 0.03]);
+      brutos.push([inicio * 0.03, i * 0.03]);
       inicio = null;
     }
   }
-  if (inicio !== null) ativos.push([inicio * 0.03, n * 0.03]);
+  if (inicio !== null) brutos.push([inicio * 0.03, n * 0.03]);
   const unidos = [];
-  for (const [a, b] of ativos) {
+  for (const [a, b] of brutos) {
     const anterior = unidos.at(-1);
     if (anterior && a - anterior[1] < 0.15) {
       anterior[1] = b;
@@ -84,7 +84,7 @@ function atividadeDeFala(pcm) {
       unidos.push([a, b]);
     }
   }
-  return { bursts: unidos.filter(([a, b]) => b - a >= 0.15), limiar, piso };
+  return unidos.filter(([a, b]) => b - a >= 0.15);
 }
 
 async function lerJsonl(caminho) {
@@ -96,31 +96,40 @@ async function lerJsonl(caminho) {
   }
 }
 
+// t0 do EMPACOTADOR = min(tInicio das conexões) ≈ min da 1ª âncora de
+// cada mic (só p/ casar METADADO de reprodução, com tolerância).
+async function t0DoPacote(base) {
+  let minimo = Infinity;
+  for (let n = 1; n <= 12; n += 1) {
+    const indice = await lerJsonl(join(base, `mic-${n}.indice.jsonl`));
+    if (!indice || indice.length === 0) continue;
+    const primeira = indice.find((l) => l.tipo === "ancora") ?? indice[0];
+    if (Number.isFinite(primeira.t)) minimo = Math.min(minimo, primeira.t);
+  }
+  return Number.isFinite(minimo) ? minimo : null;
+}
+
 const momentos = [];
-const resumoPacotes = [];
+let pacotesVivos = 0;
 const pacotes = (await readdir(RAIZ)).filter((n) => /^\d{4}-/.test(n));
 
 for (const pacote of pacotes) {
   const base = join(RAIZ, pacote);
   const reproducoes = await lerJsonl(join(base, "reproducao.jsonl"));
-  if (!reproducoes || reproducoes.length === 0) continue; // só vivos
-  let manifesto;
+  if (!reproducoes || reproducoes.length === 0) continue;
+  let pcmUsuario;
+  let pcmAssistente;
   try {
-    manifesto = JSON.parse(await readFile(join(base, "manifesto.json"), "utf8"));
+    pcmUsuario = decodificarWav(await readFile(join(base, "canal-usuario.wav")));
+    pcmAssistente = decodificarWav(
+      await readFile(join(base, "canal-assistente.wav"))
+    );
   } catch {
     continue;
   }
-  const t0 = Date.parse(manifesto.iniciadoEm);
-  let pcm;
-  try {
-    pcm = decodificarWav(await readFile(join(base, "canal-usuario.wav")));
-  } catch {
-    continue;
-  }
-  const { bursts } = atividadeDeFala(pcm);
+  pacotesVivos += 1;
+  const t0 = await t0DoPacote(base);
 
-  // Janelas excluídas do corpus (ex.: captura de música ambiente que não
-  // é teste) — corpus-excluir.json no pacote, com [{deS, ateS, motivo}].
   const exclusoes = JSON.parse(
     await readFile(join(base, "corpus-excluir.json"), "utf8").catch(
       () => "[]"
@@ -129,68 +138,71 @@ for (const pacote of pacotes) {
   const excluido = (t) =>
     exclusoes.some((e) => t >= e.deS && t <= e.ateS);
 
-  // Pares inicio/fim por uid → janelas físicas de reprodução.
-  const janelas = new Map();
-  for (const r of reproducoes) {
-    if (r.evento === "inicio") {
-      janelas.set(r.uid, {
-        uid: r.uid,
-        kind: r.kind ?? null,
-        texto: r.texto ?? null,
-        de: (r.t - t0) / 1000,
-        duracaoTotalS: r.duracaoS ?? null,
-        ate: null,
-        motivo: null,
-        posicaoS: null
-      });
-    } else if (r.evento === "fim" && janelas.has(r.uid)) {
-      const j = janelas.get(r.uid);
-      if (j.ate === null) {
-        j.ate = (r.t - t0) / 1000;
-        j.motivo = r.motivo ?? null;
-        j.posicaoS = r.posicaoS ?? null;
+  const bursts = segmentosAtivos(pcmUsuario);
+  // Canal do assistente é sintético sobre silêncio digital: limiar
+  // absoluto baixo basta e o piso é ~0.
+  const falasAssistente = segmentosAtivos(pcmAssistente, {
+    fatorLimiar: 3,
+    minimoAbs: 0.004
+  });
+
+  // Metadados de reprodução no eixo aproximado do wav (só p/ rotular
+  // kind/motivo do segmento mais próximo; tolerância 2,5s).
+  const metadados = [];
+  if (t0 !== null) {
+    const porUid = new Map();
+    for (const r of reproducoes) {
+      if (r.evento === "inicio") {
+        porUid.set(r.uid, {
+          deAprox: (r.t - t0) / 1000,
+          kind: r.kind ?? null,
+          texto: r.texto ?? null,
+          duracaoTotalS: r.duracaoS ?? null,
+          motivo: null,
+          posicaoS: null
+        });
+      } else if (r.evento === "fim" && porUid.has(r.uid)) {
+        const m = porUid.get(r.uid);
+        if (m.motivo === null) {
+          m.motivo = r.motivo ?? "completou";
+          m.posicaoS = r.posicaoS ?? null;
+        }
       }
     }
+    metadados.push(...porUid.values());
   }
+  const metadadoDe = (segDe) => {
+    let melhor = null;
+    for (const m of metadados) {
+      const d = Math.abs(m.deAprox - segDe);
+      if (d <= 2.5 && (melhor === null || d < melhor.d)) {
+        melhor = { ...m, d };
+      }
+    }
+    return melhor;
+  };
 
-  // Ordena janelas para detectar "ack substituído por conteúdo": corte
-  // seguido de outra reprodução em <600ms SEM burst causal = o conteúdo
-  // ficou pronto e cortou o ack (fast-ack.cut) — não é interrupção.
-  const ordenadas = [...janelas.values()]
-    .filter((j) => j.ate !== null && j.ate > j.de)
-    .sort((a, b) => a.de - b.de);
-
-  let doPacote = 0;
-  for (let idx = 0; idx < ordenadas.length; idx += 1) {
-    const j = ordenadas[idx];
-    const proxima = ordenadas[idx + 1] ?? null;
-    const cortou = j.motivo === "cortado";
-    // Burst CAUSAL do corte: o último que começa DENTRO da reprodução e
-    // no máximo 3s antes do fim dela.
-    const causal = cortou
-      ? bursts.findLast(
-          ([ba]) => ba >= j.de - 0.1 && ba <= j.ate && j.ate - ba <= 3
-        ) ?? null
-      : null;
-    const substituidoPorConteudo =
-      cortou && !causal && proxima !== null && proxima.de - j.ate < 0.6;
-
+  for (const [fa, fb] of falasAssistente) {
+    if (excluido(fa)) continue;
+    const meta = metadadoDe(fa);
+    const cortou = meta?.motivo === "cortado";
     for (const [ba, bb] of bursts) {
-      const inicioSobre = Math.max(ba, j.de);
-      const fimSobre = Math.min(bb, j.ate + 0.2);
+      const inicioSobre = Math.max(ba, fa);
+      const fimSobre = Math.min(bb, fb);
       if (fimSobre - inicioSobre < 0.18) continue;
       if (excluido(inicioSobre)) continue;
       const burstDur = bb - ba;
       const usuarioLongo = burstDur >= 1.2;
-      const ehCausal = causal !== null && ba === causal[0];
+      const usuarioJaFalava = ba < fa - 0.05 && bb > fa + 0.15;
+      // Corte causal: o fim físico do segmento do assistente cai perto
+      // do burst (durante, ou ≤1s depois do início do burst).
+      const ehCausal =
+        cortou && ba <= fb && fb - ba >= -0.1 && fb - ba <= 3 && bb >= fb - 0.3;
       let celula;
-      if (ba < j.de - 0.05 && bb > j.de + 0.15) {
-        // Usuário JÁ falava quando a reprodução começou.
+      if (usuarioJaFalava) {
         celula = "assistente-entrou-sobre-usuario";
       } else if (cortou && ehCausal) {
         celula = usuarioLongo ? "interrupcao-atendida" : "cedeu-a-burst-curto";
-      } else if (cortou && substituidoPorConteudo) {
-        celula = "ack-substituido-por-conteudo";
       } else if (!cortou) {
         celula = usuarioLongo
           ? "segurou-contra-piso"
@@ -202,28 +214,27 @@ for (const pacote of pacotes) {
         pacote,
         t: Number(inicioSobre.toFixed(2)),
         janela: [
-          Number((Math.min(ba, j.de) - 1).toFixed(2)),
-          Number((Math.max(bb, j.ate) + 1).toFixed(2))
+          Number((Math.min(ba, fa) - 2).toFixed(2)),
+          Number((Math.max(bb, fb) + 1).toFixed(2))
         ],
         celula,
         burst: [Number(ba.toFixed(2)), Number(bb.toFixed(2))],
         burstDurS: Number(burstDur.toFixed(2)),
         sobreposicaoS: Number((fimSobre - inicioSobre).toFixed(2)),
         assistente: {
-          kind: j.kind,
-          texto: j.texto ? j.texto.slice(0, 60) : null,
+          seg: [Number(fa.toFixed(2)), Number(fb.toFixed(2))],
+          kind: meta?.kind ?? null,
+          texto: meta?.texto ? meta.texto.slice(0, 60) : null,
           cortou,
-          reacaoMs: ehCausal ? Math.round((j.ate - ba) * 1000) : null,
-          tocouS: j.posicaoS,
-          totalS: j.duracaoTotalS
+          reacaoMs: ehCausal ? Math.round((fb - ba) * 1000) : null,
+          metaDeltaS: meta ? Number(meta.d.toFixed(2)) : null
         },
-        confiancaRotulo: celula === "sobreposicao-nao-causal" ? 0.5 : 0.85,
-        fonteRotulo: "sinal+reproducao-fisica"
+        confiancaRotulo:
+          celula === "sobreposicao-nao-causal" ? 0.5 : meta ? 0.9 : 0.7,
+        fonteRotulo: "energia-2-canais+metadado-reproducao"
       });
-      doPacote += 1;
     }
   }
-  resumoPacotes.push({ pacote, sobreposicoes: doPacote });
 }
 
 const porCelula = {};
@@ -233,11 +244,16 @@ for (const m of momentos) {
   if (m.assistente.reacaoMs !== null) reacoes.push(m.assistente.reacaoMs);
 }
 reacoes.sort((a, b) => a - b);
-const q = (p) => reacoes[Math.min(reacoes.length - 1, Math.floor(reacoes.length * p))];
+const q = (p) =>
+  reacoes[Math.min(reacoes.length - 1, Math.floor(reacoes.length * p))];
 
 await writeFile(SAIDA, momentos.map((m) => JSON.stringify(m)).join("\n") + "\n");
-console.log(`sobreposições: ${momentos.length} em ${resumoPacotes.length} pacotes vivos → ${SAIDA}`);
+console.log(
+  `sobreposições v2: ${momentos.length} em ${pacotesVivos} pacotes vivos → ${SAIDA}`
+);
 console.log("células:", JSON.stringify(porCelula, null, 1));
 if (reacoes.length) {
-  console.log(`tempo de reação ao ceder: p50=${q(0.5)}ms p90=${q(0.9)}ms (n=${reacoes.length})`);
+  console.log(
+    `reação ao ceder (causal): p50=${q(0.5)}ms p90=${q(0.9)}ms (n=${reacoes.length})`
+  );
 }
