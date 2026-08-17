@@ -10,6 +10,7 @@
 //   node scripts/observador-replay.mjs --origem var/observador/<pacote>
 //     [--url ws://127.0.0.1:4321/api/audio]
 //     [--desde <segundos|mm:ss>] [--ate <segundos|mm:ss>]
+//     [--fundo <arquivo .raw|.wav>] [--snr <dB>] [--fundo-offset <s>]
 //
 // --desde/--ate recortam a janela no EIXO DO WAV (relógio de amostras do
 // pacote, o mesmo dos leitos e do escutar); os frames preservam o
@@ -17,6 +18,16 @@
 // continua comparável posição a posição. A cena anexada aos finais é
 // repassada ao /api/turn — o replay exercita a política de confirmação
 // exatamente como o cliente real.
+//
+// --fundo mistura um SOM DE FUNDO CONTÍNUO (PCM16 mono 16 kHz; .raw
+// headerless ou .wav; loop se mais curto) sobre a voz gravada, no nível
+// dado por --snr (dB entre o RMS da FALA ATIVA da janela e o RMS do
+// fundo; padrão 5). Fundos: scripts/gerar-fundos-cena.mjs + a música
+// real de fora-do-corpus. Limite honesto do sintético: soma digital não
+// simula AGC/AEC do navegador, reverberação da sala, ducking da caixa
+// nem o efeito Lombard (você falaria mais alto) — vale como bancada de
+// estresse da cadeia de escuta e p/ calibrar cena, não como experiência
+// completa.
 //
 // Pré-requisito: engine com OBSERVER=1 na porta alvo (cérebro local
 // basta — as respostas não são o objeto do replay). SEMPRE em engine
@@ -61,6 +72,9 @@ function parseTempo(valor, nome) {
 }
 const DESDE_S = parseTempo(arg("--desde", null), "--desde") ?? 0;
 const ATE_S = parseTempo(arg("--ate", null), "--ate");
+const FUNDO_ARQUIVO = arg("--fundo", null);
+const FUNDO_SNR_DB = Number(arg("--snr", "5"));
+const FUNDO_OFFSET_S = Number(arg("--fundo-offset", "0"));
 
 const health = await fetch(`${HTTP}/api/health`).then(
   (resposta) => resposta.json(),
@@ -94,6 +108,85 @@ console.log(
     `${(fimByte / 2 / SR).toFixed(1)}s ` +
     `(${((fimByte - iniByte) / 2 / SR).toFixed(1)}s)`
 );
+
+// ---- fundo contínuo opcional (--fundo): carrega, mede e calcula ganho
+function pcmDeWav(buffer) {
+  let offset = 12;
+  while (offset + 8 <= buffer.length) {
+    const id = buffer.toString("ascii", offset, offset + 4);
+    const tamanho = buffer.readUInt32LE(offset + 4);
+    if (id === "data") {
+      return buffer.subarray(offset + 8, offset + 8 + tamanho);
+    }
+    offset += 8 + tamanho + (tamanho % 2);
+  }
+  throw new Error("WAV de fundo sem chunk data");
+}
+function rmsDe(pcm, iniAmostra, quantas, passo = 1) {
+  let soma = 0;
+  let n = 0;
+  for (let i = 0; i < quantas; i += passo) {
+    const v = pcm.readInt16LE((iniAmostra + i) * 2) / 32_768;
+    soma += v * v;
+    n += 1;
+  }
+  return n === 0 ? 0 : Math.sqrt(soma / n);
+}
+let fundoPcm = null;
+let fundoGanho = 0;
+let fundoOffsetAmostras = 0;
+if (FUNDO_ARQUIVO) {
+  const bruto = await readFile(resolve(FUNDO_ARQUIVO));
+  fundoPcm = bruto.subarray(0, 4).toString("ascii") === "RIFF"
+    ? pcmDeWav(bruto)
+    : bruto;
+  fundoOffsetAmostras = Math.floor(FUNDO_OFFSET_S * SR);
+  // RMS da FALA ATIVA da janela: mediana dos frames de 20 ms acima de
+  // -45 dBFS (evita calibrar o SNR contra silêncio).
+  const framesAtivos = [];
+  for (let b = iniByte; b + bytesPorFrame <= fimByte; b += bytesPorFrame) {
+    const rms = rmsDe(pcmCompleto, b / 2, bytesPorFrame / 2);
+    if (rms > 10 ** (-45 / 20)) {
+      framesAtivos.push(rms);
+    }
+  }
+  framesAtivos.sort((a, b) => a - b);
+  const vozRms = framesAtivos.length > 0
+    ? framesAtivos[Math.floor(framesAtivos.length / 2)]
+    : 10 ** (-30 / 20);
+  const fundoRms = rmsDe(
+    fundoPcm,
+    0,
+    Math.min(fundoPcm.length / 2, 60 * SR),
+    4
+  );
+  fundoGanho = fundoRms > 0
+    ? vozRms / (fundoRms * 10 ** (FUNDO_SNR_DB / 20))
+    : 0;
+  console.log(
+    `fundo: ${FUNDO_ARQUIVO} (${(fundoPcm.length / 2 / SR).toFixed(0)}s, ` +
+      `loop) · SNR alvo ${FUNDO_SNR_DB} dB · voz ativa ` +
+      `${(20 * Math.log10(vozRms)).toFixed(1)} dBFS · fundo ` +
+      `${(20 * Math.log10(fundoRms)).toFixed(1)} dBFS · ganho ` +
+      `${fundoGanho.toFixed(3)}`
+  );
+}
+function misturarFrame(fatia, posicaoAmostra) {
+  if (!fundoPcm) {
+    return fatia;
+  }
+  const totalFundo = fundoPcm.length / 2;
+  const saida = Buffer.alloc(fatia.length);
+  for (let i = 0; i < fatia.length / 2; i += 1) {
+    const indiceFundo =
+      (fundoOffsetAmostras + posicaoAmostra + i) % totalFundo;
+    const misto =
+      fatia.readInt16LE(i * 2) +
+      Math.round(fundoPcm.readInt16LE(indiceFundo * 2) * fundoGanho);
+    saida.writeInt16LE(Math.max(-32_768, Math.min(32_767, misto)), i * 2);
+  }
+  return saida;
+}
 
 const sessionId = `replay-${Date.now().toString(36)}`;
 let turnos = 0;
@@ -195,7 +288,7 @@ for (let offset = iniByte; offset < fimByte; offset += bytesPorFrame) {
         // fica no mesmo relógio de amostras da sessão de origem.
         sequence: (offset - iniByte) / bytesPorFrame,
         sampleStart: offset / 2,
-        pcm16: fatia
+        pcm16: misturarFrame(fatia, (offset - iniByte) / 2)
       })
     ),
     { binary: true }
