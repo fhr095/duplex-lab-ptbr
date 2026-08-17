@@ -13,19 +13,22 @@ fim→ack, tts.first-byte, render.first-audible, speculation.*).
 ## Instalação (máquina limpa)
 
 ```bash
-git clone <repo> && cd duplex-lab-ptbr && git checkout engine/candidata-v0
+git clone <repo> && cd duplex-lab-ptbr && git checkout main
 npm ci
 npm run setup:asr        # venv Whisper/Parakeet
 npm run setup:vad        # Silero v6.2
-bash scripts/setup-engine-voices.sh   # Pocket TTS PT + Piper pt-BR (SHA pinado)
-cp .env.example .env     # + OPENAI_API_KEY
+bash scripts/setup-engine-voices.sh   # Supertonic pinado + Pocket/Piper fallbacks
+bash scripts/setup-kroko.sh           # parciais streaming PT (sha256 pinado)
+cp .env.example .env     # + OPENAI_API_KEY (só segredos/opt-ins)
 ```
+
+Arranque: `bash scripts/start-candidata.sh` (perfil único da candidata,
+com pré-checagem de setup). Verificação: `GET /api/health`.
 
 ## Configuração principal (candidata v1 — ver docs/CANDIDATA-V1.md)
 
 ```bash
-bash scripts/setup-kroko.sh   # 1ª vez: modelo de parciais streaming PT
-ASR_PARTIAL_ENGINE=kroko TTS_PROVIDER=supertonic bash scripts/start-engine.sh
+bash scripts/start-candidata.sh   # PERFIL ÚNICO: pina kroko+supertonic
 ```
 
 O manifesto da candidata (docs/CANDIDATA-V1.md) registra o ledger de
@@ -44,8 +47,9 @@ Navegador (Chrome): `http://localhost:4173/` — especulação, fast-ack e
 streaming progressivo são **padrão** (`?spec=0&ack=0&ttsstream=0` desliga;
 com TTS windows o streaming desliga sozinho). Racional dos modelos:
 5.4-mini completa a 1ª frase ~4× mais rápido que luna na interação; luna
-segue nas delegações. Voz padrão pocket/rafael **pendente do veredicto de
-ouvido** (fallbacks: `TTS_PROVIDER=piper` | `windows`).
+segue nas delegações. Voz padrão: **Supertonic F4** (veredicto de ouvido
+2026-08-15; rafael/pocket rejeitada; seletor F1..M5 na página; fallbacks
+`TTS_PROVIDER=pocket|piper|windows`).
 
 `TTS_PROVIDER=supertonic` liga o Supertonic-3 local (sidecar na 8341, voz
 via `SUPERTONIC_VOICE`, F1..F5/M1..M5, padrão F4; `SUPERTONIC_STEPS=4`
@@ -87,7 +91,7 @@ por lote; (4) **a decisão da engine NÃO é ground truth** — todo rótulo é
 atribuído por revisor com as classes LOCAL_FINAL/BRIDGE/CLARIFY/PASS do
 conjunto `probes/data/fastpath-turns.pt-BR.json` (na branch de pesquisa).
 
-## Limites conhecidos da v0
+## Limites conhecidos
 
 TTS windows não suporta GET streaming (fallback automático a blob);
 cobertura do fast-path é a whitelist determinística (4,2% no corpus do

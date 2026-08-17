@@ -41,9 +41,17 @@ NÃO comporta torch).
   exclui janelas que não são teste; leitos nunca leem pacote com engine
   escrevendo (snapshot antes).
 - Análise de sessão: `node scripts/observador.mjs empacotar|
-  retranscrever|escutar --autorizo-envio --desde <s>|correlacionar`;
-  escuta cega SEMPRE antes de abrir logs. Telemetria de políticas:
-  eventos `turno.absorvido.*` e `reproducao.gate` no pagina.jsonl.
+  retranscrever|escutar --autorizo-envio --desde <segundos|mm:ss>|
+  correlacionar` + minerador de feedback à parte
+  (`scripts/observador-minerar-feedback.mjs <pacote>`); escuta cega
+  SEMPRE antes de abrir logs. Telemetria de políticas: eventos
+  `turno.absorvido.*` e `reproducao.gate` no pagina.jsonl. Health:
+  `GET /api/health` (não existe `/health`).
+- Replays: SEMPRE em engine DESCARTÁVEL (porta 4321, BRAIN local —
+  convenção de `scripts/observador-replay-bateria.sh`); nunca apontar
+  replay para a engine viva da 4173 (contamina pacote + gasta cérebro
+  real). O replay atual NÃO aceita janela (--desde/--ate é extensão
+  pendente); replay integral toca em tempo real.
 
 ## Estado da frente percepção (2026-08-17)
 

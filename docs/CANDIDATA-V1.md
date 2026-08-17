@@ -41,7 +41,9 @@ Replay verde NÃO é evidência suficiente de promoção. A régua usada aqui,
 em ordem de força:
 
 - **T1 — verdade independente**: dataset com transcrição humana e vozes
-  que não são do usuário primário (CORAA, 12 clipes espontâneos).
+  que não são do usuário primário (CORAA: 20 clipes determinísticos p/
+  o juiz dos FINAIS; subconjunto de 12 p/ a checagem das PARCIAIS —
+  evidência versionada em eval/evidencia/candidata-v1/).
 - **T2 — replay held-out**: bateria de sessões gravadas que NÃO motivaram
   a mudança (hoje: 8 sessões-chave).
 - **T3 — estrutural**: correção de bug de máquina de estados/semântica de
@@ -80,14 +82,14 @@ fase — usuário primário é o espec — e está flaggeada onde há parâmetro
 
 | Perna | v0 (RC) | v1 | Fonte |
 |---|---|---|---|
-| Final ASR (CORAA, divergência média) | 0,452 (parakeet int8) | **0,109** (TAGARELA int8) | pdca-asr.md ciclo 1 + promoção |
-| Parciais (CORAA, vozes independentes) | 0,71 (tiny) | **0,387** (Kroko) | testes/kroko/coraa-{tiny-baseline,generalizacao}.json |
+| Final ASR (CORAA, divergência média) | 0,452 (parakeet int8) | **0,109** (TAGARELA int8) | pdca local (juiz de 20 clipes); resumo neste manifesto |
+| Parciais (CORAA, vozes independentes) | 0,71 (tiny) | **0,387** (Kroko) | eval/evidencia/candidata-v1/coraa-{tiny-baseline,kroko-parciais}.json |
 | Parciais legíveis em sessão real | 47–80 % | 92–96 % | testes/kroko/RELATORIO.md |
 | Custo por atualização de parcial | re-decode integral (centenas de ms) | p50 5 ms / p95 80 ms (delta streaming) | smoke via cliente real |
 | Surdez catastrófica (monólogo >30 s) | 44–85 s surdo (2 modos) | finaliza e responde o ouvido; retém e concatena | replays 2e22/bd30 |
 | Morte muda por falha do cérebro | erro só escrito; 25 chamadas/processo | falado; 400/processo | sessão 36ed + fix |
 | Voz | pocket rafael (streaming, voz rejeitada de ouvido) | Supertonic F4/seletor (1º áudio ~1,7 s, tradeoff documentado) | bake-off v2 + doctor |
-| Bateria de regressão v1 (8 sessões-chave) | — | relatório em var/observador/pdca-asr.md (rodada 2026-08-15) | observador-replay-bateria |
+| Bateria de regressão v1 (8 sessões-chave) | — | **eval/evidencia/candidata-v1/bateria-replays-2026-08-15.md** (sanitizado; bruto local) | observador-replay-bateria |
 
 Pendências honestas de comparação: sessões FRESCAS com a candidata
 completa (próximas sessões do Felipe); continuação pós-interrupção sem

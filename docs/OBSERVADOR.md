@@ -27,7 +27,7 @@ hipótese prévia da escuta.
 ## Como gravar uma sessão real
 
 ```bash
-OBSERVER=1 bash scripts/start-engine.sh
+OBSERVER=1 PORT=4173 bash scripts/start-candidata.sh
 # abra http://localhost:4173, clique Iniciar e converse normalmente
 ```
 
