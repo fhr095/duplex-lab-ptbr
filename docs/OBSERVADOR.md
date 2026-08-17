@@ -75,6 +75,17 @@ node scripts/observador.mjs excluir       --sessao <nome> --confirmo
   áudio-nativo, ex.: gpt-audio) e exige `--autorizo-envio` explícito.
   Custo típico de uma sessão de 3–6 min: décimos de dólar (estimado no
   relatório; conferir fatura).
+- `escutar --desde <s|mm:ss> [--ate ...]` recorta a janela OUVIDA
+  mantendo timestamps ABSOLUTOS do pacote (pacote de processo longo é
+  quase todo silêncio entre sessões — sem janela, horas de mistura
+  estouram o modelo). Offset da sessão = 1ª âncora do mic-N desejado.
+- `corpus-excluir.json` no pacote (`[{deS, ateS, motivo}]`, EIXO DO WAV
+  = t0 min-âncoras) exclui janelas que não são teste (ex.: captura de
+  música ambiente); os extratores da frente percepção o respeitam.
+- Eixo de tempo: os `canal-*.wav` vivem em relógio de AMOSTRAS mapeado
+  por âncoras (`tDaAmostra`), NÃO em relógio de parede — nunca
+  posicionar reproduções por `Date.parse(iniciadoEm)`. Não medir sobre
+  pacote com a engine ainda escrevendo (snapshot antes).
 - O relatório final (síntese causal, confiança, menor teste) é autoria do
   agente sobre `correlacao/relatorio-base.md` — camadas sempre separadas:
   fatos medidos / escuta / marcações humanas / inferências.
