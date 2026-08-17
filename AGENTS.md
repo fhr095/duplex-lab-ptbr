@@ -50,15 +50,26 @@ NÃO comporta torch).
 - Replays: SEMPRE em engine DESCARTÁVEL (porta 4321, BRAIN local —
   convenção de `scripts/observador-replay-bateria.sh`); nunca apontar
   replay para a engine viva da 4173 (contamina pacote + gasta cérebro
-  real). O replay atual NÃO aceita janela (--desde/--ate é extensão
-  pendente); replay integral toca em tempo real.
+  real). `--desde/--ate` (segundos|mm:ss, eixo do WAV) recortam janela
+  preservando o sampleStart absoluto; janelas no meio de um bloco
+  acústico precisam de RUN-IN (~60 s) para o estado do VAD convergir ao
+  da sessão viva. Replay toca em tempo real e repassa a `cena` dos
+  finais ao /api/turn (exercita a confirmação de cena).
 
 ## Estado da frente percepção (2026-08-17)
 
 4 challengers + microscópio Qwen3-Omni: reprovados p/ endpoint/
 sobreposição (features grátis vencem; confianças não-calibradas).
-Promovidos: políticas commit-revisável + gate-de-entrada (vivas em
-web/absorcao-turno.mjs e web/gate-entrada.mjs) e o TAGGER DE CENA
-(integração pendente; spec `var/observador/testes/cena/ACAO-CENA.md`,
-aceite = replay a6c1). Detalhe e gatilhos dos adormecidos:
+Promovidos e VIVOS na engine: políticas commit-revisável + gate-de-
+entrada (web/absorcao-turno.mjs, web/gate-entrada.mjs) e a AÇÃO DE CENA
+(spec notes/percepcao/008 = `var/observador/testes/cena/ACAO-CENA.md`):
+worker `scripts/cena-tagger-worker.py` (setup: `scripts/setup-cena.sh`,
+venv do kroko) + `src/audio/avaliador-cena.mjs` → `cena.avaliada` em
+todo final + confirma-antes-de-agir no /api/turn
+(`src/interaction/confirmacao-cena.mjs`, CENA_TAGGER=0 desliga) +
+mensagens de vazio cientes de cena no cliente. Aceite executado
+2026-08-17 (replay a6c1 11700–11830: confirmação em vez de conversa
+fantasma; contra-prova 685b limpa: zero confirmações) — detalhes em
+`var/observador/testes/cena/ACEITE-2026-08-17.md`. Pendente T4: sessão
+viva com música. Detalhe e gatilhos dos adormecidos:
 `notes/percepcao/006` e `007` na exp/percepcao-v0.

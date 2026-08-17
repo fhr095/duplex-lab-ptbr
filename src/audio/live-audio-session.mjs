@@ -71,6 +71,9 @@ function requiredInteger(value, name) {
 
 export class LiveAudioSession {
   #asrRuntime;
+  // Percepção de cena (notes/percepcao/008): avaliador opcional que roda
+  // o audio-tagging da janela do turno em paralelo à finalização do ASR.
+  #avaliadorCena;
   #clockOriginMs = null;
   #closed = false;
   #emitCallback;
@@ -109,6 +112,7 @@ export class LiveAudioSession {
       throw new TypeError("asrRuntime com createSession é obrigatório");
     }
     this.#asrRuntime = options.asrRuntime;
+    this.#avaliadorCena = options.avaliadorCena ?? null;
     this.#emitCallback = options.onEvent ?? (() => {});
     this.#sampleRate = options.sampleRate ?? 16_000;
     this.#frameDurationMs = options.frameDurationMs ?? 20;
@@ -587,6 +591,22 @@ export class LiveAudioSession {
     });
 
     const rawFinal = turn.asr.finish();
+    // Cena acústica (notes/percepcao/008): a avaliação parte AGORA, em
+    // paralelo à finalização do ASR — o veredicto fica pronto dentro da
+    // janela finalização+commit-grace, latência adicionada ≈ 0.
+    turn.cenaPromise = this.#avaliadorCena
+      ? this.#avaliadorCena
+          .avaliar({ pcm: turn.asr.pcmAcumulado, turnId: turn.id })
+          .catch(() => null)
+      : null;
+    if (turn.cenaPromise) {
+      void turn.cenaPromise.then((cena) => {
+        this.#emit("cena.avaliada", performance.now(), {
+          turnId: turn.id,
+          ...(cena ?? { veredicto: "indisponivel", fonte: "erro" })
+        });
+      });
+    }
     turn.finalPromise = (async () => {
       const raw = await rawFinal;
       const reconciliation = reconcileFinalTranscript({
@@ -720,6 +740,18 @@ export class LiveAudioSession {
         if (this.#closed || turn.cancelled || turn.superseded) {
           return;
         }
+        // Veredicto de cena: já deve estar resolvido (partiu no commit
+        // do endpoint); a corrida de 250 ms é só o teto do atraso
+        // residual — sem veredicto a tempo, o final sai com cena null
+        // (fail-open) e o trace cena.avaliada chega quando resolver.
+        const cena = turn.cenaPromise
+          ? await Promise.race([
+              turn.cenaPromise,
+              new Promise((resolvePromise) => {
+                setTimeout(() => resolvePromise(null), 250);
+              })
+            ])
+          : null;
         const plausibility = assessTranscriptPlausibility({
           text: final.text,
           audioMs: turn.totalSpeechMs
@@ -728,7 +760,9 @@ export class LiveAudioSession {
           this.#emit("transcript.rejected", performance.now(), {
             turnId: turn.id,
             text: final.text,
-            plausibility
+            plausibility,
+            audioEndMs: final.audioEndMs ?? null,
+            cena
           });
           return;
         }
@@ -753,6 +787,12 @@ export class LiveAudioSession {
           criticalConflict: final.criticalConflict ?? null,
           criticalInstability: final.criticalInstability ?? null,
           mergedTurnIds: final.mergedTurnIds ?? null,
+          // audioEndMs vinha do ASR mas era descartado nesta borda — o
+          // guard do never-mute no cliente (≥2,5 s) dependia dele e
+          // nunca disparava ao vivo. Agora segue no evento, junto com o
+          // veredicto de cena da janela do turno.
+          audioEndMs: final.audioEndMs ?? null,
+          cena,
           endpointAtMs: atMs,
           finalSource: final.finalSource ?? "fresh",
           audioSnapshot: final.audioSnapshot ?? null,

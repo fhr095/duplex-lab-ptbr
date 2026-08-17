@@ -17,6 +17,11 @@ if [ ! -x .venv-teste-supertonic/bin/python ]; then
   echo "venv do Supertonic ausente — rode: bash scripts/setup-engine-voices.sh" >&2
   exit 1
 fi
+CENA_DIR="${CENA_MODEL_DIR:-var/observador/testes/cena/modelo/sherpa-onnx-zipformer-small-audio-tagging-2024-04-15}"
+if [ ! -f "$CENA_DIR/model.int8.onnx" ]; then
+  # Cena degrada sozinha (fallback grátis) — avisa, não bloqueia.
+  echo "AVISO: tagger de cena ausente ($CENA_DIR) — rode scripts/setup-cena.sh" >&2
+fi
 
 # Perfil candidata v1: parciais Kroko streaming + voz Supertonic.
 # Defaults de código já promovidos (não repetir aqui): final TAGARELA

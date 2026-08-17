@@ -84,6 +84,7 @@ export function attachAudioWebSocket(options) {
       options.vadControlRuntime?.createController() ?? null;
     const session = new LiveAudioSession({
       asrRuntime,
+      avaliadorCena: options.avaliadorCena ?? null,
       effectfulFinalCommitGraceMs:
         options.effectfulFinalCommitGraceMs,
       criticalFinalCommitGraceMs:

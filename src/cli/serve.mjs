@@ -9,6 +9,7 @@ import { createLocalBrain } from "../brain/local-brain.mjs";
 import { createConfiguredBrain } from "../brain/provider.mjs";
 import { loadEnvFile } from "../config/load-env.mjs";
 import { attachAudioWebSocket } from "../audio/audio-websocket.mjs";
+import { createAvaliadorCena } from "../audio/avaliador-cena.mjs";
 import {
   normalizePrefinalPolicy
 } from "../audio/prefinal-policy.mjs";
@@ -40,6 +41,9 @@ import {
 import {
   INTERACTION_KERNEL_VERSION
 } from "../interaction/interaction-kernel.mjs";
+import {
+  resolverTurnoComCena
+} from "../interaction/confirmacao-cena.mjs";
 import {
   createTurnCoordinator
 } from "../interaction/turn-coordinator.mjs";
@@ -74,6 +78,10 @@ const prefinalPolicy = normalizePrefinalPolicy(
 );
 const fastPathEnabled = process.env.FAST_PATH === "1";
 const fastPathMemory = createFastPathMemory();
+// Pendências de confirmação de cena por sessão (notes/percepcao/008
+// §3.1): conteúdo curto+confiante ouvido sob cena adversa aguardando
+// confirmação do usuário. Anti-loop e validade vivem no módulo puro.
+const cenaPendencias = new Map();
 // Programa de dados 1 (arbitragem textual): FASTPATH_LOG=arquivo.jsonl
 // acumula {texto, decisão, contexto} de uso real para rotulagem posterior.
 const fastPathLogPath = process.env.FASTPATH_LOG?.trim() || null;
@@ -324,6 +332,26 @@ if (asrRuntime) {
     console.error(`ASR local indisponível: ${error.message}`);
   }
 }
+// Cena acústica (notes/percepcao/008): tagger AudioSet por janela de
+// turno, veredicto adversa|limpa anexado ao final. CENA_TAGGER=0
+// desliga; sem modelo/venv o worker degrada para a métrica grátis e a
+// engine segue — cena nunca derruba o caminho de conversa.
+const avaliadorCena =
+  asrRuntime && process.env.CENA_TAGGER !== "0"
+    ? createAvaliadorCena({
+        projectRoot: PROJECT_ROOT,
+        modelDir: process.env.CENA_MODEL_DIR?.trim() || undefined,
+        python: process.env.CENA_PYTHON?.trim() || undefined
+      })
+    : null;
+if (avaliadorCena) {
+  await Promise.race([
+    avaliadorCena.pronto(),
+    new Promise((resolvePromise) => {
+      setTimeout(resolvePromise, 8_000).unref?.();
+    })
+  ]);
+}
 if (vadShadowMode === "silero" || vadControlMode === "silero") {
   try {
     vadShadowRuntime = await createSileroVadShadowRuntime({
@@ -406,7 +434,8 @@ const observador = process.env.OBSERVER === "1"
         mergeWindowMs,
         asr: asrHealth,
         vadControl: vadControlHealth,
-        tts: ttsHealth
+        tts: ttsHealth,
+        cena: avaliadorCena?.health ?? { state: "disabled" }
       }
     })
   : null;
@@ -598,7 +627,98 @@ async function streamTurn(request, response, body) {
     texto: body.text
   });
 
+  // Ação de cena (notes/percepcao/008 §3, Regra 1): sob cena adversa,
+  // final CURTO+confiante vira CONFIRMAÇÃO determinística local em vez
+  // de resposta ao conteúdo — o texto não confirmado NÃO avança o
+  // kernel nem chega ao cérebro. A cena NUNCA bloqueia turno: só muda a
+  // fala. Fail-open: sem `cena` no corpo, fluxo intacto.
+  const cenaDoCorpo = body.cena && typeof body.cena === "object"
+    ? {
+        veredicto:
+          body.cena.veredicto === "adversa" ? "adversa" : "limpa",
+        audioMs: Number.isFinite(body.cena.audioMs)
+          ? body.cena.audioMs
+          : null,
+        music: Number.isFinite(body.cena.music) ? body.cena.music : null,
+        fonte: typeof body.cena.fonte === "string"
+          ? body.cena.fonte.slice(0, 24)
+          : null
+      }
+    : null;
+  let textoDoTurno = body.text;
+  let cenaResultado = null;
+  if (stage === "full") {
+    const pendenciaAnterior = cenaPendencias.get(body.sessionId) ?? null;
+    const decisao = resolverTurnoComCena({
+      texto: body.text,
+      cena: cenaDoCorpo,
+      kernelPendente: Boolean(
+        turnCoordinator.snapshot(body.sessionId)?.semantic
+          ?.pendingConfirmation
+      ),
+      pendencia: pendenciaAnterior,
+      agoraMs: Date.now()
+    });
+    if (decisao.pendencia) {
+      cenaPendencias.set(body.sessionId, decisao.pendencia);
+      if (cenaPendencias.size > 200) {
+        cenaPendencias.delete(cenaPendencias.keys().next().value);
+      }
+    } else if (pendenciaAnterior) {
+      cenaPendencias.delete(body.sessionId);
+    }
+    if (decisao.acao === "confirmar" || decisao.acao === "repetir") {
+      response.writeHead(200, {
+        "content-type": "application/x-ndjson; charset=utf-8",
+        "cache-control": "no-store"
+      });
+      emit({
+        type: "cena.confirmacao",
+        acao: decisao.acao,
+        textoOuvido: body.text,
+        veredicto: cenaDoCorpo?.veredicto ?? null,
+        music: cenaDoCorpo?.music ?? null
+      });
+      emit({
+        type: "route",
+        mode: "local",
+        semantic: null,
+        safety: null,
+        interaction: null,
+        fastPath: null,
+        cena: { acao: decisao.acao }
+      });
+      emit({ type: "started", responseId: null, model: "cena-confirmacao" });
+      emit({ type: "delta", delta: decisao.fala });
+      emit({
+        type: "done",
+        responseId: null,
+        model: "cena-confirmacao",
+        usage: null
+      });
+      response.end();
+      return;
+    }
+    if (decisao.resultado) {
+      // confirmada → o conteúdo pendente segue como texto do turno;
+      // corrigida → a reformulação segue. Registrado no tee do turno.
+      textoDoTurno = decisao.textoEfetivo;
+      cenaResultado = decisao.resultado;
+      observador?.evento("turno", {
+        type: "cena.confirmacao",
+        sessionId: body.sessionId,
+        turnId: body.turnId,
+        acao: "resolvida",
+        resultado: decisao.resultado,
+        textoEfetivo: textoDoTurno
+      });
+    }
+  }
+
   if (stage === "commit") {
+    // Turno consumado por adoção especulativa supera qualquer pendência
+    // de cena da sessão (o cliente não adota sob cena adversa).
+    cenaPendencias.delete(body.sessionId);
     const commit = turnCoordinator.commitTurn({
       sessionId: body.sessionId,
       turnId: body.turnId,
@@ -625,12 +745,12 @@ async function streamTurn(request, response, body) {
     ? turnCoordinator.planTurnSpeculative({
         sessionId: body.sessionId,
         turnId: body.turnId,
-        text: body.text
+        text: textoDoTurno
       })
     : turnCoordinator.planTurn({
         sessionId: body.sessionId,
         turnId: body.turnId,
-        text: body.text
+        text: textoDoTurno
       });
   const mode = plan.mode;
   // Arbitragem da camada rápida (FAST_PATH=1): decisão pura ANTES de acionar
@@ -640,11 +760,11 @@ async function streamTurn(request, response, body) {
   // reasoner gera, com contrato no-repeat no prompt.
   const fastPath = fastPathEnabled
     ? arbitrateTurn({
-        text: body.text,
+        text: textoDoTurno,
         plan,
         crossTurn: {
           lastAmount: fastPathMemory.lastAmount(body.sessionId),
-          amounts: extractPtBrCurrencyAmounts(body.text)
+          amounts: extractPtBrCurrencyAmounts(textoDoTurno)
             .map((item) => item.value)
             .filter(Number.isFinite)
         }
@@ -654,13 +774,13 @@ async function streamTurn(request, response, body) {
   if (fastPathEnabled && stage === "full") {
     fastPathMemory.observe(
       body.sessionId,
-      body.text,
+      textoDoTurno,
       extractPtBrCurrencyAmounts
     );
     void appendFastPathLog({
       at: new Date().toISOString(),
       sessionId: body.sessionId,
-      text: body.text,
+      text: textoDoTurno,
       decision: fastPath
         ? { action: fastPath.action, class: fastPath.class }
         : null,
@@ -690,6 +810,7 @@ async function streamTurn(request, response, body) {
     semantic: plan.semantic ?? null,
     safety: plan.safety ?? null,
     interaction: plan.interaction,
+    cena: cenaResultado ? { resultado: cenaResultado } : null,
     fastPath: fastPath
       ? { action: fastPath.action, class: fastPath.class }
       : null,
@@ -735,7 +856,7 @@ async function streamTurn(request, response, body) {
     if (
       mode === "delegate" &&
       stage !== "speculative" &&
-      weatherIntent(plan.task?.query ?? body.text)
+      weatherIntent(plan.task?.query ?? textoDoTurno)
     ) {
       emit({
         type: "started",
@@ -744,7 +865,7 @@ async function streamTurn(request, response, body) {
       });
       try {
         const summary = await fetchWeatherSummary(
-          plan.task?.query ?? body.text,
+          plan.task?.query ?? textoDoTurno,
           { signal: controller.signal }
         );
         emit({ type: "delta", delta: summary });
@@ -772,7 +893,7 @@ async function streamTurn(request, response, body) {
     // efeitos externos (ferramentas, ações, side-effects); este flag é a
     // autoridade que as desabilita até o commit/adoção.
     for await (const event of brain.streamTurn({
-      text: plan.effectiveText ?? body.text,
+      text: plan.effectiveText ?? textoDoTurno,
       history: body.history,
       mode,
       signal: controller.signal,
@@ -1028,6 +1149,7 @@ const server = createServer(async (request, response) => {
           requestLimit: brain.requestLimit
         },
         asr: asrHealth,
+        cena: avaliadorCena?.health ?? { state: "disabled" },
         vadControl: vadControlHealth,
         vadShadow: vadShadowHealth,
         interaction: {
@@ -1139,6 +1261,7 @@ const audioWebSocket =
         vadShadowRuntime:
           vadShadowMode === "silero" ? vadShadowRuntime : null,
         vadConfig,
+        avaliadorCena,
         observador
       })
     : null;
@@ -1152,6 +1275,7 @@ async function shutdown(signal) {
   console.log(`Encerrando Duplex Lab (${signal})...`);
   await observador?.fechar().catch(() => {});
   await audioWebSocket?.close().catch(() => {});
+  await avaliadorCena?.close().catch(() => {});
   await asrRuntime?.close().catch(() => {});
   await vadShadowRuntime?.close().catch(() => {});
   await closeWindowsSpeechSynthesizer({ drain: false }).catch(() => {});
@@ -1200,6 +1324,13 @@ server.listen(port, host, () => {
     asrHealth.state === "ready"
       ? `ASR local: ${asrHealth.model} aquecido (${asrHealth.workers} workers)`
       : `ASR local: ${asrHealth.state}`
+  );
+  const cenaHealth = avaliadorCena?.health ?? { state: "disabled" };
+  console.log(
+    cenaHealth.state === "ready"
+      ? `Cena acústica: tagger ${cenaHealth.model}` +
+        (cenaHealth.aviso ? " (AVISO: modo grátis degradado)" : "")
+      : `Cena acústica: ${cenaHealth.state}`
   );
   console.log("Use Chromium/Chrome e, no primeiro teste, prefira fones.");
 });

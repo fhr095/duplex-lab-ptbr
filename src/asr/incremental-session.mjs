@@ -198,6 +198,13 @@ export class IncrementalAsrSession extends EventEmitter {
       : Buffer.from(this.#finalPcm);
   }
 
+  // PCM acumulado do turno ATÉ AGORA (disponível já na chamada de
+  // finish(), antes do final resolver) — usado pela avaliação de cena
+  // acústica, que roda em paralelo à finalização do ASR.
+  get pcmAcumulado() {
+    return Buffer.concat(this.#buffers);
+  }
+
   pushPcm(pcm, options = {}) {
     // Enunciado no teto de duração: a sessão está finalizando o que já
     // ouviu — frames excedentes caem em silêncio (perder a cauda é

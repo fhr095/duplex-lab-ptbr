@@ -201,6 +201,12 @@ const session = {
   endpointTimer: null,
   earlyBackchannelTurnIds: new Set(),
   finalText: "",
+  // Cena acústica do último transcript.final (veredicto adversa|limpa) —
+  // repassada ao servidor no POST do turno (Regra 1: confirma antes de
+  // agir) e usada aqui p/ Regra 2 (vazios sob som) e p/ não adotar
+  // especulação sob cena adversa.
+  cenaDoFinal: null,
+  cenaVazios: { ultimoAdversoEm: 0, especificas: 0, ultimaEspecificaEm: 0 },
   speculation: null,
   speculationSequence: 0,
   ackCache: new Map(),
@@ -2243,6 +2249,10 @@ async function processTurn() {
 
   const text = session.finalText.trim();
   session.finalText = "";
+  // Cena do final que originou este turno — consumida aqui (não vaza
+  // para turnos futuros) e repassada ao servidor, onde vive a Regra 1.
+  const cenaDoTurno = session.cenaDoFinal;
+  session.cenaDoFinal = null;
   if (!text || !session.active) {
     return;
   }
@@ -2279,15 +2289,24 @@ async function processTurn() {
   setStatus("pensando e ouvindo", "speaking");
 
   // Challenger: adota o stream especulado quando a final confirma o texto.
+  // Sob cena ADVERSA nunca adota: a especulação respondeu ao conteúdo, e
+  // a Regra 1 (servidor) pode transformá-lo em confirmação — adotar
+  // falaria a resposta fantasma que a política existe para impedir.
   const speculation = session.speculation;
   session.speculation = null;
   const adopted = speculation && !speculation.aborted &&
+    cenaDoTurno?.veredicto !== "adversa" &&
     speculationMatches(text, speculation.provisionalText)
     ? speculation
     : null;
   if (speculation && !adopted) {
     speculation.abort();
-    log("speculation.miss", speculation.provisionalText);
+    log(
+      cenaDoTurno?.veredicto === "adversa"
+        ? "speculation.descartada-cena"
+        : "speculation.miss",
+      speculation.provisionalText
+    );
   }
   if (adopted) {
     controller.signal.addEventListener(
@@ -2343,6 +2362,7 @@ async function processTurn() {
           history,
           sessionId: session.interactionSessionId,
           turnId,
+          cena: cenaDoTurno ?? undefined,
           respostaInterrompida:
             session.ultimaRespostaCortada &&
             performance.now() - session.ultimaRespostaCortada.em <=
@@ -3028,6 +3048,17 @@ function handleLocalAudioEvent(event) {
   }
   if (event.type === "transcript.final") {
     const text = String(event.text ?? "").trim();
+    session.cenaDoFinal = event.cena ?? null;
+    if (event.cena?.veredicto === "adversa") {
+      log(
+        "cena.adversa",
+        `music ${event.cena.music ?? "?"} · fonte ${event.cena.fonte}`
+      );
+    } else if (event.cena?.veredicto === "limpa") {
+      // Cena voltou a limpa: zera a escadinha de mensagens específicas
+      // de captação (freio anti-nag da Regra 2).
+      session.cenaVazios.especificas = 0;
+    }
     const reflexTransition = dispatchLocalAudioReflex({
       type: "TRANSCRIPT_FINAL",
       turnId: event.turnId ?? null,
@@ -3136,23 +3167,51 @@ function handleLocalAudioEvent(event) {
       // a6c1: 10 s da história do avô → silêncio total e "tá me
       // ouvindo?"). Nunca calar: pede repetição LOCALMENTE (TTS não
       // depende do cérebro), com freio de 20 s para não virar eco.
+      //
+      // Regra 2 da ação de cena (notes/percepcao/008 §3): o 1º vazio sob
+      // cena adversa mantém a mensagem causa-neutra (pode ser hesitação);
+      // o 2º+ em ≤60 s sob a MESMA cena confirma que o ambiente está
+      // comendo a fala → mensagem ESPECÍFICA citando o som. Freios (§4):
+      // específica no máx. 1×/30 s (compartilhando o freio geral de
+      // 20 s — vale o mais restritivo) e no máx. 2 sem a cena melhorar;
+      // cena limpa em qualquer final zera a escadinha.
       const agora = performance.now();
+      const cenaAdversa = event.cena?.veredicto === "adversa";
+      const vazioAdversoAnteriorEm = session.cenaVazios.ultimoAdversoEm;
+      if (cenaAdversa) {
+        session.cenaVazios.ultimoAdversoEm = agora;
+      }
       if (
         (event.audioEndMs ?? 0) >= 2_500 &&
         !session.assistantSpeaking &&
         agora - session.lastEmptyFinalNoticeAt > 20_000
       ) {
         session.lastEmptyFinalNoticeAt = agora;
-        // Causa-neutro: pode ser voz baixa, distância OU fonte sonora
-        // perto do mic (a6c1: música na Alexa colada no microfone com o
-        // usuário falando de longe — 3 ASRs + ouvido nativo não
-        // recuperaram as palavras).
-        const aviso =
-          "Você falou, mas não consegui entender daqui. Pode chegar " +
-          "mais perto do microfone — ou baixar algum som que esteja " +
-          "tocando perto dele?";
+        const especifica =
+          cenaAdversa &&
+          agora - vazioAdversoAnteriorEm <= 60_000 &&
+          session.cenaVazios.especificas < 2 &&
+          agora - session.cenaVazios.ultimaEspecificaEm >= 30_000;
+        if (especifica) {
+          session.cenaVazios.especificas += 1;
+          session.cenaVazios.ultimaEspecificaEm = agora;
+        }
+        // Causa-neutro por padrão: pode ser voz baixa, distância OU
+        // fonte sonora perto do mic (a6c1: música na Alexa colada no
+        // microfone com o usuário falando de longe — 3 ASRs + ouvido
+        // nativo não recuperaram as palavras).
+        const aviso = especifica
+          ? "Tem um som alto aí perto — pode baixar ou chegar mais perto?"
+          : "Você falou, mas não consegui entender daqui. Pode chegar " +
+            "mais perto do microfone — ou baixar algum som que esteja " +
+            "tocando perto dele?";
         elements.assistantText.textContent = aviso;
-        log("assistant.clarification", "final vazio após fala longa");
+        log(
+          "assistant.clarification",
+          especifica
+            ? "vazios repetidos sob cena adversa (específica)"
+            : "final vazio após fala longa"
+        );
         queueCompleteText(aviso, "repair");
       }
     }
