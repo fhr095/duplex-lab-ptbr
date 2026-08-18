@@ -1,6 +1,9 @@
 # Roadmap guiado por gates
 
-Este é o **único documento que define a ordem operacional**. As fases abaixo
+> **HISTÓRICO (era pré-engine).** A ordem operacional atual — mapa de
+> desafios e fila — está em [PLANO-DIRETOR.md](PLANO-DIRETOR.md) §4.
+
+Este documento definia a ordem operacional da fase de fundação. As fases abaixo
 organizam capacidades e podem se sobrepor; a tabela
 [Ordem operacional consolidada](#ordem-operacional-consolidada) decide o que
 entra agora no caminho crítico. O racional e as alternativas estão registrados

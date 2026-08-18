@@ -1,5 +1,8 @@
 # Guia operacional para agentes/sessões
 
+Estratégia, doutrina de decisão e mapa de desafios: **docs/PLANO-DIRETOR.md**
+(autoridade atual; README aponta para lá). Este arquivo é só operação.
+
 ## Rodar a engine (candidata v1+roda)
 
 ```bash

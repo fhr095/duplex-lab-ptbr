@@ -1,5 +1,10 @@
 # Referência macro do projeto
 
+> **HISTÓRICO CONGELADO (era pré-engine, até 03/08/2026).** A direção
+> atual do projeto vive em [PLANO-DIRETOR.md](PLANO-DIRETOR.md); a
+> engine promovida em [CANDIDATA-V1.md](CANDIDATA-V1.md). Este arquivo
+> permanece como registro auditável da fase EXP-0001–0026.
+
 Status: **referência canônica — consolidada em 03/08/2026 após auditoria,
 contranálise, calibração EXP-0015, M4b acústico EXP-0016 em shadow,
 fechamento do EXP-0017, passe textual do EXP-0018, corte físico do EXP-0019,

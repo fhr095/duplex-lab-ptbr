@@ -1,12 +1,27 @@
 # Duplex Lab PT-BR
 
-Fundação orientada a testes para construir uma interação de voz full-duplex em
-português brasileiro, com um “cérebro” externo substituível.
+Engine de conversa por voz full-duplex em português brasileiro para
+interações reais em espaços públicos, com "cérebro" LLM externo
+substituível.
 
-A direção, os limites das evidências e a estratégia atual estão consolidados na
-[referência macro do projeto](docs/PROJECT_REFERENCE.md).
+## Estado atual (2026-08-18) — comece por aqui
 
-## O que existe hoje
+- **Estratégia e doutrina**: [docs/PLANO-DIRETOR.md](docs/PLANO-DIRETOR.md)
+  — tese do produto, regras de decisão, mapa de desafios, como auditar.
+- **A engine promovida**: [docs/CANDIDATA-V1.md](docs/CANDIDATA-V1.md)
+  (manifesto + ledger de evidência) ·
+  [docs/ENGINE.md](docs/ENGINE.md) (instalação e demo) ·
+  [AGENTS.md](AGENTS.md) (operação e regras inegociáveis).
+- **Frente de percepção** (sinais além do texto): linha de raciocínio
+  completa em `notes/percepcao/000-010` na branch `exp/percepcao-v0`.
+
+Tudo abaixo desta linha é o REGISTRO HISTÓRICO da fase de fundação
+(EXP-0001–0026, fábrica de avaliações, M1–M4) — evidência válida no seu
+escopo, mas a direção que descreve foi SUPERADA pelo plano diretor.
+
+---
+
+## O que existia na fase de fundação
 
 A primeira vertical local já é funcional de ponta a ponta:
 

@@ -1,5 +1,9 @@
 # Produto e hipóteses
 
+> **HISTÓRICO (era pré-engine).** A tese de produto atual — espaços
+> públicos, usuários rotativos, adversidade acústica como regime — está
+> em [PLANO-DIRETOR.md](PLANO-DIRETOR.md) §1.
+
 ## North star
 
 Construir uma camada proprietária de interação por voz que faça a conversa
