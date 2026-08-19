@@ -186,5 +186,19 @@ test("veredicto: fallback grátis só decide sem tagger (FPR 0 no leito)", () =>
     veredictoCena({ modo: "gratis", gravesVoz: 11.9 }).veredicto,
     "limpa"
   );
-  assert.equal(veredictoCena(null).fonte, "indisponivel");
+});
+
+test("veredicto é TRIESTADO: indisponível nunca vira limpa", () => {
+  assert.equal(veredictoCena(null).veredicto, "indisponivel");
+  assert.equal(veredictoCena({}).veredicto, "indisponivel");
+  // a política só age em "adversa" — indisponível atravessa em
+  // fail-open explícito, sem se disfarçar de cena boa
+  const decisao = resolverTurnoComCena({
+    texto: "Que horas são",
+    cena: { veredicto: "indisponivel", audioMs: 1_500 },
+    kernelPendente: false,
+    pendencia: null,
+    agoraMs: 0
+  });
+  assert.equal(decisao.acao, "prosseguir");
 });

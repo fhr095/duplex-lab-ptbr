@@ -12,9 +12,11 @@ opiniões.
 Engine de conversa por voz **full-duplex em PT-BR** para interações
 reais em **espaços públicos** (totens/instalações): usuários ROTATIVOS
 (cada hora uma voz, sem cadastro), ambiente acústico ADVERSO por padrão
-(música ambiente, anúncios, vozes ao fundo), autocustódia em CPU
-(máquina de 8 GB, sem GPU em runtime), com "cérebro" LLM externo
-substituível na ponta. Consequências de desenho:
+(música ambiente, anúncios, vozes ao fundo), autocustódia em CPU sem
+GPU em runtime — **alvo de hardware: até 16 GB de RAM** (premissa
+original do produto; a máquina de desenvolvimento de 8 GB é o piso
+conservador em que tudo é medido, não o teto que corta challengers) —
+com "cérebro" LLM externo substituível na ponta. Consequências de desenho:
 
 - identidade de voz só pode ser **efêmera por sessão** (nunca
   enrollment persistente; LGPD em espaço público);
@@ -30,10 +32,18 @@ substituível na ponta. Consequências de desenho:
 A candidata v1 (docs/CANDIDATA-V1.md) provou a conversa na sala
 comportada. A fase atual: **fabricar o mundo adverso em bancada** —
 adversidade sintética determinística sobre gravações reais, com rótulo
-perfeito por construção — e endurecer a engine **um desafio por vez**,
-com descoberta/calibração/regressão baratas em replay. Teste humano
-vivo é escasso e caro: serve para PROMOVER o que a bancada já provou,
-nunca para descobrir.
+perfeito por construção — e endurecer a engine **um desafio por vez**.
+
+O ciclo metodológico (corrigido em 2026-08-18; a formulação anterior
+"humano nunca descobre" contradizia a própria história da frente —
+a6c1, 36ed e e2c0 foram descobertas humanas):
+
+**descoberta humana → reprodução sintética → correção em bancada →
+promoção humana.** Sessões vivas são o radar de falhas novas e o
+carimbo final; a bancada é onde a falha vira caso reproduzível,
+correção calibrada e regressão permanente. O que muda com a bancada é
+que o humano deixa de ser o GARGALO do meio do ciclo — não que deixe
+de ser a fonte e o juiz das pontas.
 
 Sequência de desafios (estado em §4): música ✓ → vazios/alucinação sob
 som ✓ → vozes-ambiente (leito pronto) → voz-da-sessão (challenger
@@ -86,17 +96,28 @@ aberto) → multi-pessoa/endereçamento (adormecido com gatilho).
   específicas (spec notes/percepcao/008; aceite 009 — replay reproduz
   a falha real e a corrige; falta só T4 vivo, pendência registrada).
 
-**Abertos com leito pronto (contribuição direta possível):**
+**MARCO ATIVO — propriedade/endereçamento da fala
+(notes/percepcao/011):** a quem pertence cada fala e se é dirigida à
+engine. Contrato proposto: **admissão por CONTINGÊNCIA interacional
+(comportamento no tempo do diálogo), não por identidade** — a sessão é
+um grupo ABERTO de participantes; voz nova que fala nos "slots" do
+diálogo (perto do mic, respondendo à engine) entra; fala indiferente à
+linha do tempo do assistente (rádio/TV, conversa alheia) fica fora;
+embedding de voz efêmero (RAM, morre com a sessão, NUNCA persistido) é
+acelerador/desempate da atribuição, não porteiro. Entregáveis: leito
+usuário×rádio×segunda-pessoa×sobreposição; baselines grátis
+(campo-próximo, contingência temporal, indiferença-a-sobreposição)
+antes de embeddings pequenos em SHADOW; comparação com sinal de
+presença do produto (simulado como oráculo); política segura p/
+incerteza SEM bloqueio inicial; custo sob pilha completa.
 - **Vozes-ambiente (burburinho)**: colapso do VAD medido em qualquer
   SNR; detector proposto `maxDuty60 ≥ 0,85` com FPR 0 nas sessões
   reais disponíveis (probes/percepcao/leito-ambiente-vozes.mjs;
   notes/percepcao/010). Promoção travada em gravação real.
-- **Voz-da-sessão (turnos-fantasma)**: rádio-falado gera 13 fantasmas/
-  120 s a volume doméstico; separação exige consistência de voz
-  EFÊMERA da sessão (embedding em RAM, descartado ao fim). Challenger
-  aberto: modelos de speaker embedding pequenos (ONNX/CPU) contra o
-  leito de fantasmas. Perguntas de desenho em aberto: âncora de início
-  de sessão (sinal não-acústico do produto?) e multiusuário legítimo.
+- **A cena é um VETOR de eixos triestados** (adversa|limpa|
+  indisponivel por eixo; hoje só "musica" tem detector promovido) —
+  "limpa" significa "sem adversidade detectada no eixo", nunca
+  "entrada confiável"; "indisponivel" jamais se disfarça de limpa.
 
 **Adormecidos com gatilho explícito (não reabrir sem o gatilho —
 notes/percepcao/006 §C):** fine-tune de endpoint; MaAI/VAP

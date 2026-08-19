@@ -18,9 +18,15 @@ export const CENA_VERSION = "cena-v0";
 export const LIMIAR_MUSIC = 0.5;
 export const LIMIAR_GRAVES_VOZ_FALLBACK = 12.4;
 
+// Veredicto TRIESTADO do eixo música: adversa | limpa | indisponivel.
+// "limpa" significa "sem adversidade DETECTADA no eixo avaliado" —
+// NUNCA "entrada confiável": rádio/burburinho/anúncios saem limpa por
+// desenho (são fala, não música; propriedade da fala é OUTRO eixo, ver
+// notes/percepcao/011). "indisponivel" jamais vira limpa: quem consome
+// só age em "adversa" (fail-open explícito, não disfarçado).
 export function veredictoCena(resultado) {
   if (!resultado || typeof resultado !== "object") {
-    return { veredicto: "limpa", fonte: "indisponivel" };
+    return { veredicto: "indisponivel", fonte: "indisponivel" };
   }
   if (resultado.modo === "tagger" && Number.isFinite(resultado.music)) {
     return {
@@ -37,7 +43,7 @@ export function veredictoCena(resultado) {
       fonte: "gratis"
     };
   }
-  return { veredicto: "limpa", fonte: "indisponivel" };
+  return { veredicto: "indisponivel", fonte: "indisponivel" };
 }
 
 export function createAvaliadorCena(options = {}) {
@@ -115,6 +121,11 @@ export function createAvaliadorCena(options = {}) {
         const { veredicto, fonte } = veredictoCena(resultado);
         return {
           versao: CENA_VERSION,
+          // A cena é um VETOR de eixos; hoje só "musica" tem detector
+          // promovido. `veredicto` no topo = veredicto DESTE eixo
+          // (compatibilidade); eixos futuros (vozes, propriedade)
+          // entram como campos irmãos, nunca reciclando "limpa".
+          eixo: "musica",
           veredicto,
           fonte,
           music: resultado.music ?? null,
