@@ -75,6 +75,16 @@ const ATE_S = parseTempo(arg("--ate", null), "--ate");
 const FUNDO_ARQUIVO = arg("--fundo", null);
 const FUNDO_SNR_DB = Number(arg("--snr", "5"));
 const FUNDO_OFFSET_S = Number(arg("--fundo-offset", "0"));
+// --reproducao-simulada: para cada resposta da engine, sintetiza o TTS
+// de verdade (sidecar precisa estar no ar) e emite os beacons de
+// reprodução avançando um relógio SIMULADO com a duração real do WAV —
+// o pacote ganha canal-assistente FÍSICO posicionado, e o loop
+// fonte→engine→fonte fica mensurável (bancada de recuperação de âncora,
+// notes/percepcao/012 §3). LIMITE DECLARADO: simulação TEMPORAL, não
+// acústica — prova contingência e recuperação; NÃO alega AEC,
+// reverberação nem comportamento físico da sala (o áudio simulado não
+// entra no microfone).
+const REPRODUCAO_SIMULADA = args.includes("--reproducao-simulada");
 
 const health = await fetch(`${HTTP}/api/health`).then(
   (resposta) => resposta.json(),
@@ -191,6 +201,67 @@ function misturarFrame(fatia, posicaoAmostra) {
 const sessionId = `replay-${Date.now().toString(36)}`;
 let turnos = 0;
 const finais = [];
+
+// ---- reprodução simulada: beacons reais + relógio de playback serial
+async function enviarBeacon(entrada) {
+  await fetch(`${HTTP}/api/observador/beacon`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      sessionId,
+      clientEpochMs: Date.now(),
+      perfNow: performance.now(),
+      entries: [
+        { p: performance.now(), tc: Date.now(), c: "reproducao", ...entrada }
+      ]
+    })
+  }).catch(() => {});
+}
+let filaReproducao = Promise.resolve();
+let reproducoesSimuladas = 0;
+function simularReproducao(texto) {
+  filaReproducao = filaReproducao.then(async () => {
+    const uid = `sim-${Date.now().toString(36)}-${++reproducoesSimuladas}`;
+    const resposta = await fetch(
+      `${HTTP}/api/tts?text=${encodeURIComponent(texto.slice(0, 680))}` +
+        `&uid=${uid}`,
+      { signal: AbortSignal.timeout(30_000) }
+    );
+    if (!resposta.ok) {
+      console.log(`  (tts indisponível p/ simulação: HTTP ${resposta.status})`);
+      return;
+    }
+    const wav = Buffer.from(await resposta.arrayBuffer());
+    const sr = wav.readUInt32LE(24) || 44_100;
+    const bits = wav.readUInt16LE(34) || 16;
+    const duracaoS = Math.max(
+      0.2,
+      (wav.length - 44) / (sr * (bits / 8))
+    );
+    await enviarBeacon({
+      evento: "inicio",
+      uid,
+      kind: "resposta",
+      texto: texto.slice(0, 120),
+      posicaoS: 0,
+      duracaoS
+    });
+    console.log(
+      `  ▶ reprodução simulada ${duracaoS.toFixed(1)}s («${texto.slice(0, 50)}…»)`
+    );
+    await delay(duracaoS * 1_000);
+    await enviarBeacon({
+      evento: "fim",
+      uid,
+      kind: "resposta",
+      motivo: "finalizado",
+      tocou: true,
+      posicaoS: duracaoS,
+      duracaoS
+    });
+  }).catch(() => {});
+  return filaReproducao;
+}
 async function conduzirTurno(texto, cena) {
   const turnId = `replay-turno-${++turnos}`;
   const registro = finais.at(-1);
@@ -219,6 +290,9 @@ async function conduzirTurno(texto, cena) {
     } else if (event.type === "done" || event.type === "error") {
       break;
     }
+  }
+  if (REPRODUCAO_SIMULADA && registro.resposta?.trim()) {
+    void simularReproducao(registro.resposta.trim());
   }
 }
 
