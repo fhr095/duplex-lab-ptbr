@@ -39,9 +39,8 @@ import {
   weatherIntent
 } from "../tools/weather.mjs";
 import {
-  classeDaFerramenta,
   evidenciaPropriedade,
-  podeExecutarFerramenta
+  executarFerramentaComAutoridade
 } from "../tools/autoridade.mjs";
 import {
   INTERACTION_KERNEL_VERSION
@@ -875,19 +874,37 @@ async function streamTurn(request, response, body) {
       stage !== "speculative" &&
       weatherIntent(plan.task?.query ?? textoDoTurno)
     ) {
-      const classeFerramenta = classeDaFerramenta("open-meteo");
-      const autorizacao = podeExecutarFerramenta({
-        classe: classeFerramenta,
-        propriedade
-      });
-      emit({
-        type: "ferramenta.autorizacao",
-        ferramenta: "open-meteo",
-        classe: classeFerramenta,
-        ok: autorizacao.ok,
-        motivo: autorizacao.motivo ?? null
-      });
-      if (!autorizacao.ok) {
+      // BROKER ÚNICO de autoridade (src/tools/autoridade.mjs): nenhuma
+      // ferramenta executa fora dele. Open-Meteo é leitura-publica e
+      // segue permissivo — registro honesto: fala fantasma ainda pode
+      // dispará-lo; a barreira por construção vale para a primeira
+      // ferramenta sensível/mutável.
+      try {
+        const execucao = await executarFerramentaComAutoridade({
+          nome: "open-meteo",
+          propriedade,
+          executar: () =>
+            fetchWeatherSummary(plan.task?.query ?? textoDoTurno, {
+              signal: controller.signal
+            })
+        });
+        emit(execucao.evento);
+        if (execucao.ok) {
+          emit({
+            type: "started",
+            responseId: null,
+            model: "tool:open-meteo"
+          });
+          emit({ type: "delta", delta: execucao.resultado });
+          emit({
+            type: "done",
+            responseId: null,
+            model: "tool:open-meteo",
+            usage: null
+          });
+          response.end();
+          return;
+        }
         emit({
           type: "delta",
           delta:
@@ -895,26 +912,6 @@ async function streamTurn(request, response, body) {
             "executar. "
         });
         // cai para o cérebro normal abaixo, sem executar a ferramenta
-      } else {
-      emit({
-        type: "started",
-        responseId: null,
-        model: "tool:open-meteo"
-      });
-      try {
-        const summary = await fetchWeatherSummary(
-          plan.task?.query ?? textoDoTurno,
-          { signal: controller.signal }
-        );
-        emit({ type: "delta", delta: summary });
-        emit({
-          type: "done",
-          responseId: null,
-          model: "tool:open-meteo",
-          usage: null
-        });
-        response.end();
-        return;
       } catch (error) {
         if (error.name === "AbortError") {
           response.end();
@@ -925,7 +922,6 @@ async function streamTurn(request, response, body) {
           delta: "A consulta de tempo falhou; seguindo sem a ferramenta. "
         });
         // cai para o cérebro normal abaixo
-      }
       }
     }
     // Contrato do challenger: um turno especulativo NUNCA pode disparar

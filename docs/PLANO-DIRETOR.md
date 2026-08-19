@@ -96,20 +96,26 @@ aberto) → multi-pessoa/endereçamento (adormecido com gatilho).
   específicas (spec notes/percepcao/008; aceite 009 — replay reproduz
   a falha real e a corrige; falta só T4 vivo, pendência registrada).
 
-**MARCO ATIVO — propriedade/endereçamento da fala
-(notes/percepcao/011):** a quem pertence cada fala e se é dirigida à
-engine. Contrato proposto: **admissão por CONTINGÊNCIA interacional
-(comportamento no tempo do diálogo), não por identidade** — a sessão é
-um grupo ABERTO de participantes; voz nova que fala nos "slots" do
-diálogo (perto do mic, respondendo à engine) entra; fala indiferente à
-linha do tempo do assistente (rádio/TV, conversa alheia) fica fora;
-embedding de voz efêmero (RAM, morre com a sessão, NUNCA persistido) é
-acelerador/desempate da atribuição, não porteiro. Entregáveis: leito
-usuário×rádio×segunda-pessoa×sobreposição; baselines grátis
-(campo-próximo, contingência temporal, indiferença-a-sobreposição)
-antes de embeddings pequenos em SHADOW; comparação com sinal de
-presença do produto (simulado como oráculo); política segura p/
-incerteza SEM bloqueio inicial; custo sob pilha completa.
+**Propriedade/endereçamento da fala — pesquisa FECHADA
+(notes/percepcao/011–016):** conclusão, na classificação honesta:
+**câmera grossa PROMOVIDA AO PRÓXIMO PROBE DE PRODUTO** (não
+"empiricamente vencedora" — as 3 derivações no produto e a medição com
+sinais REAIS nos cenários congelados continuam pendentes); speaker
+embedding CORTADO do caminho principal (adormecido com gatilhos:
+medição real falhar | instalação sem câmera | agrupamento
+insuficiente). Arquitetura decidida: endereçamento POR ENUNCIADO
+(presença + proximidade/orientação + atividade labial em JANELA — não
+distância instantânea de landmarks: movimento ao longo da janela,
+confiança, pose, oclusão, múltiplos tracks, sensor-indisponível) +
+prior de indiferença por fonte (nunca decide sozinho — células N/M) +
+pool só p/ cena/autoridade + BARREIRA DE AUTORIDADE fail-closed com
+broker único e lease estruturado/escopado/expirável/one-shot
+(src/tools/autoridade.mjs; Open-Meteo = leitura pública, e o registro
+reconhece: fala fantasma ainda pode dispará-lo — protegida por
+construção está a primeira ferramenta sensível/mutável). Sequência:
+sessão humana holística da engine ATUAL (avalia políticas vivas, NÃO a
+câmera) → adapter mínimo Habitat→engine → cenários congelados com
+sinais reais → decisão final promover-câmera × reabrir-embedding.
 - **Vozes-ambiente (burburinho)**: colapso do VAD medido em qualquer
   SNR; detector proposto `maxDuty60 ≥ 0,85` com FPR 0 nas sessões
   reais disponíveis (probes/percepcao/leito-ambiente-vozes.mjs;
