@@ -39,6 +39,11 @@ import {
   weatherIntent
 } from "../tools/weather.mjs";
 import {
+  classeDaFerramenta,
+  evidenciaPropriedade,
+  podeExecutarFerramenta
+} from "../tools/autoridade.mjs";
+import {
   INTERACTION_KERNEL_VERSION
 } from "../interaction/interaction-kernel.mjs";
 import {
@@ -804,12 +809,24 @@ async function streamTurn(request, response, body) {
     "x-content-type-options": "nosniff"
   });
 
+  // Contrato de propriedade/autoridade (notes/percepcao/014): todo
+  // turno carrega no trace o que a engine SABE sobre fonte/
+  // participação/endereçamento — honestamente não-instrumentado até os
+  // sinais do produto chegarem — e delegações carregam a classe da
+  // ferramenta. Escrita sem lease é bloqueada por construção
+  // (src/tools/autoridade.mjs; o disparo de delegação por fantasma do
+  // loop 013 morre aqui quando a 1ª ferramenta mutável existir).
+  const propriedade = evidenciaPropriedade({
+    cena: cenaDoCorpo,
+    pendenciaCena: cenaPendencias.has(body.sessionId)
+  });
   emit({
     type: "route",
     mode,
     semantic: plan.semantic ?? null,
     safety: plan.safety ?? null,
     interaction: plan.interaction,
+    propriedade,
     cena: cenaResultado ? { resultado: cenaResultado } : null,
     fastPath: fastPath
       ? { action: fastPath.action, class: fastPath.class }
@@ -858,6 +875,27 @@ async function streamTurn(request, response, body) {
       stage !== "speculative" &&
       weatherIntent(plan.task?.query ?? textoDoTurno)
     ) {
+      const classeFerramenta = classeDaFerramenta("open-meteo");
+      const autorizacao = podeExecutarFerramenta({
+        classe: classeFerramenta,
+        propriedade
+      });
+      emit({
+        type: "ferramenta.autorizacao",
+        ferramenta: "open-meteo",
+        classe: classeFerramenta,
+        ok: autorizacao.ok,
+        motivo: autorizacao.motivo ?? null
+      });
+      if (!autorizacao.ok) {
+        emit({
+          type: "delta",
+          delta:
+            "Essa ação precisa de uma confirmação sua antes de eu " +
+            "executar. "
+        });
+        // cai para o cérebro normal abaixo, sem executar a ferramenta
+      } else {
       emit({
         type: "started",
         responseId: null,
@@ -887,6 +925,7 @@ async function streamTurn(request, response, body) {
           delta: "A consulta de tempo falhou; seguindo sem a ferramenta. "
         });
         // cai para o cérebro normal abaixo
+      }
       }
     }
     // Contrato do challenger: um turno especulativo NUNCA pode disparar
