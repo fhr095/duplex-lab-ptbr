@@ -170,3 +170,88 @@ console.log(
     "colide — fonte ≠ endereçamento); J (rajada) e o 1º enunciado de " +
     "cada fonte medem o residual dos sinais temporais."
 );
+
+// ================= CENÁRIO 2 — células CAUSAIS (mandato v4) =========
+// Trajetória de crença e ação A CADA ENUNCIADO (não só o lift final),
+// comparando duas regras:
+//   ACUM   — lift acumulado eterno (a regra do cenário 1; sem perdão)
+//   JAN6   — lift em janela móvel dos últimos 6 enunciados (reabilita)
+// Células:
+//   N  pessoa nova que COMEÇA mal: 2 interrupções LONGAS (sobre a fala
+//      da assistente, perto) ANTES de acumular comportamento bom.
+//      Pergunta causal: a regra a rejeita antes da redenção?
+//   M  MESMA pessoa, MESMO track: 3 enunciados à engine (slots) → 3 ao
+//      acompanhante (indiferentes) → 3 à engine de novo. Teste direto
+//      de fonte ≠ participação ≠ endereçamento SEM criar 2 IDs.
+console.log("\n═══ CENÁRIO 2 — trajetórias causais ═══");
+const assist2 = [];
+for (let i = 0; i < 12; i += 1) {
+  const ini = 4 + i * 14;
+  assist2.push({ ini, fim: ini + 7 });
+}
+const duty2 =
+  assist2.reduce((s, a) => s + (a.fim - a.ini), 0) / (12 * 14 + 4);
+
+function sobrepoe2(e) {
+  let s = 0;
+  for (const a of assist2) {
+    s += Math.max(0, Math.min(a.fim, e.fim) - Math.max(a.ini, e.ini));
+  }
+  return s / (e.fim - e.ini);
+}
+
+// N: 2 interrupções longas (5 s inteiras sobre a resposta) e depois 6
+// turnos bem-comportados em slot.
+const N = [
+  { ini: assist2[0].ini + 1, fim: assist2[0].ini + 6, nota: "interrupção-longa" },
+  { ini: assist2[1].ini + 1, fim: assist2[1].ini + 6, nota: "interrupção-longa" }
+];
+for (let i = 2; i < 8; i += 1) {
+  N.push({ ini: assist2[i].fim + 1.0, fim: assist2[i].fim + 3.5, nota: "slot" });
+}
+// M: 3 slots → 3 ao acompanhante (indiferentes, atravessam) → 3 slots.
+const M = [];
+for (let i = 0; i < 3; i += 1) {
+  M.push({ ini: assist2[i].fim + 1.2, fim: assist2[i].fim + 3.8, nota: "→engine" });
+}
+for (let i = 3; i < 6; i += 1) {
+  M.push({ ini: assist2[i].ini + 2, fim: assist2[i].ini + 6.5, nota: "→acompanhante" });
+}
+for (let i = 6; i < 9; i += 1) {
+  M.push({ ini: assist2[i].fim + 1.2, fim: assist2[i].fim + 3.8, nota: "→engine" });
+}
+
+function trajetoria(nome, lista) {
+  console.log(`\n${nome}:`);
+  const historico = [];
+  let somaAcum = 0;
+  for (const [i, e] of lista.entries()) {
+    const o = sobrepoe2(e);
+    somaAcum += o;
+    historico.push(o);
+    const liftAcum = somaAcum / (i + 1) / duty2;
+    const jan = historico.slice(-6);
+    const liftJan = jan.reduce((s, v) => s + v, 0) / jan.length / duty2;
+    const acaoAcum = liftAcum >= 0.5 && i + 1 >= 2 ? "SUPRIMIR" : "ok";
+    const acaoJan = liftJan >= 0.5 && i + 1 >= 2 ? "SUPRIMIR" : "ok";
+    console.log(
+      `  e${i + 1} (${e.nota}) sobre ${o.toFixed(2)} · ` +
+        `ACUM lift ${liftAcum.toFixed(2)}→${acaoAcum} · ` +
+        `JAN6 lift ${liftJan.toFixed(2)}→${acaoJan}`
+    );
+  }
+}
+trajetoria("N — pessoa nova que começa com 2 interrupções longas", N);
+trajetoria("M — mesmo track alternando engine ↔ acompanhante", M);
+
+// Pool de não-participantes: perigo de herança de reputação.
+const poolRadio = 0.9; // lift típico do rádio já acumulado no pool
+console.log(
+  "\nPOOL não-participante: com rádio dentro (lift ~" +
+    poolRadio.toFixed(2) +
+    "), o 1º enunciado de uma pessoa nova ainda-não-admitida HERDARIA " +
+    "essa reputação se o pool pudesse rejeitar indivíduos. VEREDICTO " +
+    "DE DESENHO: pool só rebaixa AUTORIDADE DE EFEITO e marca cena de " +
+    "vozes — nunca rejeita fonte individual; rejeição individual exige " +
+    "estatística DA fonte (track/voz) ou sinal contemporâneo."
+);
