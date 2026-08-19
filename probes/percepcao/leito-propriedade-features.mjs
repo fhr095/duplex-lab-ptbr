@@ -20,6 +20,21 @@ import { resolve } from "node:path";
 const SR = 16_000;
 const QUADRO = Math.floor(SR * 0.05); // 50 ms
 
+// Controle de robustez (mandato 012): pisos energéticos variáveis para
+// checar que as conclusões não dependem do limiar de segmentação.
+//   --piso-usuario <dB> (padrão -45) · --piso-assistente <dB> (padrão -50)
+const argv = process.argv.slice(2);
+function flag(nome, padrao) {
+  const i = argv.indexOf(nome);
+  return i === -1 ? padrao : Number(argv[i + 1]);
+}
+const PISO_USUARIO = flag("--piso-usuario", -45);
+const PISO_ASSISTENTE = flag("--piso-assistente", -50);
+const FLAGS_COM_VALOR = new Set(["--piso-usuario", "--piso-assistente"]);
+const specs = argv.filter(
+  (a, i) => !a.startsWith("--") && !FLAGS_COM_VALOR.has(argv[i - 1])
+);
+
 function atividade(caminho, iniS, fimS, pisoDb) {
   const wav = readFileSync(caminho);
   const pcm = wav.subarray(44);
@@ -94,19 +109,19 @@ function percentis(valores, ps) {
   });
 }
 
-for (const spec of process.argv.slice(2)) {
+for (const spec of specs) {
   const [pacote, iniS, fimS] = spec.split(":");
   const usuario = atividade(
     resolve(pacote, "canal-usuario.wav"),
     iniS ? Number(iniS) : null,
     fimS ? Number(fimS) : null,
-    -45
+    PISO_USUARIO
   );
   const assistente = atividade(
     resolve(pacote, "canal-assistente.wav"),
     iniS ? Number(iniS) : null,
     fimS ? Number(fimS) : null,
-    -50
+    PISO_ASSISTENTE
   );
 
   const turnos = usuario.intervalos.filter(
@@ -115,7 +130,6 @@ for (const spec of process.argv.slice(2)) {
   const slots = [];
   const sobreposicoes = [];
   const niveis = [];
-  let emSlot = 0;
   let comReferencia = 0;
   for (const turno of turnos) {
     const anteriores = assistente.intervalos.filter(
@@ -124,11 +138,7 @@ for (const spec of process.argv.slice(2)) {
     const ultima = anteriores.at(-1);
     if (ultima && turno.ini - ultima.fim <= 12) {
       comReferencia += 1;
-      const slotMs = (turno.ini - ultima.fim) * 1_000;
-      slots.push(slotMs);
-      if (slotMs <= 2_500) {
-        emSlot += 1;
-      }
+      slots.push((turno.ini - ultima.fim) * 1_000);
     }
     let atravessada = 0;
     for (const a of assistente.intervalos) {
@@ -141,15 +151,38 @@ for (const spec of process.argv.slice(2)) {
     niveis.push(dbfsTrecho(usuario.pcm, turno.ini, turno.fim));
   }
 
+  // Curva de contingência SEM limiar único (controle metodológico do
+  // mandato): fração dos turnos-com-referência cujo onset cai em ≤W,
+  // para várias janelas W — e os DENOMINADORES sempre à vista.
+  const JANELAS_S = [1, 2.5, 5, 8, 12];
+  const curva = JANELAS_S.map((w) => {
+    const dentro = slots.filter((s) => s <= w * 1_000).length;
+    return `≤${w}s ${comReferencia ? ((dentro / comReferencia) * 100).toFixed(0) : "?"}%`;
+  }).join(" ");
+
+  // --serie: sobreposição turno a turno + acumulada (métrica de
+  // RECUPERAÇÃO de âncora: em quantos turnos a evidência por fonte
+  // cruzaria um limiar de abandono).
+  if (argv.includes("--serie")) {
+    let acumulada = 0;
+    sobreposicoes.forEach((s, i) => {
+      acumulada += s;
+      console.log(
+        `  turno ${i + 1}: sobreposta ${s.toFixed(2)} · média acumulada ` +
+          (acumulada / (i + 1)).toFixed(2)
+      );
+    });
+  }
+
   const [s10, s50, s90] = percentis(slots, [10, 50, 90]);
   const [o50, o90] = percentis(sobreposicoes, [50, 90]);
   const [d10, d50, d90] = percentis(niveis, [10, 50, 90]);
   console.log(
     [
       pacote.split("/").at(-1) + (iniS ? `[${iniS}-${fimS}]` : ""),
-      `turnos ${turnos.length}`,
+      `turnos ${turnos.length} (c/ ref. da engine em ≤12s: ${comReferencia})`,
       `slot p10/50/90 ${s10?.toFixed(0)}/${s50?.toFixed(0)}/${s90?.toFixed(0)}ms`,
-      `emSlot(≤2,5s) ${comReferencia ? ((emSlot / comReferencia) * 100).toFixed(0) : "?"}% de ${comReferencia}`,
+      `curva ${curva}`,
       `sobreposta p50/p90 ${o50?.toFixed(2)}/${o90?.toFixed(2)}`,
       `dBFS p10/50/90 ${d10?.toFixed(0)}/${d50?.toFixed(0)}/${d90?.toFixed(0)}`
     ].join(" · ")
