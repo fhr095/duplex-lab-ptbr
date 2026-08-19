@@ -160,6 +160,40 @@ for (const spec of specs) {
     return `≤${w}s ${comReferencia ? ((dentro / comReferencia) * 100).toFixed(0) : "?"}%`;
   }).join(" ");
 
+  // Normalização pelo duty da assistente (mandato v3): sob
+  // independência, a sobreposição esperada de uma fonte ≈ duty da
+  // assistente na janela — reportamos o LIFT (observado/esperado).
+  const totalJanelaS =
+    (usuario.pcm.length / 2 / SR) - (usuario.iniAmostra / SR);
+  const dutyAssistente =
+    assistente.intervalos.reduce((s, a) => s + (a.fim - a.ini), 0) /
+    Math.max(1e-9, totalJanelaS);
+
+  // REAÇÃO ao onset da fala da assistente (versão causal da
+  // indiferença): atividade da fonte 1,5 s ANTES × 1,5 s DEPOIS de
+  // cada onset. Usuário real CEDE (antes>depois, reação positiva);
+  // fonte indiferente não muda (~0).
+  const RJ = 1.5;
+  const reacoes = [];
+  for (const a of assistente.intervalos) {
+    let antes = 0;
+    let depois = 0;
+    for (const t of usuario.intervalos) {
+      antes += Math.max(
+        0,
+        Math.min(t.fim, a.ini) - Math.max(t.ini, a.ini - RJ)
+      );
+      depois += Math.max(
+        0,
+        Math.min(t.fim, a.ini + RJ) - Math.max(t.ini, a.ini)
+      );
+    }
+    reacoes.push((antes - depois) / RJ);
+  }
+  const reacaoMedia = reacoes.length
+    ? reacoes.reduce((s, v) => s + v, 0) / reacoes.length
+    : null;
+
   // --serie: sobreposição turno a turno + acumulada (métrica de
   // RECUPERAÇÃO de âncora: em quantos turnos a evidência por fonte
   // cruzaria um limiar de abandono).
@@ -184,6 +218,9 @@ for (const spec of specs) {
       `slot p10/50/90 ${s10?.toFixed(0)}/${s50?.toFixed(0)}/${s90?.toFixed(0)}ms`,
       `curva ${curva}`,
       `sobreposta p50/p90 ${o50?.toFixed(2)}/${o90?.toFixed(2)}`,
+      `dutyAssist ${dutyAssistente.toFixed(2)}`,
+      `lift(p50/duty) ${dutyAssistente > 0.02 ? (o50 / dutyAssistente).toFixed(2) : "s/fala"}`,
+      `reaçãoOnset ${reacaoMedia === null ? "s/onsets" : reacaoMedia.toFixed(2)} (n=${reacoes.length})`,
       `dBFS p10/50/90 ${d10?.toFixed(0)}/${d50?.toFixed(0)}/${d90?.toFixed(0)}`
     ].join(" · ")
   );
